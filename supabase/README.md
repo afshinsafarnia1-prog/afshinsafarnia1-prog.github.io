@@ -22,3 +22,12 @@ This folder is a **database/security starting point**, not a live backend.
 - The public site should not store clinical notes or therapy records until a secure, legally reviewed clinical-record design is in place.
 - Payout account identifiers are represented as encrypted text. Encryption/decryption must occur only in a trusted server-side function using a key held outside the database.
 - The current website FAQ helper remains a non-clinical guide, not a therapist or diagnostic service.
+
+
+## Two-market model (Iran + international)
+- The first version is designed to support both markets at the same time, not as a later migration.
+- Profiles and appointments carry a market and timezone; therapist pricing can be configured separately per market and currency.
+- Iran-facing checkout should use a locally available, legally compliant payment provider and settle in IRR.
+- International checkout should use a provider that is legally available to the business and the client's country, with EUR/USD as supported display/settlement currencies where the provider permits.
+- Do not assume one provider can process both markets. Provider availability, sanctions, banking, merchant eligibility and data-location rules must be checked before implementation.
+- The current market selector is only a front-end preference indicator. It does not yet change the actual payment route or convert currencies.
