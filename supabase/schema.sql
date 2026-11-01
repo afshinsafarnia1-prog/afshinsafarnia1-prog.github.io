@@ -14,6 +14,9 @@ create table public.profiles (
   phone text,
   role public.account_role not null default 'client',
   preferred_language text not null default 'fa',
+  market text not null default 'iran' check (market in ('iran','international')),
+  country_code text,
+  timezone text not null default 'Asia/Tehran',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -33,6 +36,17 @@ create table public.therapists (
   is_listed boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
+);
+
+create table public.therapist_prices (
+  id uuid primary key default gen_random_uuid(),
+  therapist_id uuid not null references public.therapists(id) on delete cascade,
+  market text not null check (market in ('iran','international')),
+  currency text not null check (currency in ('IRR','EUR','USD')),
+  amount bigint not null check (amount >= 0),
+  is_active boolean not null default true,
+  updated_at timestamptz not null default now(),
+  unique (therapist_id, market, currency)
 );
 
 create table public.availability_slots (
@@ -55,6 +69,8 @@ create table public.appointments (
   ends_at timestamptz not null,
   status public.appointment_status not null default 'requested',
   client_message text,
+  market text not null default 'iran' check (market in ('iran','international')),
+  timezone text not null default 'Asia/Tehran',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   check (ends_at > starts_at)
@@ -68,6 +84,7 @@ create table public.payments (
   currency text not null check (currency in ('IRR','EUR','USD')),
   status public.payment_status not null default 'pending',
   provider text,
+  provider_market text not null default 'iran' check (provider_market in ('iran','international')),
   provider_reference text,
   paid_at timestamptz,
   created_at timestamptz not null default now()
@@ -121,6 +138,7 @@ for each row execute procedure public.handle_new_user();
 
 alter table public.profiles enable row level security;
 alter table public.therapists enable row level security;
+alter table public.therapist_prices enable row level security;
 alter table public.availability_slots enable row level security;
 alter table public.appointments enable row level security;
 alter table public.payments enable row level security;
@@ -137,6 +155,13 @@ create policy "therapist_public_directory" on public.therapists
 for select to anon, authenticated using (is_listed and verified_at is not null);
 create policy "therapist_owner_read" on public.therapists
 for select to authenticated using (id = auth.uid());
+create policy "therapist_prices_public_read" on public.therapist_prices
+for select to anon, authenticated using (
+  is_active and exists (
+    select 1 from public.therapists t
+    where t.id = therapist_id and t.is_listed and t.verified_at is not null
+  )
+);
 -- Therapist profile creation/verification/edits are server-side only so a
 -- user cannot self-verify or publish an unreviewed clinical profile.
 
