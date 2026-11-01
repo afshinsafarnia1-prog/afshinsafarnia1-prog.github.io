@@ -190,3 +190,194 @@ for select to authenticated using (client_id = auth.uid());
 -- Admin-only access must be implemented via server-side service-role functions
 -- after verifying the caller's admin role. Do not expose the service-role key.
 
+
+
+-- Controlled manual-transfer workflow for the initial release.
+-- Clients may request a slot and submit a transfer reference; only an admin
+-- can mark the payment as received and confirm the appointment.
+create or replace function public.request_appointment(
+  p_slot_id uuid,
+  p_market text,
+  p_currency text,
+  p_client_message text default null
+)
+returns table (appointment_id uuid, payment_id uuid, amount bigint, currency text)
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_user uuid := auth.uid();
+  v_slot public.availability_slots%rowtype;
+  v_amount bigint;
+  v_appointment uuid;
+  v_payment uuid;
+begin
+  if v_user is null then
+    raise exception 'authentication_required' using errcode = '28000';
+  end if;
+  if p_market not in ('iran','international')
+     or p_currency not in ('IRR','EUR','USD') then
+    raise exception 'invalid_market_or_currency' using errcode = '22023';
+  end if;
+  if p_client_message is not null and length(p_client_message) > 500 then
+    raise exception 'message_too_long' using errcode = '22023';
+  end if;
+
+  select s.* into v_slot
+  from public.availability_slots s
+  join public.therapists t on t.id = s.therapist_id
+  where s.id = p_slot_id
+    and s.is_available
+    and s.starts_at > now()
+    and t.is_listed
+    and t.verified_at is not null
+  for update of s;
+
+  if not found then
+    raise exception 'slot_unavailable' using errcode = 'P0001';
+  end if;
+
+  if (p_market = 'iran' and p_currency <> 'IRR')
+     or (p_market = 'international' and p_currency = 'IRR') then
+    raise exception 'currency_not_allowed_for_market' using errcode = '22023';
+  end if;
+
+  select tp.amount into v_amount
+  from public.therapist_prices tp
+  where tp.therapist_id = v_slot.therapist_id
+    and tp.market = p_market
+    and tp.currency = p_currency
+    and tp.is_active;
+
+  if v_amount is null or v_amount <= 0 then
+    raise exception 'price_not_configured' using errcode = 'P0001';
+  end if;
+
+  if exists (
+    select 1 from public.appointments a
+    where a.therapist_id = v_slot.therapist_id
+      and a.status in ('requested','confirmed')
+      and a.starts_at < v_slot.ends_at
+      and a.ends_at > v_slot.starts_at
+  ) then
+    raise exception 'slot_conflict' using errcode = 'P0001';
+  end if;
+
+  insert into public.appointments
+    (client_id, therapist_id, slot_id, starts_at, ends_at, status,
+     client_message, market, timezone)
+  values
+    (v_user, v_slot.therapist_id, v_slot.id, v_slot.starts_at, v_slot.ends_at,
+     'requested', nullif(trim(p_client_message), ''), p_market,
+     coalesce((select p.timezone from public.profiles p where p.id = v_user), 'Asia/Tehran'))
+  returning id into v_appointment;
+
+  insert into public.payments
+    (appointment_id, client_id, amount, currency, status, provider, provider_market)
+  values
+    (v_appointment, v_user, v_amount, p_currency, 'pending', 'manual_transfer', p_market)
+  returning id into v_payment;
+
+  update public.availability_slots set is_available = false where id = v_slot.id;
+
+  return query select v_appointment, v_payment, v_amount, p_currency;
+end;
+$$;
+
+create or replace function public.submit_manual_payment_reference(
+  p_payment_id uuid,
+  p_reference text
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_user uuid := auth.uid();
+begin
+  if v_user is null then
+    raise exception 'authentication_required' using errcode = '28000';
+  end if;
+  if p_reference is null or length(trim(p_reference)) < 4 or length(trim(p_reference)) > 120 then
+    raise exception 'invalid_payment_reference' using errcode = '22023';
+  end if;
+
+  update public.payments
+  set provider = 'manual_transfer',
+      provider_reference = trim(p_reference)
+  where id = p_payment_id
+    and client_id = v_user
+    and status = 'pending';
+
+  if not found then
+    raise exception 'payment_not_found_or_not_pending' using errcode = 'P0001';
+  end if;
+  return true;
+end;
+$$;
+
+create or replace function public.admin_review_manual_payment(
+  p_payment_id uuid,
+  p_approve boolean
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_admin uuid := auth.uid();
+  v_appointment_id uuid;
+  v_slot_id uuid;
+begin
+  if v_admin is null or not exists (
+    select 1 from public.profiles p where p.id = v_admin and p.role = 'admin'
+  ) then
+    raise exception 'admin_only' using errcode = '42501';
+  end if;
+
+  select p.appointment_id into v_appointment_id
+  from public.payments p
+  where p.id = p_payment_id
+    and p.status = 'pending'
+    and p.provider = 'manual_transfer'
+    and p.provider_reference is not null
+  for update;
+
+  if not found then
+    raise exception 'payment_not_ready_for_review' using errcode = 'P0001';
+  end if;
+
+  if p_approve then
+    update public.payments
+      set status = 'paid', paid_at = now()
+      where id = p_payment_id;
+    update public.appointments
+      set status = 'confirmed', updated_at = now()
+      where id = v_appointment_id and status = 'requested';
+    if not found then
+      raise exception 'appointment_not_pending' using errcode = 'P0001';
+    end if;
+  else
+    update public.payments set status = 'failed' where id = p_payment_id;
+    update public.appointments
+      set status = 'cancelled', updated_at = now()
+      where id = v_appointment_id and status = 'requested'
+      returning slot_id into v_slot_id;
+    if v_slot_id is not null then
+      update public.availability_slots set is_available = true where id = v_slot_id;
+    end if;
+  end if;
+  return true;
+end;
+$$;
+
+-- Prevent direct browser execution of privileged functions.
+revoke all on function public.request_appointment(uuid,text,text,text) from public, anon;
+revoke all on function public.submit_manual_payment_reference(uuid,text) from public, anon;
+revoke all on function public.admin_review_manual_payment(uuid,boolean) from public, anon;
+grant execute on function public.request_appointment(uuid,text,text,text) to authenticated;
+grant execute on function public.submit_manual_payment_reference(uuid,text) to authenticated;
+grant execute on function public.admin_review_manual_payment(uuid,boolean) to authenticated;
