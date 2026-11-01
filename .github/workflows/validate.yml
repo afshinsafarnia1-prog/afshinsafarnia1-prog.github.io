@@ -1,0 +1,21 @@
+name: Validate YAD Center static site
+
+on:
+  push:
+    branches: [main, yadcenter-seo-redesign]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  static-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate local links and PWA manifest
+        run: node scripts/validate-site.mjs
