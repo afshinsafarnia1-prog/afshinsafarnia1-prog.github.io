@@ -31,3 +31,12 @@ This folder is a **database/security starting point**, not a live backend.
 - International checkout should use a provider that is legally available to the business and the client's country, with EUR/USD as supported display/settlement currencies where the provider permits.
 - Do not assume one provider can process both markets. Provider availability, sanctions, banking, merchant eligibility and data-location rules must be checked before implementation.
 - The current market selector is only a front-end preference indicator. It does not yet change the actual payment route or convert currencies.
+
+
+## Manual payment workflow included in schema
+- `request_appointment` locks and reserves an available future slot, checks that the therapist is listed and verified, reads the active market-specific price, and creates a pending appointment plus pending payment.
+- `submit_manual_payment_reference` lets the client submit a bank transfer reference. Do not ask clients to upload sensitive clinical information with payment evidence.
+- `admin_review_manual_payment` lets an authenticated profile whose role is already `admin` approve or reject a submitted manual payment. Approval confirms the appointment; rejection cancels it and reopens the slot.
+- Create the first admin profile manually through a trusted Supabase SQL console after verifying the account owner. Never expose an admin role-setting endpoint to public clients.
+- This is a database workflow foundation; the current static HTML portals do not yet include live authentication screens or call these RPCs. Connect those only after the Supabase project and secrets are configured.
+- The initial schema includes a legacy single-currency fee on `therapists`; use `therapist_prices` as the authoritative market-specific price table. The legacy columns are retained for backward compatibility and should not be used for checkout.
