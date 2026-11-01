@@ -127,21 +127,18 @@ alter table public.payments enable row level security;
 alter table public.payout_accounts enable row level security;
 alter table public.site_settings enable row level security;
 
--- Profile: users may read/update their own non-role fields.
+-- Profile: users may read their own profile. Profile edits and all role
+-- assignments are deliberately reserved for a validated server-side function.
 create policy "profile_select_self" on public.profiles
 for select to authenticated using (id = auth.uid());
-create policy "profile_update_self" on public.profiles
-for update to authenticated using (id = auth.uid())
-with check (id = auth.uid() and role = (select p.role from public.profiles p where p.id = auth.uid()));
 
 -- Public therapist directory exposes only listed, verified therapist profiles.
 create policy "therapist_public_directory" on public.therapists
 for select to anon, authenticated using (is_listed and verified_at is not null);
 create policy "therapist_owner_read" on public.therapists
 for select to authenticated using (id = auth.uid());
-create policy "therapist_owner_update" on public.therapists
-for update to authenticated using (id = auth.uid())
-with check (id = auth.uid());
+-- Therapist profile creation/verification/edits are server-side only so a
+-- user cannot self-verify or publish an unreviewed clinical profile.
 
 -- Availability is public for listed therapists; therapists manage their own slots.
 create policy "availability_public_read" on public.availability_slots
