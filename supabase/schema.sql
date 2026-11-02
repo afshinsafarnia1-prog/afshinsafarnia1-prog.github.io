@@ -168,17 +168,38 @@ for select to anon, authenticated using (
 -- Availability is public for listed therapists; therapists manage their own slots.
 create policy "availability_public_read" on public.availability_slots
 for select to anon, authenticated using (
-  exists (select 1 from public.therapists t where t.id = therapist_id and t.is_listed and t.verified_at is not null)
+  is_available and starts_at > now()
+  and exists (
+    select 1 from public.therapists t
+    where t.id = therapist_id and t.is_listed and t.verified_at is not null
+  )
 );
+-- Only accounts whose role was assigned through a trusted admin process may
+-- create or change their own availability. Client accounts cannot create slots.
 create policy "availability_owner_manage" on public.availability_slots
-for all to authenticated using (therapist_id = auth.uid())
-with check (therapist_id = auth.uid());
+for all to authenticated
+using (
+  therapist_id = auth.uid()
+  and exists (
+    select 1 from public.profiles p
+    where p.id = auth.uid() and p.role = 'therapist'
+  )
+)
+with check (
+  therapist_id = auth.uid()
+  and exists (
+    select 1 from public.profiles p
+    where p.id = auth.uid() and p.role = 'therapist'
+  )
+);
 
 -- Clients and assigned therapists can see their appointments.
 create policy "appointment_participant_read" on public.appointments
 for select to authenticated using (client_id = auth.uid() or therapist_id = auth.uid());
-create policy "client_create_appointment" on public.appointments
-for insert to authenticated with check (client_id = auth.uid());
+-- Direct browser inserts are intentionally disabled. New appointments must go
+-- through request_appointment(), which validates and locks a real slot, checks
+-- therapist listing/verification and market pricing, and creates the payment row
+-- atomically. This prevents forged appointments and bypassing the slot workflow.
 -- Status transitions, confirmations, payments, refunds and admin actions belong
 -- in validated server-side functions; no client-side status update policy.
 
@@ -373,6 +394,12 @@ begin
   return true;
 end;
 $$;
+
+-- Restrict direct table writes to the controlled RPC workflow.
+revoke insert, update, delete on public.appointments from anon, authenticated;
+revoke insert, update, delete on public.payments from anon, authenticated;
+revoke insert, update, delete on public.payout_accounts from anon, authenticated;
+revoke insert, update, delete on public.site_settings from anon, authenticated;
 
 -- Prevent direct browser execution of privileged functions.
 revoke all on function public.request_appointment(uuid,text,text,text) from public, anon;
