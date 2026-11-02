@@ -19,3 +19,5 @@ jobs:
           node-version: 22
       - name: Validate local links and PWA manifest
         run: node scripts/validate-site.mjs
+      - name: Check Supabase schema security guardrails
+        run: node scripts/validate-schema.mjs
