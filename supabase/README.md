@@ -17,6 +17,22 @@ This folder is a **database/security starting point**, not a live backend.
 6. Add tests for role escalation, cross-user access, therapist/client data isolation, duplicate bookings, payment replay, and unauthorized payout changes.
 7. Have a privacy/legal professional review consent, clinical-data handling, retention, cancellation/refund and emergency policies before production.
 
+## Security hardening added to the staging schema
+
+The latest staging-schema revision removes direct browser inserts into appointments and direct writes to payment, payout-account and site-settings tables. Appointment requests must use the controlled RPC workflow. Public availability reads are limited to future, available slots for listed and verified therapists; slot management also checks that the signed-in profile has the therapist role.
+
+These are schema changes in GitHub only. They have **not** been applied to a live Supabase project and have not been runtime-tested against a project. Apply to a disposable staging project first, then run the checks below before any production use.
+
+### Minimum staging checks
+- A new client can only see their own profile and appointments.
+- A client cannot create an availability slot, forge an appointment, change appointment status, write payment rows, or access payout settings.
+- A therapist cannot self-assign the therapist/admin role or self-verify/list a profile.
+- Anonymous users can see only future available slots and listed/verified therapist profiles and active prices.
+- Two clients attempting the same slot concurrently cannot both reserve it.
+- Only an admin can approve/reject a submitted manual-transfer reference.
+- Rejected payments cancel the requested appointment and release its slot; approval confirms only a still-requested appointment.
+- Confirm database grants and RLS behavior with actual authenticated test users; do not rely on static inspection alone.
+
 ## Important limitations
 - This schema does not create a working booking or payment system by itself.
 - The public site should not store clinical notes or therapy records until a secure, legally reviewed clinical-record design is in place.
