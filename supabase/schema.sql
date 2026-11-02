@@ -237,6 +237,11 @@ begin
   if v_user is null then
     raise exception 'authentication_required' using errcode = '28000';
   end if;
+  if not exists (
+    select 1 from public.profiles p where p.id = v_user and p.role = 'client'
+  ) then
+    raise exception 'client_only' using errcode = '42501';
+  end if;
   if p_market not in ('iran','international')
      or p_currency not in ('IRR','EUR','USD') then
     raise exception 'invalid_market_or_currency' using errcode = '22023';
@@ -321,6 +326,11 @@ begin
   if v_user is null then
     raise exception 'authentication_required' using errcode = '28000';
   end if;
+  if not exists (
+    select 1 from public.profiles p where p.id = v_user and p.role = 'client'
+  ) then
+    raise exception 'client_only' using errcode = '42501';
+  end if;
   if p_reference is null or length(trim(p_reference)) < 4 or length(trim(p_reference)) > 120 then
     raise exception 'invalid_payment_reference' using errcode = '22023';
   end if;
@@ -371,22 +381,26 @@ begin
     raise exception 'payment_not_ready_for_review' using errcode = 'P0001';
   end if;
 
+  if not exists (
+    select 1 from public.appointments a
+    where a.id = v_appointment_id and a.status = 'requested'
+  ) then
+    raise exception 'appointment_not_pending' using errcode = 'P0001';
+  end if;
+
   if p_approve then
-    update public.payments
-      set status = 'paid', paid_at = now()
-      where id = p_payment_id;
     update public.appointments
       set status = 'confirmed', updated_at = now()
       where id = v_appointment_id and status = 'requested';
-    if not found then
-      raise exception 'appointment_not_pending' using errcode = 'P0001';
-    end if;
+    update public.payments
+      set status = 'paid', paid_at = now()
+      where id = p_payment_id and status = 'pending';
   else
-    update public.payments set status = 'failed' where id = p_payment_id;
     update public.appointments
       set status = 'cancelled', updated_at = now()
       where id = v_appointment_id and status = 'requested'
       returning slot_id into v_slot_id;
+    update public.payments set status = 'failed' where id = p_payment_id and status = 'pending';
     if v_slot_id is not null then
       update public.availability_slots set is_available = true where id = v_slot_id;
     end if;
