@@ -28,7 +28,7 @@ const profileTrigger = /create\\s+or\\s+replace\\s+function\\s+public\\.handle_n
 if (!profileTrigger.test(sql)) errors.push("New auth users must receive a client profile through handle_new_user");
 if (!/create\\s+trigger\\s+on_auth_user_created[\\s\\S]*?after\\s+insert\\s+on\\s+auth\\.users/i.test(sql)) errors.push("Missing auth.users profile-creation trigger");
 for (const fn of ["request_appointment","submit_manual_payment_reference"]) {
-  const match = sql.match(new RegExp("create\\\\s+or\\\\s+replace\\\\s+function\\\\s+public\\\\." + fn + "[\\\\s\\\\S]*?\\\\$\\\\$;", "i"));
+  const match = sql.match(new RegExp("create\\s+or\\s+replace\\s+function\\s+public\\." + fn + "[\\s\\S]*?\\$\\$;", "i"));
   if (!match || !/p\\.role\\s*=\\s*'client'/i.test(match[0])) errors.push(fn + " must enforce the client role");
 }
 
