@@ -33,7 +33,7 @@ for (const file of htmlFiles) {
 }
 try { JSON.parse(fs.readFileSync(path.join(root, "manifest.webmanifest"), "utf8")); }
 catch { errors.push("manifest.webmanifest is not valid JSON"); }
-for (const file of [".env", ".env.production"]) {
+for (const file of ["auth.js", "supabase-config.js", "scripts/validate-schema.mjs"]) {\n  if (!fs.existsSync(path.join(root,file))) errors.push(`${file} is required`);\n}\nfor (const file of [".env", ".env.production"]) {
   if (fs.existsSync(path.join(root,file))) errors.push(`${file} must never be committed`);
 }
 if (errors.length) {
