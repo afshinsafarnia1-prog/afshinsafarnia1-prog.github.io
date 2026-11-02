@@ -23,6 +23,15 @@ for (const fn of ["request_appointment","submit_manual_payment_reference","admin
   if (!/security\\s+definer/i.test(match[0])) errors.push(fn + " must be SECURITY DEFINER");
   if (!/set\\s+search_path\\s*=\\s*''/i.test(match[0])) errors.push(fn + " must pin an empty search_path");
 }
+
+const profileTrigger = /create\\s+or\\s+replace\\s+function\\s+public\\.handle_new_user[\\s\\S]*?insert\\s+into\\s+public\\.profiles[\\s\\S]*?values\\s*\\(\\s*new\\.id[\\s\\S]*?\\);[\\s\\S]*?\\$\\$;/i;
+if (!profileTrigger.test(sql)) errors.push("New auth users must receive a client profile through handle_new_user");
+if (!/create\\s+trigger\\s+on_auth_user_created[\\s\\S]*?after\\s+insert\\s+on\\s+auth\\.users/i.test(sql)) errors.push("Missing auth.users profile-creation trigger");
+for (const fn of ["request_appointment","submit_manual_payment_reference"]) {
+  const match = sql.match(new RegExp("create\\\\s+or\\\\s+replace\\\\s+function\\\\s+public\\\\." + fn + "[\\\\s\\\\S]*?\\\\$\\\\$;", "i"));
+  if (!match || !/p\\.role\\s*=\\s*'client'/i.test(match[0])) errors.push(fn + " must enforce the client role");
+}
+
 for (const marker of [
   "revoke insert, update, delete on public.appointments from anon, authenticated",
   "revoke insert, update, delete on public.payments from anon, authenticated",
