@@ -4,6 +4,7 @@ This folder is a **database/security starting point**, not a live backend.
 
 ## What is included
 - PostgreSQL schema for profiles and three roles (client, therapist, admin)
+- Auth trigger that creates a client-only profile for each newly registered Supabase user
 - Therapist directory, availability, appointments and payment records
 - Private payout-account configuration table for domestic and international accounts
 - Row-level security policies with intentionally restricted writes
@@ -19,7 +20,7 @@ This folder is a **database/security starting point**, not a live backend.
 
 ## Security hardening added to the staging schema
 
-The latest staging-schema revision removes direct browser inserts into appointments and direct writes to payment, payout-account and site-settings tables. Appointment requests must use the controlled RPC workflow. Public availability reads are limited to future, available slots for listed and verified therapists; slot management also checks that the signed-in profile has the therapist role.
+The latest staging-schema revision removes direct browser inserts into appointments and direct writes to payment, payout-account and site-settings tables. Appointment requests and transfer-reference submissions must use controlled RPCs that explicitly require the client role. Payment review requires the admin role. Public availability reads are limited to future, available slots for listed and verified therapists; slot management also checks that the signed-in profile has the therapist role. New auth users receive a profile with the database default role of client; therapist/admin roles must be assigned only through a trusted process.
 
 These are schema changes in GitHub only. They have **not** been applied to a live Supabase project and have not been runtime-tested against a project. Apply to a disposable staging project first, then run the checks below before any production use.
 
@@ -54,5 +55,5 @@ These are schema changes in GitHub only. They have **not** been applied to a liv
 - `submit_manual_payment_reference` lets the client submit a bank transfer reference. Do not ask clients to upload sensitive clinical information with payment evidence.
 - `admin_review_manual_payment` lets an authenticated profile whose role is already `admin` approve or reject a submitted manual payment. Approval confirms the appointment; rejection cancels it and reopens the slot.
 - Create the first admin profile manually through a trusted Supabase SQL console after verifying the account owner. Never expose an admin role-setting endpoint to public clients.
-- This is a database workflow foundation; the current static HTML portals do not yet include live authentication screens or call these RPCs. Connect those only after the Supabase project and secrets are configured.
+- The client, therapist and admin HTML portals now contain a Supabase authentication gate. They remain disconnected until the project URL and public anon key are supplied in `supabase-config.js`. The portals do not yet provide live booking, payment review, profile editing or therapist availability management.
 - The initial schema includes a legacy single-currency fee on `therapists`; use `therapist_prices` as the authoritative market-specific price table. The legacy columns are retained for backward compatibility and should not be used for checkout.
