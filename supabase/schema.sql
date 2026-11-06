@@ -3,6 +3,7 @@
 -- Never commit real credentials, bank details, patient notes, or production data.
 
 create extension if not exists pgcrypto;
+create extension if not exists btree_gist;
 
 create type public.account_role as enum ('client', 'therapist', 'admin');
 create type public.appointment_status as enum ('requested', 'confirmed', 'completed', 'cancelled');
@@ -73,7 +74,13 @@ create table public.appointments (
   timezone text not null default 'Asia/Tehran',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  check (ends_at > starts_at)
+  check (ends_at > starts_at),
+  constraint appointments_no_overlapping_active_sessions
+    exclude using gist (
+      therapist_id with =,
+      tstzrange(starts_at, ends_at, '[)') with &&
+    )
+    where (status in ('requested', 'confirmed'))
 );
 
 create table public.payments (
