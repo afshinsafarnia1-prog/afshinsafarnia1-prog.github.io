@@ -23,6 +23,13 @@ for (const table of requiredTables) {
   if (!pattern.test(sql)) errors.push("RLS is not explicitly enabled for public." + table);
 }
 
+if (!/create\\s+extension\\s+if\\s+not\\s+exists\\s+btree_gist/i.test(sql)) {
+  errors.push("Missing btree_gist extension required for overlap exclusion constraint");
+}
+if (!/constraint\\s+appointments_no_overlapping_active_sessions\\s+exclude\\s+using\\s+gist[\\s\\S]*?where\\s*\\(\\s*status\\s+in\\s*\\(\\s*'requested'\\s*,\\s*'confirmed'\\s*\\)\\s*\\)/i.test(sql)) {
+  errors.push("Missing database-level exclusion constraint for overlapping active appointments");
+}
+
 for (const table of ["appointments", "payments", "payout_accounts", "site_settings"]) {
   const unsafeGrant = new RegExp(
     "grant\\s+(?:all|insert|update|delete)[^;]*\\bon\\s+(?:table\\s+)?public\\." +
