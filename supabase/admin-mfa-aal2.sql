@@ -50,7 +50,7 @@ begin
       v_updated := regexp_replace(
         v_definition,
         E'(\n[[:space:]]*BEGIN[[:space:]]*\n)',
-        E'\1  PERFORM public.require_admin_aal2();\n',
+        '\1  PERFORM public.require_admin_aal2();' || chr(10),
         'i'
       );
     elsif r.lanname = 'sql' then
