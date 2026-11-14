@@ -56,8 +56,8 @@ begin
     elsif r.lanname = 'sql' then
       v_updated := regexp_replace(
         v_definition,
-        '(WHERE[[:space:]]+EXISTS[[:space:]]*\()',
-        'WHERE public.require_admin_aal2() AND EXISTS (',
+        '([[:space:]]WHERE[[:space:]])',
+        ' WHERE public.require_admin_aal2() AND ',
         'i'
       );
     else
