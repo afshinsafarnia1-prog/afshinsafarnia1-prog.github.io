@@ -101,6 +101,8 @@
       }
       data.forEach(item => {
         const tr = document.createElement("tr");
+        tr.dataset.requestId = item.request_id;
+        tr.dataset.duration = String(item.session_duration_minutes || 50);
         const add = value => { const td = document.createElement("td"); td.textContent = safe(value); tr.append(td); return td; };
         add(item.client_name);
         add(item.therapist_name);
@@ -149,7 +151,8 @@
       if (Number.isNaN(start.getTime()) || start <= new Date()) {
         setStatus("زمان جلسه باید در آینده باشد.", true); return;
       }
-      const duration = 50;
+      const row = requests.querySelector("tr[data-request-id=\"" + requestId + "\"]");
+      const duration = Number(row?.dataset.duration || 50);
       const end = new Date(start.getTime() + duration * 60000);
       const { error } = await db.rpc("admin_schedule_request", {
         p_request_id: requestId,
