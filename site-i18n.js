@@ -81,8 +81,9 @@
   const keys = {
     ".topinner span":"tagline","#mainNav a:nth-child(1)":"services","#mainNav a:nth-child(2)":"therapists",
     "#mainNav a:nth-child(3)":"client","#mainNav a:nth-child(4)":"admin","#mainNav a:nth-child(5)":"how",
-    "#mainNav a:nth-child(6)":"articles","#mainNav a:nth-child(7)":"assistant","#mainNav a:nth-child(8)":"rules",
-    "#mainNav a:nth-child(9)":"about",".navcta":"cta","#mainNav a:nth-child(10)":"collaborate",".hero-copy .eyebrow":"heroEyebrow",".hero h1":"heroTitle",
+    "#mainNav a:nth-child(6)":"workshopsNav","#mainNav a:nth-child(7)":"articles","#mainNav a:nth-child(8)":"assistant",
+    "#mainNav a:nth-child(9)":"rules","#mainNav a:nth-child(10)":"about","#mainNav a:nth-child(11)":"collaborate",
+    ".navcta":"cta",".hero-copy .eyebrow":"heroEyebrow",".hero h1":"heroTitle",
     ".hero-copy .lead":"heroLead",".hero-actions .button":"find",".hero-actions .textlink":"read",
     ".searchbox .eyebrow":"searchEyebrow",".searchbox h2":"searchTitle",".searchbox p":"searchLead",
     "#services .section-head .eyebrow":"servicesEyebrow","#services h2":"servicesTitle","#services .section-head>p":"servicesLead",
