@@ -8,6 +8,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="supabase-config.js"></script>
 <script defer src="auth.js"></script>
+<script defer src="admin-workflow.js"></script>
 </head>
 <body>
 <main class="portal-main"><div class="portal-wrap">
@@ -35,9 +36,38 @@
 </tr></thead><tbody id="yadPaymentsBody"><tr><td colspan="6" data-i18n="loading">در حال بارگذاری…</td></tr></tbody></table></div>
 </section>
 <section class="portal-card">
-<h2 data-i18n="therapistManagement">مدیریت درمانگران</h2>
-<p data-i18n="therapistWorkflow">درمانگر اطلاعات، عکس و مدارک حرفه‌ای خود را فقط برای مدیر ارسال می‌کند. مدیر پس از بررسی، پروفایل عمومی را ثبت و منتشر می‌کند. ثبت و بارگذاری امن مدارک در پنل مدیریت هنوز در حال تکمیل است؛ تا آن زمان اطلاعات حساس را در این صفحه یا پیام عمومی وارد نکن.</p>
-<div class="notice" data-i18n="therapistSecurity">حساب درمانگر و امکان ورود مستقل برای او در این مدل فعال نیست. تأیید هویت و انتشار پروفایل فقط با تصمیم مدیر انجام می‌شود.</div>
+<div class="section-head"><div><h2>ثبت و مدیریت درمانگران</h2><p>درمانگر حساب مستقل ندارد؛ ثبت، بررسی مدارک و انتشار پروفایل فقط توسط مدیر انجام می‌شود.</p></div></div>
+<div id="yadWorkflowStatus" class="notice" role="status" aria-live="polite">در حال اتصال…</div>
+<div id="yadTherapistList" class="portal-grid"></div>
+<form id="yadTherapistForm" class="yad-admin-form">
+<h3 id="yadFormTitle">ثبت درمانگر جدید</h3>
+<input id="yadTherapistId" type="hidden">
+<input id="yadExistingPhoto" type="hidden">
+<input id="yadExistingDocument" type="hidden">
+<div class="portal-grid">
+<label>نام نمایشی<input id="yadDisplayName" required maxlength="120"></label>
+<label>شناسهٔ صفحه (لاتین)<input id="yadPublicSlug" required pattern="[a-zA-Z0-9-]+" maxlength="100"></label>
+<label>عنوان حرفه‌ای<input id="yadHeadline" maxlength="180"></label>
+<label>مدت جلسه (دقیقه)<input id="yadDuration" type="number" min="20" max="180" value="50" required></label>
+<label>هزینهٔ جلسه<input id="yadFee" type="number" min="0" step="1" required></label>
+<label>واحد پول<select id="yadCurrency"><option value="IRR">IRR</option><option value="EUR">EUR</option><option value="USD">USD</option></select></label>
+<label>تحصیلات و مدارک (با ویرگول جدا کن)<input id="yadQualifications"></label>
+<label>حوزه‌های تخصصی<input id="yadSpecialties"></label>
+<label>زبان‌ها (fa, ku, en, tr, ar, es, de, fr)<input id="yadLanguages" value="fa"></label>
+<label>رویکردهای درمانی<input id="yadModalities"></label>
+<label>عکس پروفایل<input id="yadPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label>
+<label>مدرک مجوز / پروانه<input id="yadLicenseDocument" type="file" accept="application/pdf,image/jpeg,image/png"></label>
+<label>شمارهٔ مجوز<input id="yadLicense"></label>
+<label>مرجع صادرکننده<input id="yadAuthority"></label>
+</div>
+<label>زندگی‌نامه و معرفی حرفه‌ای<textarea id="yadBiography" rows="5"></textarea></label>
+<div class="yad-checks"><label><input id="yadVerified" type="checkbox"> مدارک و مجوز بررسی و تأیید شده‌اند</label><label><input id="yadListed" type="checkbox"> انتشار در فهرست عمومی</label></div>
+<div class="admin-actions"><button class="button primary" type="submit">ذخیرهٔ پروفایل</button><button class="button outline" id="yadCancelEdit" type="button" hidden>لغو ویرایش</button></div>
+</form>
+</section>
+<section class="portal-card">
+<div class="section-head"><div><h2>درخواست‌های مراجعان و پرداخت‌ها</h2><p>مراجع درمانگر را انتخاب می‌کند؛ پس از تأیید پرداخت، زمان جلسه را در این بخش ثبت کن.</p></div><button class="button outline" id="yadRefreshWorkflow" type="button">به‌روزرسانی</button></div>
+<div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>مراجع</th><th>درمانگر انتخابی</th><th>مبلغ</th><th>شماره پیگیری</th><th>وضعیت درخواست</th><th>وضعیت پرداخت</th><th>اقدام</th></tr></thead><tbody id="yadRequestsBody"><tr><td colspan="7">در حال بارگذاری…</td></tr></tbody></table></div>
 </section>
 <section class="portal-card">
 <h2 data-i18n="financialRules">قواعد مالی یادسنتر</h2>
@@ -53,5 +83,5 @@
 .admin-actions{display:flex;gap:5px}
 .admin-muted{color:#8b9998}
 .admin-error{color:#9c3d36}
-</style>
+ .yad-admin-form{display:grid;gap:14px;margin-top:24px}.yad-admin-form label{display:grid;gap:5px;font-size:12px;color:#52696a}.yad-admin-form input,.yad-admin-form textarea,.yad-admin-form select{width:100%;padding:10px;border:1px solid #dce8e3;border-radius:10px;font:inherit;background:#fff}.yad-checks{display:flex;gap:20px;flex-wrap:wrap}.yad-checks label{display:flex;align-items:center;gap:8px}.yad-checks input{width:auto}.therapist-admin-card{min-width:0}.yad-admin-form h3{margin:0;color:#123f46}#yadWorkflowStatus[data-error=true]{color:#9c3d36}#yadRequestsBody input{padding:7px;border:1px solid #dce8e3;border-radius:8px;min-width:190px}</style>
 </body></html>
