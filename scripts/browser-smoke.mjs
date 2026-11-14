@@ -70,7 +70,7 @@ try {
   await page.goto("http://127.0.0.1:4173/client.html", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
   await page.waitForFunction(() => document.documentElement.lang === "en");
-  const clientHeading = await page.locator("h1").innerText();
+  const clientHeading = await page.locator("h1").textContent();
   if (!clientHeading.includes("Client area")) throw new Error("Client page English translation did not apply.");
 
   const manifest = await page.request.get("http://127.0.0.1:4173/manifest.webmanifest");
