@@ -260,3 +260,20 @@ end;
 $$;
 revoke all on function public.admin_set_workshop_status(uuid,text) from public,anon,authenticated;
 grant execute on function public.admin_set_workshop_status(uuid,text) to authenticated;
+
+create or replace function public.admin_set_workshop_proposal_status(p_proposal_id uuid,p_status text)
+returns void language plpgsql security definer set search_path=''
+as $$
+begin
+ if not exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin') then
+  raise exception 'admin_only' using errcode='42501';
+ end if;
+ if p_status not in ('new','reviewing','accepted','declined') then
+  raise exception 'invalid_status' using errcode='22023';
+ end if;
+ update public.workshop_proposals set status=p_status where id=p_proposal_id;
+ if not found then raise exception 'proposal_not_found' using errcode='P0002'; end if;
+end;
+$$;
+revoke all on function public.admin_set_workshop_proposal_status(uuid,text) from public,anon,authenticated;
+grant execute on function public.admin_set_workshop_proposal_status(uuid,text) to authenticated;
