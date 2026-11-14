@@ -223,3 +223,23 @@ end;
 $$;
 revoke all on function public.client_submit_workshop_payment_reference(uuid,text) from public,anon,authenticated;
 grant execute on function public.client_submit_workshop_payment_reference(uuid,text) to authenticated;
+
+-- Require a client-supplied payment reference before an administrator can mark a paid event registration as paid.
+create or replace function public.admin_set_workshop_registration_paid(p_registration_id uuid,p_paid boolean)
+returns void language plpgsql security definer set search_path=''
+as $$
+declare v_admin uuid:=auth.uid();
+begin
+ if v_admin is null or not exists(select 1 from public.profiles p where p.id=v_admin and p.role='admin') then
+  raise exception 'admin_only' using errcode='42501';
+ end if;
+ if p_paid then
+  update public.workshop_registrations set status='paid',updated_at=now()
+  where id=p_registration_id and status='pending_payment' and payment_reference is not null;
+ else
+  update public.workshop_registrations set status='pending_payment',updated_at=now()
+  where id=p_registration_id and status in ('pending_payment','paid');
+ end if;
+ if not found then raise exception 'registration_not_found_or_reference_missing' using errcode='P0002'; end if;
+end;
+$$;
