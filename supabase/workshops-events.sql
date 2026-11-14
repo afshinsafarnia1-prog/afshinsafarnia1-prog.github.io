@@ -195,3 +195,16 @@ grant execute on function public.admin_upsert_workshop(uuid,text,text,text,text,
 grant execute on function public.admin_list_workshops() to authenticated;
 grant execute on function public.admin_list_workshop_proposals() to authenticated;
 grant execute on function public.admin_set_workshop_registration_paid(uuid,boolean) to authenticated;
+
+-- Admin-only participant roster; never expose meeting credentials in the public directory.
+create or replace function public.admin_list_workshop_registrations(p_workshop_id uuid)
+returns table(registration_id uuid,client_name text,client_email text,status text,registered_at timestamptz,payment_reference text)
+language sql stable security definer set search_path=''
+as $$
+ select r.id,coalesce(p.display_name,''),coalesce(u.email,''),r.status,r.registered_at,r.payment_reference
+ from public.workshop_registrations r join public.profiles p on p.id=r.client_id join auth.users u on u.id=r.client_id
+ where r.workshop_id=p_workshop_id and exists(select 1 from public.profiles a where a.id=auth.uid() and a.role='admin')
+ order by r.registered_at;
+$$;
+revoke all on function public.admin_list_workshop_registrations(uuid) from public,anon,authenticated;
+grant execute on function public.admin_list_workshop_registrations(uuid) to authenticated;
