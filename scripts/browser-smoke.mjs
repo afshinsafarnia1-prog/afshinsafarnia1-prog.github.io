@@ -76,8 +76,12 @@ try {
   const manifest = await page.request.get("http://127.0.0.1:4173/manifest.webmanifest");
   if (!manifest.ok()) throw new Error("PWA manifest is not reachable.");
   const manifestJson = await manifest.json();
-  if (!manifestJson.name || !manifestJson.start_url || !Array.isArray(manifestJson.icons)) {
-    throw new Error("PWA manifest is missing required fields.");
+  if (!manifestJson.name || !manifestJson.start_url || !Array.isArray(manifestJson.icons) || !manifestJson.icons.length) {
+    throw new Error("PWA manifest is missing required fields or app icons.");
+  }
+  for (const icon of manifestJson.icons) {
+    const iconResponse = await page.request.get("http://127.0.0.1:4173" + icon.src);
+    if (!iconResponse.ok()) throw new Error("PWA icon is not reachable: " + icon.src);
   }
   const sw = await page.request.get("http://127.0.0.1:4173/sw.js");
   if (!sw.ok()) throw new Error("Service worker is not reachable.");
