@@ -41,10 +41,18 @@
       iran:"Iran",international:"International",unknown:"Unknown",reviewing:"Saving…",genericError:"The action could not be completed."
     }
   };
+  Object.assign(translations, {
+    ku:{...translations.en,menu:"مێنی سەرەکی",links:["سەرەکی","خزمەتگوزاری و چارەسەرکاران","ڕێنمایی","بەشی مراجع","بەڕێوەبردن","وتارەکان","یاساکانی ماڵپەڕ"],language:"زمان",adminEyebrow:"بەڕێوەبردنی یادسنتر",adminTitle:"بەشی بەڕێوەبردن",adminLead:"بەڕێوەبردنی چارەسەرکاران و مراجعان و داواکاری و پارەدان لەلایەن یادسنترەوە ئەنجام دەدرێت.",opsTitle:"بارودۆخی سیستەم",loading:"پەیوەندییەکی پارێزراو...",appointmentsTitle:"کاتەکان",paymentsTitle:"پارەدانەکان",refresh:"نوێکردنەوە",client:"مراجع",phone:"تەلەفۆن",therapist:"چارەسەرکار",status:"بارودۆخ",amount:"بڕ",reference:"ژمارەی شوێنکەوتن",createdAt:"بەرواری تۆمار",action:"کردار",therapistManagement:"بەڕێوەبردنی چارەسەرکاران",financialRules:"یاساکانی دارایی",noRows:"هیچ تۆمارێک نییە.",approve:"پەسەندکردنی پارەدان",reject:"ڕەتکردنەوە",noAdmin:"ئەم بەشە تەنها بۆ بەڕێوەبەرە.",unknown:"نەزانراو"},
+    tr:{...translations.en,menu:"Ana menü",links:["Ana sayfa","Hizmetler ve terapistler","Yardım","Danışan alanı","Yönetim","Makaleler","Site kuralları"],language:"Dil",adminEyebrow:"YAD Center merkezi yönetim",adminTitle:"YAD Center Yönetim",adminLead:"Terapistler, danışanlar, seans talepleri ve ödemeler merkezi olarak yönetilir.",opsTitle:"Sistem durumu",loading:"Güvenli bağlantı kuruluyor…",appointmentsTitle:"Seanslar",paymentsTitle:"Ödemeler",refresh:"Yenile",client:"Danışan",phone:"Telefon",therapist:"Terapist",status:"Durum",amount:"Tutar",reference:"İşlem numarası",createdAt:"Kayıt tarihi",action:"İşlem",therapistManagement:"Terapist yönetimi",financialRules:"Ödeme süreci",noRows:"Gösterilecek kayıt yok.",approve:"Ödemeyi onayla",reject:"Reddet",noAdmin:"Bu alan yalnızca yöneticilere açıktır.",unknown:"Bilinmiyor"},
+    ar:{...translations.en,menu:"القائمة الرئيسية",links:["الرئيسية","الخدمات والمعالجون","دليل المساعدة","مساحة المراجع","الإدارة","المقالات","السياسات"],language:"اللغة",adminEyebrow:"إدارة يادسنتر المركزية",adminTitle:"لوحة إدارة يادسنتر",adminLead:"تتم إدارة المعالجين والمراجعين والطلبات والمدفوعات مركزياً عبر يادسنتر.",opsTitle:"حالة النظام",loading:"جارٍ الاتصال بشكل آمن…",appointmentsTitle:"الجلسات",paymentsTitle:"المدفوعات",refresh:"تحديث",client:"المراجع",phone:"الهاتف",therapist:"المعالج",status:"الحالة",amount:"المبلغ",reference:"رقم التحويل",createdAt:"تاريخ التسجيل",action:"الإجراء",therapistManagement:"إدارة المعالجين",financialRules:"إجراءات الدفع",noRows:"لا توجد سجلات للعرض.",approve:"تأكيد الدفع",reject:"رفض",noAdmin:"هذا القسم متاح للمدير فقط.",unknown:"غير معروف"},
+    es:{...translations.en,menu:"Menú principal",links:["Inicio","Servicios y terapeutas","Guía de ayuda","Área del paciente","Administración","Artículos","Políticas"],language:"Idioma",adminEyebrow:"Administración central de YAD Center",adminTitle:"Administración de YAD Center",adminLead:"YAD Center gestiona de forma centralizada a terapeutas, pacientes, solicitudes y pagos.",opsTitle:"Estado del sistema",loading:"Conectando de forma segura…",appointmentsTitle:"Sesiones",paymentsTitle:"Pagos",refresh:"Actualizar",client:"Paciente",phone:"Teléfono",therapist:"Terapeuta",status:"Estado",amount:"Importe",reference:"Referencia de pago",createdAt:"Fecha de registro",action:"Acción",therapistManagement:"Gestión de terapeutas",financialRules:"Proceso de pago",noRows:"No hay registros para mostrar.",approve:"Aprobar pago",reject:"Rechazar",noAdmin:"Esta sección es solo para administradores.",unknown:"Desconocido"},
+    de:{...translations.en,menu:"Hauptmenü",links:["Startseite","Angebote und Therapeut:innen","Hilfe","Klientenbereich","Verwaltung","Artikel","Richtlinien"],language:"Sprache",adminEyebrow:"Zentrale YAD-Center-Verwaltung",adminTitle:"YAD Center Verwaltung",adminLead:"Therapeut:innen, Klient:innen, Anfragen und Zahlungen werden zentral verwaltet.",opsTitle:"Systemstatus",loading:"Sichere Verbindung wird hergestellt…",appointmentsTitle:"Sitzungen",paymentsTitle:"Zahlungen",refresh:"Aktualisieren",client:"Klient:in",phone:"Telefon",therapist:"Therapeut:in",status:"Status",amount:"Betrag",reference:"Zahlungsreferenz",createdAt:"Erfasst am",action:"Aktion",therapistManagement:"Therapeut:innen verwalten",financialRules:"Zahlungsablauf",noRows:"Keine Einträge vorhanden.",approve:"Zahlung bestätigen",reject:"Ablehnen",noAdmin:"Dieser Bereich ist nur für die Verwaltung zugänglich.",unknown:"Unbekannt"},
+    fr:{...translations.en,menu:"Menu principal",links:["Accueil","Services et thérapeutes","Guide d’aide","Espace patient","Administration","Articles","Règles du site"],language:"Langue",adminEyebrow:"Administration centrale de YAD Center",adminTitle:"Administration YAD Center",adminLead:"Les thérapeutes, patients, demandes et paiements sont gérés de manière centralisée.",opsTitle:"État du système",loading:"Connexion sécurisée…",appointmentsTitle:"Séances",paymentsTitle:"Paiements",refresh:"Actualiser",client:"Patient",phone:"Téléphone",therapist:"Thérapeute",status:"Statut",amount:"Montant",reference:"Référence de paiement",createdAt:"Date d’enregistrement",action:"Action",therapistManagement:"Gestion des thérapeutes",financialRules:"Processus de paiement",noRows:"Aucun élément à afficher.",approve:"Confirmer le paiement",reject:"Refuser",noAdmin:"Cette section est réservée à l’administration.",unknown:"Inconnu"}
+  });
   const pageText = (lang) => {
     const t=translations[lang]||translations.fa;
     document.documentElement.lang=lang;
-    document.documentElement.dir=lang==="fa"?"rtl":"ltr";
+    document.documentElement.dir=["fa","ku","ar"].includes(lang)?"rtl":"ltr";
     document.querySelectorAll("[data-i18n]").forEach(el=>{
       const key=el.getAttribute("data-i18n");
       if(t[key]) el.textContent=t[key];
@@ -68,13 +76,13 @@
     const select=document.createElement("select");
     select.id="yadLanguagePicker";
     select.setAttribute("aria-label","Language");
-    [["fa","فارسی"],["en","English"]].forEach(([v,label])=>{
+    [["fa","فارسی"],["ku","کوردی"],["en","English"],["tr","Türkçe"],["ar","العربية"],["es","Español"],["de","Deutsch"],["fr","Français"]].forEach(([v,label])=>{
       const option=document.createElement("option");option.value=v;option.textContent=label;select.append(option);
     });
     wrap.append(select);
     const note=aside.querySelector(".side-note");
     aside.insertBefore(wrap,note||null);
-    const saved=(()=>{try{return localStorage.getItem("yad-language")==="en"?"en":"fa";}catch(_){return "fa";}})();
+    const saved=(()=>{try{const v=localStorage.getItem("yad-language");return translations[v]?v:"fa";}catch(_){return "fa";}})();
     select.value=saved;pageText(saved);
     select.addEventListener("change",()=>{
       const lang=select.value;pageText(lang);
