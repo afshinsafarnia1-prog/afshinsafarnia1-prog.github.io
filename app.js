@@ -42,10 +42,10 @@
       const price=allPrices.find(x=>x.therapist_id===t.id&&x.market===market);
       const fallback=(!price && ((market==="iran"&&t.fee_currency==="IRR")||(market==="international"&&["EUR","USD"].includes(t.fee_currency))))?{amount:t.fee_amount,currency:t.fee_currency}:null;
       const chosen=price||fallback;
-      const priceText=chosen?new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(Number(chosen.amount))+" "+chosen.currency:"تعرفه پس از انتخاب منطقه اعلام می‌شود";
-      const meta=el("p","therapist-meta",String(t.session_duration_minutes||50)+" دقیقه · "+priceText);
+      const priceText=chosen?new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(Number(chosen.amount))+" "+chosen.currency:(i18n().priceFallback||"تعرفه پس از انتخاب منطقه اعلام می‌شود");
+      const meta=el("p","therapist-meta",String(t.session_duration_minutes||50)+" "+(i18n().minutes||"دقیقه")+" · "+priceText);
       body.append(meta);
-      const link=el("a","button primary","مشاهده و انتخاب");
+      const link=el("a","button primary",i18n().chooseTherapist||"مشاهده و انتخاب");
       link.href="client.html?therapist="+encodeURIComponent(t.id);
       body.append(link);
       card.append(body);
