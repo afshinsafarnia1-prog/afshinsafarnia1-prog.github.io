@@ -104,8 +104,13 @@
       return;
     }
     if (requiredRole === "admin") {
-      const allowed = await beginAdminMfa();
-      if (!allowed) return;
+      try {
+        const allowed = await beginAdminMfa();
+        if (!allowed) return;
+      } catch (error) {
+        setStatus("راه‌اندازی یا تأیید MFA انجام نشد. اتصال را بررسی کنید و دوباره تلاش کنید.",true);
+        return;
+      }
     }
     mfaPanel.hidden=true;
     gate.querySelector(".auth-fields").hidden=false;
