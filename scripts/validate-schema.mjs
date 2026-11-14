@@ -108,10 +108,10 @@ if (!fs.existsSync(upgradeFile)) {
     const pattern = new RegExp("create\\s+(?:or\\s+replace\\s+)?function\\s+public\\." + name + "\\b", "i");
     if (!pattern.test(upgrade)) errors.push("Missing workflow RPC in upgrade SQL: " + name);
   }
-  if (!/create\s+table\\s+if\\s+not\\s+exists\\s+public\\.client_requests/i.test(upgrade)) {
+  if (!/create\s+table\s+if\s+not\s+exists\s+public\.client_requests/i.test(upgrade)) {
     errors.push("Missing client_requests table in workflow upgrade");
   }
-  if (!/alter\s+table\\s+public\\.client_requests\\s+enable\\s+row\\s+level\\s+security/i.test(upgrade)) {
+  if (!/alter\s+table\s+public\.client_requests\s+enable\s+row\s+level\s+security/i.test(upgrade)) {
     errors.push("Client requests must have RLS enabled");
   }
   if (!/floor\(v_amount\s*\*\s*0\.60\)/i.test(upgrade) ||
@@ -133,7 +133,7 @@ if (!fs.existsSync(upgradeFile)) {
   if (!/request_not_ready_to_schedule/i.test(upgrade) || !/status='payment_verified'/i.test(upgrade)) {
     errors.push("Appointment scheduling must require a payment-verified request");
   }
-  if (/service[_-]?role[_-]?key\\s*[:=]\\s*['"][^'"]{12,}/i.test(upgrade)) {
+  if (/service[_-]?role[_-]?key\s*[:=]\s*['"][^'"]{12,}/i.test(upgrade)) {
     errors.push("Possible service-role credential found in workflow upgrade");
   }
 }
