@@ -72,7 +72,7 @@ fr:[
 "Je peux fournir des informations générales sur les services, le choix d’un thérapeute et les premières démarches. Les questions cliniques personnelles nécessitent l’évaluation d’un professionnel qualifié."
 ]
 };
-const patterns=[/شروع|درمان|session|therapy|psychotherapy|start|terapi|terapia|therapie|علاج|چارەسەر/i,/روان.?پزشک|روان.?شناس|psychologist|psychiatrist|psic[oó]logo|psychiatre|psycholog|psycholoog|طبيب نفسي|دەروونناس/i,/انتخاب|درمانگر|therapist|choose|terapist|terapeuta|therapeut|معالج|چارەسەرکار/i,/نوبت|رزرو|appointment|booking|rendez|termin|cita|موعد|کات/i,/قانون|حریم|محرمان|policy|privacy|rule|confidential|privacidad|datenschutz|confidentialité|سياسة|یاسا/i,/اضطرار|خودکشی|آسیب|خطر|emergency|suicide|harm|crisis|urgence|notfall|emergencia|خطر|مەترسی/i];
+const patterns=[/شروع|دەستپێ|start|begin|psychotherapy|psychotherapie|psicoterapia|psychothérapie|session|بدء العلاج النفسي/i,/روان.?پزشک|روان.?شناس|psychologist|psychiatrist|psic[oó]logo|psychiatre|psycholog|psycholoog|طبيب نفسي|دەروونناس/i,/انتخاب|درمانگر|therapist|choose|terapist|terapeuta|therapeut|معالج|چارەسەرکار/i,/نوبت|رزرو|appointment|booking|rendez|termin|cita|موعد|کات/i,/قانون|حریم|محرمان|policy|privacy|rule|confidential|privacidad|datenschutz|confidentialité|سياسة|یاسا/i,/اضطرار|خودکشی|آسیب|خطر|emergency|suicide|harm|crisis|urgence|notfall|emergencia|خطر|مەترسی/i];
 function reply(q){
  const box=document.getElementById("assistantMessages");if(!box)return;
  const u=document.createElement("div");u.className="user-msg";u.textContent=q;box.append(u);
