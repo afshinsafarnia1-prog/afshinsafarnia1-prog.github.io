@@ -9,6 +9,7 @@
     const select = document.getElementById("yadChosenTherapist");
     const history = document.getElementById("yadClientRequestHistory");
     const queryTherapist = new URLSearchParams(location.search).get("therapist");
+    const queryWorkshop = new URLSearchParams(location.search).get("workshop");
     let directory = [];
     let activeUser = null;
     const setStatus = (message, bad = false) => {
@@ -75,6 +76,41 @@
       });
     }
 
+
+    async function registerForRequestedWorkshop(){
+      if(!queryWorkshop)return;
+      const {error}=await db.rpc("register_for_workshop",{p_workshop_id:queryWorkshop});
+      if(error){setStatus(error.message==="event_full"?"ظرفیت این کارگاه تکمیل شده است.":error.message==="registration_closed"?"مهلت ثبت‌نام این رویداد پایان یافته است.":"ثبت‌نام انجام نشد؛ لطفاً رویداد را بررسی کنید.",true);return;}
+      setStatus("درخواست ثبت‌نام شما در کارگاه ثبت شد. وضعیت و اطلاعات ورود را در بخش رویدادهای من می‌بینید.");
+      await loadWorkshopRegistrations();
+    }
+    async function loadWorkshopRegistrations(){
+      const {data,error}=await db.rpc("client_list_workshop_registrations");
+      if(error){setStatus(error.message||"بارگذاری کارگاه‌های من ناموفق بود.",true);return;}
+      let box=document.getElementById("yadClientWorkshopRegistrations");
+      if(!box)return;box.replaceChildren();
+      if(!data?.length){box.textContent="هنوز در کارگاهی ثبت‌نام نکرده‌اید.";return;}
+      data.forEach(item=>{
+        const card=document.createElement("article");card.className="portal-card";
+        const title=document.createElement("b");title.textContent=item.title;
+        const detail=document.createElement("p");detail.textContent=new Date(item.starts_at).toLocaleString()+" · "+item.status+" · "+item.platform;
+        card.append(title,detail);
+        if(item.status==="pending_payment"){
+          const hint=document.createElement("p");hint.textContent="پس از پرداخت به یادسنتر، شماره پیگیری را ثبت کنید؛ لینک ورود پس از تأیید پرداخت نمایش داده می‌شود.";
+          const input=document.createElement("input");input.maxLength=120;input.placeholder="شماره پیگیری پرداخت";
+          const btn=document.createElement("button");btn.type="button";btn.className="button primary";btn.textContent="ارسال شماره پیگیری";
+          btn.addEventListener("click",async()=>{const {error}=await db.rpc("client_submit_workshop_payment_reference",{p_registration_id:item.registration_id,p_reference:input.value.trim()});if(error){setStatus(error.message||"ثبت شماره پیگیری ناموفق بود.",true);return;}setStatus("شماره پیگیری برای بررسی ارسال شد.");await loadWorkshopRegistrations();});
+          card.append(hint,input,btn);
+        }
+        if(item.meeting_url){
+          const link=document.createElement("a");link.href=item.meeting_url;link.target="_blank";link.rel="noopener noreferrer";link.className="button primary";link.textContent="ورود به جلسه آنلاین";
+          card.append(link);
+          if(item.meeting_password){const pass=document.createElement("p");pass.textContent="رمز جلسه: "+item.meeting_password;card.append(pass);}
+        }
+        box.append(card);
+      });
+    }
+
     async function init(session) {
       if (!session?.user || activeUser === session.user.id) return;
       activeUser = session.user.id;
@@ -84,7 +120,7 @@
         setStatus("این بخش فقط برای حساب مراجع فعال است.", true);
         return;
       }
-      try { await loadDirectory(); await loadHistory(); }
+      try { await loadDirectory(); await loadHistory(); await registerForRequestedWorkshop(); await loadWorkshopRegistrations(); }
       catch (error) { setStatus(error.message || "بارگذاری اطلاعات ناموفق بود.", true); }
     }
 
