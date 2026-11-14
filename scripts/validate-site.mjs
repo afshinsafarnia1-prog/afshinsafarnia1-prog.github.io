@@ -46,7 +46,7 @@ try {
   errors.push("manifest.webmanifest is not valid JSON");
 }
 
-for (const file of ["auth.js", "supabase-config.js", "scripts/validate-schema.mjs", "supabase/schema.sql", "sw.js"]) {
+for (const file of ["auth.js", "supabase-config.js", "admin-workflow.js", "client-workflow.js", "site-i18n.js", "scripts/validate-schema.mjs", "supabase/schema.sql", "supabase/upgrade-client-choice-payment-first.sql", "sw.js"]) {
   if (!fs.existsSync(path.join(root, file))) errors.push(`${file} is required`);
 }
 for (const file of [".env", ".env.production"]) {
