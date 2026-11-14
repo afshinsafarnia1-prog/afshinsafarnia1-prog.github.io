@@ -158,6 +158,10 @@ begin
 end;
 $$;
 
+-- Trigger execution does not require clients to have direct EXECUTE access.
+-- Keep the SECURITY DEFINER trigger function unavailable as a browser RPC.
+revoke all on function public.handle_new_user() from public, anon, authenticated;
+
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
 after insert on auth.users
