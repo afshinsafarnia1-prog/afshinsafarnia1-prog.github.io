@@ -28,7 +28,7 @@ Therapists do not need Supabase Auth accounts and cannot self-register, edit or 
 - New requests, therapist management, payment review and scheduling are handled through RPCs that verify the caller's database role.
 
 ## Languages
-The public homepage and portal language controls currently expose Persian, Kurdish, English, Turkish, Arabic, Spanish, German and French. Translation coverage is partial: some secondary page content, article text, and newer admin/client form labels still need full localization.
+The public homepage and portal language controls expose Persian, Kurdish, English, Turkish, Arabic, Spanish, German and French. The homepage and selected client/admin labels are localized, but full localization is not complete: the assistant, rules, therapist collaboration form, many admin event-management labels, and article bodies remain Persian or partly English. Do not advertise the site as fully translated until these sections receive human-reviewed translations.
 
 ## Validation completed
 - Database migrations applied and recorded in Supabase.
@@ -36,8 +36,11 @@ The public homepage and portal language controls currently expose Persian, Kurdi
 - End-to-end database smoke test completed for client selection, request creation, payment-reference submission, admin payment approval, scheduling with the selected therapist, and the 60/40 split. Temporary rows were removed and the admin role was restored.
 - Anonymous execution of therapist-management and client-request creation RPCs is denied.
 - Public directory query cannot reveal unverified/unlisted therapist profiles.
-- Security advisors still report intentional warnings for role-checked SECURITY DEFINER RPCs callable by authenticated users, the existing `btree_gist` extension in the public schema, and no-policy tables such as `payout_accounts` and `site_settings` that are deliberately inaccessible through direct browser access.
-- GitHub static workflow checks and browser-level end-to-end tests for the new pages have not yet been verified.
+- Security advisors still report intentional warnings for role-checked SECURITY DEFINER RPCs callable by authenticated users, the public therapist-proposal endpoint (protected by input validation and a per-email rate limit), and no-policy tables such as `payout_accounts`, `site_settings`, `workshop_proposals` and `workshop_registrations` that are deliberately inaccessible through direct browser table access. The `btree_gist` extension has been moved to `extensions`.
+- A transaction-based privilege check confirmed that an authenticated user cannot change their own profile role through the API, and an account without the admin role is rejected by an admin-only workshop mutation RPC.
+- The Supabase Auth advisor still reports leaked-password protection disabled. This project setting must be enabled in the Supabase Dashboard under Authentication password/security settings; the available project connector cannot change that Auth setting.
+- GitHub static validation has passed. A Playwright browser smoke-test job has now been added to CI to check all ten pages, homepage/client language switching, the manifest, service worker and uncaught browser errors; its first run must pass before browser validation can be marked complete.
+- Browser smoke tests do not replace a real authenticated end-to-end test against Supabase or a manual visual review on mobile and desktop.
 
 ## Before production
 - This is still a staging system, not ready for real clients or clinical records.
