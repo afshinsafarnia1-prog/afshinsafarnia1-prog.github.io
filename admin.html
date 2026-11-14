@@ -1,1 +1,57 @@
-<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>مدیریت یادسنتر | پنل مستقل</title><link rel="stylesheet" href="style.css"><script defer src="portal.js"></script><script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script defer src="supabase-config.js"></script><script defer src="auth.js"></script></head><body><main class="portal-main"><div class="portal-wrap"><span class="eyebrow">دسترسی مدیریت</span><h1>پنل مستقل مدیریت یادسنتر</h1><p class="lead">این بخش برای مدیریت کاربران، درمانگران، محتوا، امور مالی و تنظیمات کل سامانه در نظر گرفته شده است.</p><div class="portal-grid"><article class="portal-card"><b>مدیریت درمانگران</b><p>بررسی مدارک، تأیید یا تعلیق پروفایل و مدیریت تخصص‌ها.</p></article><article class="portal-card"><b>مدیریت مراجعان</b><p>مدیریت حساب‌ها و درخواست‌های پشتیبانی با دسترسی کنترل‌شده.</p></article><article class="portal-card"><b>مدیریت محتوا</b><p>مقالات، صفحات راهنما، قوانین و اطلاعیه‌ها.</p></article><article class="portal-card"><b>گزارش‌های مالی</b><p>سهم پلتفرم، سهم درمانگر، تراکنش‌ها و تسویه‌ها.</p></article></div><section class="portal-card bank-card"><h2>حساب‌های دریافت وجه</h2><p>دو مسیر حساب داخلی و بین‌المللی در تنظیمات مالی پیش‌بینی شده است.</p><div class="portal-grid"><div><b>حساب داخلی (ریال)</b><label>نام بانک<input placeholder="پس از اتصال امن ثبت می‌شود" disabled></label><label>شماره شبا / حساب<input placeholder="ورود در پنل امن سرور" disabled></label></div><div><b>حساب بین‌المللی (ارز)</b><label>ارز<select disabled><option>EUR / USD</option></select></label><label>مشخصات حساب یا ارائه‌دهنده پرداخت<input placeholder="ورود در پنل امن سرور" disabled></label></div></div><div class="notice">ورود فقط برای حساب مدیریتی ممکن است؛ نقش مدیر نباید از طریق ثبت‌نام عمومی ساخته شود.</div></section><div class="notice">این پنل نمایشی است؛ ورود مدیر، نقش‌ها، پایگاه داده و ثبت واقعی تغییرات هنوز پیاده‌سازی نشده‌اند.</div></div></main></body></html>
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مدیریت یادسنتر | پنل مدیریت</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="portal.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="supabase-config.js"></script>
+<script defer src="auth.js"></script>
+</head>
+<body>
+<main class="portal-main"><div class="portal-wrap">
+<span class="eyebrow" data-i18n="adminEyebrow">مدیریت متمرکز یادسنتر</span>
+<h1 data-i18n="adminTitle">پنل مدیریت یادسنتر</h1>
+<p class="lead" data-i18n="adminLead">مدیریت درمانگران، مراجعان، نوبت‌ها و پرداخت‌ها از طریق مدیریت مرکزی یادسنتر انجام می‌شود.</p>
+<section class="portal-card">
+<h2 data-i18n="opsTitle">عملیات و وضعیت سامانه</h2>
+<p id="yadAdminStatus" class="notice" role="status" aria-live="polite" data-i18n="loading">در حال اتصال امن…</p>
+<div class="portal-grid">
+<div><b data-i18n="appointmentsTitle">نوبت‌ها</b><p data-i18n="appointmentsHelp">فهرست نوبت‌های ثبت‌شده در سامانه.</p><strong id="yadAppointmentCount">—</strong></div>
+<div><b data-i18n="paymentsTitle">پرداخت‌ها</b><p data-i18n="paymentsHelp">بررسی رسیدهای پرداخت و ثبت نتیجه.</p><strong id="yadPaymentCount">—</strong></div>
+</div>
+</section>
+<section class="portal-card">
+<div class="section-head"><div><h2 data-i18n="appointmentsTitle">نوبت‌ها</h2><p data-i18n="appointmentsHelp">فهرست نوبت‌های ثبت‌شده در سامانه.</p></div><button class="button outline" id="yadRefreshAppointments" type="button" data-i18n="refresh">به‌روزرسانی</button></div>
+<div style="overflow-x:auto"><table class="admin-table"><thead><tr>
+<th data-i18n="client">مراجع</th><th data-i18n="phone">تلفن</th><th data-i18n="therapist">درمانگر</th><th data-i18n="sessionTime">زمان جلسه</th><th data-i18n="market">بازار</th><th data-i18n="status">وضعیت</th>
+</tr></thead><tbody id="yadAppointmentsBody"><tr><td colspan="6" data-i18n="loading">در حال بارگذاری…</td></tr></tbody></table></div>
+</section>
+<section class="portal-card">
+<div class="section-head"><div><h2 data-i18n="paymentsTitle">پرداخت‌ها</h2><p data-i18n="paymentsReviewHelp">رسیدهای انتقال دستی را بررسی و تأیید یا رد کن.</p></div><button class="button outline" id="yadRefreshPayments" type="button" data-i18n="refresh">به‌روزرسانی</button></div>
+<div style="overflow-x:auto"><table class="admin-table"><thead><tr>
+<th data-i18n="client">مراجع</th><th data-i18n="amount">مبلغ</th><th data-i18n="reference">شماره پیگیری</th><th data-i18n="createdAt">تاریخ ثبت</th><th data-i18n="status">وضعیت</th><th data-i18n="action">اقدام</th>
+</tr></thead><tbody id="yadPaymentsBody"><tr><td colspan="6" data-i18n="loading">در حال بارگذاری…</td></tr></tbody></table></div>
+</section>
+<section class="portal-card">
+<h2 data-i18n="therapistManagement">مدیریت درمانگران</h2>
+<p data-i18n="therapistWorkflow">درمانگر اطلاعات، عکس و مدارک حرفه‌ای خود را فقط برای مدیر ارسال می‌کند. مدیر پس از بررسی، پروفایل عمومی را ثبت و منتشر می‌کند. ثبت و بارگذاری امن مدارک در پنل مدیریت هنوز در حال تکمیل است؛ تا آن زمان اطلاعات حساس را در این صفحه یا پیام عمومی وارد نکن.</p>
+<div class="notice" data-i18n="therapistSecurity">حساب درمانگر و امکان ورود مستقل برای او در این مدل فعال نیست. تأیید هویت و انتشار پروفایل فقط با تصمیم مدیر انجام می‌شود.</div>
+</section>
+<section class="portal-card">
+<h2 data-i18n="financialRules">قواعد مالی یادسنتر</h2>
+<p data-i18n="financialHelp">پرداخت ابتدا به یادسنتر انجام می‌شود. پس از تأیید واقعی دریافت وجه، مدیر اتصال مراجع به درمانگر و ثبت سهم هر طرف را انجام می‌دهد. تأیید در این پنل صرفاً وضعیت داخلی را تغییر می‌دهد و جایگزین تأیید بانکی نیست.</p>
+</section>
+</div></main>
+<style>
+.admin-table{width:100%;border-collapse:collapse;min-width:720px;font-size:13px}
+.admin-table th,.admin-table td{padding:12px 10px;border-bottom:1px solid #e5ece8;text-align:right;white-space:nowrap}
+.admin-table th{color:#123f46;background:#f4faf7}
+.admin-table td{color:#40585a}
+.admin-table button{margin:2px;padding:7px 10px;font:inherit;font-size:11px;cursor:pointer}
+.admin-actions{display:flex;gap:5px}
+.admin-muted{color:#8b9998}
+.admin-error{color:#9c3d36}
+</style>
+</body></html>
