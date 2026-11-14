@@ -16,6 +16,8 @@
     const split = value => value.split(/[,،\n]/).map(x => x.trim()).filter(Boolean);
     const safe = value => value == null ? "—" : String(value);
     let cachedTherapists = [];
+    let activeAdmin = null;
+    let initializing = false;
 
     async function requireAdmin() {
       const { data, error } = await db.auth.getSession();
@@ -214,14 +216,28 @@
       catch (error) { setStatus(error.message || "بارگذاری اطلاعات ناموفق بود.", true); }
     });
 
-    (async () => {
+    async function initializeAdminWorkflow() {
+      if (initializing) return;
+      initializing = true;
       try {
         await requireAdmin();
+        const { data } = await db.auth.getSession();
+        const userId = data.session.user.id;
+        if (activeAdmin === userId) return;
+        activeAdmin = userId;
         await loadTherapists();
         await loadRequests();
         setStatus("اتصال پنل درمانگران و درخواست‌ها برقرار است.");
-      } catch (error) { setStatus(error.message || "اتصال به پنل ناموفق بود.", true); }
-    })();
+      } catch (error) {
+        activeAdmin = null;
+        setStatus(error.message || "اتصال به پنل ناموفق بود.", true);
+      } finally { initializing = false; }
+    }
+    db.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) setTimeout(initializeAdminWorkflow, 0);
+      else activeAdmin = null;
+    });
+    initializeAdminWorkflow();
   };
   if (document.readyState === "complete") onReady();
   else window.addEventListener("load", onReady, { once: true });
