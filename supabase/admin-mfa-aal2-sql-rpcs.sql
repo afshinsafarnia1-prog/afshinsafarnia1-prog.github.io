@@ -28,34 +28,8 @@ begin
     );
     v_updated := replace(
       v_updated,
-      ';' || chr(10) || '$function
-
-    if v_updated = v_definition
-       or position('PERFORM public.require_admin_aal2()' in v_updated) = 0
-       or position('RETURN QUERY' in v_updated) = 0
-       or position('END;' in v_updated) = 0 then
-      raise exception 'Could not safely convert SQL admin RPC %', r.proname;
-    end if;
-
-    execute v_updated;
-  end loop;
-end;
-$migration$;
-,
-      ';' || chr(10) || 'END;' || chr(10) || '$function
-
-    if v_updated = v_definition
-       or position('PERFORM public.require_admin_aal2()' in v_updated) = 0
-       or position('RETURN QUERY' in v_updated) = 0
-       or position('END;' in v_updated) = 0 then
-      raise exception 'Could not safely convert SQL admin RPC %', r.proname;
-    end if;
-
-    execute v_updated;
-  end loop;
-end;
-$migration$;
-
+      ';' || chr(10) || '$function$',
+      ';' || chr(10) || 'END;' || chr(10) || '$function$'
     );
 
     if v_updated = v_definition
