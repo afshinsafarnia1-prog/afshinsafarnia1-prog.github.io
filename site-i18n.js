@@ -65,11 +65,13 @@
       articlesEyebrow:"Penser, lire, comprendre",articlesTitle:"Revue de psychothérapie",articlesLead:"Des textes sur la psychothérapie, les relations humaines, la psychanalyse et le monde contemporain.",aboutEyebrow:"À propos de YAD Center",aboutTitle:"Une psychologie respectueuse de la complexité humaine",aboutLead:"YAD Center souhaite faciliter l’accès à des informations claires et à des professionnels qualifiés.",closingEyebrow:"Un pas à la fois",closingTitle:"Il n’est pas nécessaire de tout savoir pour commencer.",closingLead:"Découvrez les services et les profils pour faire un premier pas éclairé."
     }
   };
+  const collaborationLabels={fa:"همکاری درمانگران",ku:"هاوکاری چارەسەرکاران",en:"Therapist collaboration",tr:"Terapist iş birliği",ar:"التعاون مع المعالجين",es:"Colaboración de terapeutas",de:"Zusammenarbeit für Therapeut:innen",fr:"Collaboration des thérapeutes"};
+  Object.entries(collaborationLabels).forEach(([lang,label])=>{if(translations[lang])translations[lang].collaborate=label;});
   const keys = {
     ".topinner span":"tagline","#mainNav a:nth-child(1)":"services","#mainNav a:nth-child(2)":"therapists",
     "#mainNav a:nth-child(3)":"client","#mainNav a:nth-child(4)":"admin","#mainNav a:nth-child(5)":"how",
     "#mainNav a:nth-child(6)":"articles","#mainNav a:nth-child(7)":"assistant","#mainNav a:nth-child(8)":"rules",
-    "#mainNav a:nth-child(9)":"about",".navcta":"cta",".hero-copy .eyebrow":"heroEyebrow",".hero h1":"heroTitle",
+    "#mainNav a:nth-child(9)":"about",".navcta":"cta","#mainNav a:nth-child(10)":"collaborate",".hero-copy .eyebrow":"heroEyebrow",".hero h1":"heroTitle",
     ".hero-copy .lead":"heroLead",".hero-actions .button":"find",".hero-actions .textlink":"read",
     ".searchbox .eyebrow":"searchEyebrow",".searchbox h2":"searchTitle",".searchbox p":"searchLead",
     "#services .section-head .eyebrow":"servicesEyebrow","#services h2":"servicesTitle","#services .section-head>p":"servicesLead",
