@@ -29,3 +29,9 @@ jobs:
           node --check auth.js
       - name: Check Supabase schema security guardrails
         run: node scripts/validate-schema.mjs
+      - name: Install Chromium for browser smoke tests
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Run browser smoke tests
+        run: node scripts/browser-smoke.mjs
