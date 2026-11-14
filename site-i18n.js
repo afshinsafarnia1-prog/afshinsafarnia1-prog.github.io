@@ -159,6 +159,9 @@
       const key=node.getAttribute("data-i18n-placeholder");
       if(t[key]) node.setAttribute("placeholder",t[key]);
     });
+    document.querySelectorAll("[data-i18n-show-non-fa]").forEach(node=>{
+      node.hidden = lang === "fa";
+    });
     Object.entries(keys).forEach(([selector,key]) => {
       const node = document.querySelector(selector);
       if (node && t[key]) node.textContent = t[key];
