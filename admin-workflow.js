@@ -94,7 +94,7 @@
       if (!data?.length) {
         const tr = document.createElement("tr");
         const td = document.createElement("td");
-        td.colSpan = 7; td.textContent = "درخواستی ثبت نشده است.";
+        td.colSpan = 8; td.textContent = "درخواستی ثبت نشده است.";
         tr.append(td); requests.append(tr); return;
       }
       data.forEach(item => {
