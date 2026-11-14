@@ -70,6 +70,14 @@
         showMfaPanel("کد شش‌رقمی برنامهٔ Authenticator را وارد کنید تا ورود مدیر تکمیل شود.", false);
         return false;
       }
+      // Recover from an interrupted enrollment: Supabase retains an unverified
+      // factor, but its original QR secret is no longer available to this page.
+      // Remove only that incomplete factor before issuing a fresh QR code.
+      const incomplete = (factorData?.totp || []).find(f => f.status === "unverified");
+      if (incomplete) {
+        const {error: unenrollError} = await client.auth.mfa.unenroll({factorId:incomplete.id});
+        if (unenrollError) throw unenrollError;
+      }
       const {data: enrollment, error: enrollmentError} = await client.auth.mfa.enroll({
         factorType:"totp", friendlyName:"YAD Center Admin Authenticator"
       });
@@ -108,7 +116,8 @@
         const allowed = await beginAdminMfa();
         if (!allowed) return;
       } catch (error) {
-        setStatus("راه‌اندازی یا تأیید MFA انجام نشد. اتصال را بررسی کنید و دوباره تلاش کنید.",true);
+        const detail = typeof error?.message === "string" ? error.message : "خطای نامشخص";
+        setStatus("راه‌اندازی یا تأیید MFA انجام نشد: " + detail + " — اتصال را بررسی و دوباره تلاش کنید.",true);
         return;
       }
     }
