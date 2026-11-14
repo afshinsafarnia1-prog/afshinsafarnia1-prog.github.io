@@ -434,7 +434,7 @@ begin
   end if;
   return true;
 end;
-$;
+$$;
 
 -- Admin-only read APIs for the management interface.
 -- These SECURITY DEFINER functions bypass table RLS, so they verify the
