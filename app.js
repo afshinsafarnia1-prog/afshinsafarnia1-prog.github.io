@@ -8,7 +8,7 @@
   nav?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>nav.classList.remove("open")));
 
   const config=window.YAD_SUPABASE_CONFIG||{};
-  let db=null, allTherapists=[];
+  let db=null, allTherapists=[], allPrices=[];
   if(window.supabase?.createClient && config.url && config.anonKey){
     db=window.supabase.createClient(config.url,config.anonKey);
   }
@@ -38,7 +38,12 @@
       (t.specialties||[]).slice(0,4).forEach(x=>tags.append(el("span","",x)));
       (t.languages||[]).forEach(code=>tags.append(el("span","language-tag",languageNames[code]||code)));
       body.append(tags);
-      const meta=el("p","therapist-meta",String(t.session_duration_minutes||50)+" دقیقه · "+new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(Number(t.fee_amount||0))+" "+(t.fee_currency||""));
+      const market=document.getElementById("marketSelect")?.value||"iran";
+      const price=allPrices.find(x=>x.therapist_id===t.id&&x.market===market);
+      const fallback=(!price && ((market==="iran"&&t.fee_currency==="IRR")||(market==="international"&&["EUR","USD"].includes(t.fee_currency))))?{amount:t.fee_amount,currency:t.fee_currency}:null;
+      const chosen=price||fallback;
+      const priceText=chosen?new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(Number(chosen.amount))+" "+chosen.currency:"تعرفه پس از انتخاب منطقه اعلام می‌شود";
+      const meta=el("p","therapist-meta",String(t.session_duration_minutes||50)+" دقیقه · "+priceText);
       body.append(meta);
       const link=el("a","button primary","مشاهده و انتخاب");
       link.href="client.html?therapist="+encodeURIComponent(t.id);
@@ -58,6 +63,8 @@
       .order("display_name",{ascending:true});
     if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
     allTherapists=data||[];
+    const priceResult=await db.from("therapist_prices").select("therapist_id,market,currency,amount").eq("is_active",true);
+    allPrices=priceResult.error?[]:(priceResult.data||[]);
     filterDirectory();
     if(notice)notice.textContent=allTherapists.length
       ?"پروفایل‌های زیر توسط مدیریت یادسنتر بررسی و برای نمایش تأیید شده‌اند."
@@ -89,6 +96,11 @@
       ?"مسیر بین‌المللی انتخاب شد؛ واحد پول و شرایط پرداخت بر اساس بازار مربوط نمایش داده می‌شود."
       :"مسیر ایران انتخاب شد؛ هزینه‌ها بر اساس تعرفهٔ ریالی درمانگر نمایش داده می‌شوند.";
     document.documentElement.dataset.market=marketSelect.value;
+    renderDirectory(allTherapists.filter(t=>{
+      const language=document.getElementById("language")?.value||"";
+      const specialty=document.getElementById("specialty")?.value||"";
+      return (!language||(t.languages||[]).includes(language))&&(!specialty||(t.specialties||[]).some(s=>s.toLocaleLowerCase().includes(specialty.toLocaleLowerCase())));
+    }));
   });
 
   if(db)loadDirectory();
