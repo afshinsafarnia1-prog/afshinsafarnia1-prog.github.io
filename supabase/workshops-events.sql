@@ -243,3 +243,20 @@ begin
  if not found then raise exception 'registration_not_found_or_reference_missing' using errcode='P0002'; end if;
 end;
 $$;
+
+create or replace function public.admin_set_workshop_status(p_workshop_id uuid,p_status text)
+returns void language plpgsql security definer set search_path=''
+as $$
+begin
+ if not exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin') then
+  raise exception 'admin_only' using errcode='42501';
+ end if;
+ if p_status not in ('draft','published','cancelled','completed') then
+  raise exception 'invalid_status' using errcode='22023';
+ end if;
+ update public.workshops set status=p_status,updated_at=now() where id=p_workshop_id;
+ if not found then raise exception 'workshop_not_found' using errcode='P0002'; end if;
+end;
+$$;
+revoke all on function public.admin_set_workshop_status(uuid,text) from public,anon,authenticated;
+grant execute on function public.admin_set_workshop_status(uuid,text) to authenticated;
