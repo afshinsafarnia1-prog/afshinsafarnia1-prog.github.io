@@ -165,6 +165,88 @@
       await loadRequests();
     }
 
+
+    const eventStatus=document.getElementById("yadWorkshopAdminStatus");
+    const eventList=document.getElementById("yadWorkshopAdminList");
+    const eventForm=document.getElementById("yadWorkshopAdminForm");
+    const proposalList=document.getElementById("yadWorkshopProposals");
+    const rosterBox=document.getElementById("yadWorkshopRoster");
+    const rosterList=document.getElementById("yadWorkshopRosterList");
+    const eventValue=id=>document.getElementById(id)?.value?.trim()||"";
+    const eventDate=id=>{const v=eventValue(id);return v?new Date(v).toISOString():null;};
+    async function loadWorkshops(){
+      if(!eventList)return;
+      const [{data:events,error},{data:proposals, error:proposalError}]=await Promise.all([
+        db.rpc("admin_list_workshops"),db.rpc("admin_list_workshop_proposals")
+      ]);
+      if(error)throw error;if(proposalError)throw proposalError;
+      eventList.replaceChildren();
+      (events||[]).forEach(item=>{
+        const card=document.createElement("article");card.className="portal-card";
+        const h=document.createElement("b");h.textContent=item.title;
+        const p=document.createElement("p");p.textContent=item.presenter_name+" · "+new Date(item.starts_at).toLocaleString()+" · "+item.status+" · "+item.registration_count+" ثبت‌نام";
+        const btn=document.createElement("button");btn.type="button";btn.className="button outline";btn.textContent="مشاهده ثبت‌نام‌کنندگان";
+        btn.addEventListener("click",()=>loadWorkshopRoster(item.id,item.title));
+        card.append(h,p,btn);eventList.append(card);
+      });
+      if(!(events||[]).length)eventList.textContent="هنوز رویدادی ایجاد نشده است.";
+      proposalList.replaceChildren();
+      (proposals||[]).forEach(item=>{
+        const card=document.createElement("article");card.className="portal-card";
+        const h=document.createElement("b");h.textContent=item.proposed_title;
+        const p=document.createElement("p");p.textContent=item.presenter_name+" · "+item.contact_email+" · "+item.topic+" · "+item.status;
+        const desc=document.createElement("p");desc.textContent=item.proposal||"";
+        card.append(h,p,desc);proposalList.append(card);
+      });
+      if(!(proposals||[]).length)proposalList.textContent="پیشنهادی در صف بررسی نیست.";
+    }
+    async function loadWorkshopRoster(id,title){
+      const {data,error}=await db.rpc("admin_list_workshop_registrations",{p_workshop_id:id});
+      if(error){eventStatus.textContent=error.message;return;}
+      rosterBox.hidden=false;rosterList.replaceChildren();
+      const heading=document.createElement("p");heading.textContent=title;rosterList.append(heading);
+      (data||[]).forEach(person=>{
+        const row=document.createElement("div");row.className="portal-card";
+        const p=document.createElement("p");p.textContent=person.client_name+" · "+person.client_email+" · "+person.status+" · رسید: "+(person.payment_reference||"ثبت نشده");
+        row.append(p);
+        if(person.status==="pending_payment" && person.payment_reference){
+          const b=document.createElement("button");b.type="button";b.className="button primary";b.textContent="تأیید پرداخت پس از تطبیق";
+          b.addEventListener("click",async()=>{if(!confirm("واریز واقعی را بررسی کرده‌ای؟"))return;const {error}=await db.rpc("admin_set_workshop_registration_paid",{p_registration_id:person.registration_id,p_paid:true});if(error){eventStatus.textContent=error.message;return;}eventStatus.textContent="وضعیت پرداخت تأیید شد.";await loadWorkshopRoster(id,title);});
+          row.append(b);
+        }
+        rosterList.append(row);
+      });
+      if(!(data||[]).length)rosterList.append("هنوز ثبت‌نامی انجام نشده است.");
+    }
+    eventForm?.addEventListener("submit",async e=>{
+      e.preventDefault();eventStatus.textContent="در حال ذخیره رویداد…";
+      try{
+        const format=eventValue("eventFormat");
+        let platform=eventValue("eventPlatform");
+        if(format==="in_person")platform="In person";
+        if(format==="online"&&platform==="In person")platform="Zoom";
+        const args={
+          p_workshop_id:null,p_slug:eventValue("eventSlug"),p_title:eventValue("eventTitle"),
+          p_summary:eventValue("eventSummary"),p_description:eventValue("eventDescription"),
+          p_presenter_name:eventValue("eventPresenter"),p_presenter_bio:eventValue("eventPresenterBio"),
+          p_languages:split(eventValue("eventLanguages")),p_topics:split(eventValue("eventTopics")),
+          p_format:format,p_platform:platform,p_venue:eventValue("eventVenue")||null,
+          p_starts_at:eventDate("eventStarts"),p_ends_at:eventDate("eventEnds"),
+          p_timezone:eventValue("eventTimezone"),p_capacity:eventValue("eventCapacity")?Number(eventValue("eventCapacity")):null,
+          p_fee_amount:Number(eventValue("eventFee")||0),p_currency:eventValue("eventCurrency"),
+          p_status:eventValue("eventStatus"),p_registration_deadline:eventDate("eventDeadline"),
+          p_meeting_url:eventValue("eventMeetingUrl")||null,p_meeting_password:eventValue("eventMeetingPassword")||null
+        };
+        if(new Date(args.p_ends_at)<=new Date(args.p_starts_at))throw new Error("زمان پایان باید بعد از شروع باشد.");
+        const {error}=await db.rpc("admin_upsert_workshop",args);
+        if(error)throw error;
+        eventForm.reset();document.getElementById("eventTimezone").value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Europe/Berlin";
+        document.getElementById("eventLanguages").value="fa";document.getElementById("eventFee").value="0";
+        eventStatus.textContent="رویداد ذخیره شد.";await loadWorkshops();
+      }catch(error){eventStatus.textContent=error.message||"ذخیره رویداد ناموفق بود.";}
+    });
+    document.getElementById("yadRefreshWorkshops")?.addEventListener("click",()=>loadWorkshops().catch(e=>eventStatus.textContent=e.message));
+
     root.addEventListener("submit", async event => {
       event.preventDefault();
       try {
@@ -230,7 +312,8 @@
         activeAdmin = userId;
         await loadTherapists();
         await loadRequests();
-        setStatus("اتصال پنل درمانگران و درخواست‌ها برقرار است.");
+        if(eventList) await loadWorkshops();
+        setStatus("اتصال پنل درمانگران، درخواست‌ها و کارگاه‌ها برقرار است.");
       } catch (error) {
         activeAdmin = null;
         setStatus(error.message || "اتصال به پنل ناموفق بود.", true);
