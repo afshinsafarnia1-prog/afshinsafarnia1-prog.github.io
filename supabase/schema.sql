@@ -1,6 +1,20 @@
 -- YAD Center backend foundation (Supabase / PostgreSQL)
 -- Apply in a NEW Supabase project after reviewing the deployment checklist.
 -- Never commit real credentials, bank details, patient notes, or production data.
+-- One-time bootstrap for an empty project. This file is deliberately not
+-- re-runnable: the guard below stops a second/partial deployment before DDL.
+-- If it stops, inspect the database and recover deliberately; do not add
+-- IF NOT EXISTS indiscriminately or rerun against a partially-created schema.
+
+do $
+begin
+  if to_regtype('public.account_role') is not null
+     or to_regclass('public.profiles') is not null
+     or to_regclass('public.therapists') is not null then
+    raise exception 'yadcenter_schema_already_present: inspect current schema before applying';
+  end if;
+end;
+$;
 
 create extension if not exists pgcrypto;
 create extension if not exists btree_gist;
