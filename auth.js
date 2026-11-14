@@ -31,6 +31,7 @@
   const name = gate.querySelector("#yadName");
   const login = gate.querySelector("#yadLogin");
   const signup = gate.querySelector("#yadSignup");
+  if (requiredRole !== "client") signup.hidden = true;
   let mode = "login";
   const busy = value => { login.disabled=value; signup.disabled=value; };
   async function showSession(session) {
