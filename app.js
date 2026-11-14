@@ -133,7 +133,7 @@
   }
 
   if(db){loadDirectory();loadWorkshops();}
-  document.addEventListener("yad:languagechange",filterDirectory);
+  document.addEventListener("yad:languagechange",()=>{filterDirectory();loadWorkshops();});
   if("serviceWorker" in navigator){
     window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
   }
