@@ -6,7 +6,7 @@
 -- If it stops, inspect the database and recover deliberately; do not add
 -- IF NOT EXISTS indiscriminately or rerun against a partially-created schema.
 
-do $
+do $$
 begin
   if to_regtype('public.account_role') is not null
      or to_regclass('public.profiles') is not null
@@ -14,7 +14,7 @@ begin
     raise exception 'yadcenter_schema_already_present: inspect current schema before applying';
   end if;
 end;
-$;
+$$;
 
 create extension if not exists pgcrypto;
 create extension if not exists btree_gist;
@@ -459,7 +459,7 @@ returns table (
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 declare
   v_admin uuid := auth.uid();
   v_limit integer := least(greatest(coalesce(p_limit, 50), 1), 100);
@@ -482,7 +482,7 @@ begin
   order by a.created_at desc, a.id
   limit v_limit offset v_offset;
 end;
-$;
+$$;
 
 create or replace function public.admin_list_payments(
   p_limit integer default 50,
@@ -504,7 +504,7 @@ returns table (
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 declare
   v_admin uuid := auth.uid();
   v_limit integer := least(greatest(coalesce(p_limit, 50), 1), 100);
@@ -526,7 +526,7 @@ begin
   order by pay.created_at desc, pay.id
   limit v_limit offset v_offset;
 end;
-$;
+$$;
 
 -- Restrict direct table writes to the controlled RPC workflow.
 revoke insert, update, delete on public.appointments from anon, authenticated;
