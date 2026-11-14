@@ -19,5 +19,13 @@ jobs:
           node-version: 22
       - name: Validate local links and PWA manifest
         run: node scripts/validate-site.mjs
+      - name: Check browser JavaScript syntax
+        run: |
+          node --check app.js
+          node --check portal.js
+          node --check site-i18n.js
+          node --check admin-workflow.js
+          node --check client-workflow.js
+          node --check auth.js
       - name: Check Supabase schema security guardrails
         run: node scripts/validate-schema.mjs
