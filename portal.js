@@ -69,7 +69,7 @@
     }
   };
   const aside=document.querySelector(".side-nav");
-  if(aside && /(?:admin|client|therapist)\.html$/.test(location.pathname) && !document.getElementById("yadLanguagePicker")){
+  if(aside && !/^\/$/.test(location.pathname) && !/index\.html$/.test(location.pathname) && !document.getElementById("yadLanguagePicker")){
     const wrap=document.createElement("label");
     wrap.className="yad-language-switch";
     wrap.textContent="🌐 ";
