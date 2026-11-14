@@ -151,5 +151,5 @@
     await Promise.all([loadAppointments(),loadPayments()]);
     setStatus(t().connecting);
   };
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+  window.addEventListener("load",start,{once:true});if(document.readyState==="complete")start();
 })();
