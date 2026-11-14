@@ -208,3 +208,18 @@ as $$
 $$;
 revoke all on function public.admin_list_workshop_registrations(uuid) from public,anon,authenticated;
 grant execute on function public.admin_list_workshop_registrations(uuid) to authenticated;
+
+create or replace function public.client_submit_workshop_payment_reference(p_registration_id uuid,p_reference text)
+returns void language plpgsql security definer set search_path=''
+as $$
+begin
+ if auth.uid() is null or length(trim(coalesce(p_reference,'')))<4 or length(p_reference)>120 then
+  raise exception 'invalid_payment_reference' using errcode='22023';
+ end if;
+ update public.workshop_registrations set payment_reference=trim(p_reference),updated_at=now()
+ where id=p_registration_id and client_id=auth.uid() and status='pending_payment';
+ if not found then raise exception 'registration_not_found_or_not_pending' using errcode='P0002'; end if;
+end;
+$$;
+revoke all on function public.client_submit_workshop_payment_reference(uuid,text) from public,anon,authenticated;
+grant execute on function public.client_submit_workshop_payment_reference(uuid,text) to authenticated;
