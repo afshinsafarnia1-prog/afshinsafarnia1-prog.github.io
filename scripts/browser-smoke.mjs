@@ -61,17 +61,42 @@ try {
     if (!response || response.status() !== 200) throw new Error(`Page failed: ${path} (${response?.status()})`);
   }
 
+  const languages = ["fa", "ku", "en", "tr", "ar", "es", "de", "fr"];
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
-  await page.locator("#siteLanguage").selectOption("en");
-  await page.waitForFunction(() => document.documentElement.lang === "en" && document.documentElement.dir === "ltr");
-  const hero = await page.locator(".hero h1").innerText();
-  if (!hero.includes("Understanding what is happening")) throw new Error("Homepage English translation did not apply.");
+  for (const language of languages) {
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    const direction = await page.locator("html").getAttribute("dir");
+    const expectedDirection = ["fa", "ku", "ar"].includes(language) ? "rtl" : "ltr";
+    if (direction !== expectedDirection) throw new Error("Homepage direction is wrong for " + language);
+    const hero = await page.locator(".hero h1").textContent();
+    if (!hero?.trim()) throw new Error("Homepage hero is empty for " + language);
+  }
+  const englishHero = await page.locator(".hero h1").innerText();
+  if (!englishHero.includes("Understanding what is happening")) throw new Error("Homepage English translation did not apply.");
 
   await page.goto("http://127.0.0.1:4173/client.html", { waitUntil: "domcontentloaded" });
+  for (const language of languages) {
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    const clientHeading = await page.locator("h1").textContent();
+    if (!clientHeading?.trim()) throw new Error("Client heading is empty for " + language);
+  }
+  await page.goto("http://127.0.0.1:4173/assistant.html", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
-  await page.waitForFunction(() => document.documentElement.lang === "en");
-  const clientHeading = await page.locator("h1").textContent();
-  if (!clientHeading.includes("Client area")) throw new Error("Client page English translation did not apply.");
+  if (!(await page.locator("h1").innerText()).includes("Where would you like to begin")) throw new Error("Assistant translation did not apply.");
+  await page.goto("http://127.0.0.1:4173/therapist.html", { waitUntil: "domcontentloaded" });
+  await page.locator("#siteLanguage").selectOption("en");
+  if (!(await page.locator("h1").innerText()).includes("Therapist profiles")) throw new Error("Therapist page translation did not apply.");
+  await page.goto("http://127.0.0.1:4173/articles/", { waitUntil: "domcontentloaded" });
+  await page.locator("#siteLanguage").selectOption("en");
+  if (!(await page.locator("h1").innerText()).includes("Psychotherapy articles")) throw new Error("Article index translation did not apply.");
+  await page.goto("http://127.0.0.1:4173/rules.html", { waitUntil: "domcontentloaded" });
+  await page.locator("#siteLanguage").selectOption("en");
+  if (await page.locator("[data-i18n-show-non-fa]").isHidden()) throw new Error("Legal Persian-only notice was not shown for English.");
+  await page.goto("http://127.0.0.1:4173/articles/psychotherapy-first-session.html", { waitUntil: "domcontentloaded" });
+  await page.locator("#siteLanguage").selectOption("en");
+  if (await page.locator("[data-i18n-show-non-fa]").isHidden()) throw new Error("Article Persian-only notice was not shown for English.");
 
   const manifest = await page.request.get("http://127.0.0.1:4173/manifest.webmanifest");
   if (!manifest.ok()) throw new Error("PWA manifest is not reachable.");
@@ -87,7 +112,7 @@ try {
   if (!sw.ok()) throw new Error("Service worker is not reachable.");
 
   if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
-  console.log("PASS: 10 pages return HTTP 200; homepage and client language switch; manifest and service worker load; no uncaught page errors.");
+  console.log("PASS: 10 pages return HTTP 200; all eight homepage/client languages, assistant, therapist, article-index and Persian-only notices work; PWA assets load; no uncaught page errors.");
 } finally {
   if (browser) await browser.close();
   await new Promise(resolveClose => server.close(resolveClose));
