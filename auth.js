@@ -75,11 +75,15 @@
       // Remove only that incomplete factor before issuing a fresh QR code.
       const incomplete = (factorData?.totp || []).find(f => f.status === "unverified");
       if (incomplete) {
-        const {error: unenrollError} = await client.auth.mfa.unenroll({factorId:incomplete.id});
-        if (unenrollError) throw unenrollError;
+        // Best-effort cleanup only. An interrupted/unverified factor may not be
+        // removable through the current AAL1 session; never block recovery on it.
+        await client.auth.mfa.unenroll({factorId:incomplete.id}).catch(() => null);
       }
+      // Friendly names must be unique per user. Use a fresh label so a stale
+      // unverified factor cannot block a new QR enrollment after interruption.
+      const recoveryName = "YAD Center Admin Authenticator " + new Date().toISOString().replace(/[:.]/g,"-");
       const {data: enrollment, error: enrollmentError} = await client.auth.mfa.enroll({
-        factorType:"totp", friendlyName:"YAD Center Admin Authenticator"
+        factorType:"totp", friendlyName:recoveryName
       });
       if (enrollmentError) throw enrollmentError;
       pendingFactorId = enrollment.id;
