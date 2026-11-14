@@ -45,7 +45,7 @@ create table if not exists public.client_requests (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   check ((market = 'iran' and currency = 'IRR') or (market = 'international' and currency in ('EUR','USD'))),
-  check (therapist_share_amount + platform_share_amount = amount)
+  constraint client_requests_revenue_split_check check (therapist_share_amount + platform_share_amount = amount)
 );
 create index if not exists client_requests_client_created_idx on public.client_requests(client_id,created_at desc);
 create index if not exists client_requests_status_created_idx on public.client_requests(status,created_at desc);
