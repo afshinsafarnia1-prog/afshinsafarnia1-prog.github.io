@@ -47,3 +47,17 @@ The public homepage and portal language controls currently expose Persian, Kurdi
 - Complete a browser end-to-end test suite and an independent security review.
 - Obtain legal/privacy review for consent, data retention, cross-border processing, refunds, professional licensing and emergency procedures.
 - Do not store clinical notes or sensitive patient records until a separate legally reviewed clinical-record architecture is implemented.
+
+
+## Workshops and educational events
+
+After the base schema and `upgrade-client-choice-payment-first.sql`, apply
+`workshops-events.sql` to create the managed workshop workflow.
+
+- Therapists submit a proposal through the public proposal form; only administrators can review it and publish an event.
+- Public visitors can view published event details. Registration requires a client account.
+- Free registrations become active immediately. Paid registrations remain pending until the administrator verifies the payment reference.
+- Meeting URLs and passwords are not granted to anonymous/public table readers. The client registration RPC reveals them only to the registering client after a free registration or administrator-confirmed payment.
+- Event publishing, proposal decisions, participant rosters, and payment confirmation are administrator-only RPCs.
+- The proposal endpoint has a basic per-email rate limit. Before broad public promotion, add CAPTCHA/abuse monitoring and test it under expected traffic.
+- Zoom/Meet links are entered and managed by the administrator; the platform does not create third-party meetings automatically.
