@@ -103,7 +103,12 @@
     const db=window.supabase.createClient(config.url,config.anonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
     setStatus(t().connecting);
     const {data:sessionData,error:sessionError}=await db.auth.getSession();
-    if(sessionError||!sessionData.session){setStatus(t().noAdmin,true);return;}
+    if(sessionError){setStatus(t().noAdmin,true);return;}
+    if(!sessionData.session){
+      setStatus(t().noAdmin,true);
+      db.auth.onAuthStateChange((_event,session)=>{if(session?.user)setTimeout(()=>start(),0);});
+      return;
+    }
     const {data:profile,error:profileError}=await db.from("profiles").select("role").eq("id",sessionData.session.user.id).maybeSingle();
     if(profileError||profile?.role!=="admin"){setStatus(t().noAdmin,true);return;}
     const formatDate=(value)=>value?new Intl.DateTimeFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB",{dateStyle:"medium",timeStyle:"short"}).format(new Date(value)):t().unknown;
