@@ -158,6 +158,9 @@
     const code=mfaCode.value.replace(/\s/g,"");
     if(!pendingFactorId || !pendingChallengeId || !/^\d{6}$/.test(code)){setStatus("کد شش‌رقمی معتبر را وارد کنید.",true);return;}
     mfaVerify.disabled=true;
+    const {data:challenge,error:challengeError}=await client.auth.mfa.challenge({factorId:pendingFactorId});
+    if(challengeError){mfaVerify.disabled=false;setStatus("دریافت درخواست تأیید جدید ناموفق بود؛ دوباره تلاش کنید.",true);return;}
+    pendingChallengeId=challenge.id;
     const {error}=await client.auth.mfa.verify({factorId:pendingFactorId,challengeId:pendingChallengeId,code});
     mfaVerify.disabled=false;
     if(error){setStatus("کد تأیید نشد؛ کد تازه‌ای از برنامه بردارید و دوباره تلاش کنید.",true);return;}
