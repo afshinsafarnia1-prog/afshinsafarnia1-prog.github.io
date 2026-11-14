@@ -303,3 +303,6 @@ begin
  return v_id;
 end;
 $$;
+revoke execute on function public.submit_workshop_proposal(text,text,text,text,text,text,text) from public,authenticated;
+grant execute on function public.submit_workshop_proposal(text,text,text,text,text,text,text) to anon;
+
