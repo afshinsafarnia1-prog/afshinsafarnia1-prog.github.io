@@ -187,7 +187,10 @@
         const p=document.createElement("p");p.textContent=item.presenter_name+" · "+new Date(item.starts_at).toLocaleString()+" · "+item.status+" · "+item.registration_count+" ثبت‌نام";
         const btn=document.createElement("button");btn.type="button";btn.className="button outline";btn.textContent="مشاهده ثبت‌نام‌کنندگان";
         btn.addEventListener("click",()=>loadWorkshopRoster(item.id,item.title));
-        card.append(h,p,btn);eventList.append(card);
+        const statusBtn=document.createElement("button");statusBtn.type="button";statusBtn.className="button outline";
+        statusBtn.textContent=item.status==="published"?"لغو انتشار":item.status==="cancelled"?"انتشار دوباره":"انتشار رویداد";
+        statusBtn.addEventListener("click",async()=>{const next=item.status==="published"?"cancelled":"published";const {error}=await db.rpc("admin_set_workshop_status",{p_workshop_id:item.id,p_status:next});if(error){eventStatus.textContent=error.message;return;}eventStatus.textContent=next==="published"?"رویداد منتشر شد.":"رویداد از فهرست عمومی خارج شد.";await loadWorkshops();});
+        card.append(h,p,btn,statusBtn);eventList.append(card);
       });
       if(!(events||[]).length)eventList.textContent="هنوز رویدادی ایجاد نشده است.";
       proposalList.replaceChildren();
