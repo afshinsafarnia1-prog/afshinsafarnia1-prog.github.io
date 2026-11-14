@@ -22,6 +22,8 @@
     async function requireAdmin() {
       const { data, error } = await db.auth.getSession();
       if (error || !data.session) throw new Error("ابتدا با حساب مدیر وارد شوید.");
+      const { data: assurance, error: assuranceError } = await db.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (assuranceError || assurance?.currentLevel !== "aal2") throw new Error("برای پنل مدیریت، ورود دومرحله‌ای (MFA) لازم است.");
       const { data: profile, error: profileError } = await db.from("profiles")
         .select("role").eq("id", data.session.user.id).maybeSingle();
       if (profileError || profile?.role !== "admin") throw new Error("دسترسی فقط برای مدیر یادسنتر مجاز است.");
