@@ -5,6 +5,8 @@
 <title>همکاری درمانگران | یادسنتر</title>
 <link rel="stylesheet" href="style.css">
 <script defer src="portal.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="supabase-config.js"></script>
 </head>
 <body>
 <main class="portal-main"><div class="portal-wrap">
@@ -22,5 +24,23 @@
 </ol>
 <div class="notice">راه ارتباطی رسمی برای دریافت مدارک و درخواست همکاری هنوز در سایت ثبت نشده است. تا زمان اعلام آن، مدارک هویتی یا حرفه‌ای را در فرم‌های عمومی سایت بارگذاری نکنید.</div>
 </section>
+<section class="portal-card" id="workshopProposal">
+<h2>پیشنهاد برگزاری کارگاه یا نشست</h2>
+<p>درمانگران و متخصصان می‌توانند موضوع پیشنهادی خود را برای بررسی و انتشار به مدیریت یادسنتر ارسال کنند. پس از تأیید، زمان‌بندی، ثبت‌نام، اطلاع‌رسانی و دسترسی به جلسه آنلاین از طریق یادسنتر مدیریت می‌شود.</p>
+<form id="yadWorkshopProposalForm" class="yad-admin-form">
+<label>نام و نام خانوادگی<input id="proposalPresenter" required maxlength="120"></label>
+<label>ایمیل تماس<input id="proposalEmail" type="email" required maxlength="254"></label>
+<label>راه ارتباطی دیگر (اختیاری)<input id="proposalContact" maxlength="160"></label>
+<label>عنوان پیشنهادی کارگاه<input id="proposalTitle" required minlength="4" maxlength="180"></label>
+<label>موضوع و حوزه تخصصی<input id="proposalTopic" maxlength="180"></label>
+<label>زبان ارائه<select id="proposalLanguage"><option value="fa">فارسی</option><option value="ku">کوردی</option><option value="en">English</option><option value="tr">Türkçe</option><option value="ar">العربية</option><option value="es">Español</option><option value="de">Deutsch</option><option value="fr">Français</option></select></label>
+<label>توضیح کوتاه درباره محتوا و مخاطبان<textarea id="proposalDescription" rows="4" maxlength="3000"></textarea></label>
+<button class="button primary" type="submit">ارسال پیشنهاد به یادسنتر</button>
+</form>
+<p id="yadWorkshopProposalStatus" class="notice" role="status" aria-live="polite"></p>
+</section>
+<script>
+(()=>{const ready=()=>{const form=document.getElementById("yadWorkshopProposalForm");if(!form||!window.supabase?.createClient)return;const cfg=window.YAD_SUPABASE_CONFIG||{};if(!cfg.url||!cfg.anonKey)return;const db=window.supabase.createClient(cfg.url,cfg.anonKey);const status=document.getElementById("yadWorkshopProposalStatus");form.addEventListener("submit",async e=>{e.preventDefault();const b=form.querySelector("button");b.disabled=true;status.textContent="در حال ارسال پیشنهاد…";const {data,error}=await db.rpc("submit_workshop_proposal",{p_presenter_name:document.getElementById("proposalPresenter").value.trim(),p_contact_email:document.getElementById("proposalEmail").value.trim(),p_contact_method:document.getElementById("proposalContact").value.trim(),p_proposed_title:document.getElementById("proposalTitle").value.trim(),p_topic:document.getElementById("proposalTopic").value.trim(),p_preferred_language:document.getElementById("proposalLanguage").value,p_proposal:document.getElementById("proposalDescription").value.trim()});b.disabled=false;status.textContent=error?"ارسال پیشنهاد انجام نشد. لطفاً بعداً دوباره تلاش کنید.":"پیشنهاد شما ثبت شد و پس از بررسی مدیریت با شما تماس گرفته می‌شود.";if(!error)form.reset();});};if(document.readyState==="complete")ready();else window.addEventListener("load",ready,{once:true});})();
+</script>
 </div></main>
 </body></html>
