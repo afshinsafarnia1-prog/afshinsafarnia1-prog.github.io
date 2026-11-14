@@ -10,6 +10,7 @@
 -- remove_redundant_admin_select_policies
 -- enforce_revenue_split_consistency
 -- respect_therapist_duration_when_scheduling
+-- disable_legacy_client_booking_rpc
 -- Do not rerun against a database where these migrations are already recorded.
 
 alter table public.therapists drop constraint if exists therapists_id_fkey;
@@ -419,6 +420,7 @@ begin
 end;
 $$;
 
+revoke all on function public.request_appointment(uuid,text,text,text) from public,anon,authenticated;
 revoke all on function public.admin_save_therapist(uuid,text,text,text,text,text[],text[],text[],text[],integer,bigint,text,text,text,text,text,boolean,boolean) from public,anon;
 revoke all on function public.admin_set_therapist_prices(uuid,bigint,bigint,bigint) from public,anon;
 revoke all on function public.create_client_request(uuid,text,text,text) from public,anon;
