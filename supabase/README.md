@@ -46,7 +46,9 @@ The public homepage and portal language controls expose Persian, Kurdish, Englis
 - This is still a staging system, not ready for real clients or clinical records.
 - Manual payment references are not bank verification. An administrator must independently verify actual receipt before approval.
 - Online payment gateways, refunds, notifications, cancellations, payout execution and reconciliation are not implemented.
-- Add MFA for administrators, monitoring, backups, rate limits and audit logging.
+- Enable Supabase Auth leaked-password protection in Authentication → Settings → Password Security; this is a project dashboard setting and is not changed by SQL. Require strong passwords and MFA for administrator accounts.
+- Admin SECURITY DEFINER RPCs are executable by signed-in users at the PostgreSQL grant layer but check `auth.uid()` against `profiles.role = 'admin'` inside each admin function. The Supabase advisor reports these by function type; the role checks must remain covered by regression tests.
+- Add monitoring, backups, rate limits and audit logging.
 - Complete a browser end-to-end test suite and an independent security review.
 - Obtain legal/privacy review for consent, data retention, cross-border processing, refunds, professional licensing and emergency procedures.
 - Do not store clinical notes or sensitive patient records until a separate legally reviewed clinical-record architecture is implemented.
