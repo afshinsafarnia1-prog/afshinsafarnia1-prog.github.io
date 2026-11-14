@@ -92,6 +92,49 @@ if (/service[_-]?role[_-]?key\s*[:=]\s*['"][^'"]{12,}/i.test(sql)) {
   errors.push("Possible service-role credential found in schema");
 }
 
+const upgradeFile = path.join(process.cwd(), "supabase", "upgrade-client-choice-payment-first.sql");
+if (!fs.existsSync(upgradeFile)) {
+  errors.push("Missing supabase/upgrade-client-choice-payment-first.sql");
+} else {
+  const upgrade = fs.readFileSync(upgradeFile, "utf8");
+  const upgradeNormalized = upgrade.toLowerCase();
+  const requiredUpgradeFunctions = [
+    "admin_save_therapist", "admin_set_therapist_prices", "create_client_request",
+    "submit_manual_payment_reference", "admin_review_manual_payment",
+    "admin_list_requests", "admin_schedule_request", "admin_list_therapists",
+    "client_list_requests"
+  ];
+  for (const name of requiredUpgradeFunctions) {
+    const pattern = new RegExp("create\\s+(?:or\\s+replace\\s+)?function\\s+public\\." + name + "\\b", "i");
+    if (!pattern.test(upgrade)) errors.push("Missing workflow RPC in upgrade SQL: " + name);
+  }
+  if (!/create\\s+table\\s+if\\s+not\\s+exists\\s+public\\.client_requests/i.test(upgrade)) {
+    errors.push("Missing client_requests table in workflow upgrade");
+  }
+  if (!/alter\\s+table\\s+public\\.client_requests\\s+enable\\s+row\\s+level\\s+security/i.test(upgrade)) {
+    errors.push("Client requests must have RLS enabled");
+  }
+  if (!/floor\\(v_amount\\s*\\*\\s*0\\.60\\)/i.test(upgrade) ||
+      !/v_amount\\s*-\\s*v_therapist_share/i.test(upgrade)) {
+    errors.push("The 60/40 therapist/platform revenue split is missing");
+  }
+  if (!/therapist-documents','therapist-documents',false/i.test(upgrade)) {
+    errors.push("Therapist license documents must use a private Storage bucket");
+  }
+  if (!/therapist-photos','therapist-photos',true/i.test(upgrade)) {
+    errors.push("Therapist profile photos must use the public photos bucket");
+  }
+  if (!/drop\\s+constraint\\s+if\\s+exists\\s+therapists_id_fkey/i.test(upgrade)) {
+    errors.push("Therapist profiles must not require a therapist Auth account");
+  }
+  if (!/request_not_ready_to_schedule/i.test(upgrade) || !/status='payment_verified'/i.test(upgrade)) {
+    errors.push("Appointment scheduling must require a payment-verified request");
+  }
+  if (/service[_-]?role[_-]?key\\s*[:=]\\s*['"][^'"]{12,}/i.test(upgrade)) {
+    errors.push("Possible service-role credential found in workflow upgrade");
+  }
+}
+
 if (errors.length) {
   console.error("Schema guardrail check failed:\n" + errors.map(error => "- " + error).join("\n"));
   process.exit(1);
