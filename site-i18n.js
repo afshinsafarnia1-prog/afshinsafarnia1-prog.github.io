@@ -76,7 +76,7 @@
     "#how .eyebrow":"howEyebrow","#how h2":"howTitle","#how .how-grid>div:first-child p":"howLead",
     "#articles .eyebrow":"articlesEyebrow","#articles h2":"articlesTitle","#articles .section-head>p":"articlesLead",
     "#about .eyebrow":"aboutEyebrow","#about h2":"aboutTitle","#about .about-grid>div:last-child p":"aboutLead",
-    "#closing .eyebrow":"closingEyebrow","#closing h2":"closingTitle","#closing p":"closingLead"
+    ".closing .eyebrow":"closingEyebrow",".closing h2":"closingTitle",".closing p":"closingLead"
   };
   function apply(lang) {
     const t = translations[lang] || translations.fa;
