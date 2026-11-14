@@ -277,3 +277,29 @@ end;
 $$;
 revoke all on function public.admin_set_workshop_proposal_status(uuid,text) from public,anon,authenticated;
 grant execute on function public.admin_set_workshop_proposal_status(uuid,text) to authenticated;
+
+create index if not exists workshop_proposals_email_created_idx on public.workshop_proposals(lower(contact_email),created_at desc);
+create or replace function public.submit_workshop_proposal(
+ p_presenter_name text,p_contact_email text,p_contact_method text,p_proposed_title text,
+ p_topic text,p_preferred_language text,p_proposal text
+) returns uuid language plpgsql security definer set search_path=''
+as $$
+declare v_id uuid; v_email text:=lower(trim(coalesce(p_contact_email,'')));
+begin
+ if length(trim(coalesce(p_presenter_name,''))) not between 2 and 120
+ or length(v_email) not between 5 and 254
+ or position('@' in v_email)=0
+ or length(trim(coalesce(p_proposed_title,''))) not between 4 and 180
+ or length(coalesce(p_proposal,''))>3000 then
+   raise exception 'invalid_proposal' using errcode='22023';
+ end if;
+ perform pg_advisory_xact_lock(hashtext(v_email));
+ if (select count(*) from public.workshop_proposals q where lower(q.contact_email)=v_email and q.created_at>now()-interval '1 hour')>=3 then
+   raise exception 'proposal_rate_limited' using errcode='42900';
+ end if;
+ insert into public.workshop_proposals(presenter_name,contact_email,contact_method,proposed_title,topic,preferred_language,proposal)
+ values(trim(p_presenter_name),v_email,left(coalesce(p_contact_method,''),160),trim(p_proposed_title),left(coalesce(p_topic,''),180),left(coalesce(p_preferred_language,'fa'),8),coalesce(p_proposal,''))
+ returning id into v_id;
+ return v_id;
+end;
+$$;
