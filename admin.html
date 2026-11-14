@@ -72,6 +72,41 @@
 <div class="section-head"><div><h2>درخواست‌های مراجعان و پرداخت‌ها</h2><p>مراجع درمانگر را انتخاب می‌کند؛ پس از تأیید پرداخت، زمان جلسه را در این بخش ثبت کن.</p></div><button class="button outline" id="yadRefreshWorkflow" type="button">به‌روزرسانی</button></div>
 <div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>مراجع</th><th>درمانگر انتخابی</th><th>مبلغ</th><th>سهم درمانگر / یادسنتر</th><th>شماره پیگیری</th><th>وضعیت درخواست</th><th>وضعیت پرداخت</th><th>اقدام</th></tr></thead><tbody id="yadRequestsBody"><tr><td colspan="8">در حال بارگذاری…</td></tr></tbody></table></div>
 </section>
+<section class="portal-card" id="yadWorkshopAdmin">
+<div class="section-head"><div><h2>مدیریت کارگاه‌ها و نشست‌ها</h2><p>ایجاد رویداد، انتشار، مدیریت ثبت‌نام‌ها و نگهداری خصوصی لینک جلسه آنلاین.</p></div><button class="button outline" id="yadRefreshWorkshops" type="button">به‌روزرسانی رویدادها</button></div>
+<div id="yadWorkshopAdminStatus" class="notice" role="status" aria-live="polite">در انتظار اتصال…</div>
+<div id="yadWorkshopAdminList" class="portal-grid"></div>
+<form id="yadWorkshopAdminForm" class="yad-admin-form">
+<h3>ایجاد کارگاه یا نشست جدید</h3>
+<div class="portal-grid">
+<label>عنوان کارگاه<input id="eventTitle" required minlength="4" maxlength="180"></label>
+<label>شناسه صفحه (لاتین)<input id="eventSlug" required pattern="[a-zA-Z0-9-]+" maxlength="100"></label>
+<label>نام ارائه‌دهنده<input id="eventPresenter" required maxlength="120"></label>
+<label>زبان ارائه (کدها با ویرگول)<input id="eventLanguages" value="fa"></label>
+<label>موضوع‌ها (با ویرگول)<input id="eventTopics"></label>
+<label>نوع برگزاری<select id="eventFormat"><option value="online">آنلاین</option><option value="hybrid">حضوری و آنلاین</option><option value="in_person">حضوری</option></select></label>
+<label>بستر برگزاری<select id="eventPlatform"><option>Zoom</option><option>Google Meet</option><option>Microsoft Teams</option><option>Other</option><option>In person</option></select></label>
+<label>مکان (برای حضوری)<input id="eventVenue"></label>
+<label>تاریخ و ساعت شروع<input id="eventStarts" type="datetime-local" required></label>
+<label>تاریخ و ساعت پایان<input id="eventEnds" type="datetime-local" required></label>
+<label>منطقه زمانی<input id="eventTimezone" value="Europe/Berlin" required></label>
+<label>ظرفیت (خالی = بدون محدودیت)<input id="eventCapacity" type="number" min="1"></label>
+<label>هزینه<input id="eventFee" type="number" min="0" value="0"></label>
+<label>واحد پول<select id="eventCurrency"><option>EUR</option><option>USD</option><option>IRR</option></select></label>
+<label>مهلت ثبت‌نام<input id="eventDeadline" type="datetime-local"></label>
+<label>وضعیت انتشار<select id="eventStatus"><option value="draft">پیش‌نویس</option><option value="published">انتشار عمومی</option></select></label>
+<label>لینک خصوصی جلسه (Zoom/…؛ فقط برای ثبت‌نام‌کنندگان مجاز)<input id="eventMeetingUrl" type="url"></label>
+<label>رمز جلسه (اختیاری)<input id="eventMeetingPassword" maxlength="120"></label>
+</div>
+<label>خلاصهٔ معرفی<textarea id="eventSummary" rows="2" maxlength="500"></textarea></label>
+<label>شرح کامل<textarea id="eventDescription" rows="5"></textarea></label>
+<label>معرفی ارائه‌دهنده<textarea id="eventPresenterBio" rows="3"></textarea></label>
+<button class="button primary" type="submit">ذخیره کارگاه</button>
+</form>
+<h3>پیشنهادهای رسیده از درمانگران</h3>
+<div id="yadWorkshopProposals" class="portal-grid"></div>
+<div id="yadWorkshopRoster" class="portal-card" hidden><h3>فهرست ثبت‌نام‌کنندگان</h3><div id="yadWorkshopRosterList"></div></div>
+</section>
 <section class="portal-card">
 <h2 data-i18n="financialRules">قواعد مالی یادسنتر</h2>
 <p data-i18n="financialHelp">مراجع درمانگر تأییدشده را انتخاب می‌کند و پرداخت ابتدا به یادسنتر انجام می‌شود. پس از بررسی واقعی و تأیید وجه، مدیر زمان جلسه را با همان درمانگر ثبت می‌کند. تأیید پنل جایگزین بررسی بانکی نیست.</p><div class="notice admin-error" data-i18n="workflowWarning">پرداخت دستی را فقط پس از تطبیق شماره پیگیری با دریافت واقعی وجه تأیید کن. هنوز درگاه پرداخت آنلاین و آزمون کامل مسیر مراجع فعال نشده است.</div>
