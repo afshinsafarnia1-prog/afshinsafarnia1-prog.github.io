@@ -62,5 +62,6 @@ After the base schema and `upgrade-client-choice-payment-first.sql`, apply
 - Free registrations become active immediately. Paid registrations remain pending until the administrator verifies the payment reference.
 - Meeting URLs and passwords are not granted to anonymous/public table readers. The client registration RPC reveals them only to the registering client after a free registration or administrator-confirmed payment.
 - Event publishing, proposal decisions, participant rosters, and payment confirmation are administrator-only RPCs.
-- The proposal endpoint has a basic per-email rate limit. Before broad public promotion, add CAPTCHA/abuse monitoring and test it under expected traffic.
+- The proposal endpoint is intentionally callable by anonymous visitors only; authenticated users do not receive execute permission. It has a basic per-email rate limit, but this can be bypassed with multiple email addresses. Add CAPTCHA/abuse monitoring and test it under expected traffic before broad public promotion.
+- The proposal/registration tables intentionally have no direct client SELECT policies; reads are mediated through narrowly scoped RPCs. `payout_accounts` and `site_settings` also deny direct table access until dedicated server-side admin workflows are implemented.
 - Zoom/Meet links are entered and managed by the administrator; the platform does not create third-party meetings automatically.
