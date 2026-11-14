@@ -199,7 +199,9 @@
         const h=document.createElement("b");h.textContent=item.proposed_title;
         const p=document.createElement("p");p.textContent=item.presenter_name+" · "+item.contact_email+" · "+item.topic+" · "+item.status;
         const desc=document.createElement("p");desc.textContent=item.proposal||"";
-        card.append(h,p,desc);proposalList.append(card);
+        const actions=document.createElement("div");actions.className="admin-actions";
+        [["reviewing","شروع بررسی"],["accepted","پذیرش پیشنهاد"],["declined","رد پیشنهاد"]].forEach(([status,label])=>{const b=document.createElement("button");b.type="button";b.className="button outline";b.textContent=label;b.addEventListener("click",async()=>{const {error}=await db.rpc("admin_set_workshop_proposal_status",{p_proposal_id:item.id,p_status:status});if(error){eventStatus.textContent=error.message;return;}eventStatus.textContent="وضعیت پیشنهاد به‌روزرسانی شد.";await loadWorkshops();});actions.append(b);});
+        card.append(h,p,desc,actions);proposalList.append(card);
       });
       if(!(proposals||[]).length)proposalList.textContent="پیشنهادی در صف بررسی نیست.";
     }
