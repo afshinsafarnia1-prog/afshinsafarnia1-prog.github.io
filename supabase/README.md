@@ -46,8 +46,9 @@ The public homepage and portal language controls expose Persian, Kurdish, Englis
 - This is still a staging system, not ready for real clients or clinical records.
 - Manual payment references are not bank verification. An administrator must independently verify actual receipt before approval.
 - Online payment gateways, refunds, notifications, cancellations, payout execution and reconciliation are not implemented.
-- Enable Supabase Auth leaked-password protection in Authentication → Settings → Password Security; this is a project dashboard setting and is not changed by SQL. Require strong passwords and MFA for administrator accounts.
-- Admin SECURITY DEFINER RPCs are executable by signed-in users at the PostgreSQL grant layer but check `auth.uid()` against `profiles.role = 'admin'` inside each admin function. The Supabase advisor reports these by function type; the role checks must remain covered by regression tests.
+- Supabase Auth leaked-password protection is not enabled: this project is on the Free plan, and Supabase rejects saving this setting unless the project is Pro or above. Do not treat a failed save as enabled.
+- The YAD Center administrator account must enroll a TOTP factor in the application itself. This is separate from MFA on the Supabase dashboard owner account. The admin sign-in screen guides first-time enrollment and later challenges.
+- Admin SECURITY DEFINER RPCs require both `profiles.role = 'admin'` and the JWT assurance claim `aal2` through `public.require_admin_aal2()`. The guard is enforced at the start of all 15 admin RPCs; private therapist verification reads and admin storage operations also require AAL2. The Supabase advisor may still report these authenticated SECURITY DEFINER RPCs because they are callable at the grant layer, but non-admin or AAL1 requests are rejected by the function body.
 - Add monitoring, backups, rate limits and audit logging.
 - Complete a browser end-to-end test suite and an independent security review.
 - Obtain legal/privacy review for consent, data retention, cross-border processing, refunds, professional licensing and emergency procedures.
@@ -67,3 +68,15 @@ After the base schema and `upgrade-client-choice-payment-first.sql`, apply
 - The proposal endpoint is intentionally callable by anonymous visitors only; authenticated users do not receive execute permission. It has a basic per-email rate limit, but this can be bypassed with multiple email addresses. Add CAPTCHA/abuse monitoring and test it under expected traffic before broad public promotion.
 - The proposal/registration tables intentionally have no direct client SELECT policies; reads are mediated through narrowly scoped RPCs. `payout_accounts` and `site_settings` also deny direct table access until dedicated server-side admin workflows are implemented.
 - Zoom/Meet links are entered and managed by the administrator; the platform does not create third-party meetings automatically.
+
+
+## Administrator MFA (AAL2)
+
+Apply the following migrations after the workshop workflow migrations:
+
+1. `admin-mfa-aal2.sql` creates the shared admin role + AAL2 guard and adds restrictive policies for private therapist verification records and admin storage operations.
+2. `admin-mfa-aal2-sql-rpcs.sql` converts the SQL-language admin list RPCs to PL/pgSQL so the guard executes before querying, including when result tables are empty.
+
+The administrator signs into `admin.html` using the application Auth user, then enrolls a TOTP authenticator through the in-app QR code or manual setup key and verifies a six-digit code. The project-owner MFA configured at `/dashboard/account/security` is a separate identity and does not enroll the application Auth user. Never share the TOTP setup key or generated codes. Add a separate backup TOTP factor before production; the current admin UI does not yet provide factor-management or backup-factor enrollment.
+
+AAL2 enforcement has been exercised in database-level tests using simulated JWT claims. This does not replace a live browser test using the actual admin Auth user and authenticator app.
