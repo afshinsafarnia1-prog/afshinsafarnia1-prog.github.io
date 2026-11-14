@@ -70,6 +70,7 @@
     });
   };
   document.addEventListener("yad:languagechange",event=>pageText(event.detail?.language||"fa"));
+  try { const saved=localStorage.getItem("yad-language"); if(saved && translations[saved]) pageText(saved); } catch (_) {}
   const adminPage=document.getElementById("yadAppointmentsBody");
   if(!adminPage) return;
   const start=async()=>{
