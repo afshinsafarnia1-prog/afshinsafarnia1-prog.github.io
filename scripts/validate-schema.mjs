@@ -108,14 +108,14 @@ if (!fs.existsSync(upgradeFile)) {
     const pattern = new RegExp("create\\s+(?:or\\s+replace\\s+)?function\\s+public\\." + name + "\\b", "i");
     if (!pattern.test(upgrade)) errors.push("Missing workflow RPC in upgrade SQL: " + name);
   }
-  if (!/create\\s+table\\s+if\\s+not\\s+exists\\s+public\\.client_requests/i.test(upgrade)) {
+  if (!/create\s+table\\s+if\\s+not\\s+exists\\s+public\\.client_requests/i.test(upgrade)) {
     errors.push("Missing client_requests table in workflow upgrade");
   }
-  if (!/alter\\s+table\\s+public\\.client_requests\\s+enable\\s+row\\s+level\\s+security/i.test(upgrade)) {
+  if (!/alter\s+table\\s+public\\.client_requests\\s+enable\\s+row\\s+level\\s+security/i.test(upgrade)) {
     errors.push("Client requests must have RLS enabled");
   }
-  if (!/floor\\(v_amount\\s*\\*\\s*0\\.60\\)/i.test(upgrade) ||
-      !/v_amount\\s*-\\s*v_therapist_share/i.test(upgrade)) {
+  if (!/floor\(v_amount\s*\*\s*0\.60\)/i.test(upgrade) ||
+      !/v_amount\s*-\s*v_therapist_share/i.test(upgrade)) {
     errors.push("The 60/40 therapist/platform revenue split is missing");
   }
   if (!/therapist-documents','therapist-documents',false/i.test(upgrade)) {
@@ -124,7 +124,7 @@ if (!fs.existsSync(upgradeFile)) {
   if (!/therapist-photos','therapist-photos',true/i.test(upgrade)) {
     errors.push("Therapist profile photos must use the public photos bucket");
   }
-  if (!/drop\\s+constraint\\s+if\\s+exists\\s+therapists_id_fkey/i.test(upgrade)) {
+  if (!/drop\s+constraint\s+if\s+exists\s+therapists_id_fkey/i.test(upgrade)) {
     errors.push("Therapist profiles must not require a therapist Auth account");
   }
   if (!/revoke\s+all\s+on\s+function\s+public\.request_appointment\(uuid,text,text,text\)\s+from\s+public,anon,authenticated/i.test(upgrade)) {
