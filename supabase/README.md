@@ -1,59 +1,49 @@
-# YAD Center backend foundation
+# YAD Center — Supabase backend
 
-This folder is a **database/security starting point**, not a live backend.
+This folder documents the database foundation and the current staging workflow.
 
-## What is included
-- PostgreSQL schema for profiles and three roles (client, therapist, admin)
-- Auth trigger that creates a client-only profile for each newly registered Supabase user
-- Therapist directory, availability, appointments and payment records
-- Private payout-account configuration table for domestic and international accounts
-- Row-level security policies with intentionally restricted writes
+## Current database state
+- `schema.sql` is the original base schema.
+- `upgrade-client-choice-payment-first.sql` is the consolidated upgrade for the current therapist-selection and payment-first workflow.
+- Both the base schema and the upgrade sequence have been applied to the connected Supabase **test project**. The migration history is recorded in Supabase. Do not run either script again on that project.
+- The GitHub branch is `yadcenter-seo-redesign`; no changes have been merged to `main`.
 
-## Before connecting a real site
-1. Create a Supabase project in a region/provider that is legally and technically accessible to the operator and intended users. Check current access from Iran, sanctions, payment-provider terms, data residency and applicable privacy law before selecting a provider.
-2. Review `schema.sql` with a qualified backend/security engineer. Apply it only to a new test project first.
-3. Configure email/phone authentication, recovery, MFA for admins, backups, monitoring and retention.
-4. Implement server-side functions for admin role assignment, therapist verification, appointment state transitions, payment-provider webhooks, refunds and payout-account encryption.
-5. Keep the Supabase service-role key and encryption key in server-side environment secrets only. Never place them in HTML, JavaScript served to browsers, GitHub, or the PWA.
-6. Add tests for role escalation, cross-user access, therapist/client data isolation, duplicate bookings, payment replay, and unauthorized payout changes.
-7. Have a privacy/legal professional review consent, clinical-data handling, retention, cancellation/refund and emergency policies before production.
+## Current business workflow
+1. The administrator receives therapist details, photo, qualifications and professional-license evidence outside the public client workflow.
+2. The administrator creates the therapist profile, uploads the public photo and private license document, verifies the credentials, and publishes the profile.
+3. A client signs in and chooses a listed, verified therapist from the public directory.
+4. The request and payment are created before any appointment is scheduled.
+5. The client receives payment instructions from YAD Center, transfers the amount, and submits a payment reference.
+6. The administrator checks the actual receipt. Approval marks the request as payment-verified; it does not create or confirm an appointment.
+7. The administrator schedules the session with the therapist selected by the client.
+8. The database records the current 60% therapist / 40% YAD Center split at request creation.
 
-## Security hardening added to the staging schema
+Therapists do not need Supabase Auth accounts and cannot self-register, edit or publish profiles. The public directory exposes only profiles that are both verified and listed.
 
-The latest staging-schema revision removes direct browser inserts into appointments and direct writes to payment, payout-account and site-settings tables. Appointment requests and transfer-reference submissions must use controlled RPCs that explicitly require the client role. Payment review requires the admin role. Public availability reads are limited to future, available slots for listed and verified therapists; slot management also checks that the signed-in profile has the therapist role. New auth users receive a profile with the database default role of client; therapist/admin roles must be assigned only through a trusted process.
+## Storage and access boundaries
+- `therapist-photos` is a public bucket for profile photos; only an authenticated YAD administrator can upload, replace or delete objects.
+- `therapist-documents` is a private bucket for license evidence; only an authenticated YAD administrator can read or manage objects.
+- License numbers and document paths are stored separately from the public therapist profile.
+- The service-role/secret key is never used in browser code. The browser uses only the publishable key with RLS and role-checked RPCs.
+- New requests, therapist management, payment review and scheduling are handled through RPCs that verify the caller's database role.
 
-These are schema changes in GitHub only. They have **not** been applied to a live Supabase project and have not been runtime-tested against a project. Apply to a disposable staging project first, then run the checks below before any production use.
+## Languages
+The public homepage and portal language controls currently expose Persian, Kurdish, English, Turkish, Arabic, Spanish, German and French. Translation coverage is partial: some secondary page content, article text, and newer admin/client form labels still need full localization.
 
-### Minimum staging checks
-- A new client can only see their own profile and appointments.
-- A client cannot create an availability slot, forge an appointment, change appointment status, write payment rows, or access payout settings.
-- A therapist cannot self-assign the therapist/admin role or self-verify/list a profile.
-- Anonymous users can see only future available slots and listed/verified therapist profiles and active prices.
-- Two clients attempting the same slot concurrently cannot both reserve it.
-- Only an admin can approve/reject a submitted manual-transfer reference.
-- Rejected payments cancel the requested appointment and release its slot; approval confirms only a still-requested appointment.
-- Confirm database grants and RLS behavior with actual authenticated test users; do not rely on static inspection alone.
+## Validation completed
+- Database migrations applied and recorded in Supabase.
+- Therapist profile creation and market-price configuration tested through the admin RPC; test profile removed.
+- End-to-end database smoke test completed for client selection, request creation, payment-reference submission, admin payment approval, scheduling with the selected therapist, and the 60/40 split. Temporary rows were removed and the admin role was restored.
+- Anonymous execution of therapist-management and client-request creation RPCs is denied.
+- Public directory query cannot reveal unverified/unlisted therapist profiles.
+- Security advisors still report intentional warnings for role-checked SECURITY DEFINER RPCs callable by authenticated users, the existing `btree_gist` extension in the public schema, and no-policy tables such as `payout_accounts` and `site_settings` that are deliberately inaccessible through direct browser access.
+- GitHub static workflow checks and browser-level end-to-end tests for the new pages have not yet been verified.
 
-## Important limitations
-- This schema does not create a working booking or payment system by itself.
-- The public site should not store clinical notes or therapy records until a secure, legally reviewed clinical-record design is in place.
-- Payout account identifiers are represented as encrypted text. Encryption/decryption must occur only in a trusted server-side function using a key held outside the database.
-- The current website FAQ helper remains a non-clinical guide, not a therapist or diagnostic service.
-
-
-## Two-market model (Iran + international)
-- The first version is designed to support both markets at the same time, not as a later migration.
-- Profiles and appointments carry a market and timezone; therapist pricing can be configured separately per market and currency.
-- Iran-facing checkout should use a locally available, legally compliant payment provider and settle in IRR.
-- International checkout should use a provider that is legally available to the business and the client's country, with EUR/USD as supported display/settlement currencies where the provider permits.
-- Do not assume one provider can process both markets. Provider availability, sanctions, banking, merchant eligibility and data-location rules must be checked before implementation.
-- The current market selector is only a front-end preference indicator. It does not yet change the actual payment route or convert currencies.
-
-
-## Manual payment workflow included in schema
-- `request_appointment` locks and reserves an available future slot, checks that the therapist is listed and verified, reads the active market-specific price, and creates a pending appointment plus pending payment.
-- `submit_manual_payment_reference` lets the client submit a bank transfer reference. Do not ask clients to upload sensitive clinical information with payment evidence.
-- `admin_review_manual_payment` lets an authenticated profile whose role is already `admin` approve or reject a submitted manual payment. Approval confirms the appointment; rejection cancels it and reopens the slot.
-- Create the first admin profile manually through a trusted Supabase SQL console after verifying the account owner. Never expose an admin role-setting endpoint to public clients.
-- The client, therapist and admin HTML portals now contain a Supabase authentication gate. They remain disconnected until the project URL and public anon key are supplied in `supabase-config.js`. The portals do not yet provide live booking, payment review, profile editing or therapist availability management.
-- The initial schema includes a legacy single-currency fee on `therapists`; use `therapist_prices` as the authoritative market-specific price table. The legacy columns are retained for backward compatibility and should not be used for checkout.
+## Before production
+- This is still a staging system, not ready for real clients or clinical records.
+- Manual payment references are not bank verification. An administrator must independently verify actual receipt before approval.
+- Online payment gateways, refunds, notifications, cancellations, payout execution and reconciliation are not implemented.
+- Add MFA for administrators, monitoring, backups, rate limits and audit logging.
+- Complete a browser end-to-end test suite and an independent security review.
+- Obtain legal/privacy review for consent, data retention, cross-border processing, refunds, professional licensing and emergency procedures.
+- Do not store clinical notes or sensitive patient records until a separate legally reviewed clinical-record architecture is implemented.
