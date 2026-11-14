@@ -9,6 +9,7 @@
 -- tighten_rls_and_add_workflow_indexes
 -- remove_redundant_admin_select_policies
 -- enforce_revenue_split_consistency
+-- respect_therapist_duration_when_scheduling
 -- Do not rerun against a database where these migrations are already recorded.
 
 alter table public.therapists drop constraint if exists therapists_id_fkey;
@@ -284,7 +285,7 @@ $$;
 drop function if exists public.admin_list_requests(integer,integer);
 create function public.admin_list_requests(p_limit integer default 50,p_offset integer default 0)
 returns table(
-  request_id uuid,client_id uuid,client_name text,client_phone text,therapist_id uuid,therapist_name text,
+  request_id uuid,client_id uuid,client_name text,client_phone text,therapist_id uuid,therapist_name text,session_duration_minutes integer,
   amount bigint,currency text,therapist_share_amount bigint,platform_share_amount bigint,
   request_status text,payment_id uuid,payment_status public.payment_status,provider_reference text,created_at timestamptz
 )
@@ -299,7 +300,7 @@ begin
     raise exception 'admin_only' using errcode='42501';
   end if;
   return query
-  select r.id,r.client_id,cp.display_name,cp.phone,r.therapist_id,t.display_name,r.amount,r.currency,
+  select r.id,r.client_id,cp.display_name,cp.phone,r.therapist_id,t.display_name,t.session_duration_minutes,r.amount,r.currency,
     r.therapist_share_amount,r.platform_share_amount,r.status,p.id,p.status,p.provider_reference,r.created_at
   from public.client_requests r
   join public.profiles cp on cp.id=r.client_id
@@ -330,6 +331,9 @@ begin
   if not found then raise exception 'request_not_ready_to_schedule' using errcode='P0001'; end if;
   if not exists(select 1 from public.payments p where p.request_id=p_request_id and p.status='paid') then
     raise exception 'payment_not_verified' using errcode='P0001';
+  end if;
+  if not exists(select 1 from public.therapists t where t.id=v_request.therapist_id and t.is_listed and t.verified_at is not null) then
+    raise exception 'therapist_no_longer_available' using errcode='P0001';
   end if;
   insert into public.appointments(client_id,therapist_id,slot_id,starts_at,ends_at,status,client_message,market,timezone)
   values(v_request.client_id,v_request.therapist_id,null,p_starts_at,p_ends_at,'confirmed',v_request.client_message,
