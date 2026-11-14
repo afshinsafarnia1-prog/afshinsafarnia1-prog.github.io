@@ -28,7 +28,7 @@ Therapists do not need Supabase Auth accounts and cannot self-register, edit or 
 - New requests, therapist management, payment review and scheduling are handled through RPCs that verify the caller's database role.
 
 ## Languages
-The public homepage and portal language controls expose Persian, Kurdish, English, Turkish, Arabic, Spanish, German and French. The homepage and selected client/admin labels are localized, but full localization is not complete: the assistant, rules, therapist collaboration form, many admin event-management labels, and article bodies remain Persian or partly English. Do not advertise the site as fully translated until these sections receive human-reviewed translations.
+The public homepage and portal language controls expose Persian, Kurdish, English, Turkish, Arabic, Spanish, German and French. The homepage, assistant interface and FAQ responses, therapist collaboration/proposal interface, article index, and selected client/admin labels are localized. Full localization is not complete: the legal policy body and the full text of the three articles remain Persian (the interface now discloses this when another language is selected), and many admin event-management labels still need translation. Do not advertise the site as fully translated until all content receives human-reviewed translations.
 
 ## Validation completed
 - Database migrations applied and recorded in Supabase.
