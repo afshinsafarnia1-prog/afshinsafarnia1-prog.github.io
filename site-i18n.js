@@ -67,6 +67,17 @@
   };
   const collaborationLabels={fa:"همکاری درمانگران",ku:"هاوکاری چارەسەرکاران",en:"Therapist collaboration",tr:"Terapist iş birliği",ar:"التعاون مع المعالجين",es:"Colaboración de terapeutas",de:"Zusammenarbeit für Therapeut:innen",fr:"Collaboration des thérapeutes"};
   Object.entries(collaborationLabels).forEach(([lang,label])=>{if(translations[lang])translations[lang].collaborate=label;});
+  const directoryLabels={
+    fa:{directoryEmpty:"هنوز درمانگر تأییدشده‌ای برای نمایش وجود ندارد.",chooseTherapist:"مشاهده و انتخاب",minutes:"دقیقه",priceFallback:"تعرفه پس از انتخاب منطقه اعلام می‌شود"},
+    ku:{directoryEmpty:"هێشتا چارەسەرکاری پشتڕاستکراو بڵاو نەکراوەتەوە.",chooseTherapist:"بینین و هەڵبژاردن",minutes:"خولەک",priceFallback:"نرخ دوای هەڵبژاردنی ناوچە دیاری دەکرێت"},
+    en:{directoryEmpty:"No verified therapist profiles are currently published.",chooseTherapist:"View and choose",minutes:"min",priceFallback:"Fee shown after selecting a region"},
+    tr:{directoryEmpty:"Şu anda doğrulanmış terapist profili yayımlanmamış.",chooseTherapist:"Görüntüle ve seç",minutes:"dk",priceFallback:"Ücret bölge seçildikten sonra gösterilir"},
+    ar:{directoryEmpty:"لا توجد ملفات لمعالجين تم التحقق منها حالياً.",chooseTherapist:"عرض واختيار",minutes:"دقيقة",priceFallback:"تظهر التكلفة بعد اختيار المنطقة"},
+    es:{directoryEmpty:"Aún no hay perfiles de terapeutas verificados.",chooseTherapist:"Ver y elegir",minutes:"min",priceFallback:"La tarifa se muestra al elegir la región"},
+    de:{directoryEmpty:"Derzeit sind keine geprüften Therapeut:innen-Profile veröffentlicht.",chooseTherapist:"Ansehen und auswählen",minutes:"Min.",priceFallback:"Der Preis erscheint nach Auswahl der Region"},
+    fr:{directoryEmpty:"Aucun profil de thérapeute vérifié n’est publié pour le moment.",chooseTherapist:"Voir et choisir",minutes:"min",priceFallback:"Le tarif s’affiche après le choix de la région"}
+  };
+  Object.entries(directoryLabels).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
   const keys = {
     ".topinner span":"tagline","#mainNav a:nth-child(1)":"services","#mainNav a:nth-child(2)":"therapists",
     "#mainNav a:nth-child(3)":"client","#mainNav a:nth-child(4)":"admin","#mainNav a:nth-child(5)":"how",
