@@ -120,8 +120,14 @@ create table public.site_settings (
 
 create index appointments_client_idx on public.appointments(client_id, starts_at desc);
 create index appointments_therapist_idx on public.appointments(therapist_id, starts_at desc);
+create index appointments_created_idx on public.appointments(created_at desc);
+create index appointments_slot_idx on public.appointments(slot_id) where slot_id is not null;
 create index availability_lookup_idx on public.availability_slots(therapist_id, starts_at) where is_available;
 create index payments_client_idx on public.payments(client_id, created_at desc);
+create index payments_appointment_idx on public.payments(appointment_id);
+create index payments_status_created_idx on public.payments(status, created_at desc);
+create index payout_accounts_updated_by_idx on public.payout_accounts(updated_by) where updated_by is not null;
+create index site_settings_updated_by_idx on public.site_settings(updated_by) where updated_by is not null;
 
 -- New auth users receive a client profile. Role changes to therapist/admin must
 -- happen only through a trusted server-side admin operation.
@@ -414,7 +420,99 @@ begin
   end if;
   return true;
 end;
-$$;
+$;
+
+-- Admin-only read APIs for the management interface.
+-- These SECURITY DEFINER functions bypass table RLS, so they verify the
+-- caller's database role on every invocation and are not executable by anon/PUBLIC.
+create or replace function public.admin_list_appointments(
+  p_limit integer default 50,
+  p_offset integer default 0
+)
+returns table (
+  appointment_id uuid,
+  client_id uuid,
+  client_name text,
+  client_phone text,
+  therapist_id uuid,
+  therapist_name text,
+  starts_at timestamptz,
+  ends_at timestamptz,
+  appointment_status public.appointment_status,
+  market text,
+  created_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = ''
+as $
+declare
+  v_admin uuid := auth.uid();
+  v_limit integer := least(greatest(coalesce(p_limit, 50), 1), 100);
+  v_offset integer := greatest(coalesce(p_offset, 0), 0);
+begin
+  if v_admin is null or not exists (
+    select 1 from public.profiles p
+    where p.id = v_admin and p.role = 'admin'
+  ) then
+    raise exception 'admin_only' using errcode = '42501';
+  end if;
+
+  return query
+  select a.id, a.client_id, cp.display_name, cp.phone,
+         a.therapist_id, tp.display_name, a.starts_at, a.ends_at,
+         a.status, a.market, a.created_at
+  from public.appointments a
+  join public.profiles cp on cp.id = a.client_id
+  join public.profiles tp on tp.id = a.therapist_id
+  order by a.created_at desc, a.id
+  limit v_limit offset v_offset;
+end;
+$;
+
+create or replace function public.admin_list_payments(
+  p_limit integer default 50,
+  p_offset integer default 0
+)
+returns table (
+  payment_id uuid,
+  appointment_id uuid,
+  client_id uuid,
+  client_name text,
+  amount bigint,
+  currency text,
+  payment_status public.payment_status,
+  provider text,
+  provider_reference text,
+  created_at timestamptz,
+  paid_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = ''
+as $
+declare
+  v_admin uuid := auth.uid();
+  v_limit integer := least(greatest(coalesce(p_limit, 50), 1), 100);
+  v_offset integer := greatest(coalesce(p_offset, 0), 0);
+begin
+  if v_admin is null or not exists (
+    select 1 from public.profiles p
+    where p.id = v_admin and p.role = 'admin'
+  ) then
+    raise exception 'admin_only' using errcode = '42501';
+  end if;
+
+  return query
+  select pay.id, pay.appointment_id, pay.client_id, pr.display_name,
+         pay.amount, pay.currency, pay.status, pay.provider,
+         pay.provider_reference, pay.created_at, pay.paid_at
+  from public.payments pay
+  join public.profiles pr on pr.id = pay.client_id
+  order by pay.created_at desc, pay.id
+  limit v_limit offset v_offset;
+end;
+$;
 
 -- Restrict direct table writes to the controlled RPC workflow.
 revoke insert, update, delete on public.appointments from anon, authenticated;
@@ -426,6 +524,28 @@ revoke insert, update, delete on public.site_settings from anon, authenticated;
 revoke all on function public.request_appointment(uuid,text,text,text) from public, anon;
 revoke all on function public.submit_manual_payment_reference(uuid,text) from public, anon;
 revoke all on function public.admin_review_manual_payment(uuid,boolean) from public, anon;
+revoke all on function public.admin_list_appointments(integer,integer) from public, anon;
+revoke all on function public.admin_list_payments(integer,integer) from public, anon;
 grant execute on function public.request_appointment(uuid,text,text,text) to authenticated;
 grant execute on function public.submit_manual_payment_reference(uuid,text) to authenticated;
 grant execute on function public.admin_review_manual_payment(uuid,boolean) to authenticated;
+grant execute on function public.admin_list_appointments(integer,integer) to authenticated;
+grant execute on function public.admin_list_payments(integer,integer) to authenticated;
+
+-- FIRST ADMIN BOOTSTRAP (manual, one time, after this schema is installed):
+-- Verify the intended account in Supabase Authentication > Users, copy its
+-- exact User UID, replace the UUID below, then run this statement in the
+-- trusted SQL Editor. Do not expose this operation through the client app.
+--
+-- insert into public.profiles (id, role)
+-- select u.id, 'admin'::public.account_role
+-- from auth.users u
+-- where u.id = 'REPLACE-WITH-VERIFIED-AUTH-USER-UUID'::uuid
+--   and not exists (
+--     select 1 from public.profiles p where p.role = 'admin'
+--   )
+-- on conflict (id) do update set role = 'admin', updated_at = now();
+--
+-- This is intentionally not automatic: the first admin must be explicitly
+-- verified by the project owner, and an existing Auth user is not backfilled
+-- by the auth.users insert trigger.
