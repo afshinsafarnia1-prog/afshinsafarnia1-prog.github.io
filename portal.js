@@ -69,32 +69,7 @@
       if(t[key]) el.textContent=t[key];
     });
   };
-  const aside=document.querySelector(".side-nav");
-  const portalWrap=document.querySelector(".portal-wrap");
-  const languageHost=aside || portalWrap;
-  if(languageHost && !document.getElementById("yadLanguagePicker")){
-    const wrap=document.createElement("label");
-    wrap.className="yad-language-switch";
-    wrap.textContent="🌐 ";
-    const select=document.createElement("select");
-    select.id="yadLanguagePicker";
-    select.setAttribute("aria-label","Language");
-    [["fa","فارسی"],["ku","کوردی"],["en","English"],["tr","Türkçe"],["ar","العربية"],["es","Español"],["de","Deutsch"],["fr","Français"]].forEach(([v,label])=>{
-      const option=document.createElement("option");option.value=v;option.textContent=label;select.append(option);
-    });
-    wrap.append(select);
-    if(aside){const note=aside.querySelector(".side-note");aside.insertBefore(wrap,note||null);}
-    else {wrap.classList.add("portal-language-switch");portalWrap.insertBefore(wrap,portalWrap.firstChild);}
-    const saved=(()=>{try{const v=localStorage.getItem("yad-language");return translations[v]?v:"fa";}catch(_){return "fa";}})();
-    select.value=saved;pageText(saved);
-    select.addEventListener("change",()=>{
-      const lang=select.value;pageText(lang);
-      try{localStorage.setItem("yad-language",lang);}catch(_){}
-    });
-    const style=document.createElement("style");
-    style.textContent=".yad-language-switch{display:flex;align-items:center;gap:7px;padding:10px 8px;margin-top:8px;color:#d7eeea;font-size:12px}.yad-language-switch select{min-width:0;width:100%;padding:7px;border:1px solid #ffffff35;border-radius:9px;background:#174c52;color:white;font:inherit}.side-nav{overflow-y:auto}.portal-language-switch{justify-content:flex-end;color:#52696a}.portal-language-switch select{width:auto;min-width:145px;background:#fff;color:#123f46;border-color:#dce8e3}";
-    document.head.append(style);
-  }
+  document.addEventListener("yad:languagechange",event=>pageText(event.detail?.language||"fa"));
   const adminPage=document.getElementById("yadAppointmentsBody");
   if(!adminPage) return;
   const start=async()=>{
