@@ -72,6 +72,7 @@ try {
     const hero = await page.locator(".hero h1").textContent();
     if (!hero?.trim()) throw new Error("Homepage hero is empty for " + language);
   }
+  await page.locator("#siteLanguage").selectOption("en");
   const englishHero = await page.locator(".hero h1").innerText();
   if (!englishHero.includes("Understanding what is happening")) throw new Error("Homepage English translation did not apply.");
 
