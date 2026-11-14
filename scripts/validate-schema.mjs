@@ -127,6 +127,9 @@ if (!fs.existsSync(upgradeFile)) {
   if (!/drop\\s+constraint\\s+if\\s+exists\\s+therapists_id_fkey/i.test(upgrade)) {
     errors.push("Therapist profiles must not require a therapist Auth account");
   }
+  if (!/revoke\s+all\s+on\s+function\s+public\.request_appointment\(uuid,text,text,text\)\s+from\s+public,anon,authenticated/i.test(upgrade)) {
+    errors.push("Legacy pre-payment booking RPC must be disabled");
+  }
   if (!/request_not_ready_to_schedule/i.test(upgrade) || !/status='payment_verified'/i.test(upgrade)) {
     errors.push("Appointment scheduling must require a payment-verified request");
   }
