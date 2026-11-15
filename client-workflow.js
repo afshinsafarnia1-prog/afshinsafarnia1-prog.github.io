@@ -144,7 +144,15 @@
         p_country_code: sessionCountry,
         p_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran"
       });
-      if (error) { setStatus(error.message || "ثبت درخواست ناموفق بود.", true); return; }
+      if (error) {
+        const raw=error.message||"";
+        const friendly=raw.includes("therapist_not_accepting_new_clients")?"این درمانگر در حال حاضر پذیرش مراجع جدید ندارد."
+          :raw.includes("therapist_not_authorized_for_client_location")?"مجوز ارائهٔ خدمت این درمانگر برای کشور محل حضور شما تأیید نشده است."
+          :raw.includes("therapist_not_available")?"این پروفایل دیگر برای ثبت درخواست فعال نیست."
+          :raw.includes("create_client_request_with_consent")?"زیرساخت تکمیلی هنوز روی پایگاه داده فعال نشده است."
+          :raw;
+        setStatus(friendly||"ثبت درخواست ناموفق بود.", true); return;
+      }
       setStatus("درخواست ثبت شد. اطلاعات پرداخت را از مدیریت یادسنتر دریافت کنید؛ پس از پرداخت، شماره پیگیری را در همین صفحه وارد کنید.");
       form.reset();
       await loadHistory();
