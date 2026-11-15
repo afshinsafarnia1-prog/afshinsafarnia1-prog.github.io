@@ -8,7 +8,7 @@
   nav?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>nav.classList.remove("open")));
 
   const config=window.YAD_SUPABASE_CONFIG||{};
-  let db=null, allTherapists=[], allPrices=[];
+  let db=null, allTherapists=[], allPrices=[], publicContacts={};
   if(window.supabase?.createClient && config.url && config.anonKey){
     db=window.supabase.createClient(config.url,config.anonKey);
   }
@@ -39,11 +39,10 @@
       (t.languages||[]).forEach(code=>tags.append(el("span","language-tag",languageNames[code]||code)));
       body.append(tags);
       const market=document.getElementById("marketSelect")?.value||"iran";
-      const price=allPrices.find(x=>x.therapist_id===t.id&&x.market===market);
-      const fallback=(!price && ((market==="iran"&&t.fee_currency==="IRR")||(market==="international"&&["EUR","USD"].includes(t.fee_currency))))?{amount:t.fee_amount,currency:t.fee_currency}:null;
-      const chosen=price||fallback;
-      const priceText=chosen?new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(Number(chosen.amount))+" "+chosen.currency:(i18n().priceFallback||"تعرفه پس از انتخاب منطقه اعلام می‌شود");
-      const meta=el("p","therapist-meta",String(t.session_duration_minutes||50)+" "+(i18n().minutes||"دقیقه")+" · "+priceText);
+      const currency=market==="iran"?"IRR":(document.getElementById("internationalCurrency")?.value||"EUR");
+      const chosen=allPrices.find(x=>x.market===market&&x.currency===currency);
+      const priceText=chosen?new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(Number(chosen.amount))+" "+chosen.currency:"تعرفه در حال تنظیم است";
+      const meta=el("p","therapist-meta","۴۵ دقیقه · "+priceText);
       body.append(meta);
       const link=el("a","button primary",i18n().chooseTherapist||"مشاهده و انتخاب");
       link.href="client.html?therapist="+encodeURIComponent(t.id);
@@ -63,14 +62,48 @@
       .order("display_name",{ascending:true});
     if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
     allTherapists=data||[];
-    const priceResult=await db.from("therapist_prices").select("therapist_id,market,currency,amount").eq("is_active",true);
-    allPrices=priceResult.error?[]:(priceResult.data||[]);
+    const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
+    if(settingsError){directory.textContent="دریافت تعرفه‌های مرکزی با خطا روبه‌رو شد.";return;}
+    allPrices=settings?.tariffs||[];
+    publicContacts=settings?.contacts||{};
+    renderPublicTariffs();
+    renderPublicContacts();
     filterDirectory();
     if(notice)notice.textContent=allTherapists.length
       ?"پروفایل‌های زیر توسط مدیریت یادسنتر بررسی و برای نمایش تأیید شده‌اند."
       :"فهرست درمانگران پس از تأیید مدارک و مجوزها منتشر می‌شود؛ هیچ پروفایل تأییدنشده‌ای نمایش داده نمی‌شود.";
   }
 
+  function renderPublicTariffs(){
+    const target=document.getElementById("yadPublicTariffs");if(!target)return;
+    target.replaceChildren();
+    const labels=[["iran","IRR","تعرفه داخل ایران"],["international","EUR","تعرفه بین‌المللی (یورو)"],["international","USD","تعرفه بین‌المللی (دلار)"]];
+    labels.forEach(([market,currency,label])=>{
+      const item=allPrices.find(x=>x.market===market&&x.currency===currency);
+      const card=el("div","tariff-item");
+      card.append(el("b","",label));
+      card.append(el("strong","",item?new Intl.NumberFormat("fa-IR").format(Number(item.amount))+" "+currency:"به‌زودی"));
+      card.append(el("small","","جلسه ۴۵ دقیقه‌ای"));
+      target.append(card);
+    });
+    const updated=document.getElementById("yadTariffUpdated");
+    const latest=allPrices.map(x=>new Date(x.effective_from)).sort((a,b)=>b-a)[0];
+    if(updated)updated.textContent=latest?"آخرین به‌روزرسانی: "+latest.toLocaleDateString(document.documentElement.lang==="fa"?"fa-IR":"en-GB"):"تعرفه‌ها به‌زودی اعلام می‌شوند.";
+  }
+  function renderPublicContacts(){
+    const target=document.getElementById("yadPublicContacts");if(!target)return;
+    target.replaceChildren();
+    const links=[
+      ["whatsapp_number","واتساپ",v=>"https://wa.me/"+v.replace(/[^0-9]/g,"")],
+      ["instagram_url","اینستاگرام",v=>v],["telegram_url","تلگرام",v=>v],
+      ["youtube_url","یوتیوب",v=>v],["linkedin_url","لینکدین",v=>v],["facebook_url","فیسبوک",v=>v]
+    ];
+    links.forEach(([key,label,url])=>{const value=publicContacts[key];if(!value)return;const a=el("a","",label);a.href=url(value);a.target="_blank";a.rel="noopener noreferrer";target.append(a);});
+    if(publicContacts.contact_email){const a=el("a","","ایمیل");a.href="mailto:"+publicContacts.contact_email;target.append(a);}
+    if(!target.children.length)target.textContent="راه‌های ارتباطی رسمی پس از ثبت توسط مدیریت نمایش داده می‌شوند.";
+  }
+  document.getElementById("marketSelect")?.addEventListener("change",filterDirectory);
+  document.getElementById("internationalCurrency")?.addEventListener("change",filterDirectory);
   function filterDirectory(){
     const language=document.getElementById("language")?.value||"";
     const specialty=document.getElementById("specialty")?.value||"";
