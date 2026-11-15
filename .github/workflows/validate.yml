@@ -25,6 +25,7 @@ jobs:
           node --check therapist-profile.js
           node --check portal.js
           node --check site-i18n.js
+          node --check service-guides-i18n.js
           node --check admin-workflow.js
           node --check client-workflow.js
           node --check auth.js
