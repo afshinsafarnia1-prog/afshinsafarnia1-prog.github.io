@@ -1012,3 +1012,4 @@ grant execute on function public.get_public_therapist_rating_summary() to anon,a
 grant execute on function public.get_public_therapist_feedback(uuid) to anon,authenticated;
 grant execute on function public.get_public_therapist_public_metadata(uuid) to anon,authenticated;
 grant execute on function public.get_public_therapist_directory_metadata() to anon,authenticated;
+grant execute on function public.get_public_therapist_directory_metadata() to anon,authenticated;
