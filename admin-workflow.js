@@ -43,7 +43,7 @@
       const tariffs = data?.tariffs || [];
       const find = (market,currency) => tariffs.find(x=>x.market===market&&x.currency===currency);
       const iran=find("iran","IRR"),eur=find("international","EUR"),usd=find("international","USD");
-      if(iran)document.getElementById("yadTariffIRR").value=iran.amount;
+      if(iran)document.getElementById("yadTariffIRR").value=Number(iran.amount)/10;
       if(eur)document.getElementById("yadTariffEUR").value=eur.amount;
       if(usd)document.getElementById("yadTariffUSD").value=usd.amount;
       const base=iran||eur||usd;
@@ -74,7 +74,7 @@
           facebook_url:businessValue("yadContactFacebook")
         };
         const {error}=await db.rpc("admin_update_yad_business_settings",{
-          p_iran_irr:Number(businessValue("yadTariffIRR")),
+          p_iran_irr:Number(businessValue("yadTariffIRR"))*10,
           p_international_eur:Number(businessValue("yadTariffEUR")),
           p_international_usd:Number(businessValue("yadTariffUSD")),
           p_therapist_percent:therapistPercent,
@@ -160,8 +160,8 @@
         const add = value => { const td = document.createElement("td"); td.textContent = safe(value); tr.append(td); return td; };
         add(item.client_name);
         add(item.therapist_name);
-        add(new Intl.NumberFormat("fa-IR").format(Number(item.amount)) + " " + item.currency);
-        add(new Intl.NumberFormat("fa-IR").format(Number(item.therapist_share_amount)) + " / " + new Intl.NumberFormat("fa-IR").format(Number(item.platform_share_amount)));
+        add(new Intl.NumberFormat("fa-IR").format(item.currency==="IRR"?Number(item.amount)/10:Number(item.amount)) + (item.currency==="IRR"?" تومان":" "+item.currency));
+        add(new Intl.NumberFormat("fa-IR").format(item.currency==="IRR"?Number(item.therapist_share_amount)/10:Number(item.therapist_share_amount)) + " / " + new Intl.NumberFormat("fa-IR").format(item.currency==="IRR"?Number(item.platform_share_amount)/10:Number(item.platform_share_amount)));
         add(item.provider_reference || "—");
         add(item.request_status);
         add(item.payment_status || "—");
