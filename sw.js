@@ -24,6 +24,7 @@ const CORE_ASSETS = [
   "/articles/",
   "/articles/index.html",
   "/articles/psychotherapy-first-session.html",
+  "/articles/choosing-a-therapist.html",
   "/articles/therapeutic-relationship.html",
   "/articles/ai-robots-human-meaning.html"
 ];
