@@ -180,6 +180,25 @@ begin
 end;
 $function$;
 
+create or replace function public.admin_list_appointment_private_access()
+returns table(appointment_id uuid,client_name text,therapist_name text,starts_at timestamptz,ends_at timestamptz,appointment_status public.appointment_status,meeting_url text,meeting_password text)
+language plpgsql
+security definer
+set search_path=''
+as $function$
+begin
+  perform public.require_admin_aal2();
+  return query
+  select a.id,cp.display_name,t.display_name,a.starts_at,a.ends_at,a.status,x.meeting_url,x.meeting_password
+  from public.appointments a
+  join public.profiles cp on cp.id=a.client_id
+  join public.therapists t on t.id=a.therapist_id
+  left join public.appointment_private_access x on x.appointment_id=a.id
+  where a.status in ('confirmed','completed')
+  order by a.starts_at desc limit 200;
+end;
+$function$;
+
 create or replace function public.client_list_appointments()
 returns table(
   appointment_id uuid,therapist_name text,starts_at timestamptz,ends_at timestamptz,
@@ -389,6 +408,7 @@ $function$;
 revoke all on function public.admin_set_therapist_public_metadata(uuid,integer,text[],boolean) from public,anon;
 revoke all on function public.admin_list_therapist_public_metadata() from public,anon;
 revoke all on function public.admin_set_appointment_meeting(uuid,text,text) from public,anon;
+revoke all on function public.admin_list_appointment_private_access() from public,anon;
 revoke all on function public.client_list_appointments() from public,anon;
 revoke all on function public.client_submit_support_ticket(text,text,uuid,uuid) from public,anon;
 revoke all on function public.client_list_support_tickets() from public,anon;
@@ -402,6 +422,7 @@ revoke all on function public.get_public_therapist_feedback(uuid) from public;
 grant execute on function public.admin_set_therapist_public_metadata(uuid,integer,text[],boolean) to authenticated;
 grant execute on function public.admin_list_therapist_public_metadata() to authenticated;
 grant execute on function public.admin_set_appointment_meeting(uuid,text,text) to authenticated;
+grant execute on function public.admin_list_appointment_private_access() to authenticated;
 grant execute on function public.client_list_appointments() to authenticated;
 grant execute on function public.client_submit_support_ticket(text,text,uuid,uuid) to authenticated;
 grant execute on function public.client_list_support_tickets() to authenticated;
