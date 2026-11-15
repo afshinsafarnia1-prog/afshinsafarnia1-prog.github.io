@@ -108,11 +108,6 @@
       document.getElementById("yadLanguages").value = (t?.languages || ["fa"]).join(", ");
       document.getElementById("yadModalities").value = (t?.modalities || []).join("، ");
       document.getElementById("yadDuration").value = t?.session_duration_minutes || 50;
-      document.getElementById("yadFee").value = t?.fee_amount ?? "";
-      document.getElementById("yadIranFee").value = t?.iran_irr_fee ?? "";
-      document.getElementById("yadEurFee").value = t?.international_eur_fee ?? "";
-      document.getElementById("yadUsdFee").value = t?.international_usd_fee ?? "";
-      document.getElementById("yadCurrency").value = t?.fee_currency || "IRR";
       document.getElementById("yadLicense").value = t?.license_number || "";
       document.getElementById("yadAuthority").value = t?.issuing_authority || "";
       document.getElementById("yadVerified").checked = !!t?.verified;
@@ -341,13 +336,6 @@
         };
         const { data: savedId, error } = await db.rpc("admin_save_therapist", payload);
         if (error) throw error;
-        const { error: priceError } = await db.rpc("admin_set_therapist_prices", {
-          p_therapist_id: savedId,
-          p_iran_irr: val("yadIranFee") ? Number(val("yadIranFee")) : null,
-          p_international_eur: val("yadEurFee") ? Number(val("yadEurFee")) : null,
-          p_international_usd: val("yadUsdFee") ? Number(val("yadUsdFee")) : null
-        });
-        if (priceError) throw priceError;
         root.reset();
         fillForm(null);
         document.getElementById("yadExistingPhoto").value = "";
