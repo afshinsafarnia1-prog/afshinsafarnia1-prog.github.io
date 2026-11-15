@@ -171,6 +171,8 @@
       if (error) throw error;
       const { data: timezoneRows } = await db.rpc("admin_list_request_client_timezones");
       const timezoneByRequest = new Map((timezoneRows || []).map(item => [item.request_id, item.client_timezone]));
+      const { data: detailRows } = await db.rpc("admin_list_request_details");
+      const detailsByRequest = new Map((detailRows || []).map(item => [item.request_id, item.client_message]));
       requests.replaceChildren();
       if (!data?.length) {
         const tr = document.createElement("tr");
@@ -184,7 +186,9 @@
         tr.dataset.duration = String(item.session_duration_minutes || 45);
         tr.dataset.timezone = timezoneByRequest.get(item.request_id) || "Asia/Tehran";
         const add = value => { const td = document.createElement("td"); td.textContent = safe(value); tr.append(td); return td; };
-        add(item.client_name);
+        const clientCell=add(item.client_name);
+        const clientMessage=detailsByRequest.get(item.request_id);
+        if(clientMessage){const note=document.createElement("small");note.className="request-client-note";note.textContent=clientMessage;clientCell.append(document.createElement("br"),note);}
         add(item.therapist_name);
         add(new Intl.NumberFormat("fa-IR").format(item.currency==="IRR"?Number(item.amount)/10:Number(item.amount)) + (item.currency==="IRR"?" تومان":" "+item.currency));
         add(new Intl.NumberFormat("fa-IR").format(item.currency==="IRR"?Number(item.therapist_share_amount)/10:Number(item.therapist_share_amount)) + " / " + new Intl.NumberFormat("fa-IR").format(item.currency==="IRR"?Number(item.platform_share_amount)/10:Number(item.platform_share_amount)));
@@ -201,12 +205,35 @@
           reject.addEventListener("click", () => reviewPayment(item.payment_id, false));
           action.append(approve, reject);
         } else if (item.request_status === "payment_verified") {
-          const time = document.createElement("input");
-          time.type = "datetime-local"; time.setAttribute("aria-label", "زمان جلسه");
+          const slotSelect = document.createElement("select");
+          slotSelect.setAttribute("aria-label","زمان آزاد برای جلسه");
+          const placeholder=document.createElement("option");placeholder.value="";placeholder.textContent="در حال دریافت زمان‌های آزاد…";slotSelect.append(placeholder);
           const schedule = document.createElement("button");
-          schedule.type = "button"; schedule.className = "button primary"; schedule.textContent = "ثبت جلسه";
-          schedule.addEventListener("click", () => scheduleRequest(item.request_id, time.value));
-          action.append(time, schedule);
+          schedule.type = "button"; schedule.className = "button primary"; schedule.textContent = "ثبت جلسه از زمان آزاد";
+          const loadSlots = async () => {
+            const { data: slots, error: slotsError } = await db.rpc("admin_list_available_slots_for_request",{p_request_id:item.request_id});
+            slotSelect.replaceChildren();
+            const first=document.createElement("option");first.value="";first.textContent=slotsError?"خطا در دریافت زمان‌ها":(slots?.length?"انتخاب زمان آزاد":"زمان آزادی ثبت نشده است");slotSelect.append(first);
+            (slots||[]).forEach(slot=>{
+              const option=document.createElement("option");option.value=slot.slot_id;
+              const zone=slot.client_timezone||"Asia/Tehran";
+              option.textContent=new Intl.DateTimeFormat("fa-IR",{dateStyle:"medium",timeStyle:"short",timeZone:zone}).format(new Date(slot.starts_at))+" · "+zone;
+              slotSelect.append(option);
+            });
+            if(slotsError)setStatus(slotsError.message||"دریافت زمان آزاد ناموفق بود.",true);
+          };
+          loadSlots();
+          schedule.disabled=true;
+          slotSelect.addEventListener("change",()=>{schedule.disabled=!slotSelect.value;});
+          schedule.addEventListener("click",async()=>{
+            if(!slotSelect.value)return;
+            schedule.disabled=true;
+            const {error:scheduleError}=await db.rpc("admin_schedule_request_from_slot",{p_request_id:item.request_id,p_slot_id:slotSelect.value});
+            if(scheduleError){schedule.disabled=false;setStatus(scheduleError.message||"ثبت جلسه ناموفق بود.",true);return;}
+            setStatus("جلسه از ظرفیت آزاد انتخاب‌شده ثبت شد.");
+            await loadRequests();
+          });
+          action.append(slotSelect,schedule);
         } else if (item.request_status === "scheduled") {
           action.textContent = "جلسه ثبت شده";
         }
