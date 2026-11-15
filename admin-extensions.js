@@ -1,0 +1,150 @@
+(() => {
+  const ready = () => {
+    const sessionsRoot = document.getElementById("yadSessionAccessList");
+    if (!sessionsRoot || !window.supabase?.createClient) return;
+    const cfg = window.YAD_SUPABASE_CONFIG || {};
+    if (!cfg.url || !cfg.anonKey) return;
+    const db = window.supabase.createClient(cfg.url, cfg.anonKey);
+    const migrationHint = "برای فعال‌شدن این بخش، مهاجرت platform-completion-2026-11.sql باید پس از بررسی و تأیید روی پایگاه داده اعمال شود.";
+    const node = (tag, cls, value) => {
+      const el = document.createElement(tag);
+      if (cls) el.className = cls;
+      if (value != null) el.textContent = value;
+      return el;
+    };
+    const date = value => value ? new Intl.DateTimeFormat("fa-IR", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)) : "—";
+    const setStatus = (root, value, bad = false) => {
+      root.replaceChildren(node("p", bad ? "admin-error" : "muted", value));
+    };
+    async function verifyAdmin() {
+      const { data, error } = await db.auth.getSession();
+      if (error || !data.session) throw new Error("برای دسترسی به این بخش با حساب مدیر وارد شوید.");
+      const { data: assurance, error: assuranceError } = await db.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (assuranceError || assurance?.currentLevel !== "aal2") throw new Error("برای این عملیات ورود دومرحله‌ای (AAL2) لازم است.");
+      const { data: profile, error: profileError } = await db.from("profiles").select("role").eq("id", data.session.user.id).maybeSingle();
+      if (profileError || profile?.role !== "admin") throw new Error("دسترسی فقط برای مدیر یادسنتر مجاز است.");
+    }
+
+    async function loadSessions() {
+      const { data, error } = await db.rpc("admin_list_appointment_private_access");
+      sessionsRoot.replaceChildren();
+      if (error) { setStatus(sessionsRoot, migrationHint); return; }
+      if (!data?.length) { setStatus(sessionsRoot, "جلسهٔ تأییدشده‌ای برای مدیریت لینک وجود ندارد."); return; }
+      data.forEach(item => {
+        const card = node("article", "portal-card yad-session-admin-card");
+        card.append(node("h3", "", item.client_name + " · " + item.therapist_name));
+        card.append(node("p", "muted", date(item.starts_at) + " تا " + date(item.ends_at) + " · " + item.appointment_status));
+        const url = node("input"); url.type = "url"; url.required = true; url.maxLength = 1000;
+        url.placeholder = "لینک خصوصی جلسه با https://";
+        url.value = item.meeting_url || "";
+        url.setAttribute("aria-label", "لینک خصوصی جلسه");
+        const password = node("input"); password.type = "text"; password.maxLength = 160;
+        password.placeholder = "رمز جلسه (اختیاری)";
+        password.value = item.meeting_password || "";
+        password.setAttribute("aria-label", "رمز جلسه");
+        const save = node("button", "button primary", "ذخیرهٔ لینک خصوصی"); save.type = "button";
+        save.addEventListener("click", async () => {
+          if (!url.value.startsWith("https://")) { setStatus(sessionsRoot, "لینک جلسه باید با https:// آغاز شود.", true); return; }
+          save.disabled = true;
+          const { error: saveError } = await db.rpc("admin_set_appointment_meeting", {
+            p_appointment_id: item.appointment_id,
+            p_meeting_url: url.value.trim(),
+            p_meeting_password: password.value.trim() || null
+          });
+          save.disabled = false;
+          if (saveError) { setStatus(sessionsRoot, saveError.message || "ذخیرهٔ لینک ناموفق بود.", true); return; }
+          save.textContent = "ذخیره شد";
+          await loadSessions();
+        });
+        card.append(url, password, save);
+        if (item.appointment_status === "confirmed" && new Date(item.ends_at) <= new Date()) {
+          const complete = node("button", "button outline", "ثبت پایان جلسه"); complete.type = "button";
+          complete.addEventListener("click", async () => {
+            const { error: completeError } = await db.rpc("admin_mark_appointment_completed", { p_appointment_id: item.appointment_id });
+            if (completeError) { setStatus(sessionsRoot, completeError.message || "تغییر وضعیت ناموفق بود.", true); return; }
+            await loadSessions();
+          });
+          card.append(complete);
+        }
+        sessionsRoot.append(card);
+      });
+    }
+
+    async function loadSupport() {
+      const root = document.getElementById("yadSupportAdminList");
+      const { data, error } = await db.rpc("admin_list_support_tickets", { p_limit: 100 });
+      root.replaceChildren();
+      if (error) { setStatus(root, migrationHint); return; }
+      if (!data?.length) { setStatus(root, "درخواست پشتیبانی ثبت نشده است."); return; }
+      const labels = { cancellation: "لغو جلسه", reschedule: "تغییر زمان", complaint: "شکایت", therapist_change: "تغییر درمانگر", data_request: "اطلاعات حساب", other: "سایر" };
+      data.forEach(item => {
+        const card = node("article", "portal-card");
+        card.append(node("h3", "", (labels[item.ticket_type] || item.ticket_type) + " · " + item.client_name));
+        card.append(node("p", "", item.message));
+        card.append(node("small", "muted", date(item.created_at)));
+        const status = node("select");
+        [["new","جدید"],["in_review","در حال بررسی"],["resolved","رسیدگی شد"],["declined","پذیرفته نشد"]].forEach(([v,l]) => {
+          const o = node("option", "", l); o.value = v; status.append(o);
+        });
+        status.value = item.status;
+        const note = node("textarea"); note.rows = 3; note.maxLength = 2000; note.placeholder = "یادداشت یا پاسخ مدیریت (اختیاری)"; note.value = item.admin_note || "";
+        const save = node("button", "button primary", "ذخیرهٔ وضعیت"); save.type = "button";
+        save.addEventListener("click", async () => {
+          save.disabled = true;
+          const { error: updateError } = await db.rpc("admin_update_support_ticket", {
+            p_ticket_id: item.ticket_id, p_status: status.value, p_admin_note: note.value.trim() || null
+          });
+          save.disabled = false;
+          if (updateError) { setStatus(root, updateError.message || "ذخیرهٔ درخواست ناموفق بود.", true); return; }
+          await loadSupport();
+        });
+        card.append(status, note, save);
+        root.append(card);
+      });
+    }
+
+    async function loadFeedback() {
+      const root = document.getElementById("yadFeedbackAdminList");
+      const { data, error } = await db.rpc("admin_list_appointment_feedback", { p_limit: 100 });
+      root.replaceChildren();
+      if (error) { setStatus(root, migrationHint); return; }
+      if (!data?.length) { setStatus(root, "بازخوردی برای بررسی وجود ندارد."); return; }
+      data.forEach(item => {
+        const card = node("article", "portal-card");
+        card.append(node("h3", "", item.therapist_name + " · " + "★".repeat(item.rating)));
+        card.append(node("p", "", item.feedback || "بدون متن"));
+        card.append(node("small", "muted", date(item.created_at) + " · " + item.status));
+        const actions = node("div", "admin-actions");
+        [["published","انتشار"],["hidden","عدم انتشار"]].forEach(([value,label]) => {
+          const button = node("button", "button " + (value === "published" ? "primary" : "outline"), label);
+          button.type = "button";
+          button.addEventListener("click", async () => {
+            const { error: moderateError } = await db.rpc("admin_moderate_appointment_feedback", { p_feedback_id: item.feedback_id, p_status: value });
+            if (moderateError) { setStatus(root, moderateError.message || "ثبت تصمیم ناموفق بود.", true); return; }
+            await loadFeedback();
+          });
+          actions.append(button);
+        });
+        card.append(actions);
+        root.append(card);
+      });
+    }
+
+    document.getElementById("yadRefreshSessionAccess")?.addEventListener("click", loadSessions);
+    document.getElementById("yadRefreshSupport")?.addEventListener("click", loadSupport);
+    document.getElementById("yadRefreshFeedback")?.addEventListener("click", loadFeedback);
+    async function init() {
+      try {
+        await verifyAdmin();
+        await Promise.all([loadSessions(), loadSupport(), loadFeedback()]);
+      } catch (error) {
+        [sessionsRoot, document.getElementById("yadSupportAdminList"), document.getElementById("yadFeedbackAdminList")].filter(Boolean)
+          .forEach(root => setStatus(root, error.message, true));
+      }
+    }
+    db.auth.getSession().then(({ data }) => { if (data.session) init(); });
+    db.auth.onAuthStateChange((_event, session) => { if (session?.user) setTimeout(init, 0); });
+  };
+  if (document.readyState === "complete") ready();
+  else window.addEventListener("load", ready, { once: true });
+})();
