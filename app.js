@@ -68,7 +68,7 @@
       .order("display_name",{ascending:true});
     if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
     allTherapists=data||[];
-    const {data:publicMetadata}=await db.rpc("get_public_therapist_public_metadata");
+    const {data:publicMetadata}=await db.rpc("get_public_therapist_directory_metadata");
     if(Array.isArray(publicMetadata)){const byId=new Map(publicMetadata.map(x=>[x.therapist_id,x]));allTherapists=allTherapists.map(x=>({...x,...(byId.get(x.id)||{})}));}
     populateModalityFilter();
     const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
