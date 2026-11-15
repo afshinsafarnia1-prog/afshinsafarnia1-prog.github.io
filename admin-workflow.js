@@ -29,6 +29,63 @@
       if (profileError || profile?.role !== "admin") throw new Error("دسترسی فقط برای مدیر یادسنتر مجاز است.");
     }
 
+    const businessForm = document.getElementById("yadBusinessSettingsForm");
+    const businessStatus = document.getElementById("yadBusinessSettingsStatus");
+    const businessValue = id => document.getElementById(id)?.value?.trim() || "";
+    const setPlatformPercent = () => {
+      const therapist = Number(businessValue("yadTherapistPercent") || 70);
+      document.getElementById("yadPlatformPercent").value = String(100 - therapist);
+    };
+    async function loadBusinessSettings() {
+      if (!businessForm) return;
+      const { data, error } = await db.rpc("get_public_site_settings");
+      if (error) throw error;
+      const tariffs = data?.tariffs || [];
+      const find = (market,currency) => tariffs.find(x=>x.market===market&&x.currency===currency);
+      const iran=find("iran","IRR"),eur=find("international","EUR"),usd=find("international","USD");
+      if(iran)document.getElementById("yadTariffIRR").value=iran.amount;
+      if(eur)document.getElementById("yadTariffEUR").value=eur.amount;
+      if(usd)document.getElementById("yadTariffUSD").value=usd.amount;
+      const base=iran||eur||usd;
+      if(base)document.getElementById("yadTherapistPercent").value=base.therapist_percent;
+      const c=data?.contacts||{};
+      const fields={whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail",instagram_url:"yadContactInstagram",telegram_url:"yadContactTelegram",youtube_url:"yadContactYoutube",linkedin_url:"yadContactLinkedin",facebook_url:"yadContactFacebook"};
+      Object.entries(fields).forEach(([key,id])=>{document.getElementById(id).value=c[key]||"";});
+      const date=document.getElementById("yadTariffEffective");
+      if(!date.value){const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());date.value=now.toISOString().slice(0,16);}
+      setPlatformPercent();
+      businessStatus.textContent=tariffs.length?"تعرفه‌های فعلی بارگذاری شد.":"هنوز تعرفه‌ای ثبت نشده است؛ هر سه مبلغ را وارد کن.";
+    }
+    document.getElementById("yadTherapistPercent")?.addEventListener("input",setPlatformPercent);
+    businessForm?.addEventListener("submit",async event=>{
+      event.preventDefault();
+      businessStatus.textContent="در حال ذخیره تنظیمات…";
+      try{
+        const therapistPercent=Number(businessValue("yadTherapistPercent"));
+        const effective=new Date(businessValue("yadTariffEffective"));
+        if(!Number.isFinite(effective.getTime())||effective>new Date())throw new Error("تاریخ شروع اعتبار باید اکنون یا در گذشته باشد.");
+        const contacts={
+          whatsapp_number:businessValue("yadContactWhatsapp"),
+          contact_email:businessValue("yadContactEmail"),
+          instagram_url:businessValue("yadContactInstagram"),
+          telegram_url:businessValue("yadContactTelegram"),
+          youtube_url:businessValue("yadContactYoutube"),
+          linkedin_url:businessValue("yadContactLinkedin"),
+          facebook_url:businessValue("yadContactFacebook")
+        };
+        const {error}=await db.rpc("admin_update_yad_business_settings",{
+          p_iran_irr:Number(businessValue("yadTariffIRR")),
+          p_international_eur:Number(businessValue("yadTariffEUR")),
+          p_international_usd:Number(businessValue("yadTariffUSD")),
+          p_therapist_percent:therapistPercent,
+          p_effective_from:effective.toISOString(),
+          p_contacts:contacts
+        });
+        if(error)throw error;
+        businessStatus.textContent="تعرفه‌ها و اطلاعات تماس ذخیره شد. درخواست‌های قبلی بدون تغییر باقی می‌مانند.";
+      }catch(error){businessStatus.textContent=error.message||"ذخیره تنظیمات ناموفق بود.";}
+    });
+
     async function upload(bucket, file, oldPath) {
       if (!file) return oldPath || null;
       const clean = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-90);
@@ -296,6 +353,7 @@
         document.getElementById("yadExistingPhoto").value = "";
         document.getElementById("yadExistingDocument").value = "";
         setStatus("پروفایل درمانگر ذخیره شد.");
+        await loadBusinessSettings();
         await loadTherapists();
       } catch (error) {
         setStatus(error.message || "ذخیره پروفایل ناموفق بود.", true);
