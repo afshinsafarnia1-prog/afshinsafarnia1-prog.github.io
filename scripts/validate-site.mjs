@@ -93,6 +93,25 @@ for (const file of [".env", ".env.production"]) {
   if (fs.existsSync(path.join(root, file))) errors.push(`${file} must never be committed`);
 }
 
+
+const homepage = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const adminPage = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+const adminWorkflow = fs.readFileSync(path.join(root, "admin-workflow.js"), "utf8");
+const appScript = fs.readFileSync(path.join(root, "app.js"), "utf8");
+for (const [condition, message] of [
+  [homepage.includes('id="yadPublicTariffs"'), "Homepage must include the central tariff display"],
+  [homepage.includes('id="internationalCurrency"'), "Homepage must include EUR/USD selector"],
+  [homepage.includes('id="yadPublicContacts"'), "Homepage must include managed public contact links"],
+  [adminPage.includes('id="yadBusinessSettingsForm"'), "Admin must include central tariff/contact settings"],
+  [adminWorkflow.includes('admin_update_yad_business_settings'), "Admin workflow must save central tariffs"],
+  [adminWorkflow.includes('admin_update_yad_public_contacts'), "Admin workflow must save contact settings independently"],
+  [appScript.includes('get_public_site_settings'), "Homepage must load public settings through the scoped RPC"],
+  [!adminWorkflow.includes('admin_set_therapist_prices'), "Admin workflow must not save per-therapist prices"]
+]) if (!condition) errors.push(message);
+for (const file of ["supabase/central-tariffs-contacts-7030.sql", "supabase/admin-public-contacts-only.sql"]) {
+  if (!fs.existsSync(path.join(root, file))) errors.push(file + " is required");
+}
+
 if (errors.length) {
   console.error(errors.join("\n"));
   process.exit(1);
