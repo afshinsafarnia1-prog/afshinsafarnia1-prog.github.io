@@ -10,7 +10,7 @@
 
   const gate = document.createElement("section");
   gate.className = "portal-card auth-gate";
-  gate.innerHTML = '<span class="eyebrow">ورود امن به یادسنتر</span><h2>ورود به پنل '+labels[requiredRole]+'</h2><p class="auth-description">برای مشاهدهٔ فضای شخصی، ابتدا وارد حساب کاربری خود شوید.</p><div class="auth-fields"><label>ایمیل<input id="yadEmail" type="email" autocomplete="email" required></label><label>رمز عبور<input id="yadPassword" type="password" autocomplete="current-password" minlength="8" required></label><label id="yadNameLabel" hidden>نام نمایشی<input id="yadName" autocomplete="name"></label></div><div class="auth-actions"><button class="button primary" id="yadLogin">ورود</button><button class="button outline" id="yadSignup" type="button">ساخت حساب مراجع</button></div><section id="yadMfaPanel" class="portal-card" hidden><h3>تأیید دومرحله‌ای مدیر</h3><p id="yadMfaHelp">برای دسترسی به پنل مدیریت، کد برنامهٔ احراز هویت را وارد کنید.</p><div id="yadMfaQrWrap" hidden style="text-align:center;margin:16px 0"><img id="yadMfaQr" alt="QR code for authenticator setup" style="max-width:220px;width:100%;background:white;padding:10px;border-radius:12px"><p>اگر امکان اسکن QR ندارید، کلید راه‌اندازی را در برنامهٔ Authenticator به‌صورت دستی وارد کنید.</p><input id="yadMfaSecret" type="text" readonly aria-label="Authenticator setup key" style="width:100%;direction:ltr"></div><label>کد شش‌رقمی برنامهٔ Authenticator<input id="yadMfaCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" style="width:100%;padding:12px;direction:ltr"></label><button class="button primary" id="yadMfaVerify" type="button">تأیید کد و ادامه</button><button class="textlink" id="yadMfaLogout" type="button">خروج از حساب</button></section><p class="auth-status" id="yadAuthStatus" role="status" aria-live="polite"></p><button class="textlink" id="yadWrongRoleLogout" type="button" hidden>خروج از حساب فعلی</button><button class="textlink" id="yadReset" type="button">بازیابی رمز عبور</button><div class="notice auth-config-note" id="yadConfigNote" hidden>اتصال امن هنوز پیکربندی نشده است. پس از ایجاد پروژهٔ Supabase، فقط URL پروژه و کلید عمومی anon را در فایل supabase-config.js قرار دهید. کلید service-role هرگز نباید در مرورگر قرار گیرد.</div>';
+  gate.innerHTML = '<span class="eyebrow">ورود امن به یادسنتر</span><h2>ورود به پنل '+labels[requiredRole]+'</h2><p class="auth-description">برای مشاهدهٔ فضای شخصی، ابتدا وارد حساب کاربری خود شوید.</p><div class="auth-fields"><label>ایمیل<input id="yadEmail" type="email" autocomplete="email" required></label><label>رمز عبور<input id="yadPassword" type="password" autocomplete="current-password" minlength="8" required></label><label id="yadNameLabel" hidden>نام نمایشی<input id="yadName" autocomplete="name"></label></div><div class="auth-actions"><button class="button primary" id="yadLogin">ورود</button><button class="button outline" id="yadSignup" type="button">ساخت حساب مراجع</button></div><section id="yadMfaPanel" class="portal-card" hidden><h3>تأیید دومرحله‌ای مدیر</h3><p id="yadMfaHelp">برای دسترسی به پنل مدیریت، کد برنامهٔ احراز هویت را وارد کنید.</p><label id="yadMfaFactorLabel" hidden>انتخاب برنامهٔ احراز هویت<select id="yadMfaFactor" style="width:100%;padding:10px;margin-top:6px"></select></label><div id="yadMfaQrWrap" hidden style="text-align:center;margin:16px 0"><img id="yadMfaQr" alt="QR code for authenticator setup" style="max-width:220px;width:100%;background:white;padding:10px;border-radius:12px"><p>اگر امکان اسکن QR ندارید، کلید راه‌اندازی را در برنامهٔ Authenticator به‌صورت دستی وارد کنید.</p><input id="yadMfaSecret" type="text" readonly aria-label="Authenticator setup key" style="width:100%;direction:ltr"></div><label>کد شش‌رقمی برنامهٔ Authenticator<input id="yadMfaCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" style="width:100%;padding:12px;direction:ltr"></label><button class="button primary" id="yadMfaVerify" type="button">تأیید کد و ادامه</button><button class="button outline" id="yadMfaBackup" type="button" hidden>افزودن عامل پشتیبان</button><button class="textlink" id="yadMfaLogout" type="button">خروج از حساب</button></section><p class="auth-status" id="yadAuthStatus" role="status" aria-live="polite"></p><button class="textlink" id="yadWrongRoleLogout" type="button" hidden>خروج از حساب فعلی</button><button class="textlink" id="yadReset" type="button">بازیابی رمز عبور</button><div class="notice auth-config-note" id="yadConfigNote" hidden>اتصال امن هنوز پیکربندی نشده است. پس از ایجاد پروژهٔ Supabase، فقط URL پروژه و کلید عمومی anon را در فایل supabase-config.js قرار دهید. کلید service-role هرگز نباید در مرورگر قرار گیرد.</div>';
   wrap.prepend(gate);
   const status = gate.querySelector("#yadAuthStatus");
   const setStatus = (message, bad=false) => { status.textContent=message; status.dataset.error=bad?"true":"false"; };
@@ -34,11 +34,17 @@
   const mfaPanel = gate.querySelector("#yadMfaPanel");
   const mfaCode = gate.querySelector("#yadMfaCode");
   const mfaVerify = gate.querySelector("#yadMfaVerify");
+  const mfaFactorLabel = gate.querySelector("#yadMfaFactorLabel");
+  const mfaFactorSelect = gate.querySelector("#yadMfaFactor");
+  const mfaBackup = gate.querySelector("#yadMfaBackup");
   if (requiredRole !== "client") signup.hidden = true;
   let mode = "login";
   let pendingFactorId = null;
   let pendingChallengeId = null;
+  let verifiedFactors = [];
+  let canEnrollBackup = true;
   let mfaBusy = false;
+  mfaFactorSelect.addEventListener("change", () => { pendingFactorId = mfaFactorSelect.value || null; });
   const busy = value => { login.disabled=value; signup.disabled=value; };
   function showMfaPanel(help, setup) {
     gate.hidden = false;
@@ -48,6 +54,9 @@
     mfaPanel.hidden = false;
     gate.querySelector("#yadMfaHelp").textContent = help;
     gate.querySelector("#yadMfaQrWrap").hidden = !setup;
+    mfaFactorLabel.hidden = setup || verifiedFactors.length < 2;
+    mfaBackup.hidden = setup || !canEnrollBackup;
+    mfaBackup.disabled = !canEnrollBackup;
     mfaCode.value = "";
     setStatus("برای ادامه، احراز هویت دومرحله‌ای لازم است.");
     mfaCode.focus();
@@ -61,13 +70,23 @@
       if (assurance?.currentLevel === "aal2") return true;
       const {data: factorData, error: factorError} = await client.auth.mfa.listFactors();
       if (factorError) throw factorError;
-      const verified = (factorData?.totp || []).find(f => f.status === "verified");
-      if (verified) {
-        pendingFactorId = verified.id;
+      const allTotpFactors = factorData?.totp || [];
+      verifiedFactors = allTotpFactors.filter(f => f.status === "verified");
+      canEnrollBackup = allTotpFactors.length < 10;
+      if (verifiedFactors.length) {
+        mfaFactorSelect.replaceChildren();
+        verifiedFactors.forEach((factor, index) => {
+          const option = document.createElement("option");
+          option.value = factor.id;
+          option.textContent = factor.friendly_name || ("Authenticator " + (index + 1));
+          mfaFactorSelect.append(option);
+        });
+        pendingFactorId = verifiedFactors[0].id;
+        mfaFactorSelect.value = pendingFactorId;
         const {data: challenge, error: challengeError} = await client.auth.mfa.challenge({factorId:pendingFactorId});
         if (challengeError) throw challengeError;
         pendingChallengeId = challenge.id;
-        showMfaPanel("کد شش‌رقمی برنامهٔ Authenticator را وارد کنید تا ورود مدیر تکمیل شود.", false);
+        showMfaPanel("کد شش‌رقمی یکی از برنامه‌های Authenticator ثبت‌شده را وارد کنید. برای افزودن عامل پشتیبان، از دکمهٔ پایین استفاده کنید.", false);
         return false;
       }
       // Recover from an interrupted enrollment: Supabase retains an unverified
@@ -181,6 +200,40 @@
     if(refreshError || !refreshed.session){setStatus("تأیید انجام شد اما تازه‌سازی نشست ناموفق بود؛ صفحه را دوباره بارگذاری کنید.",true);return;}
     pendingFactorId=null;pendingChallengeId=null;
     await showSession(refreshed.session);
+  });
+  mfaBackup.addEventListener("click", async () => {
+    if (mfaBusy || !canEnrollBackup || !verifiedFactors.length) return;
+    mfaBusy = true;
+    mfaBackup.disabled = true;
+    try {
+      // Clear an abandoned, unverified enrollment before starting another one.
+      const {data: currentFactors, error: listError} = await client.auth.mfa.listFactors();
+      if (listError) throw listError;
+      const incomplete = (currentFactors?.totp || []).find(f => f.status === "unverified");
+      if (incomplete) await client.auth.mfa.unenroll({factorId:incomplete.id}).catch(() => null);
+      const friendlyName = "YAD Center Admin Backup " + new Date().toISOString().replace(/[:.]/g,"-");
+      const {data: enrollment, error: enrollmentError} = await client.auth.mfa.enroll({
+        factorType:"totp", friendlyName
+      });
+      if (enrollmentError) throw enrollmentError;
+      pendingFactorId = enrollment.id;
+      const qr = gate.querySelector("#yadMfaQr");
+      qr.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(enrollment.totp.qr_code);
+      gate.querySelector("#yadMfaSecret").value = enrollment.totp.secret;
+      const {data: challenge, error: challengeError} = await client.auth.mfa.challenge({factorId:pendingFactorId});
+      if (challengeError) throw challengeError;
+      pendingChallengeId = challenge.id;
+      showMfaPanel("این مرحله برای افزودن عامل پشتیبان است. QR را با یک دستگاه یا برنامهٔ Authenticator جداگانه اسکن کنید؛ کلید را امن و جدا از عامل اصلی نگه دارید، سپس کد شش‌رقمی را تأیید کنید.", true);
+    } catch (error) {
+      pendingFactorId = verifiedFactors[0]?.id || null;
+      mfaFactorSelect.value = pendingFactorId || "";
+      showMfaPanel("افزودن عامل پشتیبان کامل نشد. می‌توانید با عامل قبلی وارد شوید یا بعداً دوباره تلاش کنید.", false);
+      const detail = typeof error?.message === "string" ? error.message : "خطای نامشخص";
+      setStatus("افزودن عامل پشتیبان انجام نشد: " + detail, true);
+    } finally {
+      mfaBusy = false;
+      mfaBackup.disabled = !canEnrollBackup;
+    }
   });
   gate.querySelector("#yadMfaLogout").addEventListener("click",async()=>{
     const {error}=await client.auth.signOut();
