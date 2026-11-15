@@ -134,8 +134,8 @@ else {
     if (!html.includes('data-guide-content="' + page.replace(".html", "") + '"')) errors.push(page + " must expose its translation key");
     if (!html.includes('src="service-guides-i18n.js"')) errors.push(page + " must load the service guide translation script");
     for (const [tag, expected] of Object.entries(counts)) {
-      const article = html.match(/<article class="content-main"[^>]*>([\\s\\S]*?)<\\/article>/);
-      const actual = article ? [...article[1].matchAll(new RegExp("<" + tag + "\\\\b", "g"))].length : -1;
+      const article = html.match(/<article class="content-main"[^>]*>([\s\S]*?)<\/article>/);
+      const actual = article ? [...article[1].matchAll(new RegExp("<" + tag + "\\b", "g"))].length : -1;
       if (actual !== expected) errors.push(page + " expected " + expected + " " + tag + " elements; found " + actual);
     }
     if (!guideScript.includes(page.replace(".html", "") + ':{')) errors.push("English guide translation missing: " + page);
