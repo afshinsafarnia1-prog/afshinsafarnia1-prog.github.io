@@ -28,6 +28,8 @@ jobs:
           node --check service-guides-i18n.js
           node --check admin-workflow.js
           node --check client-workflow.js
+          node --check client-extensions.js
+          node --check admin-extensions.js
           node --check auth.js
       - name: Check Supabase schema security guardrails
         run: node scripts/validate-schema.mjs
