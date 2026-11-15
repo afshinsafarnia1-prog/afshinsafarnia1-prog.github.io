@@ -917,6 +917,20 @@ begin
 end;
 $function$;
 
+create or replace function public.get_public_therapist_rating_summary()
+returns table(therapist_id uuid,average_rating numeric,review_count bigint)
+language sql
+stable
+security definer
+set search_path=''
+as $function$
+  select f.therapist_id,round(avg(f.rating)::numeric,1),count(*)::bigint
+  from public.client_appointment_feedback f
+  join public.therapists t on t.id=f.therapist_id and t.is_listed and t.verified_at is not null
+  where f.status='published'
+  group by f.therapist_id;
+$function$;
+
 create or replace function public.get_public_therapist_feedback(p_therapist_id uuid)
 returns table(rating integer,feedback text,created_at timestamptz)
 language sql
@@ -962,6 +976,7 @@ revoke all on function public.admin_mark_appointment_completed(uuid) from public
 revoke all on function public.client_submit_appointment_feedback(uuid,integer,text) from public,anon;
 revoke all on function public.admin_list_appointment_feedback(integer) from public,anon;
 revoke all on function public.admin_moderate_appointment_feedback(uuid,text) from public,anon;
+revoke all on function public.get_public_therapist_rating_summary() from public;
 revoke all on function public.get_public_therapist_feedback(uuid) from public;
 revoke all on function public.get_public_therapist_public_metadata(uuid) from public;
 revoke all on function public.get_public_therapist_directory_metadata() from public;
@@ -993,6 +1008,7 @@ grant execute on function public.admin_mark_appointment_completed(uuid) to authe
 grant execute on function public.client_submit_appointment_feedback(uuid,integer,text) to authenticated;
 grant execute on function public.admin_list_appointment_feedback(integer) to authenticated;
 grant execute on function public.admin_moderate_appointment_feedback(uuid,text) to authenticated;
+grant execute on function public.get_public_therapist_rating_summary() to anon,authenticated;
 grant execute on function public.get_public_therapist_feedback(uuid) to anon,authenticated;
 grant execute on function public.get_public_therapist_public_metadata(uuid) to anon,authenticated;
 grant execute on function public.get_public_therapist_directory_metadata() to anon,authenticated;
