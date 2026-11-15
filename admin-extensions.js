@@ -93,7 +93,7 @@
       if (error) { setStatus(root, migrationHint); return; }
       if (!data?.length) { setStatus(root, "درخواست پشتیبانی ثبت نشده است."); return; }
       const labels = { cancellation: "لغو جلسه", reschedule: "تغییر زمان", complaint: "شکایت", therapist_change: "تغییر درمانگر", data_request: "اطلاعات حساب", account_deletion: "حذف حساب", other: "سایر" };
-      data.forEach(item => {
+      for (const item of data) {
         const card = node("article", "portal-card");
         card.append(node("h3", "", (labels[item.ticket_type] || item.ticket_type) + " · " + item.client_name));
         card.append(node("p", "", item.message));
@@ -178,7 +178,7 @@
           card.append(select, change);
         }
         root.append(card);
-      });
+      }
     }
 
     async function loadFeedback() {
