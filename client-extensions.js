@@ -153,7 +153,7 @@
       }
       data.forEach(item => {
         const card = node("article", "portal-card");
-        const typeNames = { cancellation: "لغو جلسه", reschedule: "تغییر زمان", complaint: "شکایت", therapist_change: "تغییر درمانگر", data_request: "درخواست اطلاعات حساب", other: "سایر" };
+        const typeNames = { cancellation: "لغو جلسه", reschedule: "تغییر زمان", complaint: "شکایت", therapist_change: "تغییر درمانگر", data_request: "درخواست اطلاعات حساب", account_deletion: "درخواست حذف حساب", other: "سایر" };
         card.append(node("b", "", typeNames[item.ticket_type] || item.ticket_type));
         card.append(node("p", "", item.message));
         card.append(node("span", "status-chip", ({new:"جدید",in_review:"در حال بررسی",resolved:"رسیدگی شد",declined:"پذیرفته نشد"})[item.status] || item.status));
