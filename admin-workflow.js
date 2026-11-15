@@ -403,6 +403,7 @@
         const { data: savedId, error } = await db.rpc("admin_save_therapist", payload);
         if (error) throw error;
         const metadataId = savedId || val("yadTherapistId");
+        let metadataWarning = false;
         if (metadataId) {
           const { error: metadataError } = await db.rpc("admin_set_therapist_public_metadata", {
             p_therapist_id: metadataId,
@@ -410,13 +411,13 @@
             p_practice_jurisdictions: split(val("yadJurisdictions")).map(code => code.toUpperCase()),
             p_accepting_new_clients: document.getElementById("yadAcceptingNewClients").checked
           });
-          if (metadataError) throw new Error("پروفایل اصلی ذخیره شد؛ اما اطلاعات سابقه، قلمرو فعالیت و پذیرش مراجع ذخیره نشد. مهاجرت تکمیلی پایگاه داده را بررسی کنید.");
+          if (metadataError) metadataWarning = true;
         }
         root.reset();
         fillForm(null);
         document.getElementById("yadExistingPhoto").value = "";
         document.getElementById("yadExistingDocument").value = "";
-        setStatus("پروفایل درمانگر ذخیره شد.");
+        setStatus(metadataWarning ? "پروفایل اصلی ذخیره شد؛ اطلاعات سابقه، قلمرو فعالیت و پذیرش مراجع پس از اعمال مهاجرت تکمیلی ذخیره می‌شود." : "پروفایل درمانگر ذخیره شد.");
         await loadBusinessSettings();
         await loadTherapists();
       } catch (error) {
