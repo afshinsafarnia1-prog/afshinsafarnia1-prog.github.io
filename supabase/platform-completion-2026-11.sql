@@ -712,7 +712,7 @@ begin
   end if;
   if v_request_id is null then raise exception 'request_not_found' using errcode='P0002'; end if;
   select p.country_code into v_country from public.profiles p join public.client_requests r on r.client_id=p.id where r.id=v_request_id;
-  if not exists(select 1 from public.therapists t where t.id=p_new_therapist_id and t.is_listed and t.verified_at is not null and v_country=any(t.practice_jurisdictions)) then
+  if not exists(select 1 from public.therapists t where t.id=p_new_therapist_id and t.is_listed and t.verified_at is not null and t.accepting_new_clients and v_country=any(t.practice_jurisdictions)) then
     raise exception 'therapist_not_authorized_for_client_location' using errcode='42501';
   end if;
   if v_ticket.appointment_id is not null then
