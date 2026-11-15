@@ -391,6 +391,18 @@ begin
 end;
 $function$;
 
+create or replace function public.get_public_therapist_public_metadata(p_therapist_id uuid)
+returns table(years_experience integer,practice_jurisdictions text[],accepting_new_clients boolean)
+language sql
+stable
+security definer
+set search_path=''
+as $function$
+  select t.years_experience,t.practice_jurisdictions,t.accepting_new_clients
+  from public.therapists t
+  where t.id=p_therapist_id and t.is_listed and t.verified_at is not null;
+$function$;
+
 create or replace function public.get_public_therapist_feedback(p_therapist_id uuid)
 returns table(rating integer,feedback text,created_at timestamptz)
 language sql
@@ -419,6 +431,7 @@ revoke all on function public.client_submit_appointment_feedback(uuid,integer,te
 revoke all on function public.admin_list_appointment_feedback(integer) from public,anon;
 revoke all on function public.admin_moderate_appointment_feedback(uuid,text) from public,anon;
 revoke all on function public.get_public_therapist_feedback(uuid) from public;
+revoke all on function public.get_public_therapist_public_metadata(uuid) from public;
 grant execute on function public.admin_set_therapist_public_metadata(uuid,integer,text[],boolean) to authenticated;
 grant execute on function public.admin_list_therapist_public_metadata() to authenticated;
 grant execute on function public.admin_set_appointment_meeting(uuid,text,text) to authenticated;
@@ -433,3 +446,4 @@ grant execute on function public.client_submit_appointment_feedback(uuid,integer
 grant execute on function public.admin_list_appointment_feedback(integer) to authenticated;
 grant execute on function public.admin_moderate_appointment_feedback(uuid,text) to authenticated;
 grant execute on function public.get_public_therapist_feedback(uuid) to anon,authenticated;
+grant execute on function public.get_public_therapist_public_metadata(uuid) to anon,authenticated;
