@@ -54,7 +54,7 @@ if (!fs.existsSync(sitemapPath)) {
   const sitemap = fs.readFileSync(sitemapPath, "utf8");
   if (sitemap.includes("YOUR-DOMAIN.example")) errors.push("sitemap.xml still contains a placeholder domain");
   if (!sitemap.includes("<urlset") || !sitemap.includes("<loc>https://")) errors.push("sitemap.xml has no valid URL entries");
-  for (const page of ["/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/relationships.html"]) {
+  for (const page of ["/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/relationships.html", "/articles/choosing-a-therapist.html"]) {
     if (!sitemap.includes(page)) errors.push("sitemap.xml is missing public guide: " + page);
   }
   for (const privatePage of ["/admin.html", "/client.html"]) {
@@ -100,6 +100,9 @@ const adminWorkflow = fs.readFileSync(path.join(root, "admin-workflow.js"), "utf
 const appScript = fs.readFileSync(path.join(root, "app.js"), "utf8");
 for (const [condition, message] of [
   [homepage.includes('id="yadPublicTariffs"'), "Homepage must include the central tariff display"],
+  [homepage.includes('id="faq"') && homepage.includes('class="faq-list"'), "Homepage must include its practical FAQ section"],
+  [homepage.includes('articles/choosing-a-therapist.html'), "Homepage must link to the therapist-selection guide"],
+  [appScript.includes('.select("id,display_name,headline,specialties,languages,photo_path")'), "Public therapist directory must request only fields used by its cards"],
   [homepage.includes('id="internationalCurrency"'), "Homepage must include EUR/USD selector"],
   [homepage.includes('id="yadPublicContacts"'), "Homepage must include managed public contact links"],
   [adminPage.includes('id="yadBusinessSettingsForm"'), "Admin must include central tariff/contact settings"],
