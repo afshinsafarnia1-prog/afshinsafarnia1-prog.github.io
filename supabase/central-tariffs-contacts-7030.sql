@@ -112,6 +112,9 @@ begin
   if v_effective > now() then
     raise exception 'future_tariff_activation_not_supported_yet' using errcode='22023';
   end if;
+  if exists(select 1 from public.yad_tariff_history where is_current and effective_from > v_effective) then
+    raise exception 'tariff_effective_date_cannot_precede_current_tariff' using errcode='22023';
+  end if;
   if length(coalesce(v_contact->>'whatsapp_number','')) > 40
      or length(coalesce(v_contact->>'contact_email','')) > 254 then
     raise exception 'contact_field_too_long' using errcode='22023';
