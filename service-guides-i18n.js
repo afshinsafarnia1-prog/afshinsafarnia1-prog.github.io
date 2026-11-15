@@ -174,6 +174,236 @@ li:["تحقق من التدريب والخبرة المتخصصين في الع�
 }
 }
 };
+Object.assign(localized,{
+es:{
+psychology:{
+h2:["¿En qué puede ayudar un psicólogo o consejero?","¿Qué áreas abarca la psicología?","¿Cuándo puede ser útil buscar apoyo profesional?","¿Psicólogo, psicoterapeuta o psiquiatra?","Para ampliar la lectura"],
+h3:["Psicología clínica","Psicología de la salud","Psicología infantil y adolescente","Psicología familiar y de las relaciones","Psicología organizacional y del trabajo","Evaluación psicológica"],
+p:[
+"Según su formación, acreditaciones y ámbito de práctica, un psicólogo o consejero puede evaluar, abordar dificultades personales e interpersonales, ofrecer orientación o intervenciones terapéuticas y derivar a otro profesional cuando proceda. Los títulos y competencias varían entre países; compruebe las credenciales y la licencia.",
+"No es necesario acudir con un diagnóstico. Sentirse desbordado, los conflictos repetidos, la dificultad para decidir, los cambios de ánimo, la ansiedad, el duelo, el estrés laboral o los problemas familiares y de pareja pueden ser motivos válidos para consultar.",
+"Evaluación e intervención ante dificultades emocionales, cognitivas y conductuales, teniendo en cuenta su intensidad, duración e impacto cotidiano.",
+"Exploración de los vínculos entre experiencias psicológicas, conductas relacionadas con la salud, enfermedad física y adaptación al tratamiento.",
+"Atención al desarrollo, las emociones, el aprendizaje y la conducta del niño o adolescente, así como a su contexto familiar y escolar.",
+"Comprensión de los patrones de comunicación, los conflictos, los límites, el apego y los cambios a lo largo del ciclo familiar.",
+"Análisis de la experiencia laboral, el agotamiento, las relaciones profesionales, la motivación y el ajuste entre la persona y su entorno de trabajo.",
+"Uso responsable de entrevistas e instrumentos validados para responder a una pregunta concreta, con interpretación de un profesional cualificado.",
+"Puede ser útil consultar cuando el malestar persiste, afecta al funcionamiento diario o a las relaciones, las estrategias habituales ya no bastan o la persona siente que necesita apoyo especializado. No hace falta esperar a una crisis.",
+"Al elegir un servicio, considere el motivo de consulta, la edad, el idioma, la experiencia y las credenciales del profesional, su enfoque, la confidencialidad, el coste y las opciones de derivación. Las decisiones se toman mejor de forma compartida, tras hablar de opciones, beneficios y límites.",
+"Estos títulos no son intercambiables. Los psicólogos trabajan en distintas áreas según su formación; los psicoterapeutas tienen formación especializada en psicoterapia; y los psiquiatras son médicos especialistas que pueden realizar evaluaciones médicas y prescribir medicación cuando está indicada. Algunas personas tienen más de una titulación. Consulte nuestras guías de <a href=\"psychotherapy.html\">psicoterapia</a> y <a href=\"psychiatry.html\">psiquiatría</a>.",
+"Estos recursos son informativos. La regulación profesional y las vías de derivación pueden variar según el país donde se presta la atención."
+],
+li:["Organización Mundial de la Salud: Salud mental","NICE: Toma de decisiones compartida en la atención sanitaria","Royal College of Psychiatrists: Diferencias entre psiquiatras, psicólogos y psicoterapeutas"]
+},
+psychotherapy:{
+h2:["¿Qué puede abordar la psicoterapia?","Algunos enfoques terapéuticos reconocidos","¿Qué conviene preguntar en la primera sesión?","¿Cuándo puede no bastar la psicoterapia por sí sola?","Investigación y orientación clínica"],
+h3:["Psicoterapia psicodinámica y psicoanalítica","Terapia cognitivo-conductual (TCC)","Psicoterapia interpersonal (TIP)","Enfoques basados en mindfulness y de tercera ola","Terapia de pareja y familiar","Enfoques humanistas y experienciales"],
+p:[
+"La terapia puede abordar síntomas como la ansiedad o el bajo estado de ánimo. Muchos enfoques también exploran el significado de la experiencia, las formas de relacionarse, los patrones repetidos, los recursos personales y el contexto vital. Los objetivos se acuerdan con la persona y se revisan durante el proceso.",
+"La psicoterapia no garantiza cambios inmediatos ni iguales para todos. Importan la calidad de la relación terapéutica, la competencia y supervisión del terapeuta, el ajuste del enfoque a las necesidades y circunstancias de la persona y la posibilidad de colaborar.",
+"Estos enfoques atienden a la experiencia emocional, los conflictos, los patrones relacionales, los procesos inconscientes y las repeticiones significativas en la vida y en la relación terapéutica. La duración y el formato pueden variar.",
+"La TCC aborda las conexiones entre pensamientos, emociones y conductas, y suele organizarse mediante objetivos claros, ejercicios y estrategias estructuradas.",
+"La TIP se centra en la relación entre los síntomas y el contexto interpersonal, incluido el duelo, los conflictos y los cambios en los roles vitales.",
+"Estos enfoques pueden utilizar la atención consciente, la aceptación y una relación distinta con las experiencias internas. Sus métodos y bases de evidencia no son idénticos.",
+"Estos enfoques exploran los patrones de interacción, los ciclos de conflicto, los límites y el contexto relacional; pueden participar la pareja o miembros de la familia.",
+"Estos enfoques destacan la experiencia vivida, una relación terapéutica auténtica, el sentido, la elección y la capacidad de crecimiento de la persona.",
+"Una etiqueta terapéutica no garantiza por sí sola la calidad. Las guías clínicas recomiendan intervenciones distintas según la dificultad. La elección debe considerar la evidencia, las circunstancias y preferencias de la persona y las credenciales del terapeuta.",
+"Las personas atendidas pueden preguntar cómo se desarrolla la terapia, conocer sus opciones y participar en las decisiones. NICE destaca la conversación clara sobre objetivos, preferencias, beneficios y limitaciones.",
+"En algunos casos también puede ser necesaria una evaluación médica o psiquiátrica, atención multidisciplinar o apoyo urgente. La psicoterapia y la medicación no son necesariamente alternativas y pueden combinarse. Las decisiones sobre medicación corresponden a un médico cualificado.",
+"Esta página es una introducción educativa, no una guía para elegir tratamiento para un diagnóstico concreto. Las recomendaciones deben contrastarse con las guías vigentes, el país donde se presta la atención y una evaluación individual."
+],
+li:["¿Tiene el terapeuta formación y experiencia pertinentes para mi motivo de consulta?","¿Cuál es su enfoque y cómo suelen desarrollarse las sesiones?","¿Qué acuerdo existe sobre la confidencialidad y sus límites?","¿Cuáles son el coste, la duración, la política de cancelación y los medios de contacto?","¿Cómo revisaremos juntos los objetivos y el progreso?","¿Qué ocurre si este tratamiento no parece adecuado?","WHO mhGAP: Intervenciones psicológicas estructuradas para la depresión","NICE: Recomendaciones sobre decisiones compartidas","OMS: Intervenciones psicológicas"]
+},
+psychiatry:{
+h2:["¿Qué hace un psiquiatra?","¿Cuándo es importante una evaluación psiquiátrica?","¿Qué diferencia hay entre psiquiatra, psicólogo y psicoterapeuta?","¿Pueden combinarse psicoterapia y medicación?","Para ampliar la lectura"],
+h3:["Psiquiatra","Psicólogo","Psicoterapeuta"],
+p:[
+"La evaluación psiquiátrica suele incluir los síntomas, cuándo comenzaron y cómo han cambiado, la salud física, el sueño, la medicación actual, los antecedentes personales y familiares y el impacto cotidiano. El médico puede recomendar pruebas adicionales o colaboración con otros profesionales.",
+"El psiquiatra puede prescribir medicación y revisar sus efectos, posibles efectos adversos y la necesidad de seguimiento. No todo el mundo necesita medicación. La decisión debe basarse en la evaluación médica, la evidencia, las preferencias de la persona y el equilibrio entre beneficios y riesgos. No inicie, suspenda ni cambie una dosis sin consultar al prescriptor.",
+"La evaluación puede ser importante si los síntomas son graves o persistentes, afectan mucho al funcionamiento, pueden intervenir factores físicos o farmacológicos, hay antecedentes de episodios intensos del estado de ánimo o experiencias perceptivas inusuales, o surgen dudas sobre la medicación. No es una lista diagnóstica: la necesidad depende de cada caso.",
+"Si existen pensamientos o conductas con riesgo inmediato de daño para usted u otra persona, o no puede mantenerse a salvo, no espere una cita ordinaria. Contacte con los servicios de urgencia o crisis de su zona.",
+"Es un médico especialista en salud mental que realiza evaluaciones médicas y puede prescribir medicación cuando está indicada.",
+"Tiene formación universitaria en conducta, cognición, emociones y relaciones. Los servicios que puede ofrecer, incluido el diagnóstico o tratamiento cuando esté permitido, dependen de su especialidad y licencia.",
+"Es una persona con formación especializada en psicoterapia. Su profesión de origen puede ser la psicología, la psiquiatría u otra disciplina relacionada; conviene comprobar su formación adicional y acreditaciones.",
+"Los límites legales de estas profesiones varían entre países. El título por sí solo no basta: compruebe la licencia vigente, la formación pertinente y la experiencia profesional.",
+"Sí. Para algunas personas, combinar atención médica, medicación, psicoterapia y apoyo social puede formar parte del plan; para otras será más adecuada otra intervención. Depende del diagnóstico, la intensidad y evolución de los síntomas, la salud física, las preferencias y las guías clínicas.",
+"Si trabaja con un psiquiatra y un psicoterapeuta, puede hablar del cuidado coordinado y de compartir la información necesaria con su consentimiento. La confidencialidad y sus límites deben quedar claros.",
+"La información de esta página es general. El diagnóstico y las decisiones sobre medicación requieren una evaluación clínica de un médico debidamente cualificado."
+],
+li:["Royal College of Psychiatrists: Diferencias entre psiquiatras, psicólogos y psicoterapeutas","Organización Mundial de la Salud: Trastornos mentales y opciones de tratamiento","WHO mhGAP: Intervenciones psicosociales para psicosis y trastorno bipolar"]
+},
+relationships:{
+h2:["¿En qué puede ayudar la terapia de pareja?","¿En qué se diferencia la terapia familiar?","¿Qué puede explorarse en una relación?","¿Cómo elegir un terapeuta de pareja o familia?","Nota importante sobre violencia y control coercitivo","Para ampliar la lectura"],
+h3:["Ciclos de conflicto","Comunicación y sentirse escuchado","Apego y seguridad emocional","Límites y roles"],
+p:[
+"Las parejas pueden buscar apoyo por conflictos repetidos, distancia emocional, dificultades de comunicación, pérdida de confianza, cambios vitales, decisiones sobre continuar la relación o el impacto de una dificultad individual en la vida compartida. El terapeuta no decide por la pareja ni asigna culpas; ayuda a comprender los patrones de interacción y las necesidades de cada persona y a explorar un diálogo más constructivo.",
+"En algunas circunstancias, el trabajo individual junto con las sesiones conjuntas o en lugar de ellas puede ser más adecuado. El formato se decide tras evaluar la situación y considerar los deseos y la seguridad de quienes participan.",
+"En terapia familiar, las dificultades individuales se consideran dentro de las relaciones y el contexto familiar. Según el motivo, pueden participar niños, adolescentes, padres u otros familiares. Se pueden abordar conflictos entre padres e hijos, transiciones familiares, duelo, enfermedad, límites y comunicación.",
+"El terapeuta debe aclarar desde el principio quién se considera cliente, cómo se protegerá la confidencialidad y qué normas se aplican si los familiares comparten información diferente en sesiones individuales.",
+"Compruebe la formación y experiencia específicas con parejas o familias; la experiencia en terapia individual no equivale a formación en terapia de pareja.",
+"Pregunte por la confidencialidad, las posibles sesiones individuales y cómo se gestiona la información de cada persona.",
+"Aclare el enfoque del terapeuta, los objetivos iniciales, los honorarios, la duración y la política de cancelación.",
+"Pregunte qué ocurre si una persona no quiere continuar o surge un asunto fuera de la competencia del terapeuta.",
+"La participación debe ser voluntaria. Si alguien se siente presionado u obligado a asistir, conviene abordar esta cuestión antes de empezar.",
+"Si hay amenazas, violencia, miedo a sufrir daño, control coercitivo o riesgo para un menor, las sesiones conjuntas pueden no ser seguras ni adecuadas. Es importante una evaluación confidencial de seguridad y apoyo especializado independiente. Ante peligro inmediato, contacte con los servicios de emergencia locales.",
+"Estos recursos proceden de organizaciones profesionales y servicios sanitarios del Reino Unido y Estados Unidos. Los títulos y las normas profesionales no son iguales en todos los países."
+],
+li:["Compruebe la formación y experiencia específicas con parejas o familias; la experiencia en terapia individual no equivale a formación en terapia de pareja.","Pregunte por la confidencialidad, las posibles sesiones individuales y cómo se gestiona la información de cada persona.","Aclare el enfoque del terapeuta, los objetivos iniciales, los honorarios, la duración y la política de cancelación.","Pregunte qué ocurre si una persona no quiere continuar o surge un asunto fuera de la competencia del terapeuta.","BACP: Cómo buscar terapia de pareja","BACP: Terapia de pareja y confidencialidad","AAMFT: Información sobre terapeutas matrimoniales y familiares","NHS: Asesoramiento y cómo se presta"]
+}
+},
+de:{
+psychology:{
+h2:["Wobei können Psychologinnen, Psychologen oder Beratende helfen?","Welche Bereiche umfasst die Psychologie?","Wann kann professionelle Unterstützung sinnvoll sein?","Psychologe, Psychotherapeut oder Psychiater?","Weiterführende Informationen"],
+h3:["Klinische Psychologie","Gesundheitspsychologie","Kinder- und Jugendpsychologie","Familien- und Beziehungspsychologie","Arbeits- und Organisationspsychologie","Psychologische Diagnostik"],
+p:[
+"Je nach Ausbildung, Qualifikation und Tätigkeitsbereich können Psychologinnen, Psychologen oder Beratende psychologische Einschätzungen vornehmen, persönliche und zwischenmenschliche Schwierigkeiten besprechen, Beratung oder therapeutische Interventionen anbieten und bei Bedarf an andere Fachpersonen verweisen. Berufsbezeichnungen und Befugnisse unterscheiden sich je nach Land; prüfen Sie daher Qualifikationen und Zulassung.",
+"Eine eindeutige Diagnose ist keine Voraussetzung. Überforderung, wiederkehrende Konflikte, Entscheidungsschwierigkeiten, Stimmungsschwankungen, Angst, Trauer, berufliche Belastung oder familiäre und partnerschaftliche Probleme können ein guter Anlass für ein Gespräch sein.",
+"Abklärung und Behandlung emotionaler, kognitiver und verhaltensbezogener Schwierigkeiten unter Berücksichtigung von Schweregrad, Dauer und Auswirkungen auf den Alltag.",
+"Untersuchung der Zusammenhänge zwischen psychischem Erleben, gesundheitsbezogenem Verhalten, körperlichen Erkrankungen und der Anpassung an Behandlungen.",
+"Berücksichtigung der Entwicklung, Gefühle, des Lernens und Verhaltens von Kindern und Jugendlichen sowie ihres familiären und schulischen Umfelds.",
+"Verständnis von Kommunikationsmustern, Konflikten, Grenzen, Bindung und Veränderungen im Verlauf des Familienlebens.",
+"Untersuchung von Arbeitserfahrungen, Erschöpfung, beruflichen Beziehungen, Motivation und der Passung zwischen Person und Arbeitsumfeld.",
+"Verantwortungsvoller Einsatz von Gesprächen und validierten Instrumenten zur Klärung einer konkreten Fragestellung; die Auswertung erfolgt durch qualifizierte Fachpersonen.",
+"Wenn psychische Belastungen anhalten, den Alltag oder Beziehungen beeinträchtigen, gewohnte Bewältigungsstrategien nicht mehr ausreichen oder der Wunsch nach fachlicher Unterstützung besteht, kann ein Gespräch hilfreich sein. Eine Krise muss nicht abgewartet werden.",
+"Berücksichtigen Sie bei der Wahl eines Angebots das Anliegen, Alter und Sprache, Erfahrung und Qualifikation der Fachperson, deren Arbeitsweise, Vertraulichkeit, Kosten und Weiterverweisungsmöglichkeiten. Entscheidungen sollten gemeinsam und nach Besprechung von Möglichkeiten, Nutzen und Grenzen getroffen werden.",
+"Die Berufsbezeichnungen sind nicht gleichbedeutend. Psychologinnen und Psychologen arbeiten je nach Ausbildung in unterschiedlichen psychologischen Bereichen; Psychotherapeutinnen und Psychotherapeuten verfügen über eine spezielle Psychotherapieausbildung; Psychiaterinnen und Psychiater sind Fachärzte, die medizinisch untersuchen und bei Bedarf Medikamente verordnen können. Manche Personen besitzen mehrere Qualifikationen. Lesen Sie auch unsere Informationen zu <a href=\"psychotherapy.html\">Psychotherapie</a> und <a href=\"psychiatry.html\">Psychiatrie</a>.",
+"Diese Informationen dienen der allgemeinen Orientierung. Berufsrechtliche Regelungen und Überweisungswege können je nach Land unterschiedlich sein."
+],
+li:["Weltgesundheitsorganisation: Psychische Gesundheit","NICE: Gemeinsame Entscheidungsfindung im Gesundheitswesen","Royal College of Psychiatrists: Unterschiede zwischen Psychiatern, Psychologen und Psychotherapeuten"]
+},
+psychotherapy:{
+h2:["Welche Themen kann Psychotherapie bearbeiten?","Einige etablierte psychotherapeutische Ansätze","Was sollte man im Erstgespräch fragen?","Wann reicht Psychotherapie allein möglicherweise nicht aus?","Forschung und klinische Leitlinien"],
+h3:["Psychodynamische und psychoanalytische Psychotherapie","Kognitive Verhaltenstherapie (KVT)","Interpersonelle Psychotherapie (IPT)","Achtsamkeitsbasierte und dritte-Welle-Ansätze","Paar- und Familientherapie","Humanistische und erlebnisorientierte Ansätze"],
+p:[
+"Psychotherapie kann Beschwerden wie Angst oder depressive Stimmung behandeln. Viele Ansätze untersuchen außerdem die Bedeutung von Erfahrungen, Beziehungsmuster, wiederkehrende Dynamiken, persönliche Ressourcen und Lebensumstände. Ziele werden gemeinsam festgelegt und im Verlauf überprüft.",
+"Psychotherapie garantiert keine sofortige oder bei allen gleiche Veränderung. Wichtig sind die Qualität der therapeutischen Beziehung, Kompetenz und Supervision der Fachperson, die Passung des Ansatzes zu den Bedürfnissen und Lebensumständen sowie die Möglichkeit zur Zusammenarbeit.",
+"Diese Ansätze befassen sich mit emotionalem Erleben, Konflikten, Beziehungsmustern, unbewussten Prozessen und bedeutsamen Wiederholungen im Leben und in der therapeutischen Beziehung. Dauer und Format können variieren.",
+"Die KVT untersucht Zusammenhänge zwischen Gedanken, Gefühlen und Verhalten und arbeitet häufig mit klaren Zielen, Übungen und strukturierten Strategien.",
+"Die IPT richtet den Blick auf Zusammenhänge zwischen Beschwerden und dem zwischenmenschlichen Umfeld, etwa Trauer, Konflikte und Veränderungen von Lebensrollen.",
+"Diese Ansätze können achtsame Aufmerksamkeit, Akzeptanz und einen veränderten Umgang mit inneren Erfahrungen nutzen. Methoden und Evidenzlage sind nicht einheitlich.",
+"Diese Ansätze untersuchen Interaktionsmuster, Konfliktkreisläufe, Grenzen und Beziehungskontexte; Partner oder Familienmitglieder können einbezogen werden.",
+"Diese Ansätze betonen das gelebte Erleben, eine authentische therapeutische Beziehung, Sinn, Wahlmöglichkeiten und Entwicklungspotenziale.",
+"Eine Therapiebezeichnung allein garantiert keine Qualität. Leitlinien empfehlen je nach Problem unterschiedliche Interventionen. Zu berücksichtigen sind Evidenz, Lebensumstände und Präferenzen der Person sowie die Qualifikation der Fachperson.",
+"Klientinnen und Klienten dürfen nach dem Vorgehen fragen, Optionen verstehen und an Entscheidungen mitwirken. NICE betont die klare Besprechung von Zielen, Präferenzen, Nutzen und Grenzen.",
+"In manchen Situationen sind zusätzlich eine medizinische oder psychiatrische Abklärung, multiprofessionelle Versorgung oder dringende Unterstützung nötig. Psychotherapie und Medikamente schließen einander nicht aus und können kombiniert werden. Medikamentenentscheidungen gehören in die Hände qualifizierter Ärztinnen und Ärzte.",
+"Diese Seite bietet einen allgemeinen Überblick und ist keine Behandlungsempfehlung für eine bestimmte Diagnose. Klinische Empfehlungen sollten anhand aktueller Leitlinien, des Landes der Versorgung und einer individuellen Abklärung geprüft werden."
+],
+li:["Hat die Fachperson passende Ausbildung und Erfahrung mit meinem Anliegen?","Wie arbeitet sie, und wie laufen Sitzungen üblicherweise ab?","Welche Vereinbarung gilt zur Vertraulichkeit und ihren Grenzen?","Wie hoch sind Kosten und Sitzungsdauer, und welche Regeln gelten für Absagen und Kontakt?","Wie überprüfen wir gemeinsam Ziele und Fortschritte?","Was geschieht, wenn die Behandlung nicht passend erscheint?","WHO mhGAP: Strukturierte psychologische Interventionen bei Depression","NICE: Empfehlungen zur gemeinsamen Entscheidungsfindung","WHO: Psychologische Interventionen"]
+},
+psychiatry:{
+h2:["Was macht eine Psychiaterin oder ein Psychiater?","Wann ist eine psychiatrische Abklärung wichtig?","Was unterscheidet Psychiater, Psychologen und Psychotherapeuten?","Können Psychotherapie und Medikamente kombiniert werden?","Weiterführende Informationen"],
+h3:["Psychiater","Psychologe","Psychotherapeut"],
+p:[
+"Eine psychiatrische Abklärung umfasst meist ein Gespräch über Beschwerden, Beginn und Verlauf, körperliche Gesundheit, Schlaf, aktuelle Medikamente, persönliche und familiäre Vorgeschichte sowie Auswirkungen auf den Alltag. Je nach Situation können weitere Untersuchungen oder die Zusammenarbeit mit anderen Fachpersonen sinnvoll sein.",
+"Psychiater können Medikamente verordnen und Wirkung, mögliche Nebenwirkungen und den Bedarf an Verlaufskontrollen prüfen. Medikamente sind nicht für alle erforderlich. Entscheidungen sollten auf medizinischer Einschätzung, Evidenz, Präferenzen und einer Abwägung von Nutzen und Risiken beruhen. Ändern oder beenden Sie Medikamente nicht ohne Rücksprache mit der verordnenden Person.",
+"Eine Abklärung kann wichtig sein, wenn Beschwerden schwer oder anhaltend sind, den Alltag deutlich beeinträchtigen, körperliche oder medikamentöse Faktoren eine Rolle spielen könnten, schwere Stimmungsepisoden oder ungewöhnliche Wahrnehmungserlebnisse bekannt sind oder Fragen zu Medikamenten entstehen. Dies ist keine Diagnoseliste; der Bedarf hängt vom Einzelfall ab.",
+"Bei Gedanken oder Verhaltensweisen mit unmittelbarer Gefahr, sich selbst oder anderen zu schaden, oder wenn Sicherheit nicht gewährleistet werden kann, warten Sie nicht auf einen regulären Termin. Wenden Sie sich an örtliche Notfall- oder Krisendienste.",
+"Eine ärztliche Fachperson für psychische Gesundheit, die medizinische Abklärungen durchführt und bei entsprechender Indikation Medikamente verordnen kann.",
+"Verfügt über eine Hochschulausbildung in Verhalten, Kognition, Emotionen und Beziehungen. Welche Leistungen einschließlich Diagnostik oder Behandlung angeboten werden dürfen, hängt von Spezialisierung und Berufszulassung ab.",
+"Eine Person mit spezieller Ausbildung in Psychotherapie. Der ursprüngliche Beruf kann Psychologie, Psychiatrie oder ein verwandtes Fach sein; zusätzliche Ausbildung und Qualifikationen sollten geprüft werden.",
+"Die rechtlichen Befugnisse unterscheiden sich je nach Land. Die Berufsbezeichnung allein reicht nicht: Prüfen Sie Zulassung, einschlägige Ausbildung und Berufserfahrung.",
+"Ja. Für manche Menschen kann eine Kombination aus medizinischer Versorgung, Medikamenten, Psychotherapie und sozialer Unterstützung sinnvoll sein; für andere passt eine andere Intervention besser. Entscheidend sind Diagnose, Schwere und Verlauf, körperliche Gesundheit, Präferenzen und klinische Leitlinien.",
+"Wenn Sie mit einem Psychiater und einer psychotherapeutischen Fachperson arbeiten, können Sie mit Ihrer Zustimmung die Abstimmung der Versorgung und die Weitergabe notwendiger Informationen besprechen. Vertraulichkeit und Grenzen des Informationsaustauschs sollten klar sein.",
+"Die Angaben auf dieser Seite sind allgemein. Diagnosen und Entscheidungen über Medikamente erfordern eine klinische Untersuchung durch eine entsprechend qualifizierte Ärztin oder einen Arzt."
+],
+li:["Royal College of Psychiatrists: Unterschiede zwischen Psychiatern, Psychologen und Psychotherapeuten","Weltgesundheitsorganisation: Psychische Störungen und Behandlungsmöglichkeiten","WHO mhGAP: Psychosoziale Interventionen bei Psychosen und bipolarer Störung"]
+},
+relationships:{
+h2:["Bei welchen Anliegen kann Paartherapie helfen?","Wie unterscheidet sich Familientherapie?","Welche Themen können in einer Beziehung besprochen werden?","Wie wählt man eine Paar- oder Familientherapeutin?","Wichtiger Hinweis zu Gewalt und Zwangskontrolle","Weiterführende Informationen"],
+h3:["Konfliktkreisläufe","Kommunikation und Gehörtwerden","Bindung und emotionale Sicherheit","Grenzen und Rollen"],
+p:[
+"Paare suchen Unterstützung bei wiederkehrenden Konflikten, emotionaler Distanz, Kommunikationsproblemen, Vertrauensverlust, großen Veränderungen, Entscheidungen über die Fortsetzung der Beziehung oder Auswirkungen individueller Belastungen auf das gemeinsame Leben. Die Fachperson entscheidet nicht für das Paar und weist keine Schuld zu, sondern hilft, Interaktionsmuster und Bedürfnisse zu verstehen und konstruktivere Gespräche zu erkunden.",
+"Unter bestimmten Umständen kann Einzelarbeit zusätzlich zu gemeinsamen Sitzungen oder an deren Stelle geeigneter sein. Das Format sollte nach Einschätzung der Situation und unter Berücksichtigung der Wünsche und Sicherheit aller Beteiligten gewählt werden.",
+"In der Familientherapie werden individuelle Schwierigkeiten im Zusammenhang mit Familienbeziehungen und dem familiären Kontext betrachtet. Je nach Anliegen können Kinder, Jugendliche, Eltern oder andere Angehörige teilnehmen. Themen können Eltern-Kind-Konflikte, Veränderungen, Trauer, Krankheit, Grenzen und Kommunikation sein.",
+"Die Fachperson sollte zu Beginn klären, wer als Klient gilt, wie Vertraulichkeit gewahrt wird und welche Regeln gelten, wenn Familienmitglieder in Einzelgesprächen unterschiedliche Informationen mitteilen.",
+"Prüfen Sie spezielle Ausbildung und Erfahrung in der Arbeit mit Paaren oder Familien; Erfahrung in Einzeltherapie ersetzt keine Ausbildung in Paartherapie.",
+"Fragen Sie nach Vertraulichkeit, möglichen Einzelgesprächen und dem Umgang mit den Informationen jeder Person.",
+"Klären Sie Vorgehen, erste Ziele, Kosten, Sitzungsdauer und Absageregeln.",
+"Fragen Sie, was geschieht, wenn eine Person nicht fortfahren möchte oder ein Thema außerhalb der Kompetenz der Fachperson liegt.",
+"Die Teilnahme sollte freiwillig sein. Fühlt sich eine Person unter Druck gesetzt oder gezwungen, sollte dies vor Beginn der Sitzungen angesprochen werden.",
+"Bei Drohungen, Gewalt, Angst vor Schädigung, Zwangskontrolle oder Gefährdung eines Kindes können gemeinsame Sitzungen unsicher oder ungeeignet sein. Eine vertrauliche Sicherheitsabklärung und unabhängige fachliche Unterstützung sind wichtig. Bei unmittelbarer Gefahr wenden Sie sich an örtliche Notdienste.",
+"Diese Informationen stammen von Berufsverbänden und Gesundheitsdiensten im Vereinigten Königreich und in den USA. Berufsbezeichnungen und Regelungen sind nicht in allen Ländern gleich."
+],
+li:["Prüfen Sie spezielle Ausbildung und Erfahrung in der Arbeit mit Paaren oder Familien; Erfahrung in Einzeltherapie ersetzt keine Ausbildung in Paartherapie.","Fragen Sie nach Vertraulichkeit, möglichen Einzelgesprächen und dem Umgang mit den Informationen jeder Person.","Klären Sie Vorgehen, erste Ziele, Kosten, Sitzungsdauer und Absageregeln.","Fragen Sie, was geschieht, wenn eine Person nicht fortfahren möchte oder ein Thema außerhalb der Kompetenz der Fachperson liegt.","BACP: Wie findet man Paartherapie?","BACP: Paarberatung und Vertraulichkeit","AAMFT: Informationen zu Ehe- und Familientherapeuten","NHS: Beratung und ihre Durchführung"]
+}
+},
+fr:{
+psychology:{
+h2:["En quoi un psychologue ou un conseiller peut-il aider ?","Quels domaines la psychologie couvre-t-elle ?","Quand demander un soutien professionnel ?","Psychologue, psychothérapeute ou psychiatre ?","Pour aller plus loin"],
+h3:["Psychologie clinique","Psychologie de la santé","Psychologie de l’enfant et de l’adolescent","Psychologie familiale et relationnelle","Psychologie du travail et des organisations","Évaluation psychologique"],
+p:[
+"Selon sa formation, ses qualifications et son domaine d’exercice, un psychologue ou un conseiller peut réaliser une évaluation, aborder des difficultés personnelles et relationnelles, proposer un accompagnement ou des interventions thérapeutiques et orienter vers un autre professionnel si nécessaire. Les titres et les champs d’exercice varient selon les pays : vérifiez les qualifications et l’autorisation d’exercer.",
+"Il n’est pas nécessaire d’arriver avec un diagnostic. Le sentiment d’être dépassé, les conflits répétitifs, les difficultés à décider, les changements d’humeur, l’anxiété, le deuil, le stress professionnel ou les difficultés familiales et relationnelles peuvent justifier une consultation.",
+"Évaluer et prendre en charge les difficultés émotionnelles, cognitives et comportementales en tenant compte de leur intensité, de leur durée et de leurs effets sur la vie quotidienne.",
+"Explorer les liens entre expériences psychologiques, comportements de santé, maladies physiques et adaptation aux traitements.",
+"Prendre en compte le développement, les émotions, les apprentissages et le comportement de l’enfant ou de l’adolescent ainsi que son environnement familial et scolaire.",
+"Comprendre les modes de communication, les conflits, les limites, l’attachement et les changements au fil du cycle de vie familiale.",
+"Étudier l’expérience du travail, l’épuisement, les relations professionnelles, la motivation et l’adéquation entre la personne et son environnement professionnel.",
+"Utiliser avec discernement des entretiens et des outils validés pour répondre à une question précise, avec une interprétation par un professionnel qualifié.",
+"Un échange avec un professionnel peut aider lorsque la souffrance psychique persiste, perturbe le quotidien ou les relations, que les stratégies habituelles ne suffisent plus ou qu’un soutien spécialisé semble nécessaire. Il n’est pas nécessaire d’attendre une crise.",
+"Pour choisir un service, tenez compte de la demande, de l’âge, de la langue, de l’expérience et des qualifications du professionnel, de sa méthode, de la confidentialité, du coût et des possibilités d’orientation. La décision gagne à être prise ensemble après discussion des options, bénéfices et limites.",
+"Ces titres ne sont pas interchangeables. Les psychologues exercent dans différents domaines selon leur formation ; les psychothérapeutes ont une formation spécialisée en psychothérapie ; les psychiatres sont des médecins spécialistes qui réalisent des évaluations médicales et peuvent prescrire des médicaments si nécessaire. Certains professionnels possèdent plusieurs qualifications. Consultez nos guides sur la <a href=\"psychotherapy.html\">psychothérapie</a> et la <a href=\"psychiatry.html\">psychiatrie</a>.",
+"Ces ressources sont destinées à l’information générale. Les règles professionnelles et les parcours d’orientation peuvent varier selon le pays."
+],
+li:["Organisation mondiale de la Santé : Santé mentale","NICE : Décision partagée dans les soins de santé","Royal College of Psychiatrists : Différences entre psychiatres, psychologues et psychothérapeutes"]
+},
+psychotherapy:{
+h2:["Quels sujets la psychothérapie peut-elle aborder ?","Quelques approches thérapeutiques reconnues","Que demander lors du premier entretien ?","Quand la psychothérapie seule peut-elle ne pas suffire ?","Recherche et recommandations cliniques"],
+h3:["Psychothérapie psychodynamique et psychanalytique","Thérapie cognitivo-comportementale (TCC)","Psychothérapie interpersonnelle (TIP)","Approches fondées sur la pleine conscience et de troisième vague","Thérapie de couple et thérapie familiale","Approches humanistes et expérientielles"],
+p:[
+"La thérapie peut aborder des symptômes comme l’anxiété ou l’humeur dépressive. De nombreuses approches explorent aussi le sens de l’expérience, les façons d’entrer en relation, les répétitions, les ressources personnelles et le contexte de vie. Les objectifs sont définis avec la personne et réexaminés au fil du travail.",
+"La psychothérapie ne garantit pas un changement immédiat ou identique pour tous. La qualité de la relation thérapeutique, la compétence et la supervision du thérapeute, l’adéquation de l’approche aux besoins et au contexte de la personne ainsi que la possibilité de collaborer comptent.",
+"Ces approches s’intéressent à l’expérience émotionnelle, aux conflits, aux schémas relationnels, aux processus inconscients et aux répétitions significatives dans la vie et dans la relation thérapeutique. La durée et le format varient.",
+"La TCC examine les liens entre pensées, émotions et comportements et s’organise souvent autour d’objectifs clairs, d’exercices et de stratégies structurées.",
+"La TIP porte sur les liens entre les symptômes et le contexte relationnel, notamment le deuil, les conflits interpersonnels et les changements de rôles de vie.",
+"Ces approches peuvent mobiliser l’attention consciente, l’acceptation et une autre relation aux expériences intérieures. Leurs méthodes et leurs niveaux de preuve ne sont pas identiques.",
+"Ces approches explorent les interactions, les cycles de conflit, les limites et le contexte relationnel ; le partenaire ou des membres de la famille peuvent participer.",
+"Ces approches mettent l’accent sur l’expérience vécue, une relation thérapeutique authentique, le sens, le choix et la capacité de développement de la personne.",
+"Une étiquette thérapeutique ne garantit pas à elle seule la qualité. Les recommandations cliniques proposent différentes interventions selon les difficultés. Le choix doit tenir compte des données disponibles, de la situation et des préférences de la personne et des qualifications du thérapeute.",
+"Les personnes suivies peuvent demander comment se déroule la thérapie, comprendre leurs options et participer aux décisions. NICE souligne l’importance de discuter clairement des objectifs, préférences, bénéfices et limites.",
+"Une évaluation médicale ou psychiatrique, des soins pluridisciplinaires ou un soutien urgent peuvent parfois être nécessaires. Psychothérapie et médicaments ne s’excluent pas forcément et peuvent être associés. Les décisions médicamenteuses doivent être prises avec un médecin qualifié.",
+"Cette page est une présentation générale et non un guide de traitement pour un diagnostic précis. Les recommandations doivent être vérifiées au regard des référentiels actuels, du pays de soins et d’une évaluation individuelle."
+],
+li:["Le thérapeute a-t-il une formation et une expérience adaptées à ma demande ?","Quelle est son approche et comment se déroulent les séances ?","Quel accord encadre la confidentialité et ses limites ?","Quels sont les honoraires, la durée des séances, les règles d’annulation et les modalités de contact ?","Comment examinerons-nous ensemble les objectifs et les progrès ?","Que se passe-t-il si ce traitement ne semble pas adapté ?","WHO mhGAP : Interventions psychologiques structurées pour la dépression","NICE : Recommandations sur la décision partagée","OMS : Interventions psychologiques"]
+},
+psychiatry:{
+h2:["Quel est le rôle d’un psychiatre ?","Quand une évaluation psychiatrique est-elle importante ?","Quelle différence entre psychiatre, psychologue et psychothérapeute ?","Peut-on associer psychothérapie et médicaments ?","Pour aller plus loin"],
+h3:["Psychiatre","Psychologue","Psychothérapeute"],
+p:[
+"Une évaluation psychiatrique comprend généralement un échange sur les symptômes, leur apparition et leur évolution, la santé physique, le sommeil, les médicaments actuels, les antécédents personnels et familiaux et les effets sur la vie quotidienne. Le médecin peut proposer des examens complémentaires ou une collaboration avec d’autres professionnels.",
+"Le psychiatre peut prescrire des médicaments et en examiner les effets, les effets indésirables possibles et la nécessité d’un suivi. Un traitement médicamenteux n’est pas nécessaire pour tout le monde. La décision repose sur l’évaluation médicale, les données disponibles, les préférences de la personne et une balance des bénéfices et des risques. Ne commencez, n’arrêtez ou ne modifiez pas un médicament sans consulter le prescripteur.",
+"Une évaluation peut être importante si les symptômes sont sévères ou persistants, perturbent nettement le quotidien, si des facteurs physiques ou médicamenteux peuvent intervenir, s’il existe des épisodes thymiques sévères ou des expériences perceptives inhabituelles, ou si des questions sur les médicaments se posent. Ce n’est pas une liste diagnostique : le besoin dépend de chaque situation.",
+"En cas de pensées ou de comportements présentant un risque immédiat de vous faire du mal ou d’en faire à autrui, ou si vous ne pouvez pas assurer votre sécurité, n’attendez pas un rendez-vous ordinaire. Contactez les services d’urgence ou de crise locaux.",
+"Un médecin spécialiste de la santé mentale qui réalise des évaluations médicales et peut prescrire des médicaments lorsque cela est indiqué.",
+"Il possède une formation universitaire en comportement, cognition, émotions et relations. Les services qu’il peut proposer, y compris le diagnostic ou le traitement lorsque la réglementation le permet, dépendent de sa spécialité et de son autorisation d’exercer.",
+"Personne ayant une formation spécialisée en psychothérapie. Sa profession d’origine peut être la psychologie, la psychiatrie ou un domaine connexe ; il convient de vérifier les formations complémentaires et les qualifications.",
+"Les limites légales de ces professions varient selon les pays. Le titre seul ne suffit pas : vérifiez l’autorisation d’exercer, la formation pertinente et l’expérience professionnelle.",
+"Oui. Pour certaines personnes, une combinaison de soins médicaux, médicaments, psychothérapie et soutien social peut faire partie du plan de soins ; pour d’autres, une autre intervention convient mieux. La décision dépend du diagnostic, de l’intensité et de l’évolution des symptômes, de la santé physique, des préférences et des recommandations cliniques.",
+"Si vous êtes suivi par un psychiatre et un psychothérapeute, vous pouvez discuter de la coordination des soins et du partage des informations nécessaires avec votre accord. La confidentialité et les limites du partage doivent être explicites.",
+"Les informations de cette page sont générales. Le diagnostic et les décisions médicamenteuses nécessitent une évaluation clinique par un médecin qualifié."
+],
+li:["Royal College of Psychiatrists : Différences entre psychiatres, psychologues et psychothérapeutes","Organisation mondiale de la Santé : Troubles mentaux et options de traitement","WHO mhGAP : Interventions psychosociales pour la psychose et le trouble bipolaire"]
+},
+relationships:{
+h2:["Pour quels problèmes la thérapie de couple peut-elle aider ?","En quoi la thérapie familiale est-elle différente ?","Quels sujets peuvent être explorés dans une relation ?","Comment choisir un thérapeute de couple ou de famille ?","Note importante sur la violence et le contrôle coercitif","Pour aller plus loin"],
+h3:["Cycles de conflit","Communication et sentiment d’être entendu","Attachement et sécurité émotionnelle","Limites et rôles"],
+p:[
+"Les couples peuvent demander de l’aide face aux conflits répétés, à la distance émotionnelle, aux difficultés de communication, à la perte de confiance, aux grands changements de vie, aux décisions concernant la poursuite de la relation ou à l’impact d’une difficulté individuelle sur la vie commune. Le thérapeute ne décide pas à la place du couple et ne désigne pas de coupable ; il aide à comprendre les interactions et les besoins de chacun et à explorer un dialogue plus constructif.",
+"Dans certaines situations, un travail individuel en complément des séances conjointes ou à leur place peut être plus adapté. Le format se décide après évaluation de la situation et prise en compte des souhaits et de la sécurité des personnes concernées.",
+"En thérapie familiale, les difficultés d’une personne sont envisagées dans le contexte des relations familiales. Selon la demande, un enfant, un adolescent, les parents ou d’autres proches peuvent participer. Les conflits parents-enfants, transitions familiales, deuils, maladies, limites et difficultés de communication peuvent être abordés.",
+"Le thérapeute doit préciser dès le début qui est considéré comme le client, comment la confidentialité est protégée et quelles règles s’appliquent lorsque des membres de la famille communiquent des informations différentes en entretien individuel.",
+"Vérifiez la formation spécialisée et l’expérience auprès des couples ou des familles ; l’expérience en thérapie individuelle ne remplace pas une formation en thérapie de couple.",
+"Renseignez-vous sur la confidentialité, la possibilité de séances individuelles et la gestion des informations de chaque personne.",
+"Clarifiez l’approche du thérapeute, les objectifs initiaux, les honoraires, la durée des séances et les règles d’annulation.",
+"Demandez ce qui se passe si une personne ne souhaite plus poursuivre ou si une question dépasse les compétences du thérapeute.",
+"La participation doit être volontaire. Si une personne se sent contrainte ou sous pression, il faut aborder ce point avant le début des séances.",
+"En présence de menaces, de violence, de peur d’un préjudice, de contrôle coercitif ou d’un risque pour un enfant, les séances conjointes peuvent être dangereuses ou inadaptées. Une évaluation confidentielle de la sécurité et un soutien spécialisé indépendant sont importants. En cas de danger immédiat, contactez les services d’urgence locaux.",
+"Ces ressources proviennent d’organisations professionnelles et de services de santé du Royaume-Uni et des États-Unis. Les titres et réglementations professionnelles diffèrent selon les pays."
+],
+li:["Vérifiez la formation spécialisée et l’expérience auprès des couples ou des familles ; l’expérience en thérapie individuelle ne remplace pas une formation en thérapie de couple.","Renseignez-vous sur la confidentialité, la possibilité de séances individuelles et la gestion des informations de chaque personne.","Clarifiez l’approche du thérapeute, les objectifs initiaux, les honoraires, la durée des séances et les règles d’annulation.","Demandez ce qui se passe si une personne ne souhaite plus poursuivre ou si une question dépasse les compétences du thérapeute.","BACP : Comment rechercher une thérapie de couple","BACP : Conseil conjugal et confidentialité","AAMFT : Informations sur les thérapeutes conjugaux et familiaux","NHS : Conseil psychologique et modalités de prise en charge"]
+}
+}
+});
 function render(lang){
  const article=document.querySelector("[data-guide-content]");
  if(!article)return;
