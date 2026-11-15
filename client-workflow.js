@@ -128,13 +128,15 @@
       event.preventDefault();
       if (!activeUser) { setStatus("برای ثبت درخواست ابتدا وارد حساب مراجع شوید.", true); return; }
       if (!select.value) { setStatus("ابتدا درمانگر موردنظر را انتخاب کنید.", true); return; }
+      if (!document.getElementById("yadClientConsent")?.checked) { setStatus("برای ثبت درخواست، تأیید مطالعهٔ اطلاعیه و شرایط لازم است.", true); return; }
       const market = document.getElementById("yadRequestMarket").value;
       const currency = market === "iran" ? "IRR" : document.getElementById("yadRequestCurrency").value;
-      const { error, data } = await db.rpc("create_client_request", {
+      const { error, data } = await db.rpc("create_client_request_with_consent", {
         p_therapist_id: select.value,
         p_market: market,
         p_currency: currency,
-        p_client_message: document.getElementById("yadClientMessage").value.trim() || null
+        p_client_message: document.getElementById("yadClientMessage").value.trim() || null,
+        p_policy_version: "2026-11-16-v1-draft"
       });
       if (error) { setStatus(error.message || "ثبت درخواست ناموفق بود.", true); return; }
       setStatus("درخواست ثبت شد. اطلاعات پرداخت را از مدیریت یادسنتر دریافت کنید؛ پس از پرداخت، شماره پیگیری را در همین صفحه وارد کنید.");
