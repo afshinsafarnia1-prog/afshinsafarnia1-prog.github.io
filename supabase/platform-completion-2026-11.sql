@@ -334,6 +334,127 @@ begin
 end;
 $function$;
 
+create or replace function public.admin_resolve_support_cancellation(
+  p_ticket_id uuid,
+  p_cancel boolean,
+  p_refund_completed boolean default false,
+  p_admin_note text default null
+)
+returns boolean
+language plpgsql
+security definer
+set search_path=''
+as $function$
+declare
+  v_ticket public.client_support_tickets%rowtype;
+  v_request_id uuid;
+  v_appointment_id uuid;
+  v_payment_status public.payment_status;
+begin
+  perform public.require_admin_aal2();
+  select * into v_ticket from public.client_support_tickets where id=p_ticket_id and ticket_type='cancellation' for update;
+  if not found then raise exception 'cancellation_ticket_not_found' using errcode='P0002'; end if;
+  if not p_cancel then
+    update public.client_support_tickets set status='declined',admin_note=nullif(trim(p_admin_note),''),updated_at=now() where id=p_ticket_id;
+    return true;
+  end if;
+  v_request_id:=v_ticket.request_id;
+  v_appointment_id:=v_ticket.appointment_id;
+  if v_request_id is null and v_appointment_id is not null then
+    select r.id into v_request_id from public.client_requests r where r.appointment_id=v_appointment_id limit 1;
+  end if;
+  if v_request_id is not null then
+    select p.status into v_payment_status from public.payments p where p.request_id=v_request_id order by p.created_at desc limit 1 for update;
+  elsif v_appointment_id is not null then
+    select p.status into v_payment_status from public.payments p where p.appointment_id=v_appointment_id order by p.created_at desc limit 1 for update;
+  end if;
+  if v_payment_status='paid' and p_refund_completed is distinct from true then
+    raise exception 'manual_refund_must_be_completed_before_confirmation' using errcode='P0001';
+  end if;
+  if v_appointment_id is not null then
+    update public.appointments set status='cancelled',updated_at=now() where id=v_appointment_id and status in ('confirmed','requested');
+  end if;
+  if v_request_id is not null then
+    update public.client_requests set status='cancelled',updated_at=now() where id=v_request_id and status<>'cancelled';
+    update public.payments set status=case when status='paid' then 'refunded'::public.payment_status else 'failed'::public.payment_status end
+    where request_id=v_request_id and status in ('paid','pending');
+  elsif v_appointment_id is not null then
+    update public.payments set status=case when status='paid' then 'refunded'::public.payment_status else 'failed'::public.payment_status end
+    where appointment_id=v_appointment_id and status in ('paid','pending');
+  end if;
+  update public.client_support_tickets set status='resolved',admin_note=nullif(trim(p_admin_note),''),updated_at=now() where id=p_ticket_id;
+  return true;
+end;
+$function$;
+
+create or replace function public.admin_resolve_support_reschedule(
+  p_ticket_id uuid,
+  p_starts_at timestamptz,
+  p_timezone text,
+  p_client_confirmed boolean,
+  p_admin_note text default null
+)
+returns boolean
+language plpgsql
+security definer
+set search_path=''
+as $function$
+declare
+  v_ticket public.client_support_tickets%rowtype;
+  v_duration integer:=45;
+begin
+  perform public.require_admin_aal2();
+  select * into v_ticket from public.client_support_tickets where id=p_ticket_id and ticket_type='reschedule' for update;
+  if not found or v_ticket.appointment_id is null then raise exception 'reschedule_ticket_not_found' using errcode='P0002'; end if;
+  if p_client_confirmed is distinct from true then raise exception 'client_confirmation_required' using errcode='22023'; end if;
+  if p_starts_at is null or p_starts_at<=now() then raise exception 'invalid_session_time' using errcode='22023'; end if;
+  select coalesce(r.session_duration_minutes,45) into v_duration
+  from public.appointments a left join public.client_requests r on r.appointment_id=a.id
+  where a.id=v_ticket.appointment_id and a.status='confirmed'
+    and exists(select 1 from public.payments p where p.appointment_id=a.id and p.status='paid');
+  if not found then raise exception 'paid_confirmed_appointment_required' using errcode='P0001'; end if;
+  update public.appointments set starts_at=p_starts_at,ends_at=p_starts_at+make_interval(mins=>v_duration),
+    timezone=coalesce(nullif(p_timezone,''),'Asia/Tehran'),updated_at=now()
+  where id=v_ticket.appointment_id;
+  update public.client_support_tickets set status='resolved',admin_note=nullif(trim(p_admin_note),''),updated_at=now() where id=p_ticket_id;
+  return true;
+end;
+$function$;
+
+create or replace function public.admin_resolve_support_therapist_change(
+  p_ticket_id uuid,
+  p_new_therapist_id uuid,
+  p_admin_note text default null
+)
+returns boolean
+language plpgsql
+security definer
+set search_path=''
+as $function$
+declare
+  v_ticket public.client_support_tickets%rowtype;
+  v_request_id uuid;
+  v_country text;
+begin
+  perform public.require_admin_aal2();
+  select * into v_ticket from public.client_support_tickets where id=p_ticket_id and ticket_type='therapist_change' for update;
+  if not found then raise exception 'therapist_change_ticket_not_found' using errcode='P0002'; end if;
+  v_request_id:=v_ticket.request_id;
+  if v_request_id is null and v_ticket.appointment_id is not null then
+    select r.id into v_request_id from public.client_requests r where r.appointment_id=v_ticket.appointment_id limit 1;
+  end if;
+  if v_request_id is null then raise exception 'request_not_found' using errcode='P0002'; end if;
+  select p.country_code into v_country from public.profiles p join public.client_requests r on r.client_id=p.id where r.id=v_request_id;
+  if not exists(select 1 from public.therapists t where t.id=p_new_therapist_id and t.is_listed and t.verified_at is not null and v_country=any(t.practice_jurisdictions)) then
+    raise exception 'therapist_not_authorized_for_client_location' using errcode='42501';
+  end if;
+  update public.client_requests set therapist_id=p_new_therapist_id,updated_at=now() where id=v_request_id;
+  update public.appointments set therapist_id=p_new_therapist_id,updated_at=now() where id=v_ticket.appointment_id and status='confirmed';
+  update public.client_support_tickets set status='resolved',admin_note=nullif(trim(p_admin_note),''),updated_at=now() where id=p_ticket_id;
+  return true;
+end;
+$function$;
+
 create or replace function public.admin_mark_appointment_completed(p_appointment_id uuid)
 returns boolean
 language plpgsql
@@ -453,6 +574,9 @@ revoke all on function public.client_submit_support_ticket(text,text,uuid,uuid) 
 revoke all on function public.client_list_support_tickets() from public,anon;
 revoke all on function public.admin_list_support_tickets(integer) from public,anon;
 revoke all on function public.admin_update_support_ticket(uuid,text,text) from public,anon;
+revoke all on function public.admin_resolve_support_cancellation(uuid,boolean,boolean,text) from public,anon;
+revoke all on function public.admin_resolve_support_reschedule(uuid,timestamptz,text,boolean,text) from public,anon;
+revoke all on function public.admin_resolve_support_therapist_change(uuid,uuid,text) from public,anon;
 revoke all on function public.admin_mark_appointment_completed(uuid) from public,anon;
 revoke all on function public.client_submit_appointment_feedback(uuid,integer,text) from public,anon;
 revoke all on function public.admin_list_appointment_feedback(integer) from public,anon;
@@ -470,6 +594,9 @@ grant execute on function public.client_submit_support_ticket(text,text,uuid,uui
 grant execute on function public.client_list_support_tickets() to authenticated;
 grant execute on function public.admin_list_support_tickets(integer) to authenticated;
 grant execute on function public.admin_update_support_ticket(uuid,text,text) to authenticated;
+grant execute on function public.admin_resolve_support_cancellation(uuid,boolean,boolean,text) to authenticated;
+grant execute on function public.admin_resolve_support_reschedule(uuid,timestamptz,text,boolean,text) to authenticated;
+grant execute on function public.admin_resolve_support_therapist_change(uuid,uuid,text) to authenticated;
 grant execute on function public.admin_mark_appointment_completed(uuid) to authenticated;
 grant execute on function public.client_submit_appointment_feedback(uuid,integer,text) to authenticated;
 grant execute on function public.admin_list_appointment_feedback(integer) to authenticated;
