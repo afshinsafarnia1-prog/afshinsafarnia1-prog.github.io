@@ -94,6 +94,20 @@
 <div class="admin-actions"><button class="button primary" type="submit">ذخیرهٔ پروفایل</button><button class="button outline" id="yadCancelEdit" type="button" hidden>لغو ویرایش</button></div>
 </form>
 </section>
+<section class="portal-card" id="yadAvailabilityManager">
+<div class="section-head"><div><h2>تقویم ظرفیت و زمان‌های آزاد</h2><p>مدیر برای درمانگر تأییدشده بازه‌های ۴۵ دقیقه‌ای تعریف می‌کند. پس از تأیید پرداخت، جلسه از یکی از زمان‌های آزاد ثبت می‌شود.</p></div></div>
+<form id="yadAvailabilityForm" class="yad-admin-form">
+<div class="portal-grid">
+<label>درمانگر<select id="yadAvailabilityTherapist" required><option value="">انتخاب درمانگر</option></select></label>
+<label>منطقهٔ زمانی ظرفیت<input id="yadAvailabilityTimezone" required maxlength="64" placeholder="Asia/Tehran"></label>
+<label>شروع بازه<input id="yadAvailabilityStart" type="datetime-local" required></label>
+<label>پایان بازه<input id="yadAvailabilityEnd" type="datetime-local" required></label>
+</div>
+<button class="button primary" type="submit">ثبت زمان آزاد ۴۵ دقیقه‌ای</button>
+<p id="yadAvailabilityStatus" class="notice" role="status" aria-live="polite"></p>
+</form>
+<h3>زمان‌های ثبت‌شده</h3><div id="yadAvailabilityList" class="portal-grid"><p>ابتدا درمانگر را انتخاب کنید.</p></div>
+</section>
 <section class="portal-card">
 <div class="section-head"><div><h2>درخواست‌های مراجعان و پرداخت‌ها</h2><p>مراجع درمانگر را انتخاب می‌کند؛ پس از تأیید پرداخت، زمان جلسه را در این بخش ثبت کن.</p></div><button class="button outline" id="yadRefreshWorkflow" type="button">به‌روزرسانی</button></div>
 <div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>مراجع</th><th>درمانگر انتخابی</th><th>مبلغ</th><th>سهم درمانگر / یادسنتر</th><th>شماره پیگیری</th><th>وضعیت درخواست</th><th>وضعیت پرداخت</th><th>اقدام</th></tr></thead><tbody id="yadRequestsBody"><tr><td colspan="8">در حال بارگذاری…</td></tr></tbody></table></div>
