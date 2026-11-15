@@ -13,6 +13,22 @@
       return el;
     };
     const date = (value, timeZone) => value ? new Intl.DateTimeFormat("fa-IR", { dateStyle: "medium", timeStyle: "short", ...(timeZone ? { timeZone } : {}) }).format(new Date(value)) : "—";
+    const localDateTimeInZone = (value, timeZone) => {
+      const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value || "");
+      if (!match) throw new Error("فرمت تاریخ و ساعت معتبر نیست.");
+      const target = Date.UTC(Number(match[1]),Number(match[2])-1,Number(match[3]),Number(match[4]),Number(match[5]));
+      let guess = target;
+      const formatter = new Intl.DateTimeFormat("en-GB",{timeZone,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
+      for(let i=0;i<5;i++){
+        const parts=Object.fromEntries(formatter.formatToParts(new Date(guess)).map(part=>[part.type,part.value]));
+        const represented=Date.UTC(Number(parts.year),Number(parts.month)-1,Number(parts.day),Number(parts.hour),Number(parts.minute));
+        const delta=target-represented;if(!delta)break;guess+=delta;
+      }
+      const finalParts=Object.fromEntries(formatter.formatToParts(new Date(guess)).map(part=>[part.type,part.value]));
+      if(Date.UTC(Number(finalParts.year),Number(finalParts.month)-1,Number(finalParts.day),Number(finalParts.hour),Number(finalParts.minute))!==target)
+        throw new Error("این ساعت در منطقهٔ زمانی مراجع وجود ندارد؛ زمان دیگری انتخاب کنید.");
+      return new Date(guess);
+    };
     const setStatus = (root, value, bad = false) => {
       root.replaceChildren(node("p", bad ? "admin-error" : "muted", value));
     };
@@ -129,10 +145,14 @@
           const apply = node("button", "button primary", "ثبت زمان جدید"); apply.type = "button";
           apply.addEventListener("click", async () => {
             if (!when.value || !confirmed.checked) { setStatus(root, "زمان جدید و تأیید مراجع لازم است.", true); return; }
+            const { data: clientTimezone, error: timezoneError } = await db.rpc("admin_get_appointment_timezone", { p_appointment_id: item.appointment_id });
+            if (timezoneError || !clientTimezone) { setStatus(root, timezoneError?.message || "منطقهٔ زمانی مراجع در دسترس نیست.", true); return; }
+            let startsAt;
+            try { startsAt = localDateTimeInZone(when.value,clientTimezone); }
+            catch(error) { setStatus(root,error.message,true); return; }
             const { error: actionError } = await db.rpc("admin_resolve_support_reschedule", {
-              p_ticket_id: item.ticket_id, p_starts_at: new Date(when.value).toISOString(),
-              p_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran",
-              p_client_confirmed: true, p_admin_note: note.value.trim() || null
+              p_ticket_id: item.ticket_id, p_starts_at: startsAt.toISOString(),
+              p_timezone: clientTimezone, p_client_confirmed: true, p_admin_note: note.value.trim() || null
             });
             if (actionError) { setStatus(root, actionError.message || "تغییر زمان انجام نشد.", true); return; }
             await loadSupport();
