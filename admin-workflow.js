@@ -375,6 +375,7 @@
         const userId = data.session.user.id;
         if (activeAdmin === userId) return;
         activeAdmin = userId;
+        await loadBusinessSettings();
         await loadTherapists();
         await loadRequests();
         if(eventList) await loadWorkshops();
