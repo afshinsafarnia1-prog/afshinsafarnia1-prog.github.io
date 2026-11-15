@@ -141,7 +141,8 @@
         p_client_message: [document.getElementById("yadPreferredTime")?.value.trim() ? "زمان‌های پیشنهادی (غیرقطعی): " + document.getElementById("yadPreferredTime").value.trim() : "", document.getElementById("yadClientMessage").value.trim()].filter(Boolean).join("\n").slice(0, 500) || null,
         p_policy_version: "2026-11-16-v1-draft",
         p_adult_confirmation: true,
-        p_country_code: sessionCountry
+        p_country_code: sessionCountry,
+        p_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran"
       });
       if (error) { setStatus(error.message || "ثبت درخواست ناموفق بود.", true); return; }
       setStatus("درخواست ثبت شد. اطلاعات پرداخت را از مدیریت یادسنتر دریافت کنید؛ پس از پرداخت، شماره پیگیری را در همین صفحه وارد کنید.");
