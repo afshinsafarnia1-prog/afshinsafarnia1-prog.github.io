@@ -404,6 +404,38 @@ li:["Vérifiez la formation spécialisée et l’expérience auprès des couples
 }
 }
 });
+const guideMeta={
+tr:{
+psychology:["Psikoloji ve danışmanlık | YAD Center","Psikoloji ve danışmanlık alanları, ne zaman destek alınacağı ve nitelikli uzman seçimi hakkında bilgilendirici rehber."],
+psychotherapy:["Psikoterapi nedir? Yaklaşımlar ve terapist seçimi | YAD Center","Psikoterapi yaklaşımları, terapötik ilişki, ilk görüşme soruları ve bilinçli seçim hakkında rehber."],
+psychiatry:["Psikiyatri ve ruh sağlığı bakımı | YAD Center","Psikiyatristlerin rolü, psikiyatrik değerlendirme ve ilaç ile psikoterapinin birlikte kullanımı hakkında bilgi."],
+relationships:["Çift ve aile terapisi | YAD Center","Çift ve aile terapisi, ilişki örüntüleri, terapist seçimi ve güvenlik konularında bilgilendirici rehber."]
+},
+ar:{
+psychology:["علم النفس والإرشاد | YAD Center","دليل تعريفي بمجالات علم النفس والإرشاد ومتى تطلب الدعم وكيفية اختيار مختص مؤهل."],
+psychotherapy:["ما العلاج النفسي؟ المناهج واختيار المعالج | YAD Center","دليل حول مناهج العلاج النفسي والعلاقة العلاجية وأسئلة الجلسة الأولى والاختيار الواعي."],
+psychiatry:["الطب النفسي ورعاية الصحة النفسية | YAD Center","تعرف إلى دور الطبيب النفسي والتقييم النفسي الطبي وإمكان الجمع بين الدواء والعلاج النفسي."],
+relationships:["العلاج الزوجي والأسري | YAD Center","دليل حول العلاج الزوجي والأسري وأنماط العلاقات واختيار المعالج واعتبارات السلامة."]
+},
+es:{
+psychology:["Psicología y orientación | YAD Center","Guía sobre las áreas de la psicología, cuándo buscar apoyo y cómo elegir un profesional cualificado."],
+psychotherapy:["¿Qué es la psicoterapia? Enfoques y elección de terapeuta | YAD Center","Guía sobre enfoques psicoterapéuticos, relación terapéutica, primera sesión y elección informada."],
+psychiatry:["Psiquiatría y atención de salud mental | YAD Center","Conozca el papel del psiquiatra, la evaluación y la posible combinación de medicación y psicoterapia."],
+relationships:["Terapia de pareja y familiar | YAD Center","Guía sobre terapia de pareja y familiar, patrones relacionales, elección de terapeuta y seguridad."]
+},
+de:{
+psychology:["Psychologie und Beratung | YAD Center","Informationen zu psychologischen Fachgebieten, professioneller Unterstützung und der Wahl qualifizierter Fachpersonen."],
+psychotherapy:["Was ist Psychotherapie? Ansätze und Therapiewahl | YAD Center","Überblick über psychotherapeutische Ansätze, therapeutische Beziehung, Erstgespräch und informierte Wahl."],
+psychiatry:["Psychiatrie und psychische Gesundheitsversorgung | YAD Center","Informationen zur Rolle der Psychiatrie, psychiatrischen Abklärung und Kombination von Medikamenten und Psychotherapie."],
+relationships:["Paar- und Familientherapie | YAD Center","Informationen zu Paar- und Familientherapie, Beziehungsmustern, Therapeutenauswahl und Sicherheit."]
+},
+fr:{
+psychology:["Psychologie et accompagnement | YAD Center","Guide sur les domaines de la psychologie, le recours à un soutien professionnel et le choix d’un spécialiste qualifié."],
+psychotherapy:["Qu’est-ce que la psychothérapie ? Approches et choix du thérapeute | YAD Center","Guide sur les approches psychothérapeutiques, la relation thérapeutique, le premier entretien et le choix éclairé."],
+psychiatry:["Psychiatrie et soins de santé mentale | YAD Center","Comprendre le rôle du psychiatre, l’évaluation psychiatrique et l’association possible des médicaments et de la psychothérapie."],
+relationships:["Thérapie de couple et thérapie familiale | YAD Center","Guide sur les thérapies de couple et familiale, les dynamiques relationnelles, le choix du thérapeute et la sécurité."]
+}
+};
 function render(lang){
  const article=document.querySelector("[data-guide-content]");
  if(!article)return;
@@ -412,7 +444,7 @@ function render(lang){
  const description=document.querySelector('meta[name="description"]');
  if(!document.documentElement.hasAttribute("data-guide-original-title"))document.documentElement.setAttribute("data-guide-original-title",document.title);
  if(description&&!description.hasAttribute("data-guide-original-content"))description.setAttribute("data-guide-original-content",description.content);
- if((lang==="en"||localized[lang]?.[page])&&data.title){document.title=data.title||document.documentElement.getAttribute("data-guide-original-title");if(description)description.content=data.description||description.getAttribute("data-guide-original-content")||description.content;}
+ if(guideMeta[lang]?.[page]){document.title=guideMeta[lang][page][0];if(description)description.content=guideMeta[lang][page][1];}else if(lang==="en"&&data.title){document.title=data.title;if(description)description.content=data.description||description.getAttribute("data-guide-original-content")||description.content;}
  else {document.title=document.documentElement.getAttribute("data-guide-original-title");if(description)description.content=description.getAttribute("data-guide-original-content")||description.content;}
  const note=document.querySelector(".translation-note[data-i18n-show-non-fa]");
  if(note)note.hidden=(lang==="fa"||!!data);
