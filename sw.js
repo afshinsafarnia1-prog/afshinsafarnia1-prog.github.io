@@ -2,6 +2,9 @@ const CACHE = "yadcenter-shell-v2";
 const CORE_ASSETS = [
   "/",
   "/index.html",
+  "/psychology.html",
+  "/psychotherapy.html",
+  "/psychiatry.html",
   "/style.css",
   "/app.js",
   "/portal.js",
