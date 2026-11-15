@@ -16,7 +16,7 @@ This folder documents the database foundation and the current staging workflow.
 5. The client receives payment instructions from YAD Center, transfers the amount, and submits a payment reference.
 6. The administrator checks the actual receipt. Approval marks the request as payment-verified; it does not create or confirm an appointment.
 7. The administrator schedules the session with the therapist selected by the client.
-8. The database records the current 60% therapist / 40% YAD Center split at request creation.
+8. The database records the current 70% therapist / 30% YAD Center split at request creation.
 
 Therapists do not need Supabase Auth accounts and cannot self-register, edit or publish profiles. The public directory exposes only profiles that are both verified and listed.
 
@@ -28,12 +28,12 @@ Therapists do not need Supabase Auth accounts and cannot self-register, edit or 
 - New requests, therapist management, payment review and scheduling are handled through RPCs that verify the caller's database role.
 
 ## Languages
-The public homepage and portal language controls expose Persian, Kurdish, English, Turkish, Arabic, Spanish, German and French. The homepage, assistant interface and FAQ responses, therapist collaboration/proposal interface, article index, and selected client/admin labels are localized. Full localization is not complete: the legal policy body and the full text of the three articles remain Persian (the interface now discloses this when another language is selected), and many admin event-management labels still need translation. Do not advertise the site as fully translated until all content receives human-reviewed translations.
+The public homepage and portal language controls expose Persian, Kurdish, English, Turkish, Arabic, Spanish, German and French. The four service-guide pages now have translated body content in Turkish, Arabic, Spanish, German and French, in addition to Persian, English and Kurdish. Full localization is not complete: the legal policy body and the full text of the articles remain Persian (the interface discloses this when another language is selected), and some admin/event-management labels still need translation. Do not advertise the site as fully translated until all content receives human-reviewed translations.
 
 ## Validation completed
 - Database migrations applied and recorded in Supabase.
 - Therapist profile creation and market-price configuration tested through the admin RPC; test profile removed.
-- End-to-end database smoke test completed for client selection, request creation, payment-reference submission, admin payment approval, scheduling with the selected therapist, and the then-current 60/40 split. Temporary rows were removed and the admin role was restored. The newer central-tariff migration was separately tested with a rollback-only QA transaction: new requests snapshot 70/30 and 45 minutes; no QA rows remain.
+- End-to-end database smoke test completed for client selection, request creation, payment-reference submission, admin payment approval, scheduling with the selected therapist, and the 70/30 split. Temporary rows were removed and the admin role was restored. The newer central-tariff migration was separately tested with a rollback-only QA transaction: new requests snapshot 70/30 and 45 minutes; no QA rows remain.
 - Anonymous execution of therapist-management and client-request creation RPCs is denied.
 - Public directory query cannot reveal unverified/unlisted therapist profiles.
 - Security advisors still report intentional warnings for role-checked SECURITY DEFINER RPCs callable by authenticated users, the public therapist-proposal endpoint (protected by input validation and a per-email rate limit), and no-policy tables such as `payout_accounts`, `site_settings`, `workshop_proposals` and `workshop_registrations` that are deliberately inaccessible through direct browser table access. The `btree_gist` extension has been moved to `extensions`.
