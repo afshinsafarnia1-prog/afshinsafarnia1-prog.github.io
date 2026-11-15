@@ -138,7 +138,7 @@
         p_therapist_id: select.value,
         p_market: market,
         p_currency: currency,
-        p_client_message: document.getElementById("yadClientMessage").value.trim() || null,
+        p_client_message: [document.getElementById("yadPreferredTime")?.value.trim() ? "زمان‌های پیشنهادی (غیرقطعی): " + document.getElementById("yadPreferredTime").value.trim() : "", document.getElementById("yadClientMessage").value.trim()].filter(Boolean).join("\n").slice(0, 500) || null,
         p_policy_version: "2026-11-16-v1-draft",
         p_adult_confirmation: true,
         p_country_code: sessionCountry
