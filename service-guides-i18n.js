@@ -31,7 +31,7 @@ function render(lang){
  if(lang==="en"&&data){document.title=data.title;if(description)description.content=data.description;}
  else {document.title=document.documentElement.getAttribute("data-guide-original-title");if(description)description.content=description.getAttribute("data-guide-original-content")||description.content;}
  const note=document.querySelector(".translation-note[data-i18n-show-non-fa]");
- if(note)note.hidden=(lang==="fa"||lang==="en"||(lang==="ku"&&["psychotherapy","psychology","psychiatry","relationships"].includes(page)));
+ if(note)note.hidden=(lang==="fa"||lang==="en"||(lang==="ku"&&!!kurdish[page]));
  if(!data){
   ["h2","h3","p","li"].forEach(tag=>article.querySelectorAll(tag).forEach(node=>{if(node.hasAttribute("data-guide-original"))node.innerHTML=node.getAttribute("data-guide-original");}));
   return;
