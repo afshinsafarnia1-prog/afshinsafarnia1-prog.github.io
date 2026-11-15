@@ -151,11 +151,7 @@
       ?"مسیر بین‌المللی انتخاب شد؛ واحد پول و شرایط پرداخت بر اساس بازار مربوط نمایش داده می‌شود."
       :"مسیر ایران انتخاب شد؛ تعرفهٔ یکسان یادسنتر به تومان نمایش داده می‌شود." ;
     document.documentElement.dataset.market=marketSelect.value;
-    renderDirectory(allTherapists.filter(t=>{
-      const language=document.getElementById("language")?.value||"";
-      const specialty=document.getElementById("specialty")?.value||"";
-      return (!language||(t.languages||[]).includes(language))&&(!specialty||(t.specialties||[]).some(s=>s.toLocaleLowerCase().includes(specialty.toLocaleLowerCase())));
-    }));
+    filterDirectory();
   });
 
 
