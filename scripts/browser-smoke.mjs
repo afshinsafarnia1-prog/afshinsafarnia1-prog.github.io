@@ -82,6 +82,8 @@ try {
     if (direction !== expectedDirection) throw new Error("Homepage direction is wrong for " + language);
     const hero = await page.locator(".hero h1").textContent();
     if (!hero?.trim()) throw new Error("Homepage hero is empty for " + language);
+    if (!(await page.locator('[data-i18n="modalityFilter"]').innerText()).trim()) throw new Error("Therapist approach filter did not localize for " + language);
+    if (!(await page.locator('[data-i18n="acceptingOnly"]').innerText()).trim()) throw new Error("Therapist intake filter did not localize for " + language);
   }
   await page.locator("#siteLanguage").selectOption("en");
   const englishHero = await page.locator(".hero h1").innerText();
@@ -98,13 +100,13 @@ try {
   }
 
   await page.goto("http://127.0.0.1:4173/client.html", { waitUntil: "domcontentloaded" });
-  for (const selector of ["#yadClientConsent", "#yadAdultConfirm", "#yadSessionCountry", "#yadClientAppointmentList", "#yadClientSupportForm", "#yadClientNotificationsList", "#yadExportMyData"]) {
+  for (const selector of ["#yadClientConsent", "#yadAdultConfirm", "#yadSessionCountry", "#yadPreferredTime", "#yadClientAppointmentList", "#yadClientSupportForm", "#yadClientNotificationsList", "#yadExportMyData"]) {
     if (!(await page.locator(selector).count())) throw new Error("Client workflow control missing: " + selector);
   }
   const clientHtml = await readFile(resolve(root, "client.html"), "utf8");
   if (!clientHtml.includes("client-extensions.js")) throw new Error("Client extension script is not connected.");
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
-  for (const selector of ["#yadSessionAccessAdmin", "#yadSupportAdmin", "#yadFeedbackAdmin", "#yadYearsExperience", "#yadJurisdictions", "#yadAcceptingNewClients"]) {
+  for (const selector of ["#yadSessionAccessAdmin", "#yadSupportAdmin", "#yadFeedbackAdmin", "#yadAvailabilityForm", "#yadAvailabilityTherapist", "#yadYearsExperience", "#yadJurisdictions", "#yadAcceptingNewClients"]) {
     if (!(await page.locator(selector).count())) throw new Error("Admin workflow control missing: " + selector);
   }
   const adminHtml = await readFile(resolve(root, "admin.html"), "utf8");
