@@ -573,10 +573,16 @@ language plpgsql
 security definer
 set search_path=''
 as $function$
+declare v_ticket_type text;
 begin
   perform public.require_admin_aal2();
   if p_status not in ('new','in_review','resolved','declined') then
     raise exception 'invalid_ticket_status' using errcode='22023';
+  end if;
+  select ticket_type into v_ticket_type from public.client_support_tickets where id=p_ticket_id;
+  if not found then raise exception 'ticket_not_found' using errcode='P0002'; end if;
+  if v_ticket_type in ('cancellation','reschedule','therapist_change') and p_status in ('resolved','declined') then
+    raise exception 'use_dedicated_ticket_resolution_action' using errcode='P0001';
   end if;
   if p_admin_note is not null and length(p_admin_note)>2000 then
     raise exception 'admin_note_too_long' using errcode='22023';
