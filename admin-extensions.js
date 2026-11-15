@@ -12,7 +12,7 @@
       if (value != null) el.textContent = value;
       return el;
     };
-    const date = value => value ? new Intl.DateTimeFormat("fa-IR", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)) : "—";
+    const date = (value, timeZone) => value ? new Intl.DateTimeFormat("fa-IR", { dateStyle: "medium", timeStyle: "short", ...(timeZone ? { timeZone } : {}) }).format(new Date(value)) : "—";
     const setStatus = (root, value, bad = false) => {
       root.replaceChildren(node("p", bad ? "admin-error" : "muted", value));
     };
@@ -33,7 +33,7 @@
       data.forEach(item => {
         const card = node("article", "portal-card yad-session-admin-card");
         card.append(node("h3", "", item.client_name + " · " + item.therapist_name));
-        card.append(node("p", "muted", date(item.starts_at) + " تا " + date(item.ends_at) + " · " + item.appointment_status));
+        card.append(node("p", "muted", date(item.starts_at, item.timezone) + " تا " + date(item.ends_at, item.timezone) + " · " + (item.timezone || "") + " · " + item.appointment_status));
         const url = node("input"); url.type = "url"; url.required = true; url.maxLength = 1000;
         url.placeholder = "لینک خصوصی جلسه با https://";
         url.value = item.meeting_url || "";
