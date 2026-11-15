@@ -17,6 +17,33 @@
 <span class="eyebrow" data-i18n="adminEyebrow">مدیریت متمرکز یادسنتر</span>
 <h1 data-i18n="adminTitle">پنل مدیریت یادسنتر</h1>
 <p class="lead" data-i18n="adminLead">مدیریت درمانگران، مراجعان، نوبت‌ها و پرداخت‌ها از طریق مدیریت مرکزی یادسنتر انجام می‌شود.</p>
+<section class="portal-card" id="yadBusinessSettings">
+<h2>تعرفه‌ها و راه‌های ارتباطی یادسنتر</h2>
+<p>تعرفه‌ها برای همه درمانگران یکسان است. مبلغ‌ها به‌ترتیب برای جلسه ۴۵ دقیقه‌ای داخل ایران، یورو و دلار ثبت می‌شوند. تغییرات جدید روی درخواست‌های قبلی اثر نمی‌گذارد.</p>
+<div id="yadBusinessSettingsStatus" class="notice" role="status" aria-live="polite">در حال دریافت تنظیمات…</div>
+<form id="yadBusinessSettingsForm" class="yad-admin-form">
+<h3>تعرفه‌های مرکزی و تقسیم درآمد</h3>
+<div class="portal-grid">
+<label>تعرفه داخل ایران (تومان)<input id="yadTariffIRR" type="number" min="1" step="1" required></label>
+<label>تعرفه بین‌المللی (یورو)<input id="yadTariffEUR" type="number" min="1" step="1" required></label>
+<label>تعرفه بین‌المللی (دلار)<input id="yadTariffUSD" type="number" min="1" step="1" required></label>
+<label>درصد سهم درمانگر<input id="yadTherapistPercent" type="number" min="1" max="99" value="70" required></label>
+<label>درصد سهم یادسنتر<input id="yadPlatformPercent" type="number" value="30" readonly></label>
+<label>تاریخ شروع اعتبار<input id="yadTariffEffective" type="datetime-local" required></label>
+</div>
+<h3>راه‌های ارتباطی عمومی</h3>
+<div class="portal-grid">
+<label>شماره واتساپ (با کد کشور)<input id="yadContactWhatsapp" type="tel" maxlength="40" placeholder="+..."></label>
+<label>ایمیل رسمی<input id="yadContactEmail" type="email" maxlength="254"></label>
+<label>لینک اینستاگرام<input id="yadContactInstagram" type="url" placeholder="https://..."></label>
+<label>لینک تلگرام<input id="yadContactTelegram" type="url" placeholder="https://..."></label>
+<label>لینک یوتیوب<input id="yadContactYoutube" type="url" placeholder="https://..."></label>
+<label>لینک لینکدین<input id="yadContactLinkedin" type="url" placeholder="https://..."></label>
+<label>لینک فیسبوک<input id="yadContactFacebook" type="url" placeholder="https://..."></label>
+</div>
+<button class="button primary" type="submit">ذخیره تعرفه‌ها و اطلاعات تماس</button>
+</form>
+</section>
 <section class="portal-card">
 <h2 data-i18n="opsTitle">عملیات و وضعیت سامانه</h2>
 <p id="yadAdminStatus" class="notice" role="status" aria-live="polite" data-i18n="loading">در حال اتصال امن…</p>
