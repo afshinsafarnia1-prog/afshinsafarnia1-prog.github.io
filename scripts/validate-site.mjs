@@ -111,7 +111,7 @@ for (const [condition, message] of [
   [homepage.includes('id="yadPublicContacts"'), "Homepage must include managed public contact links"],
   [adminPage.includes('id="yadBusinessSettingsForm"'), "Admin must include central tariff/contact settings"],
   [adminWorkflow.includes('admin_update_yad_business_settings'), "Admin workflow must save central tariffs"],
-  [adminWorkflow.includes('admin_update_yad_public_contacts'), "Admin workflow must save contact settings independently"],
+  [adminWorkflow.includes('admin_update_yad_business_settings') && adminWorkflow.includes("p_contacts:contacts"), "Admin workflow must save central tariffs and public contacts through the scoped settings RPC"],
   [appScript.includes('get_public_site_settings'), "Homepage must load public settings through the scoped RPC"],
   [!adminWorkflow.includes('admin_set_therapist_prices'), "Admin workflow must not save per-therapist prices"],
   [adminPage.includes('id="yadDuration" type="number" min="45" max="45" value="45" readonly'), "Admin therapist form must enforce the 45-minute standard session"],
