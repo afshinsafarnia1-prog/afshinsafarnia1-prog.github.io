@@ -50,7 +50,7 @@
         const card = document.createElement("article");
         card.className = "portal-card";
         const title = document.createElement("b");
-        title.textContent = item.therapist_name + " · " + item.amount + " " + item.currency;
+        title.textContent = item.therapist_name + " · " + new Intl.NumberFormat("fa-IR").format(item.currency === "IRR" ? Number(item.amount)/10 : Number(item.amount)) + (item.currency === "IRR" ? " تومان" : " " + item.currency);
         const detail = document.createElement("p");
         detail.textContent = "وضعیت درخواست: " + item.request_status + " | وضعیت پرداخت: " + (item.payment_status || "نامشخص");
         card.append(title, detail);
