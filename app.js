@@ -41,7 +41,7 @@
       const market=document.getElementById("marketSelect")?.value||"iran";
       const currency=market==="iran"?"IRR":(document.getElementById("internationalCurrency")?.value||"EUR");
       const chosen=allPrices.find(x=>x.market===market&&x.currency===currency);
-      const priceText=chosen?new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(Number(chosen.amount))+" "+chosen.currency:"تعرفه در حال تنظیم است";
+      const priceText=chosen?new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(chosen.currency==="IRR"?Number(chosen.amount)/10:Number(chosen.amount))+(chosen.currency==="IRR"?" تومان":" "+chosen.currency):"تعرفه در حال تنظیم است";
       const meta=el("p","therapist-meta","۴۵ دقیقه · "+priceText);
       body.append(meta);
       const link=el("a","button primary",i18n().chooseTherapist||"مشاهده و انتخاب");
@@ -82,7 +82,7 @@
       const item=allPrices.find(x=>x.market===market&&x.currency===currency);
       const card=el("div","tariff-item");
       card.append(el("b","",label));
-      card.append(el("strong","",item?new Intl.NumberFormat("fa-IR").format(Number(item.amount))+" "+currency:"به‌زودی"));
+      card.append(el("strong","",item?new Intl.NumberFormat("fa-IR").format(currency==="IRR"?Number(item.amount)/10:Number(item.amount))+(currency==="IRR"?" تومان":" "+currency):"به‌زودی"));
       card.append(el("small","","جلسه ۴۵ دقیقه‌ای"));
       target.append(card);
     });
