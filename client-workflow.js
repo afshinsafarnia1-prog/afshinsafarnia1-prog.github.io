@@ -19,7 +19,7 @@
 
     async function loadDirectory() {
       const { data, error } = await db.from("therapists")
-        .select("id,display_name,headline,languages,specialties,fee_amount,fee_currency")
+        .select("id,display_name,headline,languages,specialties,modalities")
         .eq("is_listed", true).not("verified_at", "is", null)
         .order("display_name", { ascending: true });
       if (error) throw error;
