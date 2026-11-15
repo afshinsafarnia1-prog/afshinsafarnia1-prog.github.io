@@ -172,7 +172,7 @@ if (!fs.existsSync(completionFile)) {
     "admin_mark_appointment_completed","admin_list_appointment_feedback","admin_moderate_appointment_feedback"
   ];
   for (const name of adminRpcs) {
-    const escaped = name.replace(/[.*+?^{}()|[\]\\]/g,"\\if (errors.length) {");
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const match = completion.match(new RegExp("create\\s+or\\s+replace\\s+function\\s+public\\."+escaped+"[\\s\\S]*?\\$function\\$;","i"));
     if (!match) { errors.push("Missing platform admin RPC: " + name); continue; }
     if (!/security\\s+definer/i.test(match[0]) || !/set\\s+search_path\\s*=\\s*''/i.test(match[0]) || !/require_admin_aal2\\(\\)/i.test(match[0])) {
@@ -180,7 +180,7 @@ if (!fs.existsSync(completionFile)) {
     }
   }
   for (const name of ["client_list_appointments","client_submit_support_ticket","client_list_support_tickets","client_list_notifications","client_mark_notification_read","client_submit_appointment_feedback","create_client_request_with_consent"]) {
-    const escaped = name.replace(/[.*+?^{}()|[\]\\]/g,"\\if (errors.length) {");
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const match = completion.match(new RegExp("create\\s+or\\s+replace\\s+function\\s+public\\."+escaped+"[\\s\\S]*?\\$function\\$;","i"));
     if (!match || !/security\\s+definer/i.test(match[0]) || !/set\\s+search_path\\s*=\\s*''/i.test(match[0])) {
       errors.push(name + " must be a pinned SECURITY DEFINER RPC");
