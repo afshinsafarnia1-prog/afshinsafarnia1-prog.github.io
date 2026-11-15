@@ -53,7 +53,7 @@ if (!fs.existsSync(sitemapPath)) {
 } else {
   const sitemap = fs.readFileSync(sitemapPath, "utf8");
   if (sitemap.includes("YOUR-DOMAIN.example")) errors.push("sitemap.xml still contains a placeholder domain");
-  if (!/<urlset[\\s>]/i.test(sitemap) || !/<loc>https:\\/\\//i.test(sitemap)) errors.push("sitemap.xml has no valid URL entries");
+  if (!sitemap.includes("<urlset") || !sitemap.includes("<loc>https://")) errors.push("sitemap.xml has no valid URL entries");
   for (const page of ["/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/relationships.html"]) {
     if (!sitemap.includes(page)) errors.push("sitemap.xml is missing public guide: " + page);
   }
@@ -65,16 +65,21 @@ if (!fs.existsSync(robotsPath)) {
   errors.push("Missing robots.txt");
 } else {
   const robots = fs.readFileSync(robotsPath, "utf8");
-  if (!/Disallow:\\s*\\/admin\\.html/i.test(robots) || !/Disallow:\\s*\\/client\\.html/i.test(robots)) {
+  if (!robots.includes("Disallow: /admin.html") || !robots.includes("Disallow: /client.html")) {
     errors.push("robots.txt must exclude private admin and client portals");
   }
-  if (fs.existsSync(sitemapPath) && !robots.includes(fs.readFileSync(sitemapPath, "utf8").match(/<loc>(https:\\/\\/[^<]+)<\\/loc>/)?.[1]?.replace(/\\/sitemap\\.xml$/, "/sitemap.xml") || "__missing_sitemap_url__")) {
-    errors.push("robots.txt sitemap URL does not match the site's sitemap host");
+  if (fs.existsSync(sitemapPath)) {
+    const sitemap = fs.readFileSync(sitemapPath, "utf8");
+    const firstUrl = sitemap.match(/<loc>([^<]+)<\\/loc>/)?.[1];
+    const expectedSitemapUrl = firstUrl ? firstUrl.replace(/\\/$/, "/sitemap.xml") : null;
+    if (!expectedSitemapUrl || !robots.includes(expectedSitemapUrl)) {
+      errors.push("robots.txt sitemap URL does not match the site's sitemap host");
+    }
   }
 }
 for (const page of ["admin.html", "client.html"]) {
   const html = fs.readFileSync(path.join(root, page), "utf8");
-  if (!/<meta\\s+name=["']robots["']\\s+content=["']noindex,nofollow["']/i.test(html)) {
+  if (!html.includes('name="robots" content="noindex,nofollow"')) {
     errors.push(page + " must be excluded from search indexing");
   }
 }
