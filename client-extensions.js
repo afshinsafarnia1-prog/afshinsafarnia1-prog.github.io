@@ -24,7 +24,7 @@
       supportStatus.textContent = text;
       supportStatus.dataset.error = bad ? "true" : "false";
     };
-    const date = value => value ? new Intl.DateTimeFormat(document.documentElement.lang === "fa" ? "fa-IR" : "en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)) : "—";
+    const date = (value, timeZone) => value ? new Intl.DateTimeFormat(document.documentElement.lang === "fa" ? "fa-IR" : "en-GB", { dateStyle: "medium", timeStyle: "short", ...(timeZone ? { timeZone } : {}) }).format(new Date(value)) : "—";
     const migrationHint = "این بخش به مهاجرت تکمیلی پایگاه داده نیاز دارد؛ پس از اعمال فایل platform-completion-2026-11.sql فعال می‌شود.";
 
     async function loadAppointments() {
@@ -41,7 +41,7 @@
       appointments.forEach(item => {
         const card = node("article", "portal-card yad-appointment-card");
         card.append(node("h3", "", item.therapist_name));
-        card.append(node("p", "muted", date(item.starts_at) + " تا " + date(item.ends_at)));
+        card.append(node("p", "muted", date(item.starts_at, item.timezone) + " تا " + date(item.ends_at, item.timezone) + " · " + (item.timezone || "")));
         card.append(node("span", "status-chip", item.appointment_status === "completed" ? "تکمیل‌شده" : item.appointment_status === "cancelled" ? "لغوشده" : "تأییدشده"));
         if (item.meeting_url) {
           const link = node("a", "button primary", "ورود به جلسهٔ خصوصی");
