@@ -123,7 +123,7 @@ begin
   if not exists(
     select 1 from public.therapists t
     where t.id=p_therapist_id and t.is_listed and t.verified_at is not null
-      and v_country=any(t.practice_jurisdictions)
+      and t.accepting_new_clients and v_country=any(t.practice_jurisdictions)
   ) then
     raise exception 'therapist_not_authorized_for_client_location' using errcode='42501';
   end if;
@@ -362,6 +362,9 @@ begin
   where s.id=p_slot_id and s.therapist_id=v_request.therapist_id and s.is_available and s.starts_at>now()
   for update;
   if not found then raise exception 'slot_unavailable_or_wrong_therapist' using errcode='P0001'; end if;
+  if not exists(select 1 from public.therapists t where t.id=v_request.therapist_id and t.is_listed and t.verified_at is not null) then
+    raise exception 'therapist_no_longer_eligible' using errcode='P0001';
+  end if;
   if v_slot.ends_at-v_slot.starts_at<>interval '45 minutes' then raise exception 'invalid_slot_duration' using errcode='22023'; end if;
   select p.timezone into v_timezone from public.profiles p where p.id=v_request.client_id;
   insert into public.appointments(client_id,therapist_id,slot_id,starts_at,ends_at,status,client_message,market,timezone)
