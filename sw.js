@@ -1,4 +1,4 @@
-const CACHE = "yadcenter-shell-v6";
+const CACHE = "yadcenter-shell-v7";
 const CORE_ASSETS = [
   "/",
   "/index.html",
@@ -13,7 +13,9 @@ const CORE_ASSETS = [
   "/service-guides-i18n.js",
   "/auth.js",
   "/client-workflow.js",
+  "/client-extensions.js",
   "/admin-workflow.js",
+  "/admin-extensions.js",
   "/supabase-config.js",
   "/manifest.webmanifest",
   "/app-icon.svg",
