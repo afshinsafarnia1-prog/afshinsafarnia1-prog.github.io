@@ -27,6 +27,10 @@
       .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path")
       .eq("id",id).eq("is_listed",true).not("verified_at","is",null).maybeSingle();
     if(error||!data){root.textContent=t("profileNotFound");return;}
+    const {data:metaRows}=await db.rpc("get_public_therapist_public_metadata",{p_therapist_id:id});
+    const publicMeta=metaRows?.[0]||{};
+    const {data:feedbackRows}=await db.rpc("get_public_therapist_feedback",{p_therapist_id:id});
+    const feedback=feedbackRows||[];
     root.replaceChildren();
     const hero=node("div","profile-hero");
     if(data.photo_path){
@@ -41,6 +45,7 @@
     intro.append(node("span","eyebrow",t("profileVerified")));
     intro.append(node("h1","",data.display_name||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.headline));
+    if(typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",publicMeta.accepting_new_clients?"پذیرش مراجع جدید":"فعلاً پذیرش مراجع جدید ندارد"));
     intro.append(node("p","profile-session",t("profileSession")));
     hero.append(intro);root.append(hero);
     const grid=node("div","profile-content-grid");
@@ -54,6 +59,10 @@
     if(modalities.length)main.append(section(t("profileModalities"),modalities));
     const languages=list(data.languages).map(x=>names[x]||x);
     if(languages.length)main.append(section(t("profileLanguages"),languages));
+    if(publicMeta.years_experience!=null)main.append(section("سابقهٔ حرفه‌ای",[publicMeta.years_experience+" سال"]));
+    const jurisdictions=list(publicMeta.practice_jurisdictions);
+    if(jurisdictions.length)main.append(section("قلمروهای مجاز فعالیتِ بررسی‌شده",jurisdictions));
+    if(feedback.length){const reviews=node("section","profile-section");reviews.append(node("h2","","بازخورد مراجعان"));feedback.forEach(item=>{const review=node("article","public-review");review.append(node("b","","★".repeat(item.rating)+" · مراجع تأییدشده"));if(item.feedback)review.append(node("p","",item.feedback));review.append(node("small","profile-muted",new Intl.DateTimeFormat(locale(),{dateStyle:"medium"}).format(new Date(item.created_at))));reviews.append(review);});main.append(reviews);}
     const aside=node("aside","profile-aside");
     const price=node("section","profile-section");
     price.append(node("h2","",t("profileFee")));
