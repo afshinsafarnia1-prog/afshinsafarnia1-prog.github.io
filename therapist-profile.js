@@ -6,7 +6,9 @@
     ?window.supabase.createClient(config.url,config.anonKey):null;
   const params=new URLSearchParams(window.location.search);
   const id=params.get("id");
-  const names={fa:"فارسی",ku:"کوردی",en:"English",tr:"ترکی",ar:"عربی",es:"اسپانیایی",de:"آلمانی",fr:"فرانسوی"};
+  const names={fa:"فارسی",ku:"کوردی",en:"English",tr:"ترکی",ar:"العربية",es:"Español",de:"Deutsch",fr:"Français"};
+  const locale=()=>document.documentElement.lang==="ku"?"en-GB":(document.documentElement.lang||"en");
+  const t=(key)=>window.YAD_I18N?.translations?.[document.documentElement.lang]?.[key]||window.YAD_I18N?.translations?.fa?.[key]||key;
   const node=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!=null)n.textContent=value;return n;};
   const list=(value)=>Array.isArray(value)?value:(typeof value==="string"?value.split(/[,،؛]/).map(x=>x.trim()).filter(Boolean):[]);
   function section(title,values){
@@ -18,52 +20,54 @@
     box.append(wrap);return box;
   }
   async function load(){
-    if(!db){root.textContent="اتصال به سامانه در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.";return;}
-    if(!id){root.textContent="نشانی پروفایل کامل نیست.";return;}
-    root.textContent="در حال دریافت اطلاعات متخصص…";
+    if(!db){root.textContent=t("profileConnectionError");return;}
+    if(!id){root.textContent=t("profileMissingId");return;}
+    root.textContent=t("profileLoading");
     const {data,error}=await db.from("therapists")
       .select("id,public_slug,headline,biography,qualifications,specialties,languages")
       .eq("id",id).eq("is_listed",true).not("verified_at","is",null).maybeSingle();
-    if(error||!data){root.textContent="این پروفایل در دسترس نیست یا هنوز برای نمایش تأیید نشده است.";return;}
+    if(error||!data){root.textContent=t("profileNotFound");return;}
     root.replaceChildren();
     const hero=node("div","profile-hero");
     const mark=node("div","profile-monogram","ی");
     mark.setAttribute("aria-hidden","true");
     hero.append(mark);
     const intro=node("div","profile-intro");
-    intro.append(node("span","eyebrow","درمانگر تأییدشدهٔ یادسنتر"));
+    intro.append(node("span","eyebrow",t("profileVerified")));
     const publicName=(data.public_slug||"").replace(/[-_]+/g," ").trim();
-    intro.append(node("h1","",publicName||"درمانگر تأییدشده"));
+    intro.append(node("h1","",publicName||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.headline));
-    intro.append(node("p","profile-session","جلسهٔ ۴۵ دقیقه‌ای · تعرفهٔ یکسان مرکزی"));
+    intro.append(node("p","profile-session",t("profileSession")));
     hero.append(intro);root.append(hero);
     const grid=node("div","profile-content-grid");
     const main=node("div","profile-main");
-    if(data.biography){const bio=node("section","profile-section");bio.append(node("h2","","دربارهٔ درمانگر"),node("p","profile-biography",data.biography));main.append(bio);}
+    if(data.biography){const bio=node("section","profile-section");bio.append(node("h2","",t("profileAbout")),node("p","profile-biography",data.biography));main.append(bio);}
     const qualifications=list(data.qualifications);
-    if(qualifications.length)main.append(section("تحصیلات و سوابق حرفه‌ای",qualifications));
+    if(qualifications.length)main.append(section(t("profileQualifications"),qualifications));
     const specialties=list(data.specialties);
-    if(specialties.length)main.append(section("حوزه‌های تخصصی",specialties));
+    if(specialties.length)main.append(section(t("profileSpecialties"),specialties));
     const languages=list(data.languages).map(x=>names[x]||x);
-    if(languages.length)main.append(section("زبان‌های گفت‌وگو",languages));
+    if(languages.length)main.append(section(t("profileLanguages"),languages));
     const aside=node("aside","profile-aside");
     const price=node("section","profile-section");
-    price.append(node("h2","","تعرفهٔ جلسه"));
-    const {data:settings}=await db.rpc("get_public_site_settings");
-    const tariffs=settings?.tariffs||[];
-    const labels=[["iran","IRR","داخل ایران"],["international","EUR","بین‌المللی · یورو"],["international","USD","بین‌المللی · دلار"]];
-    labels.forEach(([market,currency,label])=>{
+    price.append(node("h2","",t("profileFee")));
+    let tariffs=[];
+    const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
+    if(!settingsError)tariffs=settings?.tariffs||[];
+    const labels=[["iran","IRR","profileIran"],["international","EUR","profileEuro"],["international","USD","profileDollar"]];
+    labels.forEach(([market,currency,key])=>{
       const item=tariffs.find(x=>x.market===market&&x.currency===currency);
-      price.append(node("p","profile-price",label+" · "+(item?new Intl.NumberFormat("fa-IR").format(currency==="IRR"?Number(item.amount)/10:Number(item.amount))+(currency==="IRR"?" تومان":" "+currency):"در حال تنظیم")));
+      const amount=item?new Intl.NumberFormat(locale()).format(currency==="IRR"?Number(item.amount)/10:Number(item.amount))+(currency==="IRR"?t("profileToman"):" "+currency):t("profileSetting");
+      price.append(node("p","profile-price",t(key)+" · "+amount));
     });
-    price.append(node("small","profile-muted","همهٔ تعرفه‌ها برای جلسهٔ ۴۵ دقیقه‌ای است."));
+    price.append(node("small","profile-muted",t("profile45min")));
     aside.append(price);
-    const cta=node("a","button primary full-button","انتخاب این درمانگر و ثبت درخواست");
+    const cta=node("a","button primary full-button",t("profileChoose"));
     cta.href="client.html?therapist="+encodeURIComponent(data.id);
     aside.append(cta);
-    const note=node("p","profile-muted","ثبت درخواست به‌تنهایی به معنای قطعی‌شدن نوبت نیست؛ هماهنگی پس از طی مراحل پرداخت و تأیید انجام می‌شود.");
-    aside.append(note);
+    aside.append(node("p","profile-muted",t("profileBookingNote")));
     grid.append(main,aside);root.append(grid);
   }
   load();
+  document.addEventListener("yad:languagechange",load);
 })();
