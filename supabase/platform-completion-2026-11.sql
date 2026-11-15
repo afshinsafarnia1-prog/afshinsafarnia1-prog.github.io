@@ -120,11 +120,13 @@ begin
      or not exists(select 1 from pg_catalog.pg_timezone_names z where z.name=p_timezone) then
     raise exception 'valid_session_timezone_required' using errcode='22023';
   end if;
-  if not exists(
-    select 1 from public.therapists t
-    where t.id=p_therapist_id and t.is_listed and t.verified_at is not null
-      and t.accepting_new_clients and v_country=any(t.practice_jurisdictions)
-  ) then
+  if not exists(select 1 from public.therapists t where t.id=p_therapist_id and t.is_listed and t.verified_at is not null) then
+    raise exception 'therapist_not_available' using errcode='P0002';
+  end if;
+  if not exists(select 1 from public.therapists t where t.id=p_therapist_id and t.accepting_new_clients) then
+    raise exception 'therapist_not_accepting_new_clients' using errcode='P0001';
+  end if;
+  if not exists(select 1 from public.therapists t where t.id=p_therapist_id and v_country=any(t.practice_jurisdictions)) then
     raise exception 'therapist_not_authorized_for_client_location' using errcode='42501';
   end if;
 
