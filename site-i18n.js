@@ -153,6 +153,17 @@
     fr:{profileLoading:"Chargement du profil professionnel…",profileConnectionError:"Le service est momentanément indisponible. Veuillez réessayer plus tard.",profileMissingId:"L’adresse du profil est incomplète.",profileNotFound:"Ce profil est indisponible ou n’a pas encore été approuvé pour publication.",profileVerified:"Thérapeute vérifié par YAD Center",profileSession:"Séance de 45 minutes · tarif centralisé",profileAbout:"À propos du thérapeute",profileQualifications:"Formation et parcours professionnel",profileSpecialties:"Domaines de spécialité",profileLanguages:"Langues des consultations",profileFee:"Tarif de la séance",profileIran:"En Iran",profileEuro:"International · euro",profileDollar:"International · dollar américain",profile45min:"Tous les tarifs correspondent à une séance de 45 minutes.",profileSetting:"À définir",profileToman:" tomans",profileChoose:"Choisir ce thérapeute et envoyer une demande",profileBookingNote:"L’envoi d’une demande ne confirme pas le rendez-vous. L’horaire est convenu après vérification et confirmation du paiement.",profileNoName:"Thérapeute vérifié"}
   };
   Object.entries(therapistProfileLabels).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
+  const therapistContentNotice = {
+    fa:{profileContentNotice:"اطلاعات حرفه‌ای این صفحه به زبانی نمایش داده می‌شود که متخصص وارد کرده است؛ ممکن است همهٔ جزئیات ترجمه نشده باشند."},
+    ku:{profileContentNotice:"زانیاریی پیشەیی بەو زمانە پیشان دەدرێت کە پسپۆڕ خۆی تۆماری کردووە؛ لەوانەیە هەموو وردەکارییەکان وەرنەگێڕدرابن."},
+    en:{profileContentNotice:"Professional details are shown in the language supplied by the therapist; some information may not be translated."},
+    tr:{profileContentNotice:"Mesleki bilgiler terapistin sağladığı dilde gösterilir; bazı ayrıntılar çevrilmemiş olabilir."},
+    ar:{profileContentNotice:"تُعرض المعلومات المهنية باللغة التي أدخلها المعالج؛ وقد لا تكون بعض التفاصيل مترجمة."},
+    es:{profileContentNotice:"La información profesional se muestra en el idioma proporcionado por el terapeuta; es posible que algunos datos no estén traducidos."},
+    de:{profileContentNotice:"Berufliche Angaben werden in der vom therapeutischen Anbieter angegebenen Sprache angezeigt; möglicherweise sind nicht alle Informationen übersetzt."},
+    fr:{profileContentNotice:"Les informations professionnelles sont affichées dans la langue fournie par le thérapeute ; certains détails peuvent ne pas être traduits."}
+  };
+  Object.entries(therapistContentNotice).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
   const guideNavLabels = {
     fa:{homeNav:"خانه",psychologyNav:"روان‌شناسی",psychotherapyNav:"روان‌درمانی",psychiatryNav:"روان‌پزشکی",journalNav:"مجله",serviceGuide1:"آشنایی با روان‌درمانی ←",serviceGuide2:"راهنمای روان‌شناسی ←",serviceGuide3:"مطالعه دربارهٔ روابط ←",serviceGuide4:"راهنمای روان‌پزشکی ←"},
     ku:{homeNav:"ماڵەوە",psychologyNav:"دەروونناسی",psychotherapyNav:"چارەسەری دەروونی",psychiatryNav:"دەروونپزیشکی",journalNav:"گۆڤار",serviceGuide1:"زیاتر لەبارەی چارەسەری دەروونی ←",serviceGuide2:"ڕێنمایی دەروونناسی ←",serviceGuide3:"خوێندنەوە لەبارەی پەیوەندییەکان ←",serviceGuide4:"ڕێنمایی دەروونپزیشکی ←"},
