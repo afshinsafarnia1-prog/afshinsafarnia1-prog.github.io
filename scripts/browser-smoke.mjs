@@ -61,6 +61,11 @@ try {
     if (!response || response.status() !== 200) throw new Error(`Page failed: ${path} (${response?.status()})`);
   }
 
+  await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator("#yadMfaBackup").count()) || !(await page.locator("#yadMfaFactor").count())) {
+    throw new Error("Admin backup MFA enrollment or factor selection UI is missing.");
+  }
+
   for (const [path, heading] of [["/psychology.html","روان‌شناسی و مشاوره"],["/psychotherapy.html","روان‌درمانی"],["/psychiatry.html","روان‌پزشکی"]]) {
     await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
     if (!(await page.locator("h1").innerText()).includes(heading)) throw new Error("Service guide heading missing: " + path);
