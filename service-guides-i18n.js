@@ -8,7 +8,7 @@ function render(lang){
  const data=translations[page];
  const note=document.querySelector(".translation-note[data-i18n-show-non-fa]");
  if(note)note.hidden=(lang==="fa"||lang==="en");
- if(lang!=="en"||!data)return;
+ if(!data)return;
  ["h2","h3","p","li"].forEach(tag=>{
   const nodes=article.querySelectorAll(tag);
   const values=data[tag]||[];
