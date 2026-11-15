@@ -18,6 +18,8 @@ const CORE_ASSETS = [
   "/app-icon.svg",
   "/assistant.html",
   "/therapist.html",
+  "/therapist-profile.html",
+  "/therapist-profile.js",
   "/client.html",
   "/admin.html",
   "/rules.html",
