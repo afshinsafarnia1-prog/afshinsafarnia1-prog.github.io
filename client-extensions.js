@@ -8,6 +8,7 @@
     const supportForm = document.getElementById("yadClientSupportForm");
     const supportStatus = document.getElementById("yadClientSupportStatus");
     const ticketList = document.getElementById("yadClientSupportTickets");
+    const notificationsRoot = document.getElementById("yadClientNotificationsList");
     const related = document.getElementById("yadSupportAppointment");
     let appointments = [];
     let requests = [];
@@ -114,6 +115,30 @@
       });
     }
 
+    async function loadNotifications() {
+      if (!notificationsRoot) return;
+      const { data, error } = await db.rpc("client_list_notifications");
+      notificationsRoot.replaceChildren();
+      if (error) { notificationsRoot.append(node("p", "muted", migrationHint)); return; }
+      if (!data?.length) { notificationsRoot.append(node("p", "muted", "اعلان جدیدی وجود ندارد.")); return; }
+      data.forEach(item => {
+        const card = node("article", item.read_at ? "portal-card" : "portal-card yad-notification-unread");
+        card.append(node("b", "", item.title));
+        card.append(node("p", "", item.body));
+        card.append(node("small", "muted", date(item.created_at)));
+        if (!item.read_at) {
+          const mark = node("button", "button outline", "خوانده شد"); mark.type = "button";
+          mark.addEventListener("click", async () => {
+            const { error: readError } = await db.rpc("client_mark_notification_read", { p_notification_id: item.notification_id });
+            if (readError) { message(readError.message || "ثبت وضعیت اعلان انجام نشد.", true); return; }
+            await loadNotifications();
+          });
+          card.append(mark);
+        }
+        notificationsRoot.append(card);
+      });
+    }
+
     async function loadTickets() {
       if (!ticketList) return;
       const { data, error } = await db.rpc("client_list_support_tickets");
@@ -205,6 +230,7 @@
       }
       await loadAppointments();
       await loadTickets();
+      await loadNotifications();
     }
     db.auth.getSession().then(({ data }) => init(data.session));
     db.auth.onAuthStateChange((_event, session) => {
