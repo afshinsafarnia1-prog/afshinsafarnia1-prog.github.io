@@ -127,7 +127,7 @@
     const international=marketSelect.value==="international";
     if(notice)notice.textContent=international
       ?"مسیر بین‌المللی انتخاب شد؛ واحد پول و شرایط پرداخت بر اساس بازار مربوط نمایش داده می‌شود."
-      :"مسیر ایران انتخاب شد؛ هزینه‌ها بر اساس تعرفهٔ ریالی درمانگر نمایش داده می‌شوند.";
+      :"مسیر ایران انتخاب شد؛ تعرفهٔ یکسان یادسنتر به تومان نمایش داده می‌شود." ;
     document.documentElement.dataset.market=marketSelect.value;
     renderDirectory(allTherapists.filter(t=>{
       const language=document.getElementById("language")?.value||"";
