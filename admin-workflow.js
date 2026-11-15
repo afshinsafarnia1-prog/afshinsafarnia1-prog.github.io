@@ -327,8 +327,9 @@
           p_languages: split(val("yadLanguages")),
           p_modalities: split(val("yadModalities")),
           p_session_duration_minutes: 45,
-          p_fee_amount: Number(val("yadFee") || 0),
-          p_fee_currency: val("yadCurrency"),
+          // Legacy database columns remain required by the existing RPC; public pricing comes only from central tariffs.
+          p_fee_amount: 0,
+          p_fee_currency: "IRR",
           p_photo_path: photoPath,
           p_license_number: val("yadLicense") || null,
           p_issuing_authority: val("yadAuthority") || null,
