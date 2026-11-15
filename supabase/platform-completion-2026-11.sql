@@ -370,6 +370,23 @@ begin
 end;
 $function$;
 
+create or replace function public.admin_get_appointment_timezone(p_appointment_id uuid)
+returns text
+language plpgsql
+security definer
+set search_path=''
+as $function$
+declare v_timezone text;
+begin
+  perform public.require_admin_aal2();
+  select p.timezone into v_timezone
+  from public.appointments a join public.profiles p on p.id=a.client_id
+  where a.id=p_appointment_id;
+  if not found then raise exception 'appointment_not_found' using errcode='P0002'; end if;
+  return v_timezone;
+end;
+$function$;
+
 create or replace function public.admin_list_request_client_timezones()
 returns table(request_id uuid,client_timezone text)
 language plpgsql
@@ -648,6 +665,7 @@ revoke all on function public.client_mark_notification_read(uuid) from public,an
 revoke all on function public.client_list_appointments() from public,anon;
 revoke all on function public.client_submit_support_ticket(text,text,uuid,uuid) from public,anon;
 revoke all on function public.client_list_support_tickets() from public,anon;
+revoke all on function public.admin_get_appointment_timezone(uuid) from public,anon;
 revoke all on function public.admin_list_request_client_timezones() from public,anon;
 revoke all on function public.admin_list_support_tickets(integer) from public,anon;
 revoke all on function public.admin_update_support_ticket(uuid,text,text) from public,anon;
@@ -672,6 +690,7 @@ grant execute on function public.client_mark_notification_read(uuid) to authenti
 grant execute on function public.client_list_appointments() to authenticated;
 grant execute on function public.client_submit_support_ticket(text,text,uuid,uuid) to authenticated;
 grant execute on function public.client_list_support_tickets() to authenticated;
+grant execute on function public.admin_get_appointment_timezone(uuid) to authenticated;
 grant execute on function public.admin_list_request_client_timezones() to authenticated;
 grant execute on function public.admin_list_support_tickets(integer) to authenticated;
 grant execute on function public.admin_update_support_ticket(uuid,text,text) to authenticated;
