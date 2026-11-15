@@ -151,6 +151,8 @@
     async function loadRequests() {
       const { data, error } = await db.rpc("admin_list_requests", { p_limit: 100, p_offset: 0 });
       if (error) throw error;
+      const { data: timezoneRows } = await db.rpc("admin_list_request_client_timezones");
+      const timezoneByRequest = new Map((timezoneRows || []).map(item => [item.request_id, item.client_timezone]));
       requests.replaceChildren();
       if (!data?.length) {
         const tr = document.createElement("tr");
@@ -162,6 +164,7 @@
         const tr = document.createElement("tr");
         tr.dataset.requestId = item.request_id;
         tr.dataset.duration = String(item.session_duration_minutes || 45);
+        tr.dataset.timezone = timezoneByRequest.get(item.request_id) || "Asia/Tehran";
         const add = value => { const td = document.createElement("td"); td.textContent = safe(value); tr.append(td); return td; };
         add(item.client_name);
         add(item.therapist_name);
@@ -217,7 +220,7 @@
         p_request_id: requestId,
         p_starts_at: start.toISOString(),
         p_ends_at: end.toISOString(),
-        p_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran"
+        p_timezone: row?.dataset.timezone || "Asia/Tehran"
       });
       if (error) { setStatus(error.message || "ثبت جلسه ناموفق بود.", true); return; }
       setStatus("جلسه با درمانگر انتخاب‌شده ثبت شد.");
