@@ -129,6 +129,9 @@
       if (!activeUser) { setStatus("برای ثبت درخواست ابتدا وارد حساب مراجع شوید.", true); return; }
       if (!select.value) { setStatus("ابتدا درمانگر موردنظر را انتخاب کنید.", true); return; }
       if (!document.getElementById("yadClientConsent")?.checked) { setStatus("برای ثبت درخواست، تأیید مطالعهٔ اطلاعیه و شرایط لازم است.", true); return; }
+      if (!document.getElementById("yadAdultConfirm")?.checked) { setStatus("ثبت درخواست فقط برای افراد ۱۸ سال یا بیشتر فعال است.", true); return; }
+      const sessionCountry = document.getElementById("yadSessionCountry")?.value?.trim().toUpperCase() || "";
+      if (!/^[A-Z]{2}$/.test(sessionCountry)) { setStatus("کد دوحرفی معتبر کشور محل حضور هنگام جلسه را وارد کنید.", true); return; }
       const market = document.getElementById("yadRequestMarket").value;
       const currency = market === "iran" ? "IRR" : document.getElementById("yadRequestCurrency").value;
       const { error, data } = await db.rpc("create_client_request_with_consent", {
@@ -136,7 +139,9 @@
         p_market: market,
         p_currency: currency,
         p_client_message: document.getElementById("yadClientMessage").value.trim() || null,
-        p_policy_version: "2026-11-16-v1-draft"
+        p_policy_version: "2026-11-16-v1-draft",
+        p_adult_confirmation: true,
+        p_country_code: sessionCountry
       });
       if (error) { setStatus(error.message || "ثبت درخواست ناموفق بود.", true); return; }
       setStatus("درخواست ثبت شد. اطلاعات پرداخت را از مدیریت یادسنتر دریافت کنید؛ پس از پرداخت، شماره پیگیری را در همین صفحه وارد کنید.");
