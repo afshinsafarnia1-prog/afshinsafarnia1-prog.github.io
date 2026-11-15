@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://YOUR-DOMAIN.example/</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/articles/</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/assistant.html</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/therapist.html</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/client.html</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/admin.html</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/rules.html</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/articles/psychotherapy-first-session.html</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/articles/therapeutic-relationship.html</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/articles/ai-robots-human-meaning.html</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/psychology.html</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/psychotherapy.html</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/psychiatry.html</loc></url>
-<url><loc>https://YOUR-DOMAIN.example/relationships.html</loc></url>
+  <url><loc>https://elegant-otter-e1f7ef.netlify.app/</loc></url>
+  <url><loc>https://elegant-otter-e1f7ef.netlify.app/psychology.html</loc></url>
+  <url><loc>https://elegant-otter-e1f7ef.netlify.app/psychotherapy.html</loc></url>
+  <url><loc>https://elegant-otter-e1f7ef.netlify.app/psychiatry.html</loc></url>
+  <url><loc>https://elegant-otter-e1f7ef.netlify.app/relationships.html</loc></url>
+  <url><loc>https://elegant-otter-e1f7ef.netlify.app/articles/</loc></url>
+  <url><loc>https://elegant-otter-e1f7ef.netlify.app/articles/psychotherapy-first-session.html</loc></url>
+  <url><loc>https://elegant-otter-e1f7ef.netlify.app/articles/therapeutic-relationship.html</loc></url>
+  <url><loc>https://elegant-otter-e1f7ef.netlify.app/articles/ai-robots-human-meaning.html</loc></url>
+  <url><loc>https://elegant-otter-e1f7ef.netlify.app/assistant.html</loc></url>
+  <url><loc>https://elegant-otter-e1f7ef.netlify.app/therapist.html</loc></url>
+  <url><loc>https://elegant-otter-e1f7ef.netlify.app/rules.html</loc></url>
 </urlset>
