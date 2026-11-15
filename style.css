@@ -38,3 +38,6 @@
 .service-guide-links a span{color:#169b8a}
 @media(max-width:850px){.content-grid{grid-template-columns:1fr}.content-aside{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}.content-aside>.full-button{grid-column:1/-1}}
 @media(max-width:620px){.content-hero{padding:24px 0}.content-card{padding:18px}.topic-list{grid-template-columns:1fr}.content-aside{grid-template-columns:1fr}.service-guide-links{grid-template-columns:1fr}}
+
+/* Central tariff and public contact components */
+.tariff-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0}.tariff-item{display:grid;gap:8px;padding:20px;border:1px solid var(--line);border-radius:16px;background:#fff}.tariff-item b{color:var(--teal);font-size:14px}.tariff-item strong{font-size:22px;color:var(--ink)}.tariff-item small{color:var(--muted)}.footer-social{display:flex;gap:12px;flex-wrap:wrap}.footer-social a{color:inherit;text-decoration:underline;text-underline-offset:3px}@media(max-width:620px){.tariff-grid{grid-template-columns:1fr}}
