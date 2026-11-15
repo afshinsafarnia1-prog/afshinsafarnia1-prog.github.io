@@ -22,18 +22,18 @@
     if(!id){root.textContent="نشانی پروفایل کامل نیست.";return;}
     root.textContent="در حال دریافت اطلاعات متخصص…";
     const {data,error}=await db.from("therapists")
-      .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path")
+      .select("id,public_slug,headline,biography,qualifications,specialties,languages")
       .eq("id",id).eq("is_listed",true).not("verified_at","is",null).maybeSingle();
     if(error||!data){root.textContent="این پروفایل در دسترس نیست یا هنوز برای نمایش تأیید نشده است.";return;}
     root.replaceChildren();
     const hero=node("div","profile-hero");
-    if(data.photo_path){
-      const {data:photo}=db.storage.from("therapist-photos").getPublicUrl(data.photo_path);
-      if(photo?.publicUrl){const img=node("img","profile-photo");img.src=photo.publicUrl;img.alt="تصویر "+(data.display_name||"درمانگر");img.loading="lazy";hero.append(img);}
-    }
+    const mark=node("div","profile-monogram","ی");
+    mark.setAttribute("aria-hidden","true");
+    hero.append(mark);
     const intro=node("div","profile-intro");
     intro.append(node("span","eyebrow","درمانگر تأییدشدهٔ یادسنتر"));
-    intro.append(node("h1","",data.display_name||""));
+    const publicName=(data.public_slug||"").replace(/[-_]+/g," ").trim();
+    intro.append(node("h1","",publicName||"درمانگر تأییدشده"));
     if(data.headline)intro.append(node("p","profile-headline",data.headline));
     intro.append(node("p","profile-session","جلسهٔ ۴۵ دقیقه‌ای · تعرفهٔ یکسان مرکزی"));
     hero.append(intro);root.append(hero);
@@ -44,8 +44,6 @@
     if(qualifications.length)main.append(section("تحصیلات و سوابق حرفه‌ای",qualifications));
     const specialties=list(data.specialties);
     if(specialties.length)main.append(section("حوزه‌های تخصصی",specialties));
-    const modalities=list(data.modalities);
-    if(modalities.length)main.append(section("رویکردها و شیوه‌های کار",modalities));
     const languages=list(data.languages).map(x=>names[x]||x);
     if(languages.length)main.append(section("زبان‌های گفت‌وگو",languages));
     const aside=node("aside","profile-aside");
