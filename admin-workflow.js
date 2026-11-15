@@ -352,7 +352,7 @@
           const { error: metadataError } = await db.rpc("admin_set_therapist_public_metadata", {
             p_therapist_id: metadataId,
             p_years_experience: val("yadYearsExperience") ? Number(val("yadYearsExperience")) : null,
-            p_practice_jurisdictions: split(val("yadJurisdictions")),
+            p_practice_jurisdictions: split(val("yadJurisdictions")).map(code => code.toUpperCase()),
             p_accepting_new_clients: document.getElementById("yadAcceptingNewClients").checked
           });
           if (metadataError) throw new Error("پروفایل اصلی ذخیره شد؛ اما اطلاعات سابقه، قلمرو فعالیت و پذیرش مراجع ذخیره نشد. مهاجرت تکمیلی پایگاه داده را بررسی کنید.");
