@@ -165,6 +165,36 @@
       await loadTickets();
     });
 
+    document.getElementById("yadExportMyData")?.addEventListener("click", async () => {
+      const button = document.getElementById("yadExportMyData");
+      button.disabled = true;
+      try {
+        const [{ data: profile, error: profileError }, { data: requestData, error: requestError }, { data: appointmentData, error: appointmentError }, { data: ticketData, error: ticketError }] = await Promise.all([
+          db.from("profiles").select("display_name,phone,country_code,preferred_language,timezone,created_at").eq("id", activeUser).maybeSingle(),
+          db.rpc("client_list_requests"),
+          db.rpc("client_list_appointments"),
+          db.rpc("client_list_support_tickets")
+        ]);
+        const error = profileError || requestError || appointmentError || ticketError;
+        if (error) throw error;
+        const exportData = {
+          exported_at: new Date().toISOString(),
+          notice: "This export contains account and service metadata. Keep it private. It does not include clinical notes because YAD Center does not collect clinical records in this version.",
+          profile,
+          requests: requestData || [],
+          appointments: appointmentData || [],
+          support_tickets: ticketData || []
+        };
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = node("a"); link.href = url; link.download = "yadcenter-account-export.json";
+        document.body.append(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+        message("نسخهٔ اطلاعات حساب آماده شد. فایل را در محل امن نگهداری کنید.");
+      } catch (error) {
+        message(error.message || "دریافت نسخهٔ اطلاعات ناموفق بود.", true);
+      } finally { button.disabled = false; }
+    });
+
     async function init(session) {
       if (!session?.user || activeUser === session.user.id) return;
       activeUser = session.user.id;
