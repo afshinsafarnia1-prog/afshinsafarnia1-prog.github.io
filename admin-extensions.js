@@ -99,6 +99,64 @@
           await loadSupport();
         });
         card.append(status, note, save);
+        if (item.ticket_type === "cancellation") {
+          const refundLabel = node("label", "yad-inline-check", "بازپرداخت واقعی خارج از سامانه انجام شده است");
+          const refundDone = node("input"); refundDone.type = "checkbox"; refundLabel.prepend(refundDone);
+          const actions = node("div", "admin-actions");
+          const approveCancel = node("button", "button primary", "تأیید لغو"); approveCancel.type = "button";
+          approveCancel.addEventListener("click", async () => {
+            if (!window.confirm("آیا درخواست لغو را تأیید می‌کنید؟ اگر وجه دریافت شده، ابتدا باید بازپرداخت واقعی انجام شده باشد.")) return;
+            const { error: actionError } = await db.rpc("admin_resolve_support_cancellation", {
+              p_ticket_id: item.ticket_id, p_cancel: true, p_refund_completed: refundDone.checked, p_admin_note: note.value.trim() || null
+            });
+            if (actionError) { setStatus(root, actionError.message || "لغو انجام نشد.", true); return; }
+            await loadSupport();
+          });
+          const rejectCancel = node("button", "button outline", "رد درخواست لغو"); rejectCancel.type = "button";
+          rejectCancel.addEventListener("click", async () => {
+            const { error: actionError } = await db.rpc("admin_resolve_support_cancellation", {
+              p_ticket_id: item.ticket_id, p_cancel: false, p_refund_completed: false, p_admin_note: note.value.trim() || null
+            });
+            if (actionError) { setStatus(root, actionError.message || "ثبت تصمیم ناموفق بود.", true); return; }
+            await loadSupport();
+          });
+          actions.append(approveCancel, rejectCancel);
+          card.append(refundLabel, actions);
+        } else if (item.ticket_type === "reschedule") {
+          const when = node("input"); when.type = "datetime-local"; when.setAttribute("aria-label", "زمان جدید جلسه");
+          const confirmedLabel = node("label", "yad-inline-check", "زمان جدید با مراجع هماهنگ و تأیید شده است");
+          const confirmed = node("input"); confirmed.type = "checkbox"; confirmedLabel.prepend(confirmed);
+          const apply = node("button", "button primary", "ثبت زمان جدید"); apply.type = "button";
+          apply.addEventListener("click", async () => {
+            if (!when.value || !confirmed.checked) { setStatus(root, "زمان جدید و تأیید مراجع لازم است.", true); return; }
+            const { error: actionError } = await db.rpc("admin_resolve_support_reschedule", {
+              p_ticket_id: item.ticket_id, p_starts_at: new Date(when.value).toISOString(),
+              p_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran",
+              p_client_confirmed: true, p_admin_note: note.value.trim() || null
+            });
+            if (actionError) { setStatus(root, actionError.message || "تغییر زمان انجام نشد.", true); return; }
+            await loadSupport();
+          });
+          card.append(when, confirmedLabel, apply);
+        } else if (item.ticket_type === "therapist_change") {
+          const select = node("select");
+          const placeholder = node("option", "", "درمانگر جدید را انتخاب کنید"); placeholder.value = ""; select.append(placeholder);
+          const { data: therapists } = await db.rpc("admin_list_therapists");
+          (therapists || []).filter(t => t.verified && t.is_listed).forEach(t => {
+            const option = node("option", "", t.display_name + (t.headline ? " — " + t.headline : ""));
+            option.value = t.therapist_id; select.append(option);
+          });
+          const change = node("button", "button primary", "تغییر درمانگر"); change.type = "button";
+          change.addEventListener("click", async () => {
+            if (!select.value) { setStatus(root, "درمانگر جدید را انتخاب کنید.", true); return; }
+            const { error: actionError } = await db.rpc("admin_resolve_support_therapist_change", {
+              p_ticket_id: item.ticket_id, p_new_therapist_id: select.value, p_admin_note: note.value.trim() || null
+            });
+            if (actionError) { setStatus(root, actionError.message || "تغییر درمانگر انجام نشد.", true); return; }
+            await loadSupport();
+          });
+          card.append(select, change);
+        }
         root.append(card);
       });
     }
