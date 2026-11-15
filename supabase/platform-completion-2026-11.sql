@@ -54,6 +54,111 @@ create index if not exists client_feedback_therapist_public_idx on public.client
 alter table public.client_appointment_feedback enable row level security;
 revoke all on public.client_appointment_feedback from public, anon, authenticated;
 
+create table if not exists public.client_notifications (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid not null references public.profiles(id) on delete cascade,
+  category text not null check (category in ('appointment','session_access','support')),
+  title text not null,
+  body text not null,
+  read_at timestamptz,
+  created_at timestamptz not null default now()
+);
+create index if not exists client_notifications_inbox_idx on public.client_notifications(client_id,created_at desc);
+alter table public.client_notifications enable row level security;
+revoke all on public.client_notifications from public,anon,authenticated;
+
+create or replace function public.notify_client_appointment_update()
+returns trigger
+language plpgsql
+security definer
+set search_path=''
+as $function$
+begin
+  if old.status is distinct from new.status or old.starts_at is distinct from new.starts_at or old.ends_at is distinct from new.ends_at then
+    insert into public.client_notifications(client_id,category,title,body)
+    values(new.client_id,'appointment','به‌روزرسانی جلسه',
+      case when new.status='cancelled' then 'وضعیت جلسه لغو شد.'
+           when new.status='completed' then 'جلسه به‌عنوان تکمیل‌شده ثبت شد.'
+           when old.starts_at is distinct from new.starts_at then 'زمان جلسه تغییر کرده است؛ تاریخ و ساعت جدید را در پنل بررسی کنید.'
+           else 'وضعیت جلسه در پنل مراجع به‌روزرسانی شد.' end);
+  end if;
+  return new;
+end;
+$function$;
+drop trigger if exists yad_notify_appointment_update on public.appointments;
+create trigger yad_notify_appointment_update after update on public.appointments
+for each row execute function public.notify_client_appointment_update();
+
+create or replace function public.notify_client_support_update()
+returns trigger
+language plpgsql
+security definer
+set search_path=''
+as $function$
+begin
+  if old.status is distinct from new.status or old.admin_note is distinct from new.admin_note then
+    insert into public.client_notifications(client_id,category,title,body)
+    values(new.client_id,'support','به‌روزرسانی درخواست پشتیبانی',
+      case new.status when 'in_review' then 'درخواست شما در حال بررسی است.'
+        when 'resolved' then 'درخواست شما رسیدگی شد.'
+        when 'declined' then 'درخواست شما پذیرفته نشد.'
+        else 'درخواست شما به‌روزرسانی شد.' end);
+  end if;
+  return new;
+end;
+$function$;
+drop trigger if exists yad_notify_support_update on public.client_support_tickets;
+create trigger yad_notify_support_update after update on public.client_support_tickets
+for each row execute function public.notify_client_support_update();
+
+create or replace function public.notify_client_session_access()
+returns trigger
+language plpgsql
+security definer
+set search_path=''
+as $function$
+declare v_client uuid;
+begin
+  select a.client_id into v_client from public.appointments a where a.id=new.appointment_id;
+  if v_client is not null then
+    insert into public.client_notifications(client_id,category,title,body)
+    values(v_client,'session_access','لینک جلسه آماده است','لینک خصوصی جلسه در پنل مراجع شما قرار گرفت.');
+  end if;
+  return new;
+end;
+$function$;
+drop trigger if exists yad_notify_session_access on public.appointment_private_access;
+create trigger yad_notify_session_access after insert or update on public.appointment_private_access
+for each row execute function public.notify_client_session_access();
+
+create or replace function public.client_list_notifications()
+returns table(notification_id uuid,category text,title text,body text,read_at timestamptz,created_at timestamptz)
+language plpgsql
+security definer
+set search_path=''
+as $function$
+declare v_client uuid:=auth.uid();
+begin
+  if v_client is null then raise exception 'authentication_required' using errcode='28000'; end if;
+  return query select n.id,n.category,n.title,n.body,n.read_at,n.created_at
+  from public.client_notifications n where n.client_id=v_client order by n.created_at desc limit 100;
+end;
+$function$;
+
+create or replace function public.client_mark_notification_read(p_notification_id uuid)
+returns boolean
+language plpgsql
+security definer
+set search_path=''
+as $function$
+begin
+  update public.client_notifications set read_at=now()
+  where id=p_notification_id and client_id=auth.uid();
+  if not found then raise exception 'notification_not_found' using errcode='P0002'; end if;
+  return true;
+end;
+$function$;
+
 create table if not exists public.client_policy_consents (
   id uuid primary key default gen_random_uuid(),
   client_id uuid not null references public.profiles(id) on delete cascade,
@@ -569,6 +674,8 @@ revoke all on function public.admin_set_therapist_public_metadata(uuid,integer,t
 revoke all on function public.admin_list_therapist_public_metadata() from public,anon;
 revoke all on function public.admin_set_appointment_meeting(uuid,text,text) from public,anon;
 revoke all on function public.admin_list_appointment_private_access() from public,anon;
+revoke all on function public.client_list_notifications() from public,anon;
+revoke all on function public.client_mark_notification_read(uuid) from public,anon;
 revoke all on function public.client_list_appointments() from public,anon;
 revoke all on function public.client_submit_support_ticket(text,text,uuid,uuid) from public,anon;
 revoke all on function public.client_list_support_tickets() from public,anon;
@@ -589,6 +696,8 @@ grant execute on function public.admin_set_therapist_public_metadata(uuid,intege
 grant execute on function public.admin_list_therapist_public_metadata() to authenticated;
 grant execute on function public.admin_set_appointment_meeting(uuid,text,text) to authenticated;
 grant execute on function public.admin_list_appointment_private_access() to authenticated;
+grant execute on function public.client_list_notifications() to authenticated;
+grant execute on function public.client_mark_notification_read(uuid) to authenticated;
 grant execute on function public.client_list_appointments() to authenticated;
 grant execute on function public.client_submit_support_ticket(text,text,uuid,uuid) to authenticated;
 grant execute on function public.client_list_support_tickets() to authenticated;
