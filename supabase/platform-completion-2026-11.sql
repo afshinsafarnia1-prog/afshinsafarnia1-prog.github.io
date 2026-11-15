@@ -370,6 +370,23 @@ begin
 end;
 $function$;
 
+create or replace function public.admin_list_request_client_timezones()
+returns table(request_id uuid,client_timezone text)
+language plpgsql
+security definer
+set search_path=''
+as $function$
+begin
+  perform public.require_admin_aal2();
+  return query
+    select r.id,p.timezone
+    from public.client_requests r
+    join public.profiles p on p.id=r.client_id
+    where r.status='payment_verified'
+    order by r.created_at;
+end;
+$function$;
+
 create or replace function public.admin_list_support_tickets(p_limit integer default 100)
 returns table(ticket_id uuid,client_name text,ticket_type text,message text,status text,admin_note text,created_at timestamptz,request_id uuid,appointment_id uuid)
 language plpgsql
@@ -631,6 +648,7 @@ revoke all on function public.client_mark_notification_read(uuid) from public,an
 revoke all on function public.client_list_appointments() from public,anon;
 revoke all on function public.client_submit_support_ticket(text,text,uuid,uuid) from public,anon;
 revoke all on function public.client_list_support_tickets() from public,anon;
+revoke all on function public.admin_list_request_client_timezones() from public,anon;
 revoke all on function public.admin_list_support_tickets(integer) from public,anon;
 revoke all on function public.admin_update_support_ticket(uuid,text,text) from public,anon;
 revoke all on function public.admin_resolve_support_cancellation(uuid,boolean,boolean,text) from public,anon;
@@ -654,6 +672,7 @@ grant execute on function public.client_mark_notification_read(uuid) to authenti
 grant execute on function public.client_list_appointments() to authenticated;
 grant execute on function public.client_submit_support_ticket(text,text,uuid,uuid) to authenticated;
 grant execute on function public.client_list_support_tickets() to authenticated;
+grant execute on function public.admin_list_request_client_timezones() to authenticated;
 grant execute on function public.admin_list_support_tickets(integer) to authenticated;
 grant execute on function public.admin_update_support_ticket(uuid,text,text) to authenticated;
 grant execute on function public.admin_resolve_support_cancellation(uuid,boolean,boolean,text) to authenticated;
