@@ -13,7 +13,7 @@
 ## زبان‌ها
 زبان‌های رابط کاربری در حال توسعه: فارسی، کوردی، انگلیسی، ترکی، عربی، اسپانیایی، آلمانی و فرانسوی. فارسی زبان پیش‌فرض است. ترجمهٔ تمام صفحات و محتوای مقالات هنوز کامل نشده است.
 
-## Supabase
+## Public service guides\n- `psychology.html`: psychology and counselling services, specialties, referral considerations and choosing a qualified professional.\n- `psychotherapy.html`: major therapy approaches, collaborative decision-making, and questions to ask a therapist.\n- `psychiatry.html`: psychiatric assessment, medication safety, and coordination with psychotherapy.\n- The homepage service cards now link to these guides. The guides are Persian-first; non-Persian visitors see a clear notice until reviewed translations are ready.\n\n## Supabase
 1. `supabase/schema.sql` پایهٔ اولیهٔ دیتابیس است.
 2. `supabase/upgrade-client-choice-payment-first.sql` تغییرات گردش کار انتخاب درمانگر توسط مراجع، پرداخت پیش از زمان‌بندی، پروفایل مدیریتی درمانگر، فضای ذخیره‌سازی مدارک و محاسبهٔ سهم مالی را مستند می‌کند.
 3. این ارتقا روی پروژهٔ آزمایشی Supabase متصل به شاخهٔ توسعه اعمال شده است. آن را دوباره روی همان پروژه اجرا نکنید؛ مهاجرت‌ها در تاریخچهٔ Supabase ثبت شده‌اند.
