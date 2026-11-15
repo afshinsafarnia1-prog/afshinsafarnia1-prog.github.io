@@ -82,13 +82,15 @@
 <label>حوزه‌های تخصصی<input id="yadSpecialties"></label>
 <label>زبان‌ها (fa, ku, en, tr, ar, es, de, fr)<input id="yadLanguages" value="fa"></label>
 <label>رویکردهای درمانی<input id="yadModalities"></label>
+<label>سابقهٔ حرفه‌ای (سال)<input id="yadYearsExperience" type="number" min="0" max="60" step="1"></label>
+<label>قلمروهای مجاز فعالیت (کشور/استان؛ با ویرگول)<input id="yadJurisdictions" maxlength="2000" placeholder="فقط مواردی که مجوز بررسی شده است"></label>
 <label>عکس پروفایل<input id="yadPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label>
 <label>مدرک مجوز / پروانه<input id="yadLicenseDocument" type="file" accept="application/pdf,image/jpeg,image/png"></label>
 <label>شمارهٔ مجوز<input id="yadLicense"></label>
 <label>مرجع صادرکننده<input id="yadAuthority"></label>
 </div>
 <label>زندگی‌نامه و معرفی حرفه‌ای<textarea id="yadBiography" rows="5"></textarea></label>
-<div class="yad-checks"><label><input id="yadVerified" type="checkbox"> مدارک و مجوز بررسی و تأیید شده‌اند</label><label><input id="yadListed" type="checkbox"> انتشار در فهرست عمومی</label></div>
+<div class="yad-checks"><label><input id="yadVerified" type="checkbox"> مدارک و مجوز بررسی و تأیید شده‌اند</label><label><input id="yadListed" type="checkbox"> انتشار در فهرست عمومی</label><label><input id="yadAcceptingNewClients" type="checkbox"> پذیرش مراجع جدید فعال است</label></div><p class="privacy-hint">قلمرو فعالیت فقط پس از بررسی مجوز و مقررات محل ارائهٔ خدمت درج شود؛ تأیید مدرک ایرانی به‌تنهایی مجوز فعالیت در کشورهای دیگر نیست.</p>
 <div class="admin-actions"><button class="button primary" type="submit">ذخیرهٔ پروفایل</button><button class="button outline" id="yadCancelEdit" type="button" hidden>لغو ویرایش</button></div>
 </form>
 </section>
