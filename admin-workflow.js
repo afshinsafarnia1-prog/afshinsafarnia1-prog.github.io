@@ -184,7 +184,7 @@
         const tr = document.createElement("tr");
         tr.dataset.requestId = item.request_id;
         tr.dataset.duration = String(item.session_duration_minutes || 45);
-        tr.dataset.timezone = timezoneByRequest.get(item.request_id) || "Asia/Tehran";
+        tr.dataset.timezone = timezoneByRequest.get(item.request_id) || Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran";
         const add = value => { const td = document.createElement("td"); td.textContent = safe(value); tr.append(td); return td; };
         const clientCell=add(item.client_name);
         const clientMessage=detailsByRequest.get(item.request_id);
@@ -213,14 +213,21 @@
           const loadSlots = async () => {
             const { data: slots, error: slotsError } = await db.rpc("admin_list_available_slots_for_request",{p_request_id:item.request_id});
             slotSelect.replaceChildren();
-            const first=document.createElement("option");first.value="";first.textContent=slotsError?"خطا در دریافت زمان‌ها":(slots?.length?"انتخاب زمان آزاد":"زمان آزادی ثبت نشده است");slotSelect.append(first);
-            (slots||[]).forEach(slot=>{
-              const option=document.createElement("option");option.value=slot.slot_id;
-              const zone=slot.client_timezone||"Asia/Tehran";
-              option.textContent=new Intl.DateTimeFormat("fa-IR",{dateStyle:"medium",timeStyle:"short",timeZone:zone}).format(new Date(slot.starts_at))+" · "+zone;
-              slotSelect.append(option);
-            });
-            if(slotsError)setStatus(slotsError.message||"دریافت زمان آزاد ناموفق بود.",true);
+            const first=document.createElement("option");first.value="";first.textContent=slotsError?"مهاجرت ظرفیت هنوز فعال نیست":(slots?.length?"انتخاب زمان آزاد":"زمان آزادی ثبت نشده است");slotSelect.append(first);
+            if(slotsError){
+              const time=document.createElement("input");time.type="datetime-local";time.setAttribute("aria-label","زمان جلسه به وقت مدیر");
+              const manual=document.createElement("button");manual.type="button";manual.className="button outline";manual.textContent="ثبت دستی با زمان هماهنگ‌شده";
+              manual.addEventListener("click",()=>scheduleRequest(item.request_id,time.value));
+              action.append(time,manual);
+              setStatus("مدیریت ظرفیت زمان‌بندی فعال نیست؛ برای ادامه از زمان دستی هماهنگ‌شده استفاده کن.");
+            } else {
+              (slots||[]).forEach(slot=>{
+                const option=document.createElement("option");option.value=slot.slot_id;
+                const zone=slot.client_timezone||"Asia/Tehran";
+                option.textContent=new Intl.DateTimeFormat("fa-IR",{dateStyle:"medium",timeStyle:"short",timeZone:zone}).format(new Date(slot.starts_at))+" · "+zone;
+                slotSelect.append(option);
+              });
+            }
           };
           loadSlots();
           schedule.disabled=true;
