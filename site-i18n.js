@@ -153,6 +153,17 @@
     fr:{profileLoading:"Chargement du profil professionnel…",profileConnectionError:"Le service est momentanément indisponible. Veuillez réessayer plus tard.",profileMissingId:"L’adresse du profil est incomplète.",profileNotFound:"Ce profil est indisponible ou n’a pas encore été approuvé pour publication.",profileVerified:"Thérapeute vérifié par YAD Center",profileSession:"Séance de 45 minutes · tarif centralisé",profileAbout:"À propos du thérapeute",profileQualifications:"Formation et parcours professionnel",profileSpecialties:"Domaines de spécialité",profileLanguages:"Langues des consultations",profileFee:"Tarif de la séance",profileIran:"En Iran",profileEuro:"International · euro",profileDollar:"International · dollar américain",profile45min:"Tous les tarifs correspondent à une séance de 45 minutes.",profileSetting:"À définir",profileToman:" tomans",profileChoose:"Choisir ce thérapeute et envoyer une demande",profileBookingNote:"L’envoi d’une demande ne confirme pas le rendez-vous. L’horaire est convenu après vérification et confirmation du paiement.",profileNoName:"Thérapeute vérifié"}
   };
   Object.entries(therapistProfileLabels).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
+  const therapistExtraLabels = {
+    fa:{profileModalities:"رویکردها و شیوه‌های کار",profilePhotoAlt:"تصویر درمانگر"},
+    ku:{profileModalities:"ڕێباز و شێوازی کار",profilePhotoAlt:"وێنەی چارەسەرکار"},
+    en:{profileModalities:"Therapeutic approaches and methods",profilePhotoAlt:"Therapist portrait"},
+    tr:{profileModalities:"Terapi yaklaşımları ve çalışma yöntemleri",profilePhotoAlt:"Terapist fotoğrafı"},
+    ar:{profileModalities:"الأساليب والمناهج العلاجية",profilePhotoAlt:"صورة المعالج"},
+    es:{profileModalities:"Enfoques y métodos terapéuticos",profilePhotoAlt:"Fotografía del terapeuta"},
+    de:{profileModalities:"Therapeutische Ansätze und Methoden",profilePhotoAlt:"Porträt der therapeutischen Fachperson"},
+    fr:{profileModalities:"Approches et méthodes thérapeutiques",profilePhotoAlt:"Portrait du thérapeute"}
+  };
+  Object.entries(therapistExtraLabels).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
   const therapistContentNotice = {
     fa:{profileContentNotice:"اطلاعات حرفه‌ای این صفحه به زبانی نمایش داده می‌شود که متخصص وارد کرده است؛ ممکن است همهٔ جزئیات ترجمه نشده باشند."},
     ku:{profileContentNotice:"زانیاریی پیشەیی بەو زمانە پیشان دەدرێت کە پسپۆڕ خۆی تۆماری کردووە؛ لەوانەیە هەموو وردەکارییەکان وەرنەگێڕدرابن."},
