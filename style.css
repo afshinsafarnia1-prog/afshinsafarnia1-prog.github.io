@@ -126,3 +126,6 @@ button:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
 }
 
 .therapist-tags .rating-tag{background:#fff8e8;color:#8a6120;font-weight:800}
+
+
+.crisis-notice{margin:12px 0 20px;padding:13px 16px;border:1px solid #e7c4b7;border-inline-start:4px solid #c86c51;border-radius:12px;background:#fff8f4;color:#70493f;font-size:12px;line-height:2}
