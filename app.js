@@ -22,7 +22,7 @@
     if(!directory)return;
     directory.replaceChildren();
     if(!items.length){
-      const hasFilters=Boolean(document.getElementById("language")?.value||document.getElementById("specialty")?.value);
+      const hasFilters=Boolean(document.getElementById("language")?.value||document.getElementById("specialty")?.value||document.getElementById("modality")?.value||document.getElementById("therapistKeyword")?.value.trim());
       directory.append(el("p","directory-empty",hasFilters
         ?"با فیلترهای انتخاب‌شده درمانگری پیدا نشد؛ فیلترها را تغییر دهید یا همهٔ گزینه‌ها را انتخاب کنید."
         :(i18n().directoryEmpty||"در حال حاضر درمانگر تأییدشده‌ای برای نمایش وجود ندارد.")));
@@ -38,7 +38,8 @@
       body.append(el("h3","",t.display_name||""));
       if(t.headline)body.append(el("p","therapist-headline",t.headline));
       const tags=el("div","therapist-tags");
-      (t.specialties||[]).slice(0,4).forEach(x=>tags.append(el("span","",x)));
+      (t.specialties||[]).slice(0,3).forEach(x=>tags.append(el("span","",x)));
+      (t.modalities||[]).slice(0,3).forEach(x=>tags.append(el("span","modality-tag",x)));
       (t.languages||[]).forEach(code=>tags.append(el("span","language-tag",languageNames[code]||code)));
       body.append(tags);
       const market=document.getElementById("marketSelect")?.value||"iran";
@@ -60,11 +61,12 @@
     if(!db){directory.textContent="اتصال فهرست درمانگران در دسترس نیست.";return;}
     directory.textContent="در حال دریافت فهرست درمانگران…";
     const {data,error}=await db.from("therapists")
-      .select("id,display_name,headline,specialties,languages,photo_path")
+      .select("id,display_name,headline,biography,specialties,modalities,languages,photo_path")
       .eq("is_listed",true).not("verified_at","is",null)
       .order("display_name",{ascending:true});
     if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
     allTherapists=data||[];
+    populateModalityFilter();
     const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
     if(settingsError){directory.textContent="دریافت تعرفه‌های مرکزی با خطا روبه‌رو شد.";return;}
     allPrices=settings?.tariffs||[];
@@ -107,14 +109,28 @@
   }
   document.getElementById("marketSelect")?.addEventListener("change",filterDirectory);
   document.getElementById("internationalCurrency")?.addEventListener("change",filterDirectory);
+  function populateModalityFilter(){
+    const select=document.getElementById("modality");if(!select)return;
+    const current=select.value;
+    const values=[...new Set(allTherapists.flatMap(t=>t.modalities||[]).map(x=>String(x).trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,document.documentElement.lang||"fa"));
+    select.replaceChildren(el("option","","همه رویکردها"));select.options[0].value="";
+    values.forEach(value=>{const option=el("option","",value);option.value=value;select.append(option);});
+    if(values.includes(current))select.value=current;
+  }
   function filterDirectory(){
     const language=document.getElementById("language")?.value||"";
     const specialty=document.getElementById("specialty")?.value||"";
+    const modality=document.getElementById("modality")?.value||"";
+    const keyword=(document.getElementById("therapistKeyword")?.value||"").trim().toLocaleLowerCase();
     const items=allTherapists.filter(t=>{
       const langOk=!language||(t.languages||[]).includes(language);
       const specOk=!specialty||(t.specialties||[]).some(s=>s.toLocaleLowerCase().includes(specialty.toLocaleLowerCase()));
-      return langOk&&specOk;
+      const modalityOk=!modality||(t.modalities||[]).some(x=>x.toLocaleLowerCase()===modality.toLocaleLowerCase());
+      const haystack=[t.display_name,t.headline,t.biography,...(t.specialties||[]),...(t.modalities||[])].filter(Boolean).join(" ").toLocaleLowerCase();
+      const keywordOk=!keyword||haystack.includes(keyword);
+      return langOk&&specOk&&modalityOk&&keywordOk;
     });
+    const count=document.getElementById("directoryCount");if(count)count.textContent=items.length+" درمانگر از "+allTherapists.length+" پروفایل تأییدشده";
     renderDirectory(items);
   }
 
@@ -124,6 +140,9 @@
   });
   document.getElementById("language")?.addEventListener("change",filterDirectory);
   document.getElementById("specialty")?.addEventListener("change",filterDirectory);
+  document.getElementById("modality")?.addEventListener("change",filterDirectory);
+  document.getElementById("therapistKeyword")?.addEventListener("input",filterDirectory);
+  document.getElementById("clearTherapistFilters")?.addEventListener("click",()=>{["language","specialty","modality","therapistKeyword"].forEach(id=>{const node=document.getElementById(id);if(node)node.value="";});filterDirectory();});
 
   const marketSelect=document.getElementById("marketSelect");
   marketSelect?.addEventListener("change",()=>{
@@ -174,6 +193,6 @@
     window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
   }
   const style=document.createElement("style");
-  style.textContent=".therapist-directory{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:12px}.therapist-card{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid #e5ece8;border-radius:17px;padding:15px;box-shadow:0 10px 25px #123f4608;min-width:0}.therapist-photo{width:82px;height:92px;object-fit:cover;border-radius:13px;background:#e8f7f2;flex-shrink:0}.therapist-placeholder{display:grid;place-items:center;color:#123f46;font-size:34px;font-weight:800}.therapist-card-body{min-width:0;flex:1}.therapist-card h3{margin:0;color:#123f46;font-size:16px}.therapist-headline,.therapist-meta{font-size:11px;color:#687b7c;margin:4px 0}.therapist-tags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.therapist-tags span{font-size:10px;padding:3px 7px;border-radius:20px;background:#eff8f4;color:#24665d}.therapist-card .button{padding:8px 12px;font-size:11px;margin-top:5px}.directory-empty{grid-column:1/-1;color:#687b7c;font-size:13px}.language-switch select{max-width:110px}@media(max-width:620px){.therapist-card{padding:12px}.therapist-photo{width:68px;height:80px}}";
+  style.textContent=".therapist-directory{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:12px}.therapist-card{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid #e5ece8;border-radius:17px;padding:15px;box-shadow:0 10px 25px #123f4608;min-width:0}.therapist-photo{width:82px;height:92px;object-fit:cover;border-radius:13px;background:#e8f7f2;flex-shrink:0}.therapist-placeholder{display:grid;place-items:center;color:#123f46;font-size:34px;font-weight:800}.therapist-card-body{min-width:0;flex:1}.therapist-card h3{margin:0;color:#123f46;font-size:16px}.therapist-headline,.therapist-meta{font-size:11px;color:#687b7c;margin:4px 0}.therapist-tags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.therapist-tags span{font-size:10px;padding:3px 7px;border-radius:20px;background:#eff8f4;color:#24665d}.therapist-tags .modality-tag{background:#fff3ec;color:#92513f}.therapist-card .button{padding:8px 12px;font-size:11px;margin-top:5px}.directory-empty{grid-column:1/-1;color:#687b7c;font-size:13px}.directory-count{grid-column:1/-1;color:#687b7c;font-size:12px;margin:0}.therapist-filters{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));align-items:end}.therapist-filters label{min-width:0}.filter-keyword input{width:100%;min-width:0;padding:10px;border:1px solid #dce8e3;border-radius:10px;font:inherit}.filter-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.language-switch select{max-width:110px}@media(max-width:620px){.therapist-card{padding:12px}.therapist-photo{width:68px;height:80px}.filter-actions>*{flex:1}}";
   document.head.append(style);
 })();
