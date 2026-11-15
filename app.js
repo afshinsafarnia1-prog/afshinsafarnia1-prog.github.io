@@ -47,8 +47,8 @@
       const priceText=chosen?new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(chosen.currency==="IRR"?Number(chosen.amount)/10:Number(chosen.amount))+(chosen.currency==="IRR"?" تومان":" "+chosen.currency):"تعرفه در حال تنظیم است";
       const meta=el("p","therapist-meta","۴۵ دقیقه · "+priceText);
       body.append(meta);
-      const link=el("a","button primary",i18n().chooseTherapist||"مشاهده و انتخاب");
-      link.href="client.html?therapist="+encodeURIComponent(t.id);
+      const link=el("a","button primary",i18n().chooseTherapist||"مشاهدهٔ پروفایل و انتخاب");
+      link.href="therapist-profile.html?id="+encodeURIComponent(t.id);
       body.append(link);
       card.append(body);
       directory.append(card);
