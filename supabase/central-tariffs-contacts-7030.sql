@@ -21,6 +21,7 @@ create table if not exists public.yad_tariff_history (
 create unique index if not exists yad_tariff_one_current_per_currency
   on public.yad_tariff_history(market,currency) where is_current;
 alter table public.yad_tariff_history enable row level security;
+revoke all on table public.yad_tariff_history from public,anon,authenticated;
 
 alter table public.client_requests
   add column if not exists tariff_id uuid references public.yad_tariff_history(id),
@@ -52,6 +53,7 @@ create table if not exists public.yad_public_contacts (
   updated_by uuid references public.profiles(id)
 );
 alter table public.yad_public_contacts enable row level security;
+revoke all on table public.yad_public_contacts from public,anon,authenticated;
 insert into public.yad_public_contacts(id) values(true) on conflict(id) do nothing;
 
 create or replace function public.get_public_site_settings()
@@ -227,3 +229,30 @@ revoke all on function public.admin_update_yad_business_settings(bigint,bigint,b
 grant execute on function public.admin_update_yad_business_settings(bigint,bigint,bigint,integer,timestamptz,jsonb) to authenticated;
 revoke all on function public.create_client_request(uuid,text,text,text) from public,anon;
 grant execute on function public.create_client_request(uuid,text,text,text) to authenticated;
+
+
+create or replace function public.admin_list_requests(p_limit integer default 50,p_offset integer default 0)
+returns table(
+  request_id uuid,client_id uuid,client_name text,client_phone text,therapist_id uuid,therapist_name text,session_duration_minutes integer,
+  amount bigint,currency text,therapist_share_amount bigint,platform_share_amount bigint,
+  request_status text,payment_id uuid,payment_status public.payment_status,provider_reference text,created_at timestamptz
+)
+language plpgsql security definer set search_path=''
+as $$
+declare
+  v_limit integer:=least(greatest(coalesce(p_limit,50),1),100);
+  v_offset integer:=greatest(coalesce(p_offset,0),0);
+begin
+  perform public.require_admin_aal2();
+  return query
+  select r.id,r.client_id,cp.display_name,cp.phone,r.therapist_id,t.display_name,r.session_duration_minutes,r.amount,r.currency,
+    r.therapist_share_amount,r.platform_share_amount,r.status,p.id,p.status,p.provider_reference,r.created_at
+  from public.client_requests r
+  join public.profiles cp on cp.id=r.client_id
+  join public.therapists t on t.id=r.therapist_id
+  left join public.payments p on p.request_id=r.id
+  order by r.created_at desc,r.id limit v_limit offset v_offset;
+end;
+$$;
+revoke all on function public.admin_list_requests(integer,integer) from public,anon;
+grant execute on function public.admin_list_requests(integer,integer) to authenticated;
