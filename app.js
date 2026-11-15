@@ -37,8 +37,8 @@
       const body=el("div","therapist-card-body");
       body.append(el("h3","",t.display_name||""));
       if(t.headline)body.append(el("p","therapist-headline",t.headline));
-      if(t.years_experience!=null)body.append(el("p","therapist-meta","سابقهٔ حرفه‌ای: "+t.years_experience+" سال"));
-      if(typeof t.accepting_new_clients==="boolean")body.append(el("span",t.accepting_new_clients?"availability-open":"availability-closed",t.accepting_new_clients?"پذیرش مراجع جدید":"فعلاً پذیرش مراجع جدید ندارد"));
+      if(t.years_experience!=null)body.append(el("p","therapist-meta",(i18n().yearsExperience||"سابقهٔ حرفه‌ای: {years} سال").replace("{years}",String(t.years_experience))));
+      if(typeof t.accepting_new_clients==="boolean")body.append(el("span",t.accepting_new_clients?"availability-open":"availability-closed",t.accepting_new_clients?(i18n().acceptingYes||"پذیرش مراجع جدید"):(i18n().acceptingNo||"فعلاً پذیرش مراجع جدید ندارد")));
       const tags=el("div","therapist-tags");
       (t.specialties||[]).slice(0,3).forEach(x=>tags.append(el("span","",x)));
       (t.modalities||[]).slice(0,3).forEach(x=>tags.append(el("span","modality-tag",x)));
@@ -117,7 +117,7 @@
     const select=document.getElementById("modality");if(!select)return;
     const current=select.value;
     const values=[...new Set(allTherapists.flatMap(t=>t.modalities||[]).map(x=>String(x).trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,document.documentElement.lang||"fa"));
-    select.replaceChildren(el("option","","همه رویکردها"));select.options[0].value="";
+    select.replaceChildren(el("option","",i18n().modalityAll||"همه رویکردها"));select.options[0].value="";
     values.forEach(value=>{const option=el("option","",value);option.value=value;select.append(option);});
     if(values.includes(current))select.value=current;
   }
@@ -136,7 +136,7 @@
       const acceptingOk=!acceptingOnly||t.accepting_new_clients===true;
       return langOk&&specOk&&modalityOk&&keywordOk&&acceptingOk;
     });
-    const count=document.getElementById("directoryCount");if(count)count.textContent=items.length+" درمانگر از "+allTherapists.length+" پروفایل تأییدشده";
+    const count=document.getElementById("directoryCount");if(count)count.textContent=(i18n().directoryCount||"{shown} از {total}").replace("{shown}",String(items.length)).replace("{total}",String(allTherapists.length));
     renderDirectory(items);
   }
 
