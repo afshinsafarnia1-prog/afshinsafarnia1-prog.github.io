@@ -13,6 +13,8 @@ function render(lang){
   const nodes=article.querySelectorAll(tag);
   const values=data[tag]||[];
   nodes.forEach((node,index)=>{
+   if(!node.hasAttribute("data-guide-original"))node.setAttribute("data-guide-original",node.innerHTML);
+   if(lang!=="en"){node.innerHTML=node.getAttribute("data-guide-original");return;}
    if(values[index]===undefined)return;
    if(tag==="li"&&node.querySelector("a")){node.querySelector("a").textContent=values[index];return;}
    if(tag==="p")node.innerHTML=values[index];else node.textContent=values[index];
