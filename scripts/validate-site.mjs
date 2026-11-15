@@ -119,6 +119,31 @@ for (const file of ["supabase/central-tariffs-contacts-7030.sql", "supabase/admi
   if (!fs.existsSync(path.join(root, file))) errors.push(file + " is required");
 }
 
+
+const guideTranslationScript = path.join(root, "service-guides-i18n.js");
+if (!fs.existsSync(guideTranslationScript)) errors.push("service-guides-i18n.js is required");
+else {
+  const guideScript = fs.readFileSync(guideTranslationScript, "utf8");
+  for (const [page, counts] of Object.entries({
+    "psychology.html": { h2: 5, h3: 6, p: 12, li: 3 },
+    "psychotherapy.html": { h2: 5, h3: 6, p: 12, li: 9 },
+    "psychiatry.html": { h2: 5, h3: 3, p: 11, li: 3 },
+    "relationships.html": { h2: 6, h3: 4, p: 11, li: 8 }
+  })) {
+    const html = fs.readFileSync(path.join(root, page), "utf8");
+    if (!html.includes('data-guide-content="' + page.replace(".html", "") + '"')) errors.push(page + " must expose its translation key");
+    if (!html.includes('src="service-guides-i18n.js"')) errors.push(page + " must load the service guide translation script");
+    for (const [tag, expected] of Object.entries(counts)) {
+      const article = html.match(/<article class="content-main"[^>]*>([\\s\\S]*?)<\\/article>/);
+      const actual = article ? [...article[1].matchAll(new RegExp("<" + tag + "\\\\b", "g"))].length : -1;
+      if (actual !== expected) errors.push(page + " expected " + expected + " " + tag + " elements; found " + actual);
+    }
+    if (!guideScript.includes(page.replace(".html", "") + ':{')) errors.push("English guide translation missing: " + page);
+  }
+  const sw = fs.readFileSync(path.join(root, "sw.js"), "utf8");
+  if (!sw.includes('"/service-guides-i18n.js"')) errors.push("Service guide translations must be included in the offline cache");
+}
+
 if (errors.length) {
   console.error(errors.join("\n"));
   process.exit(1);
