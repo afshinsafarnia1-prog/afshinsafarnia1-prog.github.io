@@ -8,6 +8,9 @@ alter table public.therapists
   add column if not exists practice_jurisdictions text[] not null default '{}',
   add column if not exists accepting_new_clients boolean not null default false;
 
+alter table public.availability_slots
+  add column if not exists timezone text not null default 'Asia/Tehran';
+
 create table if not exists public.appointment_private_access (
   appointment_id uuid primary key references public.appointments(id) on delete cascade,
   meeting_url text not null check (meeting_url ~* '^https://'),
@@ -231,6 +234,145 @@ as $function$
   select t.years_experience,t.practice_jurisdictions,t.accepting_new_clients
   from public.therapists t
   where t.id=p_therapist_id and t.is_listed and t.verified_at is not null;
+$function$;
+
+create or replace function public.admin_create_availability_slot(
+  p_therapist_id uuid,p_starts_at timestamptz,p_ends_at timestamptz,p_timezone text
+)
+returns uuid
+language plpgsql
+security definer
+set search_path=''
+as $function$
+declare v_id uuid;
+begin
+  perform public.require_admin_aal2();
+  if p_starts_at is null or p_ends_at is null or p_starts_at<=now()
+     or p_ends_at-p_starts_at<>interval '45 minutes' then
+    raise exception 'availability_slot_must_be_future_45_minutes' using errcode='22023';
+  end if;
+  if p_timezone is null or not exists(select 1 from pg_catalog.pg_timezone_names z where z.name=p_timezone) then
+    raise exception 'valid_slot_timezone_required' using errcode='22023';
+  end if;
+  if not exists(select 1 from public.therapists t where t.id=p_therapist_id and t.is_listed and t.verified_at is not null) then
+    raise exception 'verified_listed_therapist_required' using errcode='P0001';
+  end if;
+  if exists(
+    select 1 from public.availability_slots s
+    where s.therapist_id=p_therapist_id and s.is_available
+      and tstzrange(s.starts_at,s.ends_at,'[)') && tstzrange(p_starts_at,p_ends_at,'[)')
+  ) or exists(
+    select 1 from public.appointments a
+    where a.therapist_id=p_therapist_id and a.status in ('requested','confirmed')
+      and tstzrange(a.starts_at,a.ends_at,'[)') && tstzrange(p_starts_at,p_ends_at,'[)')
+  ) then
+    raise exception 'availability_overlaps_existing_slot_or_appointment' using errcode='23P01';
+  end if;
+  insert into public.availability_slots(therapist_id,starts_at,ends_at,is_available,timezone)
+  values(p_therapist_id,p_starts_at,p_ends_at,true,p_timezone)
+  returning id into v_id;
+  return v_id;
+end;
+$function$;
+
+create or replace function public.admin_list_availability_slots(p_therapist_id uuid)
+returns table(slot_id uuid,starts_at timestamptz,ends_at timestamptz,timezone text,is_available boolean)
+language plpgsql
+security definer
+set search_path=''
+as $function$
+begin
+  perform public.require_admin_aal2();
+  return query select s.id,s.starts_at,s.ends_at,s.timezone,s.is_available
+  from public.availability_slots s
+  where s.therapist_id=p_therapist_id and s.starts_at>now()
+  order by s.starts_at limit 200;
+end;
+$function$;
+
+create or replace function public.admin_delete_availability_slot(p_slot_id uuid)
+returns boolean
+language plpgsql
+security definer
+set search_path=''
+as $function$
+begin
+  perform public.require_admin_aal2();
+  delete from public.availability_slots s
+  where s.id=p_slot_id and s.is_available
+    and not exists(select 1 from public.appointments a where a.slot_id=s.id);
+  if not found then raise exception 'slot_not_available_or_already_booked' using errcode='P0001'; end if;
+  return true;
+end;
+$function$;
+
+create or replace function public.admin_list_request_details()
+returns table(request_id uuid,client_message text)
+language plpgsql
+security definer
+set search_path=''
+as $function$
+begin
+  perform public.require_admin_aal2();
+  return query select r.id,r.client_message from public.client_requests r
+  where r.status in ('payment_verified','scheduled')
+  order by r.created_at desc;
+end;
+$function$;
+
+create or replace function public.admin_list_available_slots_for_request(p_request_id uuid)
+returns table(slot_id uuid,starts_at timestamptz,ends_at timestamptz,slot_timezone text,client_timezone text)
+language plpgsql
+security definer
+set search_path=''
+as $function$
+begin
+  perform public.require_admin_aal2();
+  return query
+  select s.id,s.starts_at,s.ends_at,s.timezone,cp.timezone
+  from public.client_requests r
+  join public.profiles cp on cp.id=r.client_id
+  join public.availability_slots s on s.therapist_id=r.therapist_id
+  where r.id=p_request_id and r.status='payment_verified' and s.is_available
+    and s.starts_at>now()
+  order by s.starts_at limit 100;
+end;
+$function$;
+
+create or replace function public.admin_schedule_request_from_slot(p_request_id uuid,p_slot_id uuid)
+returns uuid
+language plpgsql
+security definer
+set search_path=''
+as $function$
+declare
+  v_request public.client_requests%rowtype;
+  v_slot public.availability_slots%rowtype;
+  v_appointment uuid;
+  v_timezone text;
+begin
+  perform public.require_admin_aal2();
+  select * into v_request from public.client_requests r
+  where r.id=p_request_id and r.status='payment_verified' for update;
+  if not found then raise exception 'request_not_ready_to_schedule' using errcode='P0001'; end if;
+  if not exists(select 1 from public.payments p where p.request_id=p_request_id and p.status='paid') then
+    raise exception 'payment_not_verified' using errcode='P0001';
+  end if;
+  select * into v_slot from public.availability_slots s
+  where s.id=p_slot_id and s.therapist_id=v_request.therapist_id and s.is_available and s.starts_at>now()
+  for update;
+  if not found then raise exception 'slot_unavailable_or_wrong_therapist' using errcode='P0001'; end if;
+  if v_slot.ends_at-v_slot.starts_at<>interval '45 minutes' then raise exception 'invalid_slot_duration' using errcode='22023'; end if;
+  select p.timezone into v_timezone from public.profiles p where p.id=v_request.client_id;
+  insert into public.appointments(client_id,therapist_id,slot_id,starts_at,ends_at,status,client_message,market,timezone)
+  values(v_request.client_id,v_request.therapist_id,v_slot.id,v_slot.starts_at,v_slot.ends_at,'confirmed',
+    v_request.client_message,v_request.market,coalesce(v_timezone,v_slot.timezone,'Asia/Tehran'))
+  returning id into v_appointment;
+  update public.availability_slots set is_available=false where id=v_slot.id;
+  update public.client_requests set status='scheduled',appointment_id=v_appointment,updated_at=now() where id=p_request_id;
+  update public.payments set appointment_id=v_appointment where request_id=p_request_id;
+  return v_appointment;
+end;
 $function$;
 
 create or replace function public.admin_set_appointment_meeting(
@@ -655,6 +797,12 @@ $function$;
 revoke all on function public.client_update_country_code(text) from public,anon;
 revoke all on function public.admin_set_therapist_public_metadata(uuid,integer,text[],boolean) from public,anon;
 revoke all on function public.admin_list_therapist_public_metadata() from public,anon;
+revoke all on function public.admin_create_availability_slot(uuid,timestamptz,timestamptz,text) from public,anon;
+revoke all on function public.admin_list_availability_slots(uuid) from public,anon;
+revoke all on function public.admin_delete_availability_slot(uuid) from public,anon;
+revoke all on function public.admin_list_request_details() from public,anon;
+revoke all on function public.admin_list_available_slots_for_request(uuid) from public,anon;
+revoke all on function public.admin_schedule_request_from_slot(uuid,uuid) from public,anon;
 revoke all on function public.admin_set_appointment_meeting(uuid,text,text) from public,anon;
 revoke all on function public.admin_list_appointment_private_access() from public,anon;
 revoke all on function public.notify_client_appointment_update() from public,anon,authenticated;
@@ -683,6 +831,12 @@ revoke all on function public.get_public_therapist_directory_metadata() from pub
 grant execute on function public.client_update_country_code(text) to authenticated;
 grant execute on function public.admin_set_therapist_public_metadata(uuid,integer,text[],boolean) to authenticated;
 grant execute on function public.admin_list_therapist_public_metadata() to authenticated;
+grant execute on function public.admin_create_availability_slot(uuid,timestamptz,timestamptz,text) to authenticated;
+grant execute on function public.admin_list_availability_slots(uuid) to authenticated;
+grant execute on function public.admin_delete_availability_slot(uuid) to authenticated;
+grant execute on function public.admin_list_request_details() to authenticated;
+grant execute on function public.admin_list_available_slots_for_request(uuid) to authenticated;
+grant execute on function public.admin_schedule_request_from_slot(uuid,uuid) to authenticated;
 grant execute on function public.admin_set_appointment_meeting(uuid,text,text) to authenticated;
 grant execute on function public.admin_list_appointment_private_access() to authenticated;
 grant execute on function public.client_list_notifications() to authenticated;
