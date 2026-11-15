@@ -30,12 +30,10 @@
     }
     items.forEach(t=>{
       const card=el("article","therapist-card");
-      if(t.photo_path && db){
-        const {data}=db.storage.from("therapist-photos").getPublicUrl(t.photo_path);
-        if(data?.publicUrl){const img=el("img","therapist-photo");img.src=data.publicUrl;img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
-      } else card.append(el("div","therapist-photo therapist-placeholder","ی"));
+      card.append(el("div","therapist-photo therapist-placeholder","ی"));
       const body=el("div","therapist-card-body");
-      body.append(el("h3","",t.display_name||""));
+      const publicName=(t.public_slug||"").replace(/[-_]+/g," ").trim();
+      body.append(el("h3","",publicName||"درمانگر تأییدشده"));
       if(t.headline)body.append(el("p","therapist-headline",t.headline));
       const tags=el("div","therapist-tags");
       (t.specialties||[]).slice(0,4).forEach(x=>tags.append(el("span","",x)));
@@ -60,9 +58,9 @@
     if(!db){directory.textContent="اتصال فهرست درمانگران در دسترس نیست.";return;}
     directory.textContent="در حال دریافت فهرست درمانگران…";
     const {data,error}=await db.from("therapists")
-      .select("id,display_name,headline,specialties,languages,photo_path")
+      .select("id,public_slug,headline,specialties,languages")
       .eq("is_listed",true).not("verified_at","is",null)
-      .order("display_name",{ascending:true});
+      .order("public_slug",{ascending:true});
     if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
     allTherapists=data||[];
     const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
