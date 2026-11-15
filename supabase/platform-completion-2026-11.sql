@@ -299,7 +299,7 @@ end;
 $function$;
 
 create or replace function public.admin_list_appointment_private_access()
-returns table(appointment_id uuid,client_name text,therapist_name text,starts_at timestamptz,ends_at timestamptz,appointment_status public.appointment_status,meeting_url text,meeting_password text)
+returns table(appointment_id uuid,client_name text,therapist_name text,starts_at timestamptz,ends_at timestamptz,timezone text,appointment_status public.appointment_status,meeting_url text,meeting_password text)
 language plpgsql
 security definer
 set search_path=''
@@ -307,7 +307,7 @@ as $function$
 begin
   perform public.require_admin_aal2();
   return query
-  select a.id,cp.display_name,t.display_name,a.starts_at,a.ends_at,a.status,x.meeting_url,x.meeting_password
+  select a.id,cp.display_name,t.display_name,a.starts_at,a.ends_at,a.timezone,a.status,x.meeting_url,x.meeting_password
   from public.appointments a
   join public.profiles cp on cp.id=a.client_id
   join public.therapists t on t.id=a.therapist_id
