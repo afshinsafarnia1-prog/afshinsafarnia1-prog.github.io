@@ -208,13 +208,73 @@
       });
     }
 
+    const availabilityForm=document.getElementById("yadAvailabilityForm");
+    const availabilityTherapist=document.getElementById("yadAvailabilityTherapist");
+    const availabilityList=document.getElementById("yadAvailabilityList");
+    const availabilityStatus=document.getElementById("yadAvailabilityStatus");
+    const availabilityMessage=(value,bad=false)=>{if(availabilityStatus){availabilityStatus.textContent=value;availabilityStatus.dataset.error=bad?"true":"false";}};
+    async function loadAvailabilitySlots(){
+      if(!availabilityTherapist?.value||!availabilityList)return;
+      const {data,error}=await db.rpc("admin_list_availability_slots",{p_therapist_id:availabilityTherapist.value});
+      availabilityList.replaceChildren();
+      if(error){availabilityList.append(node("p","admin-error",error.message||migrationHint));return;}
+      if(!data?.length){availabilityList.append(node("p","muted","برای این درمانگر زمان آزادی ثبت نشده است."));return;}
+      data.forEach(slot=>{
+        const card=node("article","portal-card yad-session-admin-card");
+        card.append(node("b","",date(slot.starts_at,slot.timezone)+" · "+slot.timezone));
+        card.append(node("small","muted",date(slot.ends_at,slot.timezone)));
+        const remove=node("button","button outline","حذف ظرفیت");remove.type="button";
+        remove.addEventListener("click",async()=>{
+          if(!window.confirm("این زمان آزاد حذف شود؟"))return;
+          const {error:deleteError}=await db.rpc("admin_delete_availability_slot",{p_slot_id:slot.slot_id});
+          if(deleteError){availabilityMessage(deleteError.message||"حذف ظرفیت ناموفق بود.",true);return;}
+          await loadAvailabilitySlots();
+        });
+        card.append(remove);availabilityList.append(card);
+      });
+    }
+    async function initAvailability(){
+      if(!availabilityForm)return;
+      if(!document.getElementById("yadAvailabilityTimezone").value)
+        document.getElementById("yadAvailabilityTimezone").value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
+      const {data:therapists,error}=await db.rpc("admin_list_therapists");
+      if(error){availabilityMessage(error.message||migrationHint,true);return;}
+      availabilityTherapist.replaceChildren();
+      const placeholder=node("option","","درمانگر را انتخاب کنید");placeholder.value="";availabilityTherapist.append(placeholder);
+      (therapists||[]).filter(t=>t.verified&&t.is_listed).forEach(t=>{
+        const option=node("option","",t.display_name);option.value=t.therapist_id;availabilityTherapist.append(option);
+      });
+      availabilityTherapist.addEventListener("change",loadAvailabilitySlots);
+      availabilityForm.addEventListener("submit",async event=>{
+        event.preventDefault();
+        if(!availabilityTherapist.value){availabilityMessage("درمانگر را انتخاب کنید.",true);return;}
+        const zone=document.getElementById("yadAvailabilityTimezone").value.trim();
+        let start,end;
+        try{
+          start=localDateTimeInZone(document.getElementById("yadAvailabilityStart").value,zone);
+          end=localDateTimeInZone(document.getElementById("yadAvailabilityEnd").value,zone);
+        }catch(error){availabilityMessage(error.message,true);return;}
+        if(end.getTime()-start.getTime()!==45*60000){availabilityMessage("هر ظرفیت باید دقیقاً ۴۵ دقیقه باشد.",true);return;}
+        const button=availabilityForm.querySelector('button[type="submit"]');button.disabled=true;
+        const {error:saveError}=await db.rpc("admin_create_availability_slot",{
+          p_therapist_id:availabilityTherapist.value,p_starts_at:start.toISOString(),p_ends_at:end.toISOString(),p_timezone:zone
+        });
+        button.disabled=false;
+        if(saveError){availabilityMessage(saveError.message||"ثبت زمان آزاد ناموفق بود.",true);return;}
+        availabilityForm.reset();
+        document.getElementById("yadAvailabilityTimezone").value=zone;
+        availabilityMessage("زمان آزاد ۴۵ دقیقه‌ای ثبت شد.");
+        await loadAvailabilitySlots();
+      });
+    }
+
     document.getElementById("yadRefreshSessionAccess")?.addEventListener("click", loadSessions);
     document.getElementById("yadRefreshSupport")?.addEventListener("click", loadSupport);
     document.getElementById("yadRefreshFeedback")?.addEventListener("click", loadFeedback);
     async function init() {
       try {
         await verifyAdmin();
-        await Promise.all([loadSessions(), loadSupport(), loadFeedback()]);
+        await Promise.all([loadSessions(), loadSupport(), loadFeedback(), initAvailability()]);
       } catch (error) {
         [sessionsRoot, document.getElementById("yadSupportAdminList"), document.getElementById("yadFeedbackAdminList")].filter(Boolean)
           .forEach(root => setStatus(root, error.message, true));
