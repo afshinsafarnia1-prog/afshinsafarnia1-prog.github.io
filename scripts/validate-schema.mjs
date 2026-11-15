@@ -138,6 +138,68 @@ if (!fs.existsSync(upgradeFile)) {
   }
 }
 
+
+const completionFile = path.join(process.cwd(), "supabase", "platform-completion-2026-11.sql");
+if (!fs.existsSync(completionFile)) {
+  errors.push("Missing supabase/platform-completion-2026-11.sql");
+} else {
+  const completion = fs.readFileSync(completionFile, "utf8");
+  const completionLower = completion.toLowerCase();
+  if (!completion.includes("REVIEW DRAFT ONLY") || !completion.includes("has NOT been executed")) {
+    errors.push("Platform completion migration must clearly remain marked as unapplied review draft");
+  }
+  const dollarTags = [...completion.matchAll(/\$function\$/g)].length;
+  if (dollarTags % 2 !== 0) errors.push("Platform completion migration has an unmatched function delimiter");
+  const functionNames = [...completion.matchAll(/create\s+or\s+replace\s+function\s+public\.([a-z0-9_]+)\s*\(/gi)].map(match => match[1].toLowerCase());
+  const duplicates = functionNames.filter((name,index) => functionNames.indexOf(name)!==index);
+  if (duplicates.length) errors.push("Duplicate function definitions in platform migration: " + [...new Set(duplicates)].join(", "));
+  for (const table of ["appointment_private_access","client_support_tickets","client_appointment_feedback","client_policy_consents","client_notifications"]) {
+    if (!new RegExp("alter\\s+table\\s+public\\."+table+"\\s+enable\\s+row\\s+level\\s+security","i").test(completion)) {
+      errors.push("Platform migration must enable RLS for public." + table);
+    }
+    if (!new RegExp("revoke\\s+all\\s+on\\s+public\\."+table+"\\s+from\\s+public,\\s*anon,\\s*authenticated","i").test(completion)) {
+      errors.push("Platform migration must deny direct browser access to public." + table);
+    }
+  }
+  const adminRpcs = [
+    "admin_set_therapist_public_metadata","admin_list_therapist_public_metadata",
+    "admin_create_availability_slot","admin_list_availability_slots","admin_delete_availability_slot",
+    "admin_list_request_details","admin_list_available_slots_for_request","admin_schedule_request_from_slot",
+    "admin_set_appointment_meeting","admin_list_appointment_private_access",
+    "admin_get_appointment_timezone","admin_list_request_client_timezones",
+    "admin_list_support_tickets","admin_update_support_ticket","admin_resolve_support_cancellation",
+    "admin_resolve_support_reschedule","admin_resolve_support_therapist_change",
+    "admin_mark_appointment_completed","admin_list_appointment_feedback","admin_moderate_appointment_feedback"
+  ];
+  for (const name of adminRpcs) {
+    const escaped = name.replace(/[.*+?^{}()|[\]\\]/g,"\\if (errors.length) {");
+    const match = completion.match(new RegExp("create\\s+or\\s+replace\\s+function\\s+public\\."+escaped+"[\\s\\S]*?\\$function\\$;","i"));
+    if (!match) { errors.push("Missing platform admin RPC: " + name); continue; }
+    if (!/security\\s+definer/i.test(match[0]) || !/set\\s+search_path\\s*=\\s*''/i.test(match[0]) || !/require_admin_aal2\\(\\)/i.test(match[0])) {
+      errors.push(name + " must be SECURITY DEFINER, pin search_path and require AAL2");
+    }
+  }
+  for (const name of ["client_list_appointments","client_submit_support_ticket","client_list_support_tickets","client_list_notifications","client_mark_notification_read","client_submit_appointment_feedback","create_client_request_with_consent"]) {
+    const escaped = name.replace(/[.*+?^{}()|[\]\\]/g,"\\if (errors.length) {");
+    const match = completion.match(new RegExp("create\\s+or\\s+replace\\s+function\\s+public\\."+escaped+"[\\s\\S]*?\\$function\\$;","i"));
+    if (!match || !/security\\s+definer/i.test(match[0]) || !/set\\s+search_path\\s*=\\s*''/i.test(match[0])) {
+      errors.push(name + " must be a pinned SECURITY DEFINER RPC");
+    }
+  }
+  if (!/revoke\\s+all\\s+on\\s+function\\s+public\\.create_client_request\\(uuid,text,text,text\\)\\s+from\\s+public,\\s*anon,\\s*authenticated/i.test(completion)) {
+    errors.push("Legacy request creation must be revoked so adult/jurisdiction consent cannot be bypassed");
+  }
+  if (!/therapist_not_authorized_for_client_location/i.test(completion) || !/adult_confirmation_required/i.test(completion)) {
+    errors.push("Client request creation must enforce adult confirmation and therapist jurisdiction");
+  }
+  if (!/admin_schedule_request_from_slot/i.test(completion) || !/tstzrange/i.test(completion)) {
+    errors.push("Scheduling must use administrator-managed slots and conflict checks");
+  }
+  if (!/appointment_private_access/i.test(completion) || !/client_list_appointments/i.test(completion)) {
+    errors.push("Private appointment access RPCs are missing");
+  }
+}
+
 if (errors.length) {
   console.error("Schema guardrail check failed:\n" + errors.map(error => "- " + error).join("\n"));
   process.exit(1);
