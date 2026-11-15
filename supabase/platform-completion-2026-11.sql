@@ -26,7 +26,7 @@ create table if not exists public.client_support_tickets (
   client_id uuid not null references public.profiles(id) on delete cascade,
   request_id uuid references public.client_requests(id) on delete set null,
   appointment_id uuid references public.appointments(id) on delete set null,
-  ticket_type text not null check (ticket_type in ('cancellation','reschedule','complaint','therapist_change','data_request','other')),
+  ticket_type text not null check (ticket_type in ('cancellation','reschedule','complaint','therapist_change','data_request','account_deletion','other')),
   message text not null check (length(message) between 8 and 2000),
   status text not null default 'new' check (status in ('new','in_review','resolved','declined')),
   admin_note text,
@@ -362,7 +362,7 @@ begin
   if v_client is null or not exists(select 1 from public.profiles p where p.id=v_client and p.role='client') then
     raise exception 'client_only' using errcode='42501';
   end if;
-  if p_ticket_type not in ('cancellation','reschedule','complaint','therapist_change','data_request','other') then
+  if p_ticket_type not in ('cancellation','reschedule','complaint','therapist_change','data_request','account_deletion','other') then
     raise exception 'invalid_ticket_type' using errcode='22023';
   end if;
   if p_message is null or length(trim(p_message))<8 or length(p_message)>2000 then
@@ -476,6 +476,9 @@ begin
   if v_payment_status='paid' and p_refund_completed is distinct from true then
     raise exception 'manual_refund_must_be_completed_before_confirmation' using errcode='P0001';
   end if;
+  if v_appointment_id is not null and exists(select 1 from public.appointments a where a.id=v_appointment_id and a.status='completed') then
+    raise exception 'completed_appointment_cannot_be_cancelled' using errcode='P0001';
+  end if;
   if v_appointment_id is not null then
     update public.appointments set status='cancelled',updated_at=now() where id=v_appointment_id and status in ('confirmed','requested');
   end if;
@@ -549,6 +552,9 @@ begin
     select r.id into v_request_id from public.client_requests r where r.appointment_id=v_ticket.appointment_id limit 1;
   end if;
   if v_request_id is null then raise exception 'request_not_found' using errcode='P0002'; end if;
+  if v_ticket.appointment_id is not null and exists(select 1 from public.appointments a where a.id=v_ticket.appointment_id and a.status<>'confirmed') then
+    raise exception 'only_confirmed_sessions_can_change_therapist' using errcode='P0001';
+  end if;
   select p.country_code into v_country from public.profiles p join public.client_requests r on r.client_id=p.id where r.id=v_request_id;
   if not exists(select 1 from public.therapists t where t.id=p_new_therapist_id and t.is_listed and t.verified_at is not null and v_country=any(t.practice_jurisdictions)) then
     raise exception 'therapist_not_authorized_for_client_location' using errcode='42501';
@@ -674,6 +680,9 @@ revoke all on function public.admin_set_therapist_public_metadata(uuid,integer,t
 revoke all on function public.admin_list_therapist_public_metadata() from public,anon;
 revoke all on function public.admin_set_appointment_meeting(uuid,text,text) from public,anon;
 revoke all on function public.admin_list_appointment_private_access() from public,anon;
+revoke all on function public.notify_client_appointment_update() from public,anon,authenticated;
+revoke all on function public.notify_client_support_update() from public,anon,authenticated;
+revoke all on function public.notify_client_session_access() from public,anon,authenticated;
 revoke all on function public.client_list_notifications() from public,anon;
 revoke all on function public.client_mark_notification_read(uuid) from public,anon;
 revoke all on function public.client_list_appointments() from public,anon;
