@@ -107,6 +107,9 @@
       document.getElementById("yadSpecialties").value = (t?.specialties || []).join("، ");
       document.getElementById("yadLanguages").value = (t?.languages || ["fa"]).join(", ");
       document.getElementById("yadModalities").value = (t?.modalities || []).join("، ");
+      document.getElementById("yadYearsExperience").value = t?.years_experience ?? "";
+      document.getElementById("yadJurisdictions").value = (t?.practice_jurisdictions || []).join("، ");
+      document.getElementById("yadAcceptingNewClients").checked = !!t?.accepting_new_clients;
       document.getElementById("yadDuration").value = 45;
       document.getElementById("yadLicense").value = t?.license_number || "";
       document.getElementById("yadAuthority").value = t?.issuing_authority || "";
@@ -122,7 +125,9 @@
     async function loadTherapists() {
       const { data, error } = await db.rpc("admin_list_therapists");
       if (error) throw error;
-      cachedTherapists = data || [];
+      const { data: metadata } = await db.rpc("admin_list_therapist_public_metadata");
+      const metadataById = new Map((metadata || []).map(item => [item.therapist_id, item]));
+      cachedTherapists = (data || []).map(item => ({ ...item, ...(metadataById.get(item.therapist_id) || {}) }));
       list.replaceChildren();
       if (!cachedTherapists.length) {
         list.textContent = "هنوز درمانگری ثبت نشده است.";
@@ -339,6 +344,16 @@
         };
         const { data: savedId, error } = await db.rpc("admin_save_therapist", payload);
         if (error) throw error;
+        const metadataId = savedId || val("yadTherapistId");
+        if (metadataId) {
+          const { error: metadataError } = await db.rpc("admin_set_therapist_public_metadata", {
+            p_therapist_id: metadataId,
+            p_years_experience: val("yadYearsExperience") ? Number(val("yadYearsExperience")) : null,
+            p_practice_jurisdictions: split(val("yadJurisdictions")),
+            p_accepting_new_clients: document.getElementById("yadAcceptingNewClients").checked
+          });
+          if (metadataError) throw new Error("پروفایل اصلی ذخیره شد؛ اما اطلاعات سابقه، قلمرو فعالیت و پذیرش مراجع ذخیره نشد. مهاجرت تکمیلی پایگاه داده را بررسی کنید.");
+        }
         root.reset();
         fillForm(null);
         document.getElementById("yadExistingPhoto").value = "";
