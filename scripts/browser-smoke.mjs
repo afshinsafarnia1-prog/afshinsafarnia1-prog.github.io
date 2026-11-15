@@ -50,7 +50,7 @@ try {
   });
 
   const pages = [
-    "/", "/client.html", "/admin.html", "/therapist.html",
+    "/", "/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/client.html", "/admin.html", "/therapist.html",
     "/assistant.html", "/rules.html", "/articles/",
     "/articles/psychotherapy-first-session.html",
     "/articles/therapeutic-relationship.html",
@@ -59,6 +59,12 @@ try {
   for (const path of pages) {
     const response = await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
     if (!response || response.status() !== 200) throw new Error(`Page failed: ${path} (${response?.status()})`);
+  }
+
+  for (const [path, heading] of [["/psychology.html","روان‌شناسی و مشاوره"],["/psychotherapy.html","روان‌درمانی"],["/psychiatry.html","روان‌پزشکی"]]) {
+    await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
+    if (!(await page.locator("h1").innerText()).includes(heading)) throw new Error("Service guide heading missing: " + path);
+    if (await page.locator(".content-main .content-card").count() < 4) throw new Error("Service guide content is incomplete: " + path);
   }
 
   const languages = ["fa", "ku", "en", "tr", "ar", "es", "de", "fr"];
@@ -113,7 +119,7 @@ try {
   if (!sw.ok()) throw new Error("Service worker is not reachable.");
 
   if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
-  console.log("PASS: 10 pages return HTTP 200; all eight homepage/client languages, assistant, therapist, article-index and Persian-only notices work; PWA assets load; no uncaught page errors.");
+  console.log("PASS: 13 pages return HTTP 200; all eight homepage/client languages, assistant, therapist, article-index and Persian-only notices work; PWA assets load; no uncaught page errors.");
 } finally {
   if (browser) await browser.close();
   await new Promise(resolveClose => server.close(resolveClose));
