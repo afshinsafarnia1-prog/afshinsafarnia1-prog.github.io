@@ -131,7 +131,18 @@
       articleIndexEyebrow:"Revue de YAD Center",articleIndexTitle:"Articles sur la psychothérapie",articleIndexLead:"Des textes pour faire une pause, questionner et comprendre la complexité de l’expérience humaine. Ces contenus sont éducatifs et ne remplacent pas une évaluation ou un traitement professionnel.",article1tag:"Guide du premier rendez-vous",article1title:"La première séance de psychothérapie : à quoi s’attendre ?",article1desc:"Introduction à l’évaluation initiale et au cadre thérapeutique.",article2tag:"Processus thérapeutique",article2title:"Pourquoi la relation thérapeutique est-elle importante ?",article2desc:"Confiance, collaboration et espace de réflexion en thérapie.",article3tag:"L’humain et le monde contemporain",article3title:"Si les machines travaillent, que fera l’être humain ?",article3desc:"Réflexions sur le travail, le sens et l’identité.",articleRead:"Lire ←",persianOnlyNotice:"Le texte intégral de cette page est actuellement disponible en persan. Une traduction révisée n’est pas encore prête."
     }
   };
-  Object.entries(secondaryPageLabels).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
+  const guideNavLabels = {
+    fa:{homeNav:"خانه",psychologyNav:"روان‌شناسی",psychotherapyNav:"روان‌درمانی",psychiatryNav:"روان‌پزشکی",journalNav:"مجله",serviceGuide1:"آشنایی با روان‌درمانی ←",serviceGuide2:"راهنمای روان‌شناسی ←",serviceGuide3:"مطالعه دربارهٔ روابط ←",serviceGuide4:"راهنمای روان‌پزشکی ←"},
+    ku:{homeNav:"ماڵەوە",psychologyNav:"دەروونناسی",psychotherapyNav:"چارەسەری دەروونی",psychiatryNav:"دەروونپزیشکی",journalNav:"گۆڤار",serviceGuide1:"زیاتر لەبارەی چارەسەری دەروونی ←",serviceGuide2:"ڕێنمایی دەروونناسی ←",serviceGuide3:"خوێندنەوە لەبارەی پەیوەندییەکان ←",serviceGuide4:"ڕێنمایی دەروونپزیشکی ←"},
+    en:{homeNav:"Home",psychologyNav:"Psychology",psychotherapyNav:"Psychotherapy",psychiatryNav:"Psychiatry",journalNav:"Journal",serviceGuide1:"Explore psychotherapy →",serviceGuide2:"Psychology guide →",serviceGuide3:"Read about relationships →",serviceGuide4:"Psychiatry guide →"},
+    tr:{homeNav:"Ana sayfa",psychologyNav:"Psikoloji",psychotherapyNav:"Psikoterapi",psychiatryNav:"Psikiyatri",journalNav:"Dergi",serviceGuide1:"Psikoterapiyi keşfedin →",serviceGuide2:"Psikoloji rehberi →",serviceGuide3:"İlişkiler hakkında okuyun →",serviceGuide4:"Psikiyatri rehberi →"},
+    ar:{homeNav:"الرئيسية",psychologyNav:"علم النفس",psychotherapyNav:"العلاج النفسي",psychiatryNav:"الطب النفسي",journalNav:"المجلة",serviceGuide1:"اكتشف العلاج النفسي ←",serviceGuide2:"دليل علم النفس ←",serviceGuide3:"اقرأ عن العلاقات ←",serviceGuide4:"دليل الطب النفسي ←"},
+    es:{homeNav:"Inicio",psychologyNav:"Psicología",psychotherapyNav:"Psicoterapia",psychiatryNav:"Psiquiatría",journalNav:"Revista",serviceGuide1:"Conocer la psicoterapia →",serviceGuide2:"Guía de psicología →",serviceGuide3:"Leer sobre las relaciones →",serviceGuide4:"Guía de psiquiatría →"},
+    de:{homeNav:"Startseite",psychologyNav:"Psychologie",psychotherapyNav:"Psychotherapie",psychiatryNav:"Psychiatrie",journalNav:"Journal",serviceGuide1:"Psychotherapie kennenlernen →",serviceGuide2:"Psychologie-Leitfaden →",serviceGuide3:"Über Beziehungen lesen →",serviceGuide4:"Psychiatrie-Leitfaden →"},
+    fr:{homeNav:"Accueil",psychologyNav:"Psychologie",psychotherapyNav:"Psychothérapie",psychiatryNav:"Psychiatrie",journalNav:"Revue",serviceGuide1:"Découvrir la psychothérapie →",serviceGuide2:"Guide de psychologie →",serviceGuide3:"Lire sur les relations →",serviceGuide4:"Guide de psychiatrie →"}
+  };
+  Object.entries(guideNavLabels).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
+    Object.entries(secondaryPageLabels).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
   const keys = {
     ".topinner span":"tagline","#mainNav a:nth-child(1)":"services","#mainNav a:nth-child(2)":"therapists",
     "#mainNav a:nth-child(3)":"client","#mainNav a:nth-child(4)":"admin","#mainNav a:nth-child(5)":"how",
@@ -172,9 +183,10 @@
     const button = document.querySelector("#searchForm button");
     if (button) button.textContent = t.search;
     document.querySelectorAll(".service-grid .service").forEach((node,i) => {
-      const n=i+1; const h=node.querySelector("h3"), p=node.querySelector("p");
+      const n=i+1; const h=node.querySelector("h3"), p=node.querySelector("p"), link=node.querySelector("a");
       if(h && t["s"+n]) h.textContent=t["s"+n];
       if(p && t["s"+n+"p"]) p.textContent=t["s"+n+"p"];
+      if(link && t["serviceGuide"+n]) link.textContent=t["serviceGuide"+n];
     });
     document.querySelectorAll("#how .steps>div").forEach((node,i) => {
       const n=i+1, h=node.querySelector("h3"), p=node.querySelector("p");
