@@ -43,6 +43,7 @@
       (t.specialties||[]).slice(0,3).forEach(x=>tags.append(el("span","",x)));
       (t.modalities||[]).slice(0,3).forEach(x=>tags.append(el("span","modality-tag",x)));
       (t.languages||[]).forEach(code=>tags.append(el("span","language-tag",languageNames[code]||code)));
+      if(Number(t.review_count)>0)tags.append(el("span","rating-tag","★ "+Number(t.average_rating).toFixed(1)+" ("+t.review_count+")"));
       body.append(tags);
       const market=document.getElementById("marketSelect")?.value||"iran";
       const currency=market==="iran"?"IRR":(document.getElementById("internationalCurrency")?.value||"EUR");
@@ -70,6 +71,8 @@
     allTherapists=data||[];
     const {data:publicMetadata}=await db.rpc("get_public_therapist_directory_metadata");
     if(Array.isArray(publicMetadata)){const byId=new Map(publicMetadata.map(x=>[x.therapist_id,x]));allTherapists=allTherapists.map(x=>({...x,...(byId.get(x.id)||{})}));}
+    const {data:ratingRows}=await db.rpc("get_public_therapist_rating_summary");
+    if(Array.isArray(ratingRows)){const ratingById=new Map(ratingRows.map(x=>[x.therapist_id,x]));allTherapists=allTherapists.map(x=>({...x,...(ratingById.get(x.id)||{})}));}
     populateModalityFilter();
     const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
     if(settingsError){directory.textContent="دریافت تعرفه‌های مرکزی با خطا روبه‌رو شد.";return;}
