@@ -138,7 +138,7 @@ else {
       const actual = article ? [...article[1].matchAll(new RegExp("<" + tag + "\\b", "g"))].length : -1;
       if (actual !== expected) errors.push(page + " expected " + expected + " " + tag + " elements; found " + actual);
     }
-    if (!guideScript.includes(page.replace(".html", "") + ':{')) errors.push("English guide translation missing: " + page);
+    if (!guideScript.includes('"' + page.replace(".html", "") + '":{')) errors.push("English guide translation missing: " + page);
   }
   const sw = fs.readFileSync(path.join(root, "sw.js"), "utf8");
   if (!sw.includes('"/service-guides-i18n.js"')) errors.push("Service guide translations must be included in the offline cache");
