@@ -107,7 +107,7 @@
       document.getElementById("yadSpecialties").value = (t?.specialties || []).join("، ");
       document.getElementById("yadLanguages").value = (t?.languages || ["fa"]).join(", ");
       document.getElementById("yadModalities").value = (t?.modalities || []).join("، ");
-      document.getElementById("yadDuration").value = t?.session_duration_minutes || 50;
+      document.getElementById("yadDuration").value = 45;
       document.getElementById("yadLicense").value = t?.license_number || "";
       document.getElementById("yadAuthority").value = t?.issuing_authority || "";
       document.getElementById("yadVerified").checked = !!t?.verified;
@@ -156,7 +156,7 @@
       data.forEach(item => {
         const tr = document.createElement("tr");
         tr.dataset.requestId = item.request_id;
-        tr.dataset.duration = String(item.session_duration_minutes || 50);
+        tr.dataset.duration = String(item.session_duration_minutes || 45);
         const add = value => { const td = document.createElement("td"); td.textContent = safe(value); tr.append(td); return td; };
         add(item.client_name);
         add(item.therapist_name);
@@ -206,7 +206,7 @@
         setStatus("زمان جلسه باید در آینده باشد.", true); return;
       }
       const row = requests.querySelector("tr[data-request-id=\"" + requestId + "\"]");
-      const duration = Number(row?.dataset.duration || 50);
+      const duration = Number(row?.dataset.duration || 45);
       const end = new Date(start.getTime() + duration * 60000);
       const { error } = await db.rpc("admin_schedule_request", {
         p_request_id: requestId,
@@ -223,6 +223,8 @@
     const eventStatus=document.getElementById("yadWorkshopAdminStatus");
     const eventList=document.getElementById("yadWorkshopAdminList");
     const eventForm=document.getElementById("yadWorkshopAdminForm");
+    const eventTimezone=document.getElementById("eventTimezone");
+    if(eventTimezone&&!eventTimezone.value)eventTimezone.value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
     const proposalList=document.getElementById("yadWorkshopProposals");
     const rosterBox=document.getElementById("yadWorkshopRoster");
     const rosterList=document.getElementById("yadWorkshopRosterList");
@@ -299,7 +301,7 @@
         if(new Date(args.p_ends_at)<=new Date(args.p_starts_at))throw new Error("زمان پایان باید بعد از شروع باشد.");
         const {error}=await db.rpc("admin_upsert_workshop",args);
         if(error)throw error;
-        eventForm.reset();document.getElementById("eventTimezone").value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Europe/Berlin";
+        eventForm.reset();document.getElementById("eventTimezone").value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
         document.getElementById("eventLanguages").value="fa";document.getElementById("eventFee").value="0";
         eventStatus.textContent="رویداد ذخیره شد.";await loadWorkshops();
       }catch(error){eventStatus.textContent=error.message||"ذخیره رویداد ناموفق بود.";}
@@ -324,7 +326,7 @@
           p_specialties: split(val("yadSpecialties")),
           p_languages: split(val("yadLanguages")),
           p_modalities: split(val("yadModalities")),
-          p_session_duration_minutes: Number(val("yadDuration") || 50),
+          p_session_duration_minutes: 45,
           p_fee_amount: Number(val("yadFee") || 0),
           p_fee_currency: val("yadCurrency"),
           p_photo_path: photoPath,
