@@ -114,6 +114,8 @@
           if (updateError) { setStatus(root, updateError.message || "ذخیرهٔ درخواست ناموفق بود.", true); return; }
           await loadSupport();
         });
+        const requiresDedicatedAction=["cancellation","reschedule","therapist_change"].includes(item.ticket_type);
+        if(requiresDedicatedAction)save.hidden=true;
         card.append(status, note, save);
         if (item.ticket_type === "cancellation") {
           const refundLabel = node("label", "yad-inline-check", "بازپرداخت واقعی خارج از سامانه انجام شده است");
