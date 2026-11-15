@@ -81,6 +81,16 @@ try {
   await page.locator("#siteLanguage").selectOption("en");
   const englishHero = await page.locator(".hero h1").innerText();
   if (!englishHero.includes("Understanding what is happening")) throw new Error("Homepage English translation did not apply.");
+  const serviceLinks = await page.locator(".service-grid .service a").allTextContents();
+  if (!serviceLinks[0].includes("Explore psychotherapy") || !serviceLinks[1].includes("Psychology guide") || !serviceLinks[3].includes("Psychiatry guide")) {
+    throw new Error("Homepage service guide links did not localize into English.");
+  }
+  for (const [path, label] of [["/psychology.html","Psychotherapy"],["/psychotherapy.html","Psychology"],["/psychiatry.html","Psychotherapy"]]) {
+    await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
+    await page.locator("#siteLanguage").selectOption("en");
+    const navText = await page.locator(".navrow nav").innerText();
+    if (!navText.includes("Home") || !navText.includes("Journal")) throw new Error("Service guide navigation did not localize: " + path);
+  }
 
   await page.goto("http://127.0.0.1:4173/client.html", { waitUntil: "domcontentloaded" });
   for (const language of languages) {
