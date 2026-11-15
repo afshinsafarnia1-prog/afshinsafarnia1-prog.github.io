@@ -70,8 +70,10 @@ if (!fs.existsSync(robotsPath)) {
   }
   if (fs.existsSync(sitemapPath)) {
     const sitemap = fs.readFileSync(sitemapPath, "utf8");
-    const firstUrl = sitemap.match(/<loc>([^<]+)<\\/loc>/)?.[1];
-    const expectedSitemapUrl = firstUrl ? firstUrl.replace(/\\/$/, "/sitemap.xml") : null;
+    const locStart = sitemap.indexOf("<loc>");
+    const locEnd = sitemap.indexOf("</loc>", locStart);
+    const firstUrl = locStart >= 0 && locEnd > locStart ? sitemap.slice(locStart + 5, locEnd) : null;
+    const expectedSitemapUrl = firstUrl ? (firstUrl.endsWith("/") ? firstUrl + "sitemap.xml" : firstUrl + "/sitemap.xml") : null;
     if (!expectedSitemapUrl || !robots.includes(expectedSitemapUrl)) {
       errors.push("robots.txt sitemap URL does not match the site's sitemap host");
     }
