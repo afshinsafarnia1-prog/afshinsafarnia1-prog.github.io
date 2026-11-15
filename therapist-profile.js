@@ -24,18 +24,22 @@
     if(!id){root.textContent=t("profileMissingId");return;}
     root.textContent=t("profileLoading");
     const {data,error}=await db.from("therapists")
-      .select("id,public_slug,headline,biography,qualifications,specialties,languages")
+      .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path")
       .eq("id",id).eq("is_listed",true).not("verified_at","is",null).maybeSingle();
     if(error||!data){root.textContent=t("profileNotFound");return;}
     root.replaceChildren();
     const hero=node("div","profile-hero");
-    const mark=node("div","profile-monogram","ی");
-    mark.setAttribute("aria-hidden","true");
-    hero.append(mark);
+    if(data.photo_path){
+      const {data:photo}=db.storage.from("therapist-photos").getPublicUrl(data.photo_path);
+      if(photo?.publicUrl){const img=node("img","profile-photo");img.src=photo.publicUrl;img.alt=t("profilePhotoAlt");img.loading="lazy";hero.append(img);}
+    } else {
+      const mark=node("div","profile-monogram","ی");
+      mark.setAttribute("aria-hidden","true");
+      hero.append(mark);
+    }
     const intro=node("div","profile-intro");
     intro.append(node("span","eyebrow",t("profileVerified")));
-    const publicName=(data.public_slug||"").replace(/[-_]+/g," ").trim();
-    intro.append(node("h1","",publicName||t("profileNoName")));
+    intro.append(node("h1","",data.display_name||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.headline));
     intro.append(node("p","profile-session",t("profileSession")));
     hero.append(intro);root.append(hero);
@@ -46,6 +50,8 @@
     if(qualifications.length)main.append(section(t("profileQualifications"),qualifications));
     const specialties=list(data.specialties);
     if(specialties.length)main.append(section(t("profileSpecialties"),specialties));
+    const modalities=list(data.modalities);
+    if(modalities.length)main.append(section(t("profileModalities"),modalities));
     const languages=list(data.languages).map(x=>names[x]||x);
     if(languages.length)main.append(section(t("profileLanguages"),languages));
     const aside=node("aside","profile-aside");
