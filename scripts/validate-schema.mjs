@@ -175,18 +175,18 @@ if (!fs.existsSync(completionFile)) {
     const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const match = completion.match(new RegExp("create\\s+or\\s+replace\\s+function\\s+public\\."+escaped+"[\\s\\S]*?\\$function\\$;","i"));
     if (!match) { errors.push("Missing platform admin RPC: " + name); continue; }
-    if (!/security\\s+definer/i.test(match[0]) || !/set\\s+search_path\\s*=\\s*''/i.test(match[0]) || !/require_admin_aal2\\(\\)/i.test(match[0])) {
+    if (!/security\s+definer/i.test(match[0]) || !/set\s+search_path\s*=\s*''/i.test(match[0]) || !/require_admin_aal2\(\)/i.test(match[0])) {
       errors.push(name + " must be SECURITY DEFINER, pin search_path and require AAL2");
     }
   }
   for (const name of ["client_list_appointments","client_submit_support_ticket","client_list_support_tickets","client_list_notifications","client_mark_notification_read","client_submit_appointment_feedback","create_client_request_with_consent"]) {
     const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const match = completion.match(new RegExp("create\\s+or\\s+replace\\s+function\\s+public\\."+escaped+"[\\s\\S]*?\\$function\\$;","i"));
-    if (!match || !/security\\s+definer/i.test(match[0]) || !/set\\s+search_path\\s*=\\s*''/i.test(match[0])) {
+    if (!match || !/security\s+definer/i.test(match[0]) || !/set\s+search_path\s*=\s*''/i.test(match[0])) {
       errors.push(name + " must be a pinned SECURITY DEFINER RPC");
     }
   }
-  if (!/revoke\\s+all\\s+on\\s+function\\s+public\\.create_client_request\\(uuid,text,text,text\\)\\s+from\\s+public,\\s*anon,\\s*authenticated/i.test(completion)) {
+  if (!/revoke\s+all\s+on\s+function\s+public\.create_client_request\(uuid,text,text,text\)\s+from\s+public,\s*anon,\s*authenticated/i.test(completion)) {
     errors.push("Legacy request creation must be revoked so adult/jurisdiction consent cannot be bypassed");
   }
   if (!/therapist_not_authorized_for_client_location/i.test(completion) || !/adult_confirmation_required/i.test(completion)) {
