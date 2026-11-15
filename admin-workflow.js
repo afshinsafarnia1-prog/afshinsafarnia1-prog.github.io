@@ -15,6 +15,24 @@
     const val = id => document.getElementById(id)?.value?.trim() || "";
     const split = value => value.split(/[,،\n]/).map(x => x.trim()).filter(Boolean);
     const safe = value => value == null ? "—" : String(value);
+    const localDateTimeInZone = (value, timeZone) => {
+      const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value || "");
+      if (!match) throw new Error("فرمت تاریخ و ساعت معتبر نیست.");
+      const target = Date.UTC(Number(match[1]), Number(match[2])-1, Number(match[3]), Number(match[4]), Number(match[5]));
+      let guess = target;
+      const formatter = new Intl.DateTimeFormat("en-GB", { timeZone, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hourCycle:"h23" });
+      for (let i=0;i<5;i++) {
+        const parts = Object.fromEntries(formatter.formatToParts(new Date(guess)).map(part=>[part.type,part.value]));
+        const represented = Date.UTC(Number(parts.year),Number(parts.month)-1,Number(parts.day),Number(parts.hour),Number(parts.minute));
+        const delta = target-represented;
+        if (!delta) break;
+        guess += delta;
+      }
+      const finalParts = Object.fromEntries(formatter.formatToParts(new Date(guess)).map(part=>[part.type,part.value]));
+      const finalValue = Date.UTC(Number(finalParts.year),Number(finalParts.month)-1,Number(finalParts.day),Number(finalParts.hour),Number(finalParts.minute));
+      if (finalValue !== target) throw new Error("این ساعت در منطقهٔ زمانی مراجع وجود ندارد؛ زمان دیگری انتخاب کنید.");
+      return new Date(guess);
+    };
     let cachedTherapists = [];
     let activeAdmin = null;
     let initializing = false;
@@ -209,11 +227,14 @@
 
     async function scheduleRequest(requestId, localValue) {
       if (!localValue) { setStatus("ابتدا تاریخ و ساعت جلسه را انتخاب کن.", true); return; }
-      const start = new Date(localValue);
+      const row = requests.querySelector("tr[data-request-id=\"" + requestId + "\"]");
+      const timeZone = row?.dataset.timezone || "Asia/Tehran";
+      let start;
+      try { start = localDateTimeInZone(localValue,timeZone); }
+      catch(error) { setStatus(error.message,true); return; }
       if (Number.isNaN(start.getTime()) || start <= new Date()) {
         setStatus("زمان جلسه باید در آینده باشد.", true); return;
       }
-      const row = requests.querySelector("tr[data-request-id=\"" + requestId + "\"]");
       const duration = Number(row?.dataset.duration || 45);
       const end = new Date(start.getTime() + duration * 60000);
       const { error } = await db.rpc("admin_schedule_request", {
