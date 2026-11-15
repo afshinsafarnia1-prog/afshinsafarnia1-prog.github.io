@@ -103,7 +103,7 @@
       const none = node("option", "", "بدون انتخاب جلسه");
       none.value = "";
       related.append(none);
-      requests.forEach(item => {
+      requests.filter(item => item.request_status !== "scheduled").forEach(item => {
         const option = node("option", "", "درخواست · " + item.therapist_name + " · " + item.request_status);
         option.value = "request:" + item.request_id;
         related.append(option);
