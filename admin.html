@@ -10,7 +10,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="supabase-config.js"></script>
 <script defer src="auth.js"></script>
-<script defer src="admin-workflow.js"></script>
+<script defer src="admin-workflow.js"></script><script defer src="admin-extensions.js"></script>
 </head>
 <body>
 <main class="portal-main"><div class="portal-wrap">
@@ -96,6 +96,9 @@
 <div class="section-head"><div><h2>درخواست‌های مراجعان و پرداخت‌ها</h2><p>مراجع درمانگر را انتخاب می‌کند؛ پس از تأیید پرداخت، زمان جلسه را در این بخش ثبت کن.</p></div><button class="button outline" id="yadRefreshWorkflow" type="button">به‌روزرسانی</button></div>
 <div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>مراجع</th><th>درمانگر انتخابی</th><th>مبلغ</th><th>سهم درمانگر / یادسنتر</th><th>شماره پیگیری</th><th>وضعیت درخواست</th><th>وضعیت پرداخت</th><th>اقدام</th></tr></thead><tbody id="yadRequestsBody"><tr><td colspan="8">در حال بارگذاری…</td></tr></tbody></table></div>
 </section>
+<section class="portal-card" id="yadSessionAccessAdmin"><div class="section-head"><div><h2>لینک خصوصی جلسات</h2><p>فقط برای نوبت پرداخت‌شده و تأییدشده لینک HTTPS ثبت کنید. لینک در حساب همان مراجع نمایش داده می‌شود.</p></div><button class="button outline" id="yadRefreshSessionAccess" type="button">به‌روزرسانی</button></div><div id="yadSessionAccessList" class="portal-grid"><p>در انتظار اتصال…</p></div></section>
+<section class="portal-card" id="yadSupportAdmin"><div class="section-head"><div><h2>درخواست‌های پشتیبانی و شکایت‌ها</h2><p>درخواست لغو، جابه‌جایی، تغییر درمانگر، شکایت و درخواست‌های اطلاعات حساب.</p></div><button class="button outline" id="yadRefreshSupport" type="button">به‌روزرسانی</button></div><div id="yadSupportAdminList" class="portal-grid"><p>در انتظار اتصال…</p></div></section>
+<section class="portal-card" id="yadFeedbackAdmin"><div class="section-head"><div><h2>بازخورد جلسات</h2><p>بازخوردها پیش از نمایش عمومی باید توسط مدیریت بررسی شوند.</p></div><button class="button outline" id="yadRefreshFeedback" type="button">به‌روزرسانی</button></div><div id="yadFeedbackAdminList" class="portal-grid"><p>در انتظار اتصال…</p></div></section>
 <section class="portal-card" id="yadWorkshopAdmin">
 <div class="section-head"><div><h2>مدیریت کارگاه‌ها و نشست‌ها</h2><p>ایجاد رویداد، انتشار، مدیریت ثبت‌نام‌ها و نگهداری خصوصی لینک جلسه آنلاین.</p></div><button class="button outline" id="yadRefreshWorkshops" type="button">به‌روزرسانی رویدادها</button></div>
 <div id="yadWorkshopAdminStatus" class="notice" role="status" aria-live="polite">در انتظار اتصال…</div>
