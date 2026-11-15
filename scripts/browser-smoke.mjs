@@ -111,6 +111,7 @@ try {
     if (!(await page.locator("h1").innerText()).trim()) throw new Error("Client page heading is empty for " + language);
     if (!(await page.locator('[data-i18n="sessionCountry"]').innerText()).trim()) throw new Error("Client session-country label did not localize for " + language);
     if (!(await page.locator('[data-i18n="adultConfirm"]').innerText()).trim()) throw new Error("Client adult-confirmation label did not localize for " + language);
+    if (!(await page.locator('[data-i18n="crisisNotice"]').innerText()).trim()) throw new Error("Client emergency boundary did not localize for " + language);
   }
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
   for (const selector of ["#yadSessionAccessAdmin", "#yadSupportAdmin", "#yadFeedbackAdmin", "#yadAvailabilityForm", "#yadAvailabilityTherapist", "#yadYearsExperience", "#yadJurisdictions", "#yadAcceptingNewClients"]) {
