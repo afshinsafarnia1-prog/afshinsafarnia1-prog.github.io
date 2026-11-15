@@ -98,6 +98,22 @@ try {
   }
 
   await page.goto("http://127.0.0.1:4173/client.html", { waitUntil: "domcontentloaded" });
+  for (const selector of ["#yadClientConsent", "#yadAdultConfirm", "#yadSessionCountry", "#yadClientAppointmentList", "#yadClientSupportForm", "#yadClientNotificationsList", "#yadExportMyData"]) {
+    if (!(await page.locator(selector).count())) throw new Error("Client workflow control missing: " + selector);
+  }
+  const clientHtml = await readFile(resolve(root, "client.html"), "utf8");
+  if (!clientHtml.includes("client-extensions.js")) throw new Error("Client extension script is not connected.");
+  await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
+  for (const selector of ["#yadSessionAccessAdmin", "#yadSupportAdmin", "#yadFeedbackAdmin", "#yadYearsExperience", "#yadJurisdictions", "#yadAcceptingNewClients"]) {
+    if (!(await page.locator(selector).count())) throw new Error("Admin workflow control missing: " + selector);
+  }
+  const adminHtml = await readFile(resolve(root, "admin.html"), "utf8");
+  if (!adminHtml.includes("admin-extensions.js")) throw new Error("Admin extension script is not connected.");
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  for (const selector of ["#modality", "#therapistKeyword", "#acceptingOnly", "#clearTherapistFilters"]) {
+    if (!(await page.locator(selector).count())) throw new Error("Therapist directory filter missing: " + selector);
+  }
+
   for (const language of languages) {
     await page.locator("#siteLanguage").selectOption(language);
     await page.waitForFunction(value => document.documentElement.lang === value, language);
@@ -133,8 +149,15 @@ try {
   const sw = await page.request.get("http://127.0.0.1:4173/sw.js");
   if (!sw.ok()) throw new Error("Service worker is not reachable.");
 
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  await page.locator("#menuToggle").click();
+  if (!(await page.locator("#mainNav").isVisible())) throw new Error("Mobile navigation did not open.");
+  if (!(await page.locator(".therapist-filters").isVisible())) throw new Error("Mobile therapist filters are not visible.");
+  const mobileFilterColumns = await page.locator(".therapist-filters").evaluate(el => getComputedStyle(el).gridTemplateColumns);
+  if (mobileFilterColumns.split(" ").length !== 1) throw new Error("Therapist filters are not single-column on mobile.");
   if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
-  console.log("PASS: 14 pages return HTTP 200; all eight homepage/client languages, assistant, therapist, article-index and Persian-only notices work; PWA assets load; no uncaught page errors.");
+  console.log("PASS: 14 pages return HTTP 200; eight languages, client consent/session/support/notification controls, admin management panels, directory filters, mobile navigation and responsive filter layout, assistant, therapist, article-index, Persian-only notices and PWA assets checked; no uncaught page errors.");
 } finally {
   if (browser) await browser.close();
   await new Promise(resolveClose => server.close(resolveClose));
