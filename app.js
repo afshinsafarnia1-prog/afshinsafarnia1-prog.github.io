@@ -37,6 +37,8 @@
       const body=el("div","therapist-card-body");
       body.append(el("h3","",t.display_name||""));
       if(t.headline)body.append(el("p","therapist-headline",t.headline));
+      if(t.years_experience!=null)body.append(el("p","therapist-meta","سابقهٔ حرفه‌ای: "+t.years_experience+" سال"));
+      if(typeof t.accepting_new_clients==="boolean")body.append(el("span",t.accepting_new_clients?"availability-open":"availability-closed",t.accepting_new_clients?"پذیرش مراجع جدید":"فعلاً پذیرش مراجع جدید ندارد"));
       const tags=el("div","therapist-tags");
       (t.specialties||[]).slice(0,3).forEach(x=>tags.append(el("span","",x)));
       (t.modalities||[]).slice(0,3).forEach(x=>tags.append(el("span","modality-tag",x)));
@@ -66,6 +68,8 @@
       .order("display_name",{ascending:true});
     if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
     allTherapists=data||[];
+    const {data:publicMetadata}=await db.rpc("get_public_therapist_public_metadata");
+    if(Array.isArray(publicMetadata)){const byId=new Map(publicMetadata.map(x=>[x.therapist_id,x]));allTherapists=allTherapists.map(x=>({...x,...(byId.get(x.id)||{})}));}
     populateModalityFilter();
     const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
     if(settingsError){directory.textContent="دریافت تعرفه‌های مرکزی با خطا روبه‌رو شد.";return;}
@@ -121,6 +125,7 @@
     const language=document.getElementById("language")?.value||"";
     const specialty=document.getElementById("specialty")?.value||"";
     const modality=document.getElementById("modality")?.value||"";
+    const acceptingOnly=!!document.getElementById("acceptingOnly")?.checked;
     const keyword=(document.getElementById("therapistKeyword")?.value||"").trim().toLocaleLowerCase();
     const items=allTherapists.filter(t=>{
       const langOk=!language||(t.languages||[]).includes(language);
@@ -128,7 +133,8 @@
       const modalityOk=!modality||(t.modalities||[]).some(x=>x.toLocaleLowerCase()===modality.toLocaleLowerCase());
       const haystack=[t.display_name,t.headline,t.biography,...(t.specialties||[]),...(t.modalities||[])].filter(Boolean).join(" ").toLocaleLowerCase();
       const keywordOk=!keyword||haystack.includes(keyword);
-      return langOk&&specOk&&modalityOk&&keywordOk;
+      const acceptingOk=!acceptingOnly||t.accepting_new_clients===true;
+      return langOk&&specOk&&modalityOk&&keywordOk&&acceptingOk;
     });
     const count=document.getElementById("directoryCount");if(count)count.textContent=items.length+" درمانگر از "+allTherapists.length+" پروفایل تأییدشده";
     renderDirectory(items);
@@ -142,7 +148,8 @@
   document.getElementById("specialty")?.addEventListener("change",filterDirectory);
   document.getElementById("modality")?.addEventListener("change",filterDirectory);
   document.getElementById("therapistKeyword")?.addEventListener("input",filterDirectory);
-  document.getElementById("clearTherapistFilters")?.addEventListener("click",()=>{["language","specialty","modality","therapistKeyword"].forEach(id=>{const node=document.getElementById(id);if(node)node.value="";});filterDirectory();});
+  document.getElementById("acceptingOnly")?.addEventListener("change",filterDirectory);
+  document.getElementById("clearTherapistFilters")?.addEventListener("click",()=>{["language","specialty","modality","therapistKeyword"].forEach(id=>{const node=document.getElementById(id);if(node)node.value="";});const accepting=document.getElementById("acceptingOnly");if(accepting)accepting.checked=false;filterDirectory();});
 
   const marketSelect=document.getElementById("marketSelect");
   marketSelect?.addEventListener("change",()=>{
@@ -189,6 +196,6 @@
     window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
   }
   const style=document.createElement("style");
-  style.textContent=".therapist-directory{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:12px}.therapist-card{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid #e5ece8;border-radius:17px;padding:15px;box-shadow:0 10px 25px #123f4608;min-width:0}.therapist-photo{width:82px;height:92px;object-fit:cover;border-radius:13px;background:#e8f7f2;flex-shrink:0}.therapist-placeholder{display:grid;place-items:center;color:#123f46;font-size:34px;font-weight:800}.therapist-card-body{min-width:0;flex:1}.therapist-card h3{margin:0;color:#123f46;font-size:16px}.therapist-headline,.therapist-meta{font-size:11px;color:#687b7c;margin:4px 0}.therapist-tags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.therapist-tags span{font-size:10px;padding:3px 7px;border-radius:20px;background:#eff8f4;color:#24665d}.therapist-tags .modality-tag{background:#fff3ec;color:#92513f}.therapist-card .button{padding:8px 12px;font-size:11px;margin-top:5px}.directory-empty{grid-column:1/-1;color:#687b7c;font-size:13px}.directory-count{grid-column:1/-1;color:#687b7c;font-size:12px;margin:0}.therapist-filters{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));align-items:end}.therapist-filters label{min-width:0}.filter-keyword input{width:100%;min-width:0;padding:10px;border:1px solid #dce8e3;border-radius:10px;font:inherit}.filter-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.language-switch select{max-width:110px}@media(max-width:620px){.therapist-card{padding:12px}.therapist-photo{width:68px;height:80px}.filter-actions>*{flex:1}}";
+  style.textContent=".therapist-directory{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:12px}.therapist-card{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid #e5ece8;border-radius:17px;padding:15px;box-shadow:0 10px 25px #123f4608;min-width:0}.therapist-photo{width:82px;height:92px;object-fit:cover;border-radius:13px;background:#e8f7f2;flex-shrink:0}.therapist-placeholder{display:grid;place-items:center;color:#123f46;font-size:34px;font-weight:800}.therapist-card-body{min-width:0;flex:1}.therapist-card h3{margin:0;color:#123f46;font-size:16px}.therapist-headline,.therapist-meta{font-size:11px;color:#687b7c;margin:4px 0}.therapist-tags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.therapist-tags span{font-size:10px;padding:3px 7px;border-radius:20px;background:#eff8f4;color:#24665d}.therapist-tags .modality-tag{background:#fff3ec;color:#92513f}.therapist-card .button{padding:8px 12px;font-size:11px;margin-top:5px}.directory-empty{grid-column:1/-1;color:#687b7c;font-size:13px}.directory-count{grid-column:1/-1;color:#687b7c;font-size:12px;margin:0}.therapist-filters{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));align-items:end}.therapist-filters label{min-width:0}.filter-keyword input{width:100%;min-width:0;padding:10px;border:1px solid #dce8e3;border-radius:10px;font:inherit}.filter-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.filter-accepting{display:flex!important;grid-auto-flow:column;justify-content:start;align-items:center;gap:8px!important}.filter-accepting input{width:auto}.availability-open,.availability-closed{display:inline-block;margin-top:5px;padding:4px 9px;border-radius:20px;font-size:10px}.availability-open{background:#e7f7ee;color:#176b48}.availability-closed{background:#f2f3f2;color:#687b7c}.language-switch select{max-width:110px}@media(max-width:620px){.therapist-card{padding:12px}.therapist-photo{width:68px;height:80px}.filter-actions>*{flex:1}}";
   document.head.append(style);
 })();
