@@ -86,7 +86,7 @@ for (const page of ["admin.html", "client.html"]) {
   }
 }
 
-for (const file of ["auth.js", "supabase-config.js", "admin-workflow.js", "client-workflow.js", "site-i18n.js", "therapist-profile.js", "scripts/validate-schema.mjs", "supabase/schema.sql", "supabase/upgrade-client-choice-payment-first.sql", "sw.js"]) {
+for (const file of ["auth.js", "supabase-config.js", "admin-workflow.js", "client-workflow.js", "site-i18n.js", "therapist-profile.js", "client-extensions.js", "admin-extensions.js", "scripts/validate-schema.mjs", "supabase/schema.sql", "supabase/upgrade-client-choice-payment-first.sql", "supabase/platform-completion-2026-11.sql", "sw.js"]) {
   if (!fs.existsSync(path.join(root, file))) errors.push(`${file} is required`);
 }
 for (const file of [".env", ".env.production"]) {
@@ -103,8 +103,16 @@ for (const [condition, message] of [
   [fs.existsSync(path.join(root, "therapist-profile.html")), "Public therapist profile page must exist"],
   [appScript.includes('therapist-profile.html?id='), "Therapist directory cards must link to public profiles"],
   [homepage.includes('id="faq"') && homepage.includes('class="faq-list"'), "Homepage must include its practical FAQ section"],
+  [homepage.includes('id="modality"') && homepage.includes('id="therapistKeyword"') && homepage.includes('id="acceptingOnly"'), "Therapist directory must include approach, keyword and intake availability filters"],
+  [appScript.includes("get_public_therapist_directory_metadata") && appScript.includes("accepting_new_clients"), "Therapist directory must read verified intake availability metadata"],
+  [fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadAdultConfirm"') && fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadSessionCountry"') && fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientConsent"'), "Client request must require adult confirmation, session country and policy acknowledgement"],
+  [fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("create_client_request_with_consent") && fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("p_adult_confirmation: true"), "Client request must use consent- and adult-gated RPC"],
+  [fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientAppointments"') && fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientSupportForm"') && fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientNotificationsList"'), "Client portal must include sessions, support and notifications"],
+  [adminPage.includes('id="yadSessionAccessAdmin"') && adminPage.includes('id="yadSupportAdmin"') && adminPage.includes('id="yadFeedbackAdmin"'), "Admin portal must include session access, support and feedback moderation"],
+  [fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("admin_set_appointment_meeting") && fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("admin_resolve_support_cancellation") && fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("client_submit_appointment_feedback"), "Platform completion migration must define private session, cancellation and feedback RPCs"],
+  [fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/client-extensions.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-extensions.js"'), "PWA cache must include the new client/admin workflow scripts"],
   [homepage.includes('articles/choosing-a-therapist.html'), "Homepage must link to the therapist-selection guide"],
-  [appScript.includes('.select("id,display_name,headline,specialties,languages,photo_path")'), "Public therapist directory must request fields from the approved therapist profile migration"],
+  [appScript.includes('.select("id,display_name,headline,biography,specialties,modalities,languages,photo_path")'), "Public therapist directory must request migrated public therapist profile fields"],
   [fs.readFileSync(path.join(root, "supabase/upgrade-client-choice-payment-first.sql"), "utf8").includes("add column if not exists photo_path"), "Therapist profile migration must define the public photo field"],
   [fs.readFileSync(path.join(root, "therapist-profile.js"), "utf8").includes('.select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path")'), "Public therapist profile must request only migrated public profile fields"],
   [homepage.includes('id="internationalCurrency"'), "Homepage must include EUR/USD selector"],
