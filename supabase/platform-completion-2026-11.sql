@@ -698,6 +698,10 @@ declare
   v_ticket public.client_support_tickets%rowtype;
   v_request_id uuid;
   v_country text;
+  v_old_slot_id uuid;
+  v_new_slot_id uuid;
+  v_start timestamptz;
+  v_end timestamptz;
 begin
   perform public.require_admin_aal2();
   select * into v_ticket from public.client_support_tickets where id=p_ticket_id and ticket_type='therapist_change' for update;
@@ -707,15 +711,29 @@ begin
     select r.id into v_request_id from public.client_requests r where r.appointment_id=v_ticket.appointment_id limit 1;
   end if;
   if v_request_id is null then raise exception 'request_not_found' using errcode='P0002'; end if;
-  if v_ticket.appointment_id is not null and exists(select 1 from public.appointments a where a.id=v_ticket.appointment_id and a.status<>'confirmed') then
-    raise exception 'only_confirmed_sessions_can_change_therapist' using errcode='P0001';
-  end if;
   select p.country_code into v_country from public.profiles p join public.client_requests r on r.client_id=p.id where r.id=v_request_id;
   if not exists(select 1 from public.therapists t where t.id=p_new_therapist_id and t.is_listed and t.verified_at is not null and v_country=any(t.practice_jurisdictions)) then
     raise exception 'therapist_not_authorized_for_client_location' using errcode='42501';
   end if;
+  if v_ticket.appointment_id is not null then
+    select a.starts_at,a.ends_at,a.slot_id into v_start,v_end,v_old_slot_id
+    from public.appointments a where a.id=v_ticket.appointment_id and a.status='confirmed' for update;
+    if not found then raise exception 'only_confirmed_sessions_can_change_therapist' using errcode='P0001'; end if;
+    if v_old_slot_id is not null then
+      select s.id into v_new_slot_id from public.availability_slots s
+      where s.therapist_id=p_new_therapist_id and s.is_available
+        and s.starts_at=v_start and s.ends_at=v_end for update;
+      if not found then raise exception 'new_therapist_has_no_matching_available_slot' using errcode='P0001'; end if;
+      update public.availability_slots set is_available=true where id=v_old_slot_id;
+      update public.availability_slots set is_available=false where id=v_new_slot_id;
+      update public.appointments set therapist_id=p_new_therapist_id,slot_id=v_new_slot_id,updated_at=now()
+      where id=v_ticket.appointment_id;
+    else
+      update public.appointments set therapist_id=p_new_therapist_id,updated_at=now()
+      where id=v_ticket.appointment_id;
+    end if;
+  end if;
   update public.client_requests set therapist_id=p_new_therapist_id,updated_at=now() where id=v_request_id;
-  update public.appointments set therapist_id=p_new_therapist_id,updated_at=now() where id=v_ticket.appointment_id and status='confirmed';
   update public.client_support_tickets set status='resolved',admin_note=nullif(trim(p_admin_note),''),updated_at=now() where id=p_ticket_id;
   return true;
 end;
