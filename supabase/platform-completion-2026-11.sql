@@ -918,6 +918,7 @@ revoke all on function public.admin_list_available_slots_for_request(uuid) from 
 revoke all on function public.admin_schedule_request_from_slot(uuid,uuid) from public,anon;
 revoke all on function public.admin_set_appointment_meeting(uuid,text,text) from public,anon;
 revoke all on function public.admin_list_appointment_private_access() from public,anon;
+revoke all on function public.notify_client_appointment_created() from public,anon,authenticated;
 revoke all on function public.notify_client_appointment_update() from public,anon,authenticated;
 revoke all on function public.notify_client_support_update() from public,anon,authenticated;
 revoke all on function public.notify_client_session_access() from public,anon,authenticated;
