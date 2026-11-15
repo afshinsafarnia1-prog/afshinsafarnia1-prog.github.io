@@ -20,18 +20,172 @@ kurdish["psychiatry"]={
 "li":["کۆلێژی شاهانەی دەروونپزیشکان: جیاوازیی نێوان دەروونپزیشک، دەروونناس و چارەسەرکاری دەروونی","ڕێکخراوی تەندروستیی جیهانی: نەخۆشییە دەروونییەکان و هەڵبژاردەکانی چارەسەر","WHO mhGAP: مداخڵە دەروونییەکان بۆ شێزوفرینیا و نەخۆشیی دووقوتبی"]
 };
 kurdish["relationships"]={"h2":["زوج‌چارەسەری بۆ چ کێشەیەک دەتوانێت یارمەتیدەر بێت؟","جیاوازیی خێزان‌چارەسەری چییە؟","لە پەیوەندییەکدا چ شتانە دەکرێنە بابەتی گفتوگۆ؟","چۆن چارەسەرکاری هاوسەر یان خێزان هەڵبژێرین؟","تێبینییەکی گرنگ دەربارەی توندوتیژی و کۆنترۆڵی ناچارکەر","سەرچاوە بۆ خوێندنەوەی زیاتر"],"h3":["بازنەکانی ناکۆکی","پەیوەندی و هەستکردن بەوەی گوێت لێ دەگیرێت","دڵبەستەیی و ئاسایشی هەستی","سنوور و ڕۆڵەکان"],"p":["هاوسەران دەتوانن بۆ ناکۆکییە دووبارەبووەکان، دووریی هەستی، سەختی لە گفتوگۆ، لەدەستدانی متمانە، گۆڕانی گەورەی ژیان، بڕیاردان لەبارەی بەردەوامبوونی پەیوەندی یان کاریگەریی کێشەیەکی تاکەکەسی لەسەر ژیانی هاوبەش داوای یارمەتی بکەن. ئەرکی چارەسەرکار ئەوە نییە لەبری هاوسەران بڕیار بدات یان تاوانبارێک دیاری بکات؛ بەڵکو یارمەتی دەدات شێوەکانی کارلێک و پێویستییەکانی هەر دوو کەس ڕوونتر ببنەوە و ئەگەری گفتوگۆیەکی سازندەتر بپشکنرێت.","لە هەندێک بارودۆخدا کاری تاکەکەسی لەگەڵ دانیشتنی هاوبەش یان لەبری ئەوە گونجاوترە. شێوازی گونجاوی کار دەبێت دوای هەڵسەنگاندنی بارودۆخ و بە لەبەرچاوگرتنی خواست و سەلامەتیی ئەوانەی بەشدارن دیاری بکرێت.","لە خێزان‌چارەسەریدا کێشەی تاک لە پەیوەندی بە پەیوەندییە خێزانییەکان و بارودۆخی خێزانەوە دەخرێتە بەرچاو. بەپێی کێشەکە، منداڵ، هەرزەکار، دایک و باوک یان ئەندامانی تری خێزان دەتوانن لە دانیشتنەکاندا ئامادە بن. ناکۆکیی دایک‌وباوک و منداڵ، گۆڕانی خێزان، خەم و لەدەستدان، نەخۆشی، سنوور و سەختییەکانی پەیوەندی دەتوانن ببنە بابەتی کار.","چارەسەرکار دەبێت لە سەرەتاوە ڕوون بکاتەوە کێ بە مراجع دادەنرێت، نهێنیپارێزی چۆن دەپارێزرێت و ئەگەر ئەندامانی خێزان لە دانیشتنی تاکەکەسیدا زانیاریی جیاواز باس بکەن، چ ڕێسایەک بۆ بەڕێوەبردنی ئەوە هەیە.","ئەو شێوازانەی وەڵامی یەک کەس وەڵامی دواتری ئەوی تر توندتر دەکات؛ بۆ نموونە دوورکەوتنەوە و بەدواداچوون، یان ڕەخنە و بەرگری.","چۆنیەتی دەربڕینی پێویستییەکان، گوێگرتن، شوێنی تێکنەگەیشتن و ئەوەی ئایا گفتوگۆ بەبێ سووکایەتی یان هەڕەشە ئەنجام دەدرێت.","ئەزموونی نزیکی، دووری، متمانە، وابەستەیی و شێوازی وەڵامدانەوە بە پێویستییە هەستییەکان.","ڕێککەوتن لەبارەی بەرپرسیارییەکان، تایبەتمەندی، خێزانی بنەڕەتی، پەروەردەی منداڵ و بڕیارە هاوبەشەکان.","بەشداری لە چارەسەری دەبێت بە ویستی خۆی بێت. ئەگەر یەکێک لە کەسانەکە بە فشار یان ناچاری بەشداری بکات، پێویستە پێش دەستپێکردنی دانیشتنەکان ئەم بابەتە باس بکرێت.","ئەگەر لە پەیوەندییەکدا هەڕەشە، توندوتیژی، ترسی زیان، کۆنترۆڵی ناچارکەر یان مەترسی بۆ منداڵ هەبێت، دانیشتنی هاوبەش لەوانەیە سەلامەت یان گونجاو نەبێت. هەڵسەنگاندنی نهێنیی سەلامەتی و وەرگرتنی پشتگیریی پسپۆڕانەی سەربەخۆ گرنگە. لە مەترسیی دەستبەجێدا پەیوەندی بە خزمەتگوزاریی فریاکەوتنی شوێنی ژیانت بکە.","ئەم سەرچاوانە لە ڕێکخراوە پیشەییەکان و خزمەتگوزارییە تەندروستییەکانی بەریتانیا و ئەمریکاوە هاتوون. ناونیشان و ڕێساکانی پیشەیی لە هەموو وڵاتێکدا یەکسان نین."],"li":["ڕاهێنان و ئەزموونی تایبەتی چارەسەرکار لە کارکردن لەگەڵ هاوسەر یان خێزان بپشکنە؛ ئەزموونی چارەسەری تاکەکەسی بە تەنها هاوتای ڕاهێنانی زوج‌چارەسەری نییە.","دەربارەی نهێنیپارێزی، ئەگەری دانیشتنی تاکەکەسی و شێوازی پاراستنی زانیاریی هەر ئەندامێک بپرسە.","ڕێبازی چارەسەرکار، ئامانجە سەرەتاییەکان، کرێ، ماوەی دانیشتن و یاسای هەڵوەشاندنەوە ڕوون بکەرەوە.","بپرسە ئەگەر یەکێک لە کەسانەکە نەیەوێت بەردەوام بێت یان کێشەیەک دەرکەوێت کە لە دەرەوەی توانای چارەسەرکارە، چی ڕوودەدات.","BACP: چۆن چارەسەری هاوسەر بدۆزینەوە؟","BACP: ڕاوێژکاری هاوسەران و نهێنیپارێزی","AAMFT: ناسین بە چارەسەرکارانی هاوسەر و خێزان","NHS: ڕاوێژکاری و شێوازەکانی پێشکەشکردنی"]};
+const localized={
+tr:{
+psychology:{
+h2:["Psikolog veya danışman hangi konularda yardımcı olabilir?","Psikoloji hangi alanları kapsar?","Ne zaman profesyonel destek almak yararlı olabilir?","Psikolog, psikoterapist veya psikiyatrist?","Daha fazla okuma"],
+h3:["Klinik psikoloji","Sağlık psikolojisi","Çocuk ve ergen psikolojisi","Aile ve ilişki psikolojisi","Örgüt ve iş psikolojisi","Psikolojik değerlendirme"],
+p:[
+"Eğitimine, mesleki yeterliliklerine ve çalışma alanına bağlı olarak psikolog veya danışman değerlendirme yapabilir, kişisel ve kişilerarası güçlükleri ele alabilir, danışmanlık ya da terapi müdahaleleri sunabilir ve gerektiğinde başka bir uzmana yönlendirebilir. Unvanlar ve yetki sınırları ülkelere göre değişir; diploma ve geçerli ruhsatı kontrol edin.",
+"Başvurmak için önceden tanı almış olmanız gerekmez. Bunalmışlık, tekrarlayan çatışmalar, karar vermede güçlük, duygu durumundaki değişiklikler, kaygı, yas, iş stresi veya aile ve ilişki sorunları görüşmeye başlamak için yeterlidir.",
+"Duygusal, bilişsel ve davranışsal güçlüklerin şiddeti, süresi ve günlük yaşama etkisi dikkate alınarak değerlendirilmesi ve ele alınması.",
+"Psikolojik yaşantılar, sağlık davranışları, fiziksel hastalık ve tedaviye uyum arasındaki ilişkilerin incelenmesi.",
+"Çocuğun veya ergenin gelişiminin, duygularının, öğrenmesinin, davranışlarının ve aile-okul çevresinin değerlendirilmesi.",
+"İletişim biçimlerinin, çatışmanın, sınırların, bağlanmanın ve aile yaşam döngüsündeki değişimlerin anlaşılması.",
+"İş deneyimi, tükenmişlik, mesleki ilişkiler, motivasyon ve kişi-iş ortamı uyumunun incelenmesi.",
+"Belirli bir soruyu yanıtlamak için görüşme ve geçerliği gösterilmiş araçların sorumlu biçimde kullanılması; sonuçların yetkin bir uzman tarafından yorumlanması.",
+"Psikolojik sıkıntı sürüyorsa, günlük işlevleri veya ilişkileri etkiliyorsa, alışılmış baş etme yolları yetmiyorsa ya da kişi uzman desteğine ihtiyaç duyduğunu hissediyorsa profesyonelle görüşmek yardımcı olabilir. Kriz beklemek gerekmez.",
+"Hizmet seçerken sorunun niteliğini, yaşı, dili, uzmanın deneyim ve yeterliliklerini, çalışma biçimini, gizliliği, ücreti ve yönlendirme seçeneklerini değerlendirin. Bakım kararı seçenekler, yararlar ve sınırlılıklar konuşularak ortaklaşa verilmelidir.",
+"Bu mesleki unvanlar birbirinin yerine kullanılamaz. Psikologlar eğitimlerine göre psikolojinin farklı alanlarında çalışır; psikoterapistler psikoterapi alanında özel eğitim alır; psikiyatristler ise tıbbi değerlendirme yapabilen ve gerektiğinde ilaç yazabilen uzman hekimlerdir. Bazı kişiler birden fazla yeterliliğe sahiptir. Ayrıntı için <a href=\"psychotherapy.html\">psikoterapi</a> ve <a href=\"psychiatry.html\">psikiyatri</a> rehberlerimize bakın.",
+"Bu kaynaklar genel bilgilendirme amaçlıdır. Mesleki düzenlemeler ve yönlendirme yolları, hizmetin sunulduğu ülkeye göre değişebilir."
+],
+li:["Dünya Sağlık Örgütü: Ruh sağlığı","NICE: Sağlık hizmetlerinde ortak karar verme","Royal College of Psychiatrists: Psikiyatrist, psikolog ve psikoterapist arasındaki farklar"]
+},
+psychotherapy:{
+h2:["Psikoterapi hangi konuları ele alabilir?","Tanımlanmış bazı terapi yaklaşımları","İlk görüşmede neler sorulmalı?","Psikoterapi tek başına ne zaman yeterli olmayabilir?","Araştırma ve klinik rehberler"],
+h3:["Psikodinamik ve psikanalitik psikoterapi","Bilişsel davranışçı terapi (BDT)","Kişilerarası psikoterapi (KİPT)","Farkındalık temelli ve üçüncü dalga yaklaşımlar","Çift ve aile terapisi","İnsancıl ve yaşantısal yaklaşımlar"],
+p:[
+"Terapi kaygı veya çökkünlük gibi belirtileri ele alabilir. Birçok yaklaşım ayrıca yaşantıların anlamını, ilişki kurma biçimlerini, yinelenen örüntüleri, kişisel kaynakları ve yaşam koşullarını inceler. Hedefler danışanla birlikte belirlenir ve süreç içinde gözden geçirilir.",
+"Psikoterapi herkes için hızlı veya aynı değişimi garanti etmez. Terapötik ilişkinin niteliği, terapistin yetkinliği ve süpervizyonu, yaklaşımın kişinin ihtiyaçlarına uygunluğu, yaşam koşulları ve işbirliği önemlidir.",
+"Bu yaklaşımlar duygusal yaşantılara, çatışmalara, ilişkisel örüntülere, bilinçdışı süreçlere ve kişinin yaşamında ve terapi ilişkisinde yinelenen anlamlı örüntülere odaklanır. Süre ve biçim değişebilir.",
+"BDT düşünceler, duygular ve davranışlar arasındaki bağlantıları ele alır; çoğu zaman açık hedefler, uygulamalar ve yapılandırılmış stratejiler içerir.",
+"KİPT belirtiler ile kişinin ilişkisel bağlamı arasındaki bağlantılara; yas, kişilerarası anlaşmazlıklar ve yaşam rollerindeki değişimlere odaklanır.",
+"Bu yaklaşımlar bilinçli farkındalık, kabul ve içsel yaşantılarla farklı bir ilişki kurmayı kullanabilir. Yöntemleri ve kanıt temelleri birbirinin aynısı değildir.",
+"Bu yaklaşımlar etkileşim örüntülerini, çatışma döngülerini, sınırları ve ilişkisel bağlamı inceler; eşler veya aile üyeleri sürece katılabilir.",
+"Bu yaklaşımlar yaşantıya, sahici terapötik ilişkiye, anlama, seçime ve kişinin gelişme kapasitesine önem verir.",
+"Bir terapi etiketi tek başına kaliteyi garanti etmez. Klinik rehberler farklı güçlükler için farklı müdahaleler önerir. Seçimde kanıtlar, kişinin koşulları ve tercihleri ile terapistin yeterlilikleri dikkate alınmalıdır.",
+"Danışanlar terapinin nasıl yürütüldüğünü sorma, seçeneklerini anlama ve kararlara katılma hakkına sahiptir. NICE ortak karar verme rehberi hedeflerin, tercihlerin, yararların ve sınırlılıkların açıkça konuşulmasını vurgular.",
+"Bazı durumlarda tıbbi veya psikiyatrik değerlendirme, çok disiplinli bakım ya da acil destek de gerekebilir. Psikoterapi ve ilaç her zaman birbirinin alternatifi değildir; koşullara göre birlikte kullanılabilir. İlaç kararları yetkili hekimle verilmelidir.",
+"Bu sayfa genel bir eğitim özetidir; belirli bir tanı için tedavi seçimi önerisi değildir. Klinik öneriler güncel rehberlere, hizmetin sunulduğu ülkeye ve bireysel değerlendirmeye göre kontrol edilmelidir."
+],
+li:["Terapistin başvurduğum sorunla ilgili eğitimi ve deneyimi var mı?","Yaklaşımı nedir ve seanslar genellikle nasıl yürütülür?","Gizlilik ve sınırları konusunda nasıl bir anlaşma yapılır?","Ücret, seans süresi, iptal/erteleme ve iletişim kuralları nelerdir?","Hedefleri ve ilerlemeyi birlikte nasıl gözden geçireceğiz?","Bu tedavi uygun görünmezse ne olur?","WHO mhGAP: Depresyon için yapılandırılmış psikolojik müdahaleler","NICE: Ortak karar verme önerileri","WHO: Psikolojik müdahaleler"]
+},
+psychiatry:{
+h2:["Psikiyatrist ne yapar?","Psikiyatrik değerlendirme ne zaman önemlidir?","Psikiyatrist, psikolog ve psikoterapist arasındaki fark nedir?","Psikoterapi ve ilaç birlikte kullanılabilir mi?","Daha fazla okuma"],
+h3:["Psikiyatrist","Psikolog","Psikoterapist"],
+p:[
+"Psikiyatrik değerlendirme belirtileri, başlangıç ve değişimlerini, fiziksel sağlığı, uykuyu, kullanılan ilaçları, kişisel ve aile öyküsünü ve güçlüklerin günlük yaşama etkisini kapsar. Gerektiğinde hekim ek inceleme veya başka uzmanlarla işbirliği önerebilir.",
+"Psikiyatrist ilaç yazabilir; etkilerini, olası yan etkilerini ve izlem gereksinimini değerlendirir. İlaç herkes için gerekli değildir. Karar tıbbi değerlendirme, kanıtlar, kişinin tercihleri ve olası yarar-risk dengesi temelinde verilmelidir. Hekiminize danışmadan ilaca başlamayın, bırakmayın veya dozunu değiştirmeyin.",
+"Belirtiler ağır veya kalıcıysa, günlük işlevler belirgin etkileniyorsa, fiziksel ya da ilaçla ilişkili etkenler söz konusuysa, ağır duygu durum dönemleri veya olağandışı algısal yaşantılar öyküsü varsa ya da ilaçlarla ilgili sorular doğuyorsa psikiyatrik değerlendirme önem taşıyabilir. Bu örnekler tanı kontrol listesi değildir; gereksinim kişiye göre belirlenir.",
+"Kendinize veya başkasına yönelik yakın zarar riski içeren düşünce ya da davranışlar varsa veya güvenliği sağlayamıyorsanız rutin randevuyu beklemeyin. Bulunduğunuz yerdeki acil veya kriz hizmetlerine başvurun.",
+"Ruh sağlığı alanında tıbbi değerlendirme yapan ve gerektiğinde ilaç yazabilen uzman hekimdir.",
+"Davranış, biliş, duygu ve ilişkiler konusunda üniversite eğitimi alır. Tanı veya tedavi dahil sunabileceği hizmetler uzmanlık alanına ve mesleki ruhsatına bağlıdır.",
+"Psikoterapi alanında uzmanlık eğitimi almış kişidir. İlk mesleki geçmişi psikoloji, psikiyatri veya ilişkili başka bir alan olabilir; ek eğitim ve yeterlilikleri kontrol edilmelidir.",
+"Bu mesleklerin yasal sınırları ülkeden ülkeye değişir. Yalnızca unvana bakmayın; geçerli ruhsatı, ilgili eğitimi ve mesleki deneyimi kontrol edin.",
+"Evet. Bazı kişiler için tıbbi bakım, ilaç, psikoterapi ve sosyal desteğin birleşimi tedavi planının parçası olabilir; bazıları için başka bir müdahale daha uygundur. Karar tanıya, belirtilerin şiddeti ve seyrine, fiziksel sağlığa, tercihlere ve klinik rehberlere bağlıdır.",
+"Hem psikiyatrist hem psikoterapistle çalışıyorsanız, bakımın eşgüdümünü ve gerekli bilgilerin onayınızla paylaşılmasını görüşebilirsiniz. Gizlilik ve bilgi paylaşımının sınırları açık olmalıdır.",
+"Bu sayfadaki bilgiler geneldir. Tanı ve ilaç kararları, uygun yetkinliğe sahip bir hekimin klinik değerlendirmesini gerektirir."
+],
+li:["Royal College of Psychiatrists: Psikiyatrist, psikolog ve psikoterapist arasındaki farklar","Dünya Sağlık Örgütü: Ruhsal bozukluklar ve tedavi seçenekleri","WHO mhGAP: Psikoz ve bipolar bozuklukta psikososyal müdahaleler"]
+},
+relationships:{
+h2:["Çift terapisi hangi sorunlarda yardımcı olabilir?","Aile terapisi nasıl farklıdır?","Bir ilişkide hangi konular ele alınabilir?","Çift veya aile terapisti nasıl seçilir?","Şiddet ve zorlayıcı kontrol hakkında önemli not","Daha fazla okuma"],
+h3:["Çatışma döngüleri","İletişim ve duyulmuş hissetmek","Bağlanma ve duygusal güvenlik","Sınırlar ve roller"],
+p:[
+"Çiftler tekrarlayan çatışmalar, duygusal uzaklık, iletişim güçlükleri, güven kaybı, önemli yaşam değişiklikleri, ilişkiyi sürdürme kararları veya bireysel bir sorunun ortak yaşama etkisi için destek arayabilir. Terapist çift adına karar vermez veya suçlu belirlemez; etkileşim örüntülerini ve ihtiyaçları anlamaya, daha yapıcı diyaloğu araştırmaya yardımcı olur.",
+"Bazı durumlarda ortak seansların yanında veya yerine bireysel çalışma daha uygun olabilir. Uygun biçim, durum değerlendirildikten ve katılanların istekleri ile güvenliği dikkate alındıktan sonra belirlenmelidir.",
+"Aile terapisinde bireyin güçlükleri aile ilişkileri ve bağlamı içinde ele alınır. Konuya göre çocuk, ergen, ebeveynler veya diğer aile üyeleri seanslara katılabilir. Ebeveyn-çocuk çatışması, aile geçişleri, yas, hastalık, sınırlar ve iletişim güçlükleri ele alınabilir.",
+"Terapist başlangıçta kimin danışan sayıldığını, gizliliğin nasıl korunacağını ve aile üyeleri bireysel görüşmelerde farklı bilgiler paylaştığında hangi kuralların uygulanacağını açıklamalıdır.",
+"Çift veya ailelerle çalışma konusunda özel eğitim ve deneyimi kontrol edin; yalnızca bireysel terapi deneyimi, çift terapisi eğitimiyle aynı değildir.",
+"Gizliliği, olası bireysel görüşmeleri ve her kişinin bilgilerinin nasıl ele alındığını sorun.",
+"Terapistin yaklaşımını, başlangıç hedeflerini, ücretleri, seans süresini ve iptal politikasını netleştirin.",
+"Bir kişi devam etmek istemezse veya terapistin yetkinlik alanı dışında bir konu ortaya çıkarsa ne olacağını sorun.",
+"Terapiye katılım gönüllü olmalıdır. Bir kişi baskı veya zorlama hissediyorsa seanslar başlamadan bu konu ele alınmalıdır.",
+"İlişkide tehdit, şiddet, zarar görme korkusu, zorlayıcı kontrol veya çocuğa yönelik risk varsa ortak seanslar güvenli ya da uygun olmayabilir. Gizli bir güvenlik değerlendirmesi ve bağımsız uzman desteği önemlidir. Yakın tehlikede bulunduğunuz yerdeki acil hizmetlere başvurun.",
+"Bu kaynaklar Birleşik Krallık ve ABD'deki meslek kuruluşları ve sağlık hizmetlerinden alınmıştır. Mesleki unvanlar ve düzenlemeler her ülkede aynı değildir."
+],
+li:["Çift veya ailelerle çalışma konusunda özel eğitim ve deneyimi kontrol edin; yalnızca bireysel terapi deneyimi, çift terapisi eğitimiyle aynı değildir.","Gizliliği, olası bireysel görüşmeleri ve her kişinin bilgilerinin nasıl ele alındığını sorun.","Terapistin yaklaşımını, başlangıç hedeflerini, ücretleri, seans süresini ve iptal politikasını netleştirin.","Bir kişi devam etmek istemezse veya terapistin yetkinlik alanı dışında bir konu ortaya çıkarsa ne olacağını sorun.","BACP: Çift terapisine nasıl başvurulur?","BACP: Çift danışmanlığı ve gizlilik","AAMFT: Evlilik ve aile terapistleri hakkında","NHS: Danışmanlık ve sunuluş biçimleri"]
+}
+},
+ar:{
+psychology:{
+h2:["كيف يمكن للأخصائي النفسي أو المرشد المساعدة؟","ما المجالات التي يشملها علم النفس؟","متى يكون طلب الدعم المهني مفيداً؟","أخصائي نفسي أم معالج نفسي أم طبيب نفسي؟","للمزيد من القراءة"],
+h3:["علم النفس السريري","علم النفس الصحي","علم نفس الطفل والمراهق","علم نفس الأسرة والعلاقات","علم النفس التنظيمي والمهني","التقييم النفسي"],
+p:[
+"بحسب التعليم والمؤهلات ومجال الممارسة، قد يجري الأخصائي النفسي أو المرشد تقييماً نفسياً، ويناقش الصعوبات الشخصية والعلاقاتية، ويقدم الإرشاد أو التدخل العلاجي، ويحيل إلى مختص آخر عند الحاجة. تختلف الألقاب وحدود الممارسة بين البلدان؛ لذا ينبغي التحقق من المؤهلات والترخيص.",
+"لا يلزم أن تأتي بتشخيص واضح. الشعور بالإرهاق، وتكرار الخلافات، وصعوبة اتخاذ القرارات، وتغير المزاج، والقلق، والحزن، وضغط العمل أو مشكلات الأسرة والعلاقات كلها أسباب مناسبة لبدء الحديث.",
+"تقييم الصعوبات الانفعالية والمعرفية والسلوكية والتعامل معها، مع مراعاة شدتها واستمرارها وتأثيرها في الحياة اليومية.",
+"استكشاف الروابط بين الخبرات النفسية والسلوكيات الصحية والمرض الجسدي والتكيف مع العلاج.",
+"مراعاة نمو الطفل أو المراهق ومشاعره وتعلمه وسلوكه والسياق الأسري والمدرسي.",
+"فهم أنماط التواصل والصراع والحدود والتعلق والتغيرات خلال مراحل الحياة الأسرية.",
+"دراسة خبرات العمل والاحتراق المهني والعلاقات المهنية والدافعية والتوافق بين الشخص وبيئة العمل.",
+"استخدام المقابلات والأدوات المقننة بمسؤولية للإجابة عن سؤال محدد، مع تفسير النتائج من مختص مؤهل.",
+"قد يفيد التحدث إلى مختص عندما تستمر المعاناة النفسية أو تؤثر في الأداء اليومي والعلاقات أو لا تعود أساليب التكيف المعتادة كافية. لا حاجة إلى انتظار حدوث أزمة.",
+"عند اختيار الخدمة، راعِ طبيعة المشكلة والعمر واللغة وخبرة المختص ومؤهلاته وطريقة عمله والسرية والتكلفة وخيارات الإحالة. من الأفضل اتخاذ القرار بصورة مشتركة بعد مناقشة الخيارات وفوائدها وحدودها.",
+"هذه الألقاب المهنية ليست مترادفة دائماً. يعمل الأخصائيون النفسيون في مجالات مختلفة وفق تدريبهم؛ ويتلقى المعالجون النفسيون تدريباً متخصصاً في العلاج النفسي؛ أما الأطباء النفسيون فهم أطباء متخصصون يجرون تقييماً طبياً ويمكنهم وصف الأدوية عند الحاجة. وقد يحمل بعض المهنيين أكثر من مؤهل. اقرأ دليلي <a href=\"psychotherapy.html\">العلاج النفسي</a> و<a href=\"psychiatry.html\">الطب النفسي</a> للمزيد.",
+"هذه الموارد للتثقيف العام. قد تختلف اللوائح المهنية ومسارات الإحالة بحسب البلد الذي تقدم فيه الرعاية."
+],
+li:["منظمة الصحة العالمية: الصحة النفسية","NICE: اتخاذ القرارات المشتركة في الرعاية الصحية","الكلية الملكية للأطباء النفسيين: الفرق بين الطبيب النفسي والأخصائي النفسي والمعالج النفسي"]
+},
+psychotherapy:{
+h2:["ما الموضوعات التي قد يتناولها العلاج النفسي؟","بعض المناهج العلاجية المعروفة","ما الأسئلة المناسبة في الجلسة الأولى؟","متى قد لا يكون العلاج النفسي وحده كافياً؟","الأبحاث والإرشادات السريرية"],
+h3:["العلاج النفسي الديناميكي والتحليلي","العلاج المعرفي السلوكي","العلاج النفسي بين الشخصي","المقاربات القائمة على اليقظة والجيل الثالث","العلاج الزوجي والأسري","المقاربات الإنسانية والخبراتية"],
+p:[
+"قد يتناول العلاج أعراضاً مثل القلق أو انخفاض المزاج، كما تستكشف مناهج كثيرة معنى الخبرة وأنماط العلاقات والتكرارات والموارد الشخصية وسياق الحياة. توضع الأهداف بالتعاون مع المستفيد وتراجع مع تقدم العمل.",
+"لا يضمن العلاج النفسي تغيراً فورياً أو متماثلاً لدى الجميع. تهم جودة العلاقة العلاجية وكفاءة المعالج والإشراف المهني وملاءمة المنهج لاحتياجات الشخص وظروفه وإمكان التعاون.",
+"تهتم هذه المقاربات بالخبرة الانفعالية والصراعات والأنماط العلائقية والعمليات اللاواعية والتكرارات ذات المعنى في حياة الشخص والعلاقة العلاجية. وقد تختلف مدة العلاج وصيغته.",
+"يتناول العلاج المعرفي السلوكي الروابط بين الأفكار والانفعالات والسلوك، وغالباً ما يستخدم أهدافاً واضحة وتمارين واستراتيجيات منظمة.",
+"يركز العلاج بين الشخصي على الصلة بين الأعراض والسياق العلائقي، بما في ذلك الفقد والنزاعات والتغيرات في الأدوار الحياتية.",
+"قد تستخدم هذه المقاربات الانتباه الواعي والقبول وبناء علاقة مختلفة مع الخبرات الداخلية. وليست مناهجها وأدلتها متطابقة.",
+"تستكشف هذه المقاربات أنماط التفاعل ودورات الصراع والحدود والسياق العلائقي، وقد يشارك الشريك أو أفراد الأسرة.",
+"تؤكد هذه المقاربات الخبرة المعاشة والعلاقة العلاجية الأصيلة والمعنى والاختيار وقدرة الشخص على النمو.",
+"لا يضمن اسم المنهج جودة العلاج وحده. توصي الإرشادات السريرية بتدخلات مختلفة بحسب الصعوبة؛ وينبغي مراعاة الأدلة وظروف الشخص وتفضيلاته ومؤهلات المعالج.",
+"يحق للمستفيد السؤال عن طريقة العلاج وفهم الخيارات والمشاركة في القرارات. وتؤكد إرشادات NICE أهمية مناقشة الأهداف والتفضيلات والفوائد والحدود بوضوح.",
+"قد تلزم أحياناً معاينة طبية أو نفسية أو رعاية متعددة التخصصات أو دعم عاجل. العلاج النفسي والدواء ليسا بالضرورة بديلين، وقد يجتمعان بحسب الحالة. ينبغي اتخاذ قرارات الدواء مع طبيب مؤهل.",
+"هذه الصفحة عرض تثقيفي عام وليست دليلاً لاختيار علاج لتشخيص بعينه. ينبغي مراجعة التوصيات وفق الإرشادات الحالية وبلد تقديم الرعاية والتقييم الفردي."
+],
+li:["هل لدى المعالج تدريب وخبرة مناسبان للمشكلة التي أطرحها؟","ما منهجه وكيف تسير الجلسات عادة؟","ما الاتفاق المتعلق بالسرية وحدودها؟","ما التكلفة ومدة الجلسة وسياسة الإلغاء أو التأجيل ووسائل التواصل؟","كيف سنراجع الأهداف والتقدم معاً؟","ماذا يحدث إذا لم يكن العلاج مناسباً؟","WHO mhGAP: تدخلات نفسية منظمة للاكتئاب","NICE: توصيات اتخاذ القرار المشترك","منظمة الصحة العالمية: التدخلات النفسية"]
+},
+psychiatry:{
+h2:["ماذا يفعل الطبيب النفسي؟","متى يكون التقييم النفسي الطبي مهماً؟","ما الفرق بين الطبيب النفسي والأخصائي النفسي والمعالج النفسي؟","هل يمكن الجمع بين العلاج النفسي والدواء؟","للمزيد من القراءة"],
+h3:["الطبيب النفسي","الأخصائي النفسي","المعالج النفسي"],
+p:[
+"يشمل التقييم النفسي الطبي عادة مناقشة الأعراض ووقت بدايتها وتغيرها والصحة الجسدية والنوم والأدوية الحالية والتاريخ الشخصي والعائلي وتأثير الصعوبات في الحياة اليومية. وقد يقترح الطبيب فحوصاً إضافية أو تعاوناً مع مختصين آخرين.",
+"يمكن للطبيب النفسي وصف الأدوية ومراجعة آثارها وآثارها الجانبية المحتملة والحاجة إلى المتابعة. لا يحتاج الجميع إلى دواء. ينبغي أن يستند القرار إلى التقييم الطبي والأدلة وتفضيلات الشخص وموازنة المنافع والمخاطر. لا تبدأ الدواء أو توقفه أو تغير جرعته دون استشارة الطبيب.",
+"قد يكون التقييم مهماً إذا كانت الأعراض شديدة أو مستمرة أو أثرت بوضوح في الأداء اليومي، أو احتمل وجود عوامل جسدية أو دوائية، أو وُجد تاريخ لنوبات مزاجية شديدة أو خبرات إدراكية غير معتادة، أو ظهرت أسئلة حول الدواء. هذه أمثلة وليست قائمة تشخيصية؛ وتحدد الحاجة وفق ظروف كل شخص.",
+"إذا وجدت أفكار أو سلوكيات تنطوي على خطر وشيك لإيذاء نفسك أو غيرك، أو لم تستطع الحفاظ على السلامة، فلا تنتظر موعداً اعتيادياً. اتصل بخدمات الطوارئ أو الأزمات في مكان إقامتك.",
+"طبيب متخصص في الصحة النفسية يجري تقييماً طبياً ويمكنه وصف الدواء عند الحاجة.",
+"تلقى تعليماً جامعياً في السلوك والإدراك والانفعالات والعلاقات. وتعتمد الخدمات التي يمكنه تقديمها، بما فيها التشخيص أو العلاج حيث يسمح النظام، على تخصصه وترخيصه.",
+"شخص تلقى تدريباً متخصصاً في العلاج النفسي. وقد يكون مؤهله الأصلي في علم النفس أو الطب النفسي أو مهنة ذات صلة؛ وينبغي التحقق من التدريب الإضافي والمؤهلات.",
+"تختلف الحدود القانونية لهذه المهن بين البلدان. لا يكفي المسمى الوظيفي وحده؛ تحقق من الترخيص الساري والتدريب ذي الصلة والخبرة المهنية.",
+"نعم. قد يجمع بعض الأشخاص بين الرعاية الطبية والدواء والعلاج النفسي والدعم الاجتماعي ضمن خطة علاجية، بينما يناسب آخرين تدخل مختلف. يعتمد القرار على التشخيص وشدة الأعراض ومسارها والصحة الجسدية والتفضيلات والإرشادات السريرية.",
+"إذا كنت تعمل مع طبيب نفسي ومعالج نفسي، يمكنك مناقشة تنسيق الرعاية ومشاركة المعلومات الضرورية بموافقتك. ينبغي توضيح السرية وحدود تبادل المعلومات.",
+"المعلومات هنا عامة. يتطلب التشخيص واتخاذ قرارات الدواء تقييماً سريرياً من طبيب مؤهل."
+],
+li:["الكلية الملكية للأطباء النفسيين: الفرق بين الطبيب النفسي والأخصائي النفسي والمعالج النفسي","منظمة الصحة العالمية: الاضطرابات النفسية وخيارات العلاج","WHO mhGAP: التدخلات النفسية الاجتماعية للذهان والاضطراب ثنائي القطب"]
+},
+relationships:{
+h2:["ما المشكلات التي قد يساعد فيها العلاج الزوجي؟","كيف يختلف العلاج الأسري؟","ما الموضوعات التي يمكن استكشافها في العلاقة؟","كيف تختار معالجاً للأزواج أو الأسرة؟","ملاحظة مهمة بشأن العنف والسيطرة القسرية","للمزيد من القراءة"],
+h3:["دورات الصراع","التواصل والشعور بأن الآخر يصغي","التعلق والأمان الانفعالي","الحدود والأدوار"],
+p:[
+"قد يطلب الأزواج الدعم بسبب الصراع المتكرر أو البعد العاطفي أو صعوبات التواصل أو فقدان الثقة أو تغيرات الحياة أو قرارات استمرار العلاقة أو أثر مشكلة فردية في الحياة المشتركة. لا يقرر المعالج نيابة عن الزوجين ولا يحدد مذنباً؛ بل يساعد على فهم أنماط التفاعل واحتياجات الطرفين واستكشاف حوار أكثر بنائية.",
+"قد يكون العمل الفردي إلى جانب الجلسات المشتركة أو بدلاً منها أنسب في بعض الظروف. ويحدد الشكل الملائم بعد تقييم الوضع ومراعاة رغبات المشاركين وسلامتهم.",
+"في العلاج الأسري تُفهم صعوبات الفرد ضمن العلاقات والسياق الأسري. وقد يشارك طفل أو مراهق أو والدان أو أفراد آخرون بحسب المشكلة. ويمكن تناول صراع الوالدين والأبناء والتحولات الأسرية والفقد والمرض والحدود وصعوبات التواصل.",
+"ينبغي أن يوضح المعالج منذ البداية من يعد مستفيداً، وكيف تُصان السرية، وما القواعد عند مشاركة أفراد الأسرة معلومات مختلفة في جلسات فردية.",
+"تحقق من التدريب والخبرة المتخصصين في العمل مع الأزواج أو الأسر؛ فالخبرة في العلاج الفردي وحده لا تعادل التدريب على علاج الأزواج.",
+"اسأل عن السرية وإمكان عقد جلسات فردية وكيفية التعامل مع معلومات كل شخص.",
+"وضح منهج المعالج والأهداف الأولية والرسوم ومدة الجلسة وسياسة الإلغاء.",
+"اسأل عما يحدث إذا لم يرغب أحد الطرفين في الاستمرار أو ظهرت مسألة خارج نطاق كفاءة المعالج.",
+"ينبغي أن تكون المشاركة في العلاج طوعية. وإذا شعر أحد الطرفين بالضغط أو الإكراه، فيجب تناول ذلك قبل بدء الجلسات.",
+"إذا تضمنت العلاقة تهديداً أو عنفاً أو خوفاً من الأذى أو سيطرة قسرية أو خطراً على طفل، فقد لا تكون الجلسات المشتركة آمنة أو مناسبة. يلزم تقييم سري للسلامة ودعم متخصص مستقل. عند الخطر الفوري اتصل بخدمات الطوارئ في مكانك.",
+"تأتي هذه الموارد من منظمات مهنية وخدمات صحية في المملكة المتحدة والولايات المتحدة. ولا تتطابق الألقاب واللوائح المهنية في جميع البلدان."
+],
+li:["تحقق من التدريب والخبرة المتخصصين في العمل مع الأزواج أو الأسر؛ فالخبرة في العلاج الفردي وحده لا تعادل التدريب على علاج الأزواج.","اسأل عن السرية وإمكان عقد جلسات فردية وكيفية التعامل مع معلومات كل شخص.","وضح منهج المعالج والأهداف الأولية والرسوم ومدة الجلسة وسياسة الإلغاء.","اسأل عما يحدث إذا لم يرغب أحد الطرفين في الاستمرار أو ظهرت مسألة خارج نطاق كفاءة المعالج.","BACP: كيفية طلب العلاج الزوجي","BACP: الإرشاد الزوجي والسرية","AAMFT: معلومات عن معالجي الزواج والأسرة","NHS: الإرشاد وكيفية تقديمه"]
+}
+}
+};
 function render(lang){
  const article=document.querySelector("[data-guide-content]");
  if(!article)return;
  const page=article.getAttribute("data-guide-content");
- const data=lang==="ku"?kurdish[page]:translations[page];
+ const data=lang==="ku"?kurdish[page]:(localized[lang]?.[page]||translations[page]);
  const description=document.querySelector('meta[name="description"]');
  if(!document.documentElement.hasAttribute("data-guide-original-title"))document.documentElement.setAttribute("data-guide-original-title",document.title);
  if(description&&!description.hasAttribute("data-guide-original-content"))description.setAttribute("data-guide-original-content",description.content);
- if(lang==="en"&&data){document.title=data.title;if(description)description.content=data.description;}
+ if((lang==="en"||localized[lang]?.[page])&&data.title){document.title=data.title||document.documentElement.getAttribute("data-guide-original-title");if(description)description.content=data.description||description.getAttribute("data-guide-original-content")||description.content;}
  else {document.title=document.documentElement.getAttribute("data-guide-original-title");if(description)description.content=description.getAttribute("data-guide-original-content")||description.content;}
  const note=document.querySelector(".translation-note[data-i18n-show-non-fa]");
- if(note)note.hidden=(lang==="fa"||lang==="en"||(lang==="ku"&&!!kurdish[page]));
+ if(note)note.hidden=(lang==="fa"||!!data);
  if(!data){
   ["h2","h3","p","li"].forEach(tag=>article.querySelectorAll(tag).forEach(node=>{if(node.hasAttribute("data-guide-original"))node.innerHTML=node.getAttribute("data-guide-original");}));
   return;
@@ -41,7 +195,7 @@ function render(lang){
   const values=data[tag]||[];
   nodes.forEach((node,index)=>{
    if(!node.hasAttribute("data-guide-original"))node.setAttribute("data-guide-original",node.innerHTML);
-   if(lang!=="en"&&lang!=="ku"){node.innerHTML=node.getAttribute("data-guide-original");return;}
+   if(lang==="fa"||(!values[index]&&values[index]!==0)){node.innerHTML=node.getAttribute("data-guide-original");return;}
    if(values[index]===undefined)return;
    if(tag==="li"&&node.querySelector("a")){node.querySelector("a").textContent=values[index];return;}
    if(tag==="p")node.innerHTML=values[index];else node.textContent=values[index];
