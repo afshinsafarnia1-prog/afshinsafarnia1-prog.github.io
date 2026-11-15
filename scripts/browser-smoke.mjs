@@ -105,6 +105,13 @@ try {
   }
   const clientHtml = await readFile(resolve(root, "client.html"), "utf8");
   if (!clientHtml.includes("client-extensions.js")) throw new Error("Client extension script is not connected.");
+  for (const language of languages) {
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    if (!(await page.locator("h1").innerText()).trim()) throw new Error("Client page heading is empty for " + language);
+    if (!(await page.locator('[data-i18n="sessionCountry"]').innerText()).trim()) throw new Error("Client session-country label did not localize for " + language);
+    if (!(await page.locator('[data-i18n="adultConfirm"]').innerText()).trim()) throw new Error("Client adult-confirmation label did not localize for " + language);
+  }
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
   for (const selector of ["#yadSessionAccessAdmin", "#yadSupportAdmin", "#yadFeedbackAdmin", "#yadAvailabilityForm", "#yadAvailabilityTherapist", "#yadYearsExperience", "#yadJurisdictions", "#yadAcceptingNewClients"]) {
     if (!(await page.locator(selector).count())) throw new Error("Admin workflow control missing: " + selector);
@@ -116,12 +123,6 @@ try {
     if (!(await page.locator(selector).count())) throw new Error("Therapist directory filter missing: " + selector);
   }
 
-  for (const language of languages) {
-    await page.locator("#siteLanguage").selectOption(language);
-    await page.waitForFunction(value => document.documentElement.lang === value, language);
-    const clientHeading = await page.locator("h1").textContent();
-    if (!clientHeading?.trim()) throw new Error("Client heading is empty for " + language);
-  }
   await page.goto("http://127.0.0.1:4173/assistant.html", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Where would you like to begin")) throw new Error("Assistant translation did not apply.");
