@@ -22,7 +22,10 @@
     if(!directory)return;
     directory.replaceChildren();
     if(!items.length){
-      directory.append(el("p","directory-empty",i18n().directoryEmpty||"در حال حاضر درمانگر تأییدشده‌ای برای نمایش وجود ندارد."));
+      const hasFilters=Boolean(document.getElementById("language")?.value||document.getElementById("specialty")?.value);
+      directory.append(el("p","directory-empty",hasFilters
+        ?"با فیلترهای انتخاب‌شده درمانگری پیدا نشد؛ فیلترها را تغییر دهید یا همهٔ گزینه‌ها را انتخاب کنید."
+        :(i18n().directoryEmpty||"در حال حاضر درمانگر تأییدشده‌ای برای نمایش وجود ندارد.")));
       return;
     }
     items.forEach(t=>{
@@ -57,7 +60,7 @@
     if(!db){directory.textContent="اتصال فهرست درمانگران در دسترس نیست.";return;}
     directory.textContent="در حال دریافت فهرست درمانگران…";
     const {data,error}=await db.from("therapists")
-      .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,session_duration_minutes,fee_amount,fee_currency,photo_path")
+      .select("id,display_name,headline,specialties,languages,photo_path")
       .eq("is_listed",true).not("verified_at","is",null)
       .order("display_name",{ascending:true});
     if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
