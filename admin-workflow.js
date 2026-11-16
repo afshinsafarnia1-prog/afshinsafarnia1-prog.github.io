@@ -130,7 +130,11 @@
       document.getElementById("yadAcceptingNewClients").checked = !!t?.accepting_new_clients;
       document.getElementById("yadDuration").value = 45;
       document.getElementById("yadLicense").value = t?.license_number || "";
-      document.getElementById("yadAuthority").value = t?.issuing_authority || "";
+      document.getElementById("yadAuthority").value = t?.issuing_authority || "سازمان نظام روان‌شناسی و مشاوره جمهوری اسلامی ایران";
+      document.getElementById("yadLicenseExpires").value = t?.license_expires_at || "";
+      document.getElementById("yadRegistryReference").value = t?.registry_reference || "";
+      document.getElementById("yadScopeEvidenceReference").value = t?.psychotherapy_scope_evidence_reference || "";
+      document.getElementById("yadJurisdictionReviewReference").value = t?.jurisdiction_review_reference || "";
       document.getElementById("yadVerified").checked = !!t?.verified;
       document.getElementById("yadListed").checked = !!t?.is_listed;
       document.getElementById("yadExistingPhoto").value = t?.photo_path || "";
@@ -395,29 +399,35 @@
           p_fee_currency: "IRR",
           p_photo_path: photoPath,
           p_license_number: val("yadLicense") || null,
-          p_issuing_authority: val("yadAuthority") || null,
+          p_issuing_authority: "سازمان نظام روان‌شناسی و مشاوره جمهوری اسلامی ایران",
           p_document_path: documentPath,
-          p_verified: document.getElementById("yadVerified").checked,
-          p_is_listed: document.getElementById("yadListed").checked
+          p_verified: false,
+          p_is_listed: false
         };
         const { data: savedId, error } = await db.rpc("admin_save_therapist", payload);
         if (error) throw error;
         const metadataId = savedId || val("yadTherapistId");
-        let metadataWarning = false;
-        if (metadataId) {
-          const { error: metadataError } = await db.rpc("admin_set_therapist_public_metadata", {
+        const wantsVerification = document.getElementById("yadVerified").checked;
+        if (wantsVerification) {
+          const { error: verificationError } = await db.rpc("admin_verify_therapist", {
             p_therapist_id: metadataId,
+            p_license_number: val("yadLicense"),
+            p_license_expires_at: val("yadLicenseExpires") || null,
+            p_registry_reference: val("yadRegistryReference"),
+            p_psychotherapy_scope_evidence_reference: val("yadScopeEvidenceReference"),
+            p_jurisdiction_review_reference: val("yadJurisdictionReviewReference"),
+            p_approved_jurisdictions: split(val("yadJurisdictions")).map(code => code.toUpperCase()),
             p_years_experience: val("yadYearsExperience") ? Number(val("yadYearsExperience")) : null,
-            p_practice_jurisdictions: split(val("yadJurisdictions")).map(code => code.toUpperCase()),
-            p_accepting_new_clients: document.getElementById("yadAcceptingNewClients").checked
+            p_accepting_new_clients: document.getElementById("yadAcceptingNewClients").checked,
+            p_publish: document.getElementById("yadListed").checked
           });
-          if (metadataError) metadataWarning = true;
+          if (verificationError) throw verificationError;
         }
         root.reset();
         fillForm(null);
         document.getElementById("yadExistingPhoto").value = "";
         document.getElementById("yadExistingDocument").value = "";
-        setStatus(metadataWarning ? "پروفایل اصلی ذخیره شد؛ اطلاعات سابقه، قلمرو فعالیت و پذیرش مراجع پس از اعمال مهاجرت تکمیلی ذخیره می‌شود." : "پروفایل درمانگر ذخیره شد.");
+        setStatus(wantsVerification ? "استعلام پروانه، صلاحیت تخصصی و قلمروهای فعالیت ثبت شد؛ وضعیت انتشار مطابق انتخاب مدیر اعمال شد." : "پروفایل ذخیره شد اما تا تکمیل استعلام رسمی، احراز صلاحیت تخصصی و بررسی قلمروها منتشر یا برای پذیرش مراجع فعال نمی‌شود.");
         await loadBusinessSettings();
         await loadTherapists();
       } catch (error) {
