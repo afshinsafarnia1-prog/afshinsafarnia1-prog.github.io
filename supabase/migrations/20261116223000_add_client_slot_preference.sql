@@ -29,9 +29,9 @@ end;
 $function$;
 
 create or replace function public.create_client_request_with_consent(
-  p_therapist_id uuid,p_market text,p_currency text,p_client_message text default null,
+  p_therapist_id uuid,p_market text,p_currency text,p_client_message text,
   p_policy_version text,p_adult_confirmation boolean,p_country_code text,p_timezone text,
-  p_preferred_slot_id uuid
+  p_preferred_slot_id uuid default null
 )
 returns table(request_id uuid,payment_id uuid,amount bigint,currency text)
 language plpgsql security definer set search_path=''
