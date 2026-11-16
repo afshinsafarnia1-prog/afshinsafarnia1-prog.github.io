@@ -118,10 +118,10 @@ for (const [condition, message] of [
   [fs.readFileSync(path.join(root, "supabase/upgrade-client-choice-payment-first.sql"), "utf8").includes("add column if not exists photo_path"), "Therapist profile migration must define the public photo field"],
   [fs.readFileSync(path.join(root, "therapist-profile.js"), "utf8").includes('.select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path")'), "Public therapist profile must request only migrated public profile fields"],
   [homepage.includes('id="internationalCurrency"') && homepage.includes('value="CAD"'), "Homepage must include EUR/USD/CAD selector"],
-  [homepage.includes('id="yadPublicContacts"'), "Homepage must include managed public contact links"],
+  [homepage.includes('id="yadPublicContacts"') && fs.readFileSync(path.join(root, "app.js"), "utf8").includes('["phone_number","تلفن",v=>"tel:"+v]'), "Homepage must display the admin-managed phone number"],
   [adminPage.includes('id="yadBusinessSettingsForm"'), "Admin must include public contact, branding and intake settings"],
   [adminPage.includes('id="yadAssessmentFeeAdminForm"') && adminPage.includes('id="yadAdminAssessmentRequests"'), "Admin must include paid assessment fee and request management"],
-  [adminWorkflow.includes('admin_update_yad_public_contacts') && adminWorkflow.includes("p_contacts:contacts"), "Admin workflow must save public contacts through the scoped settings RPC"],
+  [adminWorkflow.includes('admin_update_yad_public_contacts') && adminWorkflow.includes("p_contacts:contacts") && adminWorkflow.includes('phone_number:"yadContactPhone"'), "Admin workflow must save public phone and contacts through the scoped settings RPC"],
   [adminWorkflow.includes('admin_set_client_intake') && !adminWorkflow.includes('admin_update_yad_business_settings'), "Admin workflow must manage intake without requiring central therapy tariffs"],
   [adminWorkflow.includes('admin_set_assessment_specialist'), "Admin must be able to designate verified assessment specialists"],
   [appScript.includes('get_public_site_settings'), "Homepage must load public settings through the scoped RPC"],
@@ -140,7 +140,7 @@ for (const [condition, message] of [
   [adminWorkflow.includes("Intl.DateTimeFormat().resolvedOptions().timeZone"), "Workshop timezone must default to the administrator device timezone"],
   [!adminWorkflow.includes('"Europe/Berlin"'), "Workshop scheduling must not hard-code a Berlin timezone"]
 ]) if (!condition) errors.push(message);
-for (const file of ["supabase/migrations/20261116184730_require_verified_therapist_for_intake.sql", "supabase/migrations/20261116195646_therapist_specific_fees_and_cad_currency.sql", "supabase/migrations/20261116195852_paid_external_personality_assessment_workflow.sql"]) {
+for (const file of ["supabase/migrations/20261116184730_require_verified_therapist_for_intake.sql", "supabase/migrations/20261116195646_therapist_specific_fees_and_cad_currency.sql", "supabase/migrations/20261116195852_paid_external_personality_assessment_workflow.sql", "supabase/migrations/20261116201500_add_admin_managed_public_phone_number.sql"]) {
   if (!fs.existsSync(path.join(root, file))) errors.push(file + " is required");
 }
 
