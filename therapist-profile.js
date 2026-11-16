@@ -75,14 +75,16 @@
     const price=node("section","profile-section");
     price.append(node("h2","",t("profileFee")));
     let tariffs=[];
-    const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
-    if(!settingsError)tariffs=settings?.tariffs||[];
-    const labels=[["iran","IRR","profileIran"],["international","EUR","profileEuro"],["international","USD","profileDollar"]];
-    labels.forEach(([market,currency,key])=>{
-      const item=tariffs.find(x=>x.market===market&&x.currency===currency);
-      const amount=item?new Intl.NumberFormat(locale()).format(currency==="IRR"?Number(item.amount)/10:Number(item.amount))+(currency==="IRR"?t("profileToman"):" "+currency):t("profileSetting");
-      price.append(node("p","profile-price",t(key)+" · "+amount));
-    });
+    const {data:feeRows,error:feeError}=await db.rpc("get_public_therapist_fees",{p_therapist_id:id});
+    const currencyLabels={IRR:t("profileIran")+" · "+t("profileToman"),EUR:t("profileEuro"),USD:t("profileDollar"),CAD:"دلار کانادا"};
+    if(!feeError&&feeRows?.length){
+      feeRows.forEach(item=>{
+        const amount=new Intl.NumberFormat(locale()).format(item.currency==="IRR"?Number(item.amount)/10:Number(item.amount))+(item.currency==="IRR"?" تومان":" "+item.currency);
+        price.append(node("p","profile-price",(currencyLabels[item.currency]||item.currency)+" · "+amount));
+      });
+    }else{
+      price.append(node("p","profile-muted","تعرفهٔ این درمانگر هنوز برای نمایش ثبت نشده است."));
+    }
     price.append(node("small","profile-muted",t("profile45min")));
     aside.append(price);
     const cta=node("a","button primary full-button",t("profileChoose"));
