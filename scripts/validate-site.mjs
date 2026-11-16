@@ -139,7 +139,12 @@ for (const [condition, message] of [
   [adminPage.includes('id="yadAuthority" maxlength="240"') && adminWorkflow.includes('p_issuing_authority: val("yadAuthority").trim()'), "Therapist licensing authority must be editable and stored per jurisdiction"],
   [adminWorkflow.includes("p_fee_amount: 0") && adminWorkflow.includes('p_fee_currency: "IRR"') && !adminWorkflow.includes('val("yadFee")') && !adminWorkflow.includes('val("yadCurrency")'), "Therapist profile saves must not depend on removed per-therapist fee fields"],
   [adminWorkflow.includes("Intl.DateTimeFormat().resolvedOptions().timeZone"), "Workshop timezone must default to the administrator device timezone"],
-  [!adminWorkflow.includes('"Europe/Berlin"'), "Workshop scheduling must not hard-code a Berlin timezone"]
+  [!adminWorkflow.includes('"Europe/Berlin"'), "Workshop scheduling must not hard-code a Berlin timezone"],
+  [fs.existsSync(path.join(root, "therapist-articles.js")) && fs.readFileSync(path.join(root, "therapist.html"), "utf8").includes('id="yadTherapistArticleForm"'), "Therapists must have an authenticated article submission form"],
+  [fs.existsSync(path.join(root, "admin-articles.js")) && fs.readFileSync(path.join(root, "admin.html"), "utf8").includes('id="yadAdminArticles"'), "Admin must have an MFA-protected article moderation interface"],
+  [fs.existsSync(path.join(root, "articles/contributor-articles.js")) && fs.readFileSync(path.join(root, "articles/index.html"), "utf8").includes('id="yadContributorArticles"'), "Public article index must display only approved therapist submissions"],
+  [fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/therapist-articles.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-articles.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/articles/contributor-articles.js"'), "PWA cache must include therapist article submission, moderation and public reader scripts"],
+  [fs.existsSync(path.join(root, "supabase/migrations/20261117000500_add_moderated_therapist_articles.sql")), "Moderated therapist article workflow migration must be present"],
 ]) if (!condition) errors.push(message);
 for (const file of ["supabase/migrations/20261116184730_require_verified_therapist_for_intake.sql", "supabase/migrations/20261116195646_therapist_specific_fees_and_cad_currency.sql", "supabase/migrations/20261116195852_paid_external_personality_assessment_workflow.sql", "supabase/migrations/20261116201500_add_admin_managed_public_phone_number.sql", "supabase/migrations/20261116202000_allow_jurisdiction_specific_therapist_license_authority.sql"]) {
   if (!fs.existsSync(path.join(root, file))) errors.push(file + " is required");
