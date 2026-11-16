@@ -133,7 +133,7 @@
       document.getElementById("yadAuthority").value = t?.issuing_authority || "سازمان نظام روان‌شناسی و مشاوره جمهوری اسلامی ایران";
       document.getElementById("yadLicenseExpires").value = t?.license_expires_at || "";
       document.getElementById("yadRegistryReference").value = t?.registry_reference || "";
-      document.getElementById("yadScopeEvidenceReference").value = t?.psychotherapy_scope_evidence_reference || "";
+      document.getElementById("yadExistingScopeDocument").value = t?.psychotherapy_scope_evidence_reference || "";
       document.getElementById("yadJurisdictionReviewReference").value = t?.jurisdiction_review_reference || "";
       document.getElementById("yadVerified").checked = !!t?.verified;
       document.getElementById("yadListed").checked = !!t?.is_listed;
@@ -381,8 +381,10 @@
         setStatus("در حال ذخیره پروفایل…");
         const photo = document.getElementById("yadPhoto").files[0];
         const documentFile = document.getElementById("yadLicenseDocument").files[0];
+        const scopeDocumentFile = document.getElementById("yadScopeDocument").files[0];
         const photoPath = await upload("therapist-photos", photo, val("yadExistingPhoto"));
         const documentPath = await upload("therapist-documents", documentFile, val("yadExistingDocument"));
+        const scopeDocumentPath = await upload("therapist-documents", scopeDocumentFile, val("yadExistingScopeDocument"));
         const payload = {
           p_therapist_id: val("yadTherapistId") || null,
           p_public_slug: val("yadPublicSlug"),
@@ -414,7 +416,7 @@
             p_license_number: val("yadLicense"),
             p_license_expires_at: val("yadLicenseExpires") || null,
             p_registry_reference: val("yadRegistryReference"),
-            p_psychotherapy_scope_evidence_reference: val("yadScopeEvidenceReference"),
+            p_psychotherapy_scope_evidence_reference: scopeDocumentPath,
             p_jurisdiction_review_reference: val("yadJurisdictionReviewReference"),
             p_approved_jurisdictions: split(val("yadJurisdictions")).map(code => code.toUpperCase()),
             p_years_experience: val("yadYearsExperience") ? Number(val("yadYearsExperience")) : null,
@@ -427,6 +429,7 @@
         fillForm(null);
         document.getElementById("yadExistingPhoto").value = "";
         document.getElementById("yadExistingDocument").value = "";
+        document.getElementById("yadExistingScopeDocument").value = "";
         setStatus(wantsVerification ? "استعلام پروانه، صلاحیت تخصصی و قلمروهای فعالیت ثبت شد؛ وضعیت انتشار مطابق انتخاب مدیر اعمال شد." : "پروفایل ذخیره شد اما تا تکمیل استعلام رسمی، احراز صلاحیت تخصصی و بررسی قلمروها منتشر یا برای پذیرش مراجع فعال نمی‌شود.");
         await loadBusinessSettings();
         await loadTherapists();
