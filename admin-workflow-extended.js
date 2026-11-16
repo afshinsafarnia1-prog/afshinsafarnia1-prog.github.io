@@ -68,6 +68,14 @@
       if(base)document.getElementById("yadTherapistPercent").value=base.therapist_percent;
       document.getElementById("yadClientIntakeEnabled").checked = data?.client_intake_enabled === true;
        document.getElementById("yadClientPolicyVersion").value = data?.client_policy_version || "2026-11-16-v1-draft";
+       const branding=data?.branding||{};
+       document.getElementById("yadBrandName").value=branding.brand_name||"یادسنتر";
+       document.getElementById("yadBrandTagline").value=branding.tagline||"";
+       document.getElementById("yadManagerName").value=branding.manager_name||"";
+       document.getElementById("yadManagerTitle").value=branding.manager_title||"";
+       document.getElementById("yadManagerBio").value=branding.manager_bio||"";
+       document.getElementById("yadExistingLogoPath").value=branding.logo_path||"";
+       document.getElementById("yadExistingManagerPhotoPath").value=branding.manager_photo_path||"";
        const c=data?.contacts||{};
       const fields={whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail",instagram_url:"yadContactInstagram",telegram_url:"yadContactTelegram",youtube_url:"yadContactYoutube",linkedin_url:"yadContactLinkedin",facebook_url:"yadContactFacebook"};
       Object.entries(fields).forEach(([key,id])=>{document.getElementById(id).value=c[key]||"";});
@@ -117,7 +125,17 @@
           const {error}=await db.rpc("admin_update_yad_public_contacts",{p_contacts:contacts});
           if(error)throw error;
         }
-        const {error:intakeError}=await db.rpc("admin_set_client_intake",{
+        const logoFile=document.getElementById("yadBrandLogo").files[0];
+         const managerPhotoFile=document.getElementById("yadManagerPhoto").files[0];
+         const logoPath=await upload("site-assets",logoFile,document.getElementById("yadExistingLogoPath").value);
+         const managerPhotoPath=await upload("site-assets",managerPhotoFile,document.getElementById("yadExistingManagerPhotoPath").value);
+         const {error:brandingError}=await db.rpc("admin_update_site_branding",{p_branding:{
+           brand_name:businessValue("yadBrandName"),tagline:businessValue("yadBrandTagline"),
+           manager_name:businessValue("yadManagerName"),manager_title:businessValue("yadManagerTitle"),
+           manager_bio:businessValue("yadManagerBio"),logo_path:logoPath,manager_photo_path:managerPhotoPath
+         }});
+         if(brandingError)throw brandingError;
+         const {error:intakeError}=await db.rpc("admin_set_client_intake",{
           p_enabled:intakeEnabled,
           p_policy_version:policyVersion
         });
@@ -132,6 +150,9 @@
 
     async function upload(bucket, file, oldPath) {
       if (!file) return oldPath || null;
+      if(file.size>5*1024*1024)throw new Error("حجم تصویر نباید بیشتر از ۵ مگابایت باشد.");
+      const allowed=bucket==="site-assets"?["image/jpeg","image/png","image/webp","image/svg+xml"]:["image/jpeg","image/png","image/webp"];
+      if(!allowed.includes(file.type))throw new Error("فرمت تصویر انتخاب‌شده مجاز نیست.");
       const clean = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-90);
       const path = crypto.randomUUID() + "/" + clean;
       const { error } = await db.storage.from(bucket).upload(path, file, {
