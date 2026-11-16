@@ -18,8 +18,8 @@
 <h1 data-i18n="adminTitle">پنل مدیریت یادسنتر</h1>
 <p class="lead" data-i18n="adminLead">مدیریت درمانگران، مراجعان، نوبت‌ها و پرداخت‌ها از طریق مدیریت مرکزی یادسنتر انجام می‌شود.</p>
 <section class="portal-card" id="yadBusinessSettings">
-<h2>تعرفه‌ها و راه‌های ارتباطی یادسنتر</h2>
-<p>تعرفه‌ها برای همه درمانگران یکسان است. مبلغ‌ها به‌ترتیب برای جلسه ۴۵ دقیقه‌ای داخل ایران، یورو و دلار ثبت می‌شوند. تغییرات جدید روی درخواست‌های قبلی اثر نمی‌گذارد.</p>
+<h2 data-i18n="businessTitle">تعرفه‌ها و راه‌های ارتباطی یادسنتر</h2>
+<p data-i18n="businessHelp">تعرفه‌ها برای همه درمانگران یکسان است. مبلغ‌ها برای جلسهٔ ۴۵ دقیقه‌ای به تفکیک بازار ثبت می‌شوند.</p>
 <div id="yadBusinessSettingsStatus" class="notice" role="status" aria-live="polite">در حال دریافت تنظیمات…</div>
 <form id="yadBusinessSettingsForm" class="yad-admin-form">
 <h3>تعرفه‌های مرکزی و تقسیم درآمد</h3>
@@ -65,7 +65,7 @@
 </tr></thead><tbody id="yadPaymentsBody"><tr><td colspan="6" data-i18n="loading">در حال بارگذاری…</td></tr></tbody></table></div>
 </section>
 <section class="portal-card">
-<div class="section-head"><div><h2>ثبت و مدیریت درمانگران</h2><p>درمانگر حساب مستقل ندارد؛ ثبت، بررسی مدارک و انتشار پروفایل فقط توسط مدیر انجام می‌شود.</p></div></div>
+<div class="section-head"><div><h2 data-i18n="therapistManage">ثبت و مدیریت درمانگران</h2><p data-i18n="therapistManageHelp">مدارک و انتشار پروفایل فقط پس از احراز هویت و بررسی صلاحیت توسط مدیریت انجام می‌شود.</p></div></div>
 <div id="yadWorkflowStatus" class="notice" role="status" aria-live="polite">در حال اتصال…</div>
 <div id="yadTherapistList" class="portal-grid"></div>
 <form id="yadTherapistForm" class="yad-admin-form">
@@ -101,7 +101,7 @@
 </form>
 </section>
 <section class="portal-card" id="yadAvailabilityManager">
-<div class="section-head"><div><h2>تقویم ظرفیت و زمان‌های آزاد</h2><p>مدیر برای درمانگر تأییدشده بازه‌های ۴۵ دقیقه‌ای تعریف می‌کند. پس از تأیید پرداخت، جلسه از یکی از زمان‌های آزاد ثبت می‌شود.</p></div></div>
+<div class="section-head"><div><h2 data-i18n="availabilityTitle">تقویم ظرفیت و زمان‌های آزاد</h2><p data-i18n="availabilityHelp">مدیر برای درمانگر تأییدشده بازه‌های ۴۵ دقیقه‌ای تعریف می‌کند.</p></div></div>
 <form id="yadAvailabilityForm" class="yad-admin-form">
 <div class="portal-grid">
 <label>درمانگر<select id="yadAvailabilityTherapist" required><option value="">انتخاب درمانگر</option></select></label>
@@ -115,14 +115,14 @@
 <h3>زمان‌های ثبت‌شده</h3><div id="yadAvailabilityList" class="portal-grid"><p>ابتدا درمانگر را انتخاب کنید.</p></div>
 </section>
 <section class="portal-card">
-<div class="section-head"><div><h2>درخواست‌های مراجعان و پرداخت‌ها</h2><p>مراجع درمانگر را انتخاب می‌کند؛ پس از تأیید پرداخت، زمان جلسه را در این بخش ثبت کن.</p></div><button class="button outline" id="yadRefreshWorkflow" type="button">به‌روزرسانی</button></div>
+<div class="section-head"><div><h2 data-i18n="requestsTitle">درخواست‌های مراجعان و پرداخت‌ها</h2><p data-i18n="requestsHelp">پس از تأیید واقعی وجه، زمان جلسه با درمانگر هماهنگ می‌شود.</p></div><button class="button outline" id="yadRefreshWorkflow" type="button">به‌روزرسانی</button></div>
 <div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>مراجع</th><th>درمانگر انتخابی</th><th>مبلغ</th><th>سهم درمانگر / یادسنتر</th><th>شماره پیگیری</th><th>وضعیت درخواست</th><th>وضعیت پرداخت</th><th>اقدام</th></tr></thead><tbody id="yadRequestsBody"><tr><td colspan="8">در حال بارگذاری…</td></tr></tbody></table></div>
 </section>
-<section class="portal-card" id="yadSessionAccessAdmin"><div class="section-head"><div><h2>لینک خصوصی جلسات</h2><p>فقط برای نوبت پرداخت‌شده و تأییدشده لینک HTTPS ثبت کنید. لینک در حساب همان مراجع نمایش داده می‌شود.</p></div><button class="button outline" id="yadRefreshSessionAccess" type="button">به‌روزرسانی</button></div><div id="yadSessionAccessList" class="portal-grid"><p>در انتظار اتصال…</p></div></section>
-<section class="portal-card" id="yadSupportAdmin"><div class="section-head"><div><h2>درخواست‌های پشتیبانی و شکایت‌ها</h2><p>درخواست لغو، جابه‌جایی، تغییر درمانگر، شکایت و درخواست‌های اطلاعات حساب.</p></div><button class="button outline" id="yadRefreshSupport" type="button">به‌روزرسانی</button></div><div id="yadSupportAdminList" class="portal-grid"><p>در انتظار اتصال…</p></div></section>
-<section class="portal-card" id="yadFeedbackAdmin"><div class="section-head"><div><h2>بازخورد جلسات</h2><p>بازخوردها پیش از نمایش عمومی باید توسط مدیریت بررسی شوند.</p></div><button class="button outline" id="yadRefreshFeedback" type="button">به‌روزرسانی</button></div><div id="yadFeedbackAdminList" class="portal-grid"><p>در انتظار اتصال…</p></div></section>
+<section class="portal-card" id="yadSessionAccessAdmin"><div class="section-head"><div><h2 data-i18n="sessionLinksTitle">لینک خصوصی جلسات</h2><p data-i18n="sessionLinksHelp">فقط برای نوبت پرداخت‌شده و تأییدشده لینک HTTPS ثبت کنید.</p></div><button class="button outline" id="yadRefreshSessionAccess" type="button">به‌روزرسانی</button></div><div id="yadSessionAccessList" class="portal-grid"><p>در انتظار اتصال…</p></div></section>
+<section class="portal-card" id="yadSupportAdmin"><div class="section-head"><div><h2 data-i18n="supportAdminTitle">درخواست‌های پشتیبانی و شکایت‌ها</h2><p>درخواست لغو، جابه‌جایی، تغییر درمانگر، شکایت و درخواست‌های اطلاعات حساب.</p></div><button class="button outline" id="yadRefreshSupport" type="button">به‌روزرسانی</button></div><div id="yadSupportAdminList" class="portal-grid"><p>در انتظار اتصال…</p></div></section>
+<section class="portal-card" id="yadFeedbackAdmin"><div class="section-head"><div><h2 data-i18n="feedbackAdminTitle">بازخورد جلسات</h2><p>بازخوردها پیش از نمایش عمومی باید توسط مدیریت بررسی شوند.</p></div><button class="button outline" id="yadRefreshFeedback" type="button">به‌روزرسانی</button></div><div id="yadFeedbackAdminList" class="portal-grid"><p>در انتظار اتصال…</p></div></section>
 <section class="portal-card" id="yadWorkshopAdmin">
-<div class="section-head"><div><h2>مدیریت کارگاه‌ها و نشست‌ها</h2><p>ایجاد رویداد، انتشار، مدیریت ثبت‌نام‌ها و نگهداری خصوصی لینک جلسه آنلاین.</p></div><button class="button outline" id="yadRefreshWorkshops" type="button">به‌روزرسانی رویدادها</button></div>
+<div class="section-head"><div><h2 data-i18n="workshopAdminTitle">مدیریت کارگاه‌ها و نشست‌ها</h2><p>ایجاد رویداد، انتشار، مدیریت ثبت‌نام‌ها و نگهداری خصوصی لینک جلسه آنلاین.</p></div><button class="button outline" id="yadRefreshWorkshops" type="button">به‌روزرسانی رویدادها</button></div>
 <div id="yadWorkshopAdminStatus" class="notice" role="status" aria-live="polite">در انتظار اتصال…</div>
 <div id="yadWorkshopAdminList" class="portal-grid"></div>
 <form id="yadWorkshopAdminForm" class="yad-admin-form">
