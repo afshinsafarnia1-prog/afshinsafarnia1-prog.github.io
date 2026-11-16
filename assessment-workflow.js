@@ -44,7 +44,7 @@
    requests.replaceChildren();
    if(error){requests.textContent=error.message||"بارگذاری درخواست‌ها ناموفق بود.";return;}
    if(!data?.length){requests.textContent="هنوز درخواست ارزیابی ثبت نکرده‌اید.";return;}
-   data.forEach(item=>{
+   for(const item of data){
     const card=document.createElement("article");card.className="portal-card";
     const title=document.createElement("b");title.textContent=(item.assessment_type==="STIPO"?"STIPO / STIPO-R":"SWAP-200")+" · "+item.specialist_name;
     const amount=document.createElement("p");amount.textContent=fmt(item.amount,item.currency)+" · وضعیت: "+item.status;
@@ -64,7 +64,7 @@
      if(recommended?.length){const wrap=document.createElement("div");wrap.append(Object.assign(document.createElement("b"),{textContent:"درمانگران پیشنهادی متخصص"}));recommended.forEach(t=>{const a=document.createElement("a");a.href="therapist-profile.html?id="+encodeURIComponent(t.id);a.textContent=t.display_name;a.className="button outline";wrap.append(a);});card.append(wrap);}
     }
     requests.append(card);
-   });
+   }
   }
   form.addEventListener("submit",async e=>{
    e.preventDefault();
