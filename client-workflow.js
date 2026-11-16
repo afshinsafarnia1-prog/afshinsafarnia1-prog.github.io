@@ -16,7 +16,7 @@
     const feeNote=document.getElementById("yadSelectedTherapistFee");
     let activeUser = null;
     let clientIntakeEnabled = false;
-    let clientPolicyVersion = "2026-11-16-v1-draft";
+    let clientPolicyVersion = "2026-11-17-v2-draft";
     const setStatus = (message, bad = false) => {
       status.textContent = message;
       status.dataset.error = bad ? "true" : "false";
@@ -29,7 +29,7 @@
         const {data,error}=await db.rpc("get_public_site_settings");
         if(error)throw error;
         clientIntakeEnabled=data?.client_intake_enabled===true;
-        clientPolicyVersion=data?.client_policy_version||"2026-11-16-v1-draft";
+        clientPolicyVersion=data?.client_policy_version||"2026-11-17-v2-draft";
         if(submit)submit.disabled=!clientIntakeEnabled;
         if(notice)notice.textContent=clientIntakeEnabled
           ?"پذیرش درخواست فعال است. پیش از ارسال، قوانین و اطلاعیهٔ حریم خصوصی را مطالعه کنید."
