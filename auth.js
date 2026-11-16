@@ -5,7 +5,8 @@
   const labels = {client:"مراجع",therapist:"درمانگر",admin:"مدیر"};
   const wrap = document.querySelector(".portal-wrap");
   if (!wrap) return;
-  const original = [...wrap.children].filter(el => !el.classList.contains("universal-language"));
+  const therapistPrivatePanel = requiredRole === "therapist" ? wrap.querySelector("#therapistPrivatePortal") : null;
+  const original = therapistPrivatePanel ? [therapistPrivatePanel] : [...wrap.children].filter(el => !el.classList.contains("universal-language"));
   original.forEach(el => el.hidden = true);
 
   const gate = document.createElement("section");
