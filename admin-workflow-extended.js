@@ -452,7 +452,7 @@
           p_fee_currency: "IRR",
           p_photo_path: photoPath,
           p_license_number: val("yadLicense") || null,
-          p_issuing_authority: "سازمان نظام روان‌شناسی و مشاوره جمهوری اسلامی ایران",
+          p_issuing_authority: val("yadAuthority").trim(),
           p_document_path: documentPath,
           p_verified: false,
           p_is_listed: false
