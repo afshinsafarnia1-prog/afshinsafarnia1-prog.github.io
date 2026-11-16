@@ -166,7 +166,7 @@ if (!adminPage.includes('id="yadClientIntakeEnabled"') || !adminPage.includes('i
 if (!fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientIntakeNotice"')) errors.push("Client page must disclose whether intake is open");
 if (!adminWorkflow.includes('admin_set_client_intake')) errors.push("Admin workflow must save intake state through the protected RPC");
 if (!adminWorkflow.includes('admin_update_yad_public_contacts')) errors.push("Admin workflow must allow public contacts to be saved before tariffs are configured");
-if (!adminWorkflow.includes('all three tariff')) errors.push("Admin workflow must prevent intake activation before all central tariffs are entered");
+if (!adminWorkflow.includes('هر سه تعرفه')) errors.push("Admin workflow must prevent intake activation before all central tariffs are entered");
 if (!fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("client_intake_paused")) errors.push("Client workflow must fail closed when intake is paused");
 
 if (errors.length) {
