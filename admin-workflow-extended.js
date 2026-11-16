@@ -197,8 +197,11 @@
       const { data, error } = await db.rpc("admin_list_therapists");
       if (error) throw error;
       const { data: metadata } = await db.rpc("admin_list_therapist_public_metadata");
+      const { data: specialistFlags, error: specialistFlagsError } = await db.rpc("admin_list_assessment_specialist_flags");
+      if(specialistFlagsError)throw specialistFlagsError;
       const metadataById = new Map((metadata || []).map(item => [item.therapist_id, item]));
-      cachedTherapists = (data || []).map(item => ({ ...item, ...(metadataById.get(item.therapist_id) || {}) }));
+      const specialistById = new Map((specialistFlags || []).map(item => [item.therapist_id, item.is_assessment_specialist]));
+      cachedTherapists = (data || []).map(item => ({ ...item, ...(metadataById.get(item.therapist_id) || {}), is_assessment_specialist:specialistById.get(item.therapist_id)===true }));
       list.replaceChildren();
       if (!cachedTherapists.length) {
         list.textContent = "هنوز درمانگری ثبت نشده است.";
