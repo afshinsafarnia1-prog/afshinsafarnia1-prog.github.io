@@ -73,6 +73,7 @@
 <input id="yadTherapistId" type="hidden">
 <input id="yadExistingPhoto" type="hidden">
 <input id="yadExistingDocument" type="hidden">
+<input id="yadExistingScopeDocument" type="hidden">
 <div class="portal-grid">
 <label>نام نمایشی<input id="yadDisplayName" required maxlength="120"></label>
 <label>شناسهٔ صفحه (لاتین)<input id="yadPublicSlug" required pattern="[a-zA-Z0-9-]+" maxlength="100"></label>
@@ -90,7 +91,7 @@
 <label>مرجع صادرکننده<input id="yadAuthority" value="سازمان نظام روان‌شناسی و مشاوره جمهوری اسلامی ایران" readonly></label>
 <label>تاریخ انقضای پروانه (در صورت درج روی پروانه)<input id="yadLicenseExpires" type="date"></label>
 <label>مرجع/نشانی استعلام رسمی پروانه<input id="yadRegistryReference" maxlength="2000" placeholder="نشانی یا شناسه استعلام از درگاه رسمی سازمان"></label>
-<label>مدرک آموزش تخصصی روان‌درمانگری و سوپرویژن<input id="yadScopeEvidenceReference" maxlength="2000" placeholder="مسیر مدرک خصوصی یا مشخصات گواهی و سوپرویژن"></label>
+<label>مدرک تخصصی روان‌درمانگری، آموزش رویکردی و سوپرویژن<input id="yadScopeDocument" type="file" accept="application/pdf,image/jpeg,image/png"></label>
 <label>مستند بررسی مقررات هر کشور مجاز<textarea id="yadJurisdictionReviewReference" rows="3" maxlength="4000" placeholder="برای هر کشور کد ISO و مرجع/نظر حقوقی مربوط را ثبت کنید؛ نمونه: IR=...؛ DE=..."></textarea></label>
 </div>
 <label>زندگی‌نامه و معرفی حرفه‌ای<textarea id="yadBiography" rows="5"></textarea></label>
