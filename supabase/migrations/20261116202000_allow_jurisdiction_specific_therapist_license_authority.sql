@@ -23,3 +23,78 @@ begin
 end; $$;
 revoke all on function public.admin_save_therapist(uuid,text,text,text,text,text[],text[],text[],text[],integer,bigint,text,text,text,text,text,boolean,boolean) from public,anon;
 grant execute on function public.admin_save_therapist(uuid,text,text,text,text,text[],text[],text[],text[],integer,bigint,text,text,text,text,text,boolean,boolean) to authenticated;
+
+-- Preserve the jurisdiction-specific licensing authority recorded by the admin.
+-- Verification must not silently overwrite it with an Iran-only regulator name.
+create or replace function public.admin_verify_therapist(
+ p_therapist_id uuid,p_license_number text,p_license_expires_at date,
+ p_registry_reference text,p_psychotherapy_scope_evidence_reference text,
+ p_jurisdiction_review_reference text,p_approved_jurisdictions text[],
+ p_years_experience integer,p_accepting_new_clients boolean,p_publish boolean
+) returns void language plpgsql security definer set search_path=''
+as $function$
+declare
+ v_admin uuid:=auth.uid();
+ v_countries text[]:=coalesce(p_approved_jurisdictions,'{}');
+ v_issuing_authority text;
+begin
+ perform public.require_admin_aal2();
+ if v_admin is null or not exists(select 1 from public.profiles p where p.id=v_admin and p.role='admin') then
+  raise exception 'admin_only' using errcode='42501';
+ end if;
+ if p_therapist_id is null or not exists(select 1 from public.therapists t where t.id=p_therapist_id) then
+  raise exception 'therapist_not_found' using errcode='22023';
+ end if;
+ if nullif(btrim(p_license_number),'') is null or length(btrim(p_license_number))>120
+    or nullif(btrim(p_registry_reference),'') is null or length(btrim(p_registry_reference))<8 or length(p_registry_reference)>2000
+    or nullif(btrim(p_psychotherapy_scope_evidence_reference),'') is null or length(btrim(p_psychotherapy_scope_evidence_reference))<8 or length(p_psychotherapy_scope_evidence_reference)>2000
+    or nullif(btrim(p_jurisdiction_review_reference),'') is null or length(btrim(p_jurisdiction_review_reference))<8 or length(p_jurisdiction_review_reference)>4000 then
+  raise exception 'verification_references_required' using errcode='22023';
+ end if;
+ if p_license_expires_at is not null and p_license_expires_at<current_date then
+  raise exception 'license_expired' using errcode='22023';
+ end if;
+ if not exists(select 1 from public.therapist_private_verification v where v.therapist_id=p_therapist_id and nullif(btrim(v.document_path),'') is not null) then
+  raise exception 'license_document_required' using errcode='22023';
+ end if;
+ if cardinality(v_countries)=0 or exists(select 1 from unnest(v_countries) c where c !~ '^[A-Z]{2}$') then
+  raise exception 'approved_jurisdictions_required_as_iso_country_codes' using errcode='22023';
+ end if;
+ if p_years_experience is not null and p_years_experience not between 0 and 60 then
+  raise exception 'invalid_years_experience' using errcode='22023';
+ end if;
+
+ select nullif(btrim(v.issuing_authority),'') into v_issuing_authority
+ from public.therapist_private_verification v where v.therapist_id=p_therapist_id;
+ if v_issuing_authority is null then
+  raise exception 'jurisdiction_specific_issuing_authority_required' using errcode='22023';
+ end if;
+
+ insert into public.therapist_private_verification(
+  therapist_id,license_number,issuing_authority,verified_by,updated_at,
+  registry_checked_at,registry_reference,psychotherapy_scope_verified_at,
+  psychotherapy_scope_evidence_reference,jurisdiction_reviewed_at,
+  jurisdiction_review_reference,license_expires_at,approved_jurisdictions
+ ) values(
+  p_therapist_id,btrim(p_license_number),v_issuing_authority,v_admin,now(),
+  now(),btrim(p_registry_reference),now(),btrim(p_psychotherapy_scope_evidence_reference),
+  now(),btrim(p_jurisdiction_review_reference),p_license_expires_at,v_countries
+ )
+ on conflict(therapist_id) do update set
+  license_number=excluded.license_number,issuing_authority=excluded.issuing_authority,
+  verified_by=excluded.verified_by,updated_at=now(),registry_checked_at=now(),
+  registry_reference=excluded.registry_reference,psychotherapy_scope_verified_at=now(),
+  psychotherapy_scope_evidence_reference=excluded.psychotherapy_scope_evidence_reference,
+  jurisdiction_reviewed_at=now(),jurisdiction_review_reference=excluded.jurisdiction_review_reference,
+  license_expires_at=excluded.license_expires_at,approved_jurisdictions=excluded.approved_jurisdictions;
+
+ update public.therapists set verified_at=now(),is_listed=coalesce(p_publish,false),
+  practice_jurisdictions=v_countries,
+  accepting_new_clients=coalesce(p_accepting_new_clients,false) and coalesce(p_publish,false),
+  years_experience=p_years_experience,updated_at=now()
+ where id=p_therapist_id;
+end;
+$function$;
+
+revoke all on function public.admin_verify_therapist(uuid,text,date,text,text,text,text[],integer,boolean,boolean) from public,anon;
+grant execute on function public.admin_verify_therapist(uuid,text,date,text,text,text,text[],integer,boolean,boolean) to authenticated;
