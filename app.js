@@ -98,6 +98,8 @@
         if(data?.publicUrl){const img=el("img","yad-brand-logo");img.src=data.publicUrl;img.alt=name+" لوگو";mark.replaceChildren(img);}
       }
     });
+    const topTagline=document.getElementById("yadBrandTopTagline");
+    if(topTagline&&siteBranding.tagline)topTagline.textContent=siteBranding.tagline;
     const aboutTitle=document.getElementById("yadBrandAboutTitle");
     const aboutText=document.getElementById("yadBrandAboutText");
     const manager=document.getElementById("yadPublicManager");
