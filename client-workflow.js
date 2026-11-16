@@ -14,10 +14,31 @@
     const queryWorkshop = new URLSearchParams(location.search).get("workshop");
     let directory = [];
     let activeUser = null;
+    let clientIntakeEnabled = false;
+    let clientPolicyVersion = "2026-11-16-v1-draft";
     const setStatus = (message, bad = false) => {
       status.textContent = message;
       status.dataset.error = bad ? "true" : "false";
     };
+
+    async function loadClientIntakeState() {
+      const notice=document.getElementById("yadClientIntakeNotice");
+      const submit=form.querySelector('button[type="submit"]');
+      try {
+        const {data,error}=await db.rpc("get_public_site_settings");
+        if(error)throw error;
+        clientIntakeEnabled=data?.client_intake_enabled===true;
+        clientPolicyVersion=data?.client_policy_version||"2026-11-16-v1-draft";
+        if(submit)submit.disabled=!clientIntakeEnabled;
+        if(notice)notice.textContent=clientIntakeEnabled
+          ?"پذیرش درخواست فعال است. پیش از ارسال، قوانین و اطلاعیهٔ حریم خصوصی را مطالعه کنید."
+          :"ثبت درخواست جدید فعلاً غیرفعال است. یادسنتر پس از تکمیل بررسی‌های حقوقی و فعال‌سازی رسمی، پذیرش را آغاز می‌کند.";
+      } catch(error) {
+        clientIntakeEnabled=false;
+        if(submit)submit.disabled=true;
+        if(notice)notice.textContent="وضعیت پذیرش قابل تأیید نیست؛ برای حفظ امنیت، ثبت درخواست موقتاً غیرفعال است.";
+      }
+    }
 
     async function loadDirectory() {
       const { data, error } = await db.from("therapists")
@@ -147,6 +168,7 @@
     countryInput?.addEventListener("change",loadAvailableSlots);
     form.addEventListener("submit", async event => {
       event.preventDefault();
+      if (!clientIntakeEnabled) { setStatus("ثبت درخواست جدید فعلاً غیرفعال است.", true); return; }
       if (!activeUser) { setStatus("برای ثبت درخواست ابتدا وارد حساب مراجع شوید.", true); return; }
       if (!select.value) { setStatus("ابتدا درمانگر موردنظر را انتخاب کنید.", true); return; }
       if (!document.getElementById("yadClientConsent")?.checked) { setStatus("برای ثبت درخواست، تأیید مطالعهٔ اطلاعیه و شرایط لازم است.", true); return; }
@@ -160,7 +182,7 @@
         p_market: market,
         p_currency: currency,
         p_client_message: [document.getElementById("yadPreferredTime")?.value.trim() ? "زمان‌های پیشنهادی (غیرقطعی): " + document.getElementById("yadPreferredTime").value.trim() : "", document.getElementById("yadClientMessage").value.trim()].filter(Boolean).join("\n").slice(0, 500) || null,
-        p_policy_version: "2026-11-16-v1-draft",
+        p_policy_version: clientPolicyVersion,
         p_adult_confirmation: true,
         p_country_code: sessionCountry,
         p_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran",
@@ -171,6 +193,8 @@
         const friendly=raw.includes("therapist_not_accepting_new_clients")?"این درمانگر در حال حاضر پذیرش مراجع جدید ندارد."
           :raw.includes("therapist_not_authorized_for_client_location")?"مجوز ارائهٔ خدمت این درمانگر برای کشور محل حضور شما تأیید نشده است."
           :raw.includes("therapist_not_available")?"این پروفایل دیگر برای ثبت درخواست فعال نیست."
+          :raw.includes("client_intake_paused")?"ثبت درخواست جدید فعلاً غیرفعال است."
+          :raw.includes("current_policy_version_required")?"نسخهٔ نهایی قوانین هنوز تأیید نشده است."
           :raw.includes("create_client_request_with_consent")?"زیرساخت تکمیلی هنوز روی پایگاه داده فعال نشده است."
           :raw;
         setStatus(friendly||"ثبت درخواست ناموفق بود.", true); return;
@@ -180,7 +204,7 @@
       await loadHistory();
     });
 
-    db.auth.getSession().then(({ data }) => init(data.session));
+    loadClientIntakeState().finally(()=>db.auth.getSession().then(({ data }) => init(data.session)));
     db.auth.onAuthStateChange((_event, session) => {
       if (session) init(session);
       else { activeUser = null; }
