@@ -8,7 +8,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="app-icon.svg" type="image/svg+xml"><script defer src="portal.js"></script><script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script defer src="supabase-config.js"></script><script defer src="site-i18n.js"></script><script defer src="app.js"></script>
+<link rel="stylesheet" href="style.css"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="app-icon.svg" type="image/svg+xml"><script defer src="portal.js"></script><script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script defer src="supabase-config.js"></script><script defer src="site-i18n.js"></script><script defer src="app.js"></script><script defer src="pwa-install.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"MedicalWebPage","name":"یادسنتر","description":"مرکز آنلاین روان‌شناسی و روان‌درمانی","inLanguage":"fa"}</script>
 </head>
 <body><a class="skip-link" href="#mainContent">رفتن به محتوای اصلی</a>
@@ -29,7 +29,7 @@
 <div class="hero-copy"><div class="eyebrow"><i></i> همراهی حرفه‌ای، انتخاب آگاهانه</div>
 <h1>برای فهمیدن آنچه می‌گذرد،<br><em>جایی برای مکث لازم است.</em></h1>
 <p class="lead">یادسنتر فضایی برای آشنایی با خدمات روان‌شناختی، شناخت رویکردهای درمانی و یافتن درمانگر متناسب با نیاز، زبان و ترجیحات شماست؛ با مسیر دسترسی برای مراجعان داخل ایران و خارج از ایران.</p>
-<div class="hero-actions"><a class="button primary" href="#therapists">درمانگر مناسبم را پیدا کنم <span>←</span></a><a class="textlink" href="#how">با روند کار آشنا شوم</a></div>
+<div class="hero-actions"><a class="button primary" href="#therapists">درمانگر مناسبم را پیدا کنم <span>←</span></a><a class="textlink" href="#how">با روند کار آشنا شوم</a><button class="button outline pwa-install-button" id="pwaInstallButton" type="button" hidden>نصب اپلیکیشن یادسنتر</button></div>
 <div class="trustline"><span>✳ انتخاب بر اساس زبان و رویکرد</span><span>✳ معرفی شفاف خدمات</span></div></div>
 <div class="hero-visual"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="sun"></div><div class="visual-card card-top"><span class="mini-icon">◌</span><b>شناخت</b><small>پیش از انتخاب</small></div><div class="visual-card card-bottom"><span class="mini-icon coral">✳</span><b>همراهی</b><small>در مسیر تغییر</small></div><div class="quote-card">«گاهی آغاز تغییر،<br>از امکان گفت‌وگوست.»</div></div>
 </div></section>
@@ -58,4 +58,5 @@
 <section class="closing"><div class="wrap closing-inner"><div><span class="eyebrow light">یک قدم در زمان خودش</span><h2>برای شروع لازم نیست همه‌چیز را بدانید.</h2><p>می‌توانید با خواندن مطالب و شناخت خدمات، قدم اول را آرام‌تر بردارید.</p></div><a class="button cream" href="#services">آشنایی با خدمات <span>←</span></a></div></section>
 </main>
 <footer><div class="wrap footer-grid"><a class="brand inverse" href="/"><span class="brandmark">ی</span><span><b>یادسنتر</b><small>YAD CENTER</small></span></a><p>مرکز آنلاین روان‌شناسی و روان‌درمانی<br><small>محتوای آموزشی جایگزین تشخیص و درمان تخصصی نیست.</small></p><div class="footerlinks"><a href="#about">درباره ما</a><a href="#articles">مقالات</a><div id="yadPublicContacts" class="footer-social"><span>راه‌های ارتباطی رسمی پس از ثبت توسط مدیریت نمایش داده می‌شوند.</span></div></div></div><div class="copyright">© یادسنتر — تمامی حقوق محفوظ است.</div></footer>
+<dialog id="pwaInstallHelp" class="pwa-install-dialog" aria-labelledby="pwaInstallTitle"><div class="pwa-install-content"><h2 id="pwaInstallTitle">نصب یادسنتر روی آیفون</h2><p>۱. در مرورگر Safari دکمهٔ اشتراک‌گذاری را بزنید.</p><p>۲. گزینهٔ «Add to Home Screen» یا «افزودن به صفحهٔ اصلی» را انتخاب کنید.</p><p>۳. گزینهٔ Add را بزنید. آیکون یادسنتر به صفحهٔ اصلی اضافه می‌شود.</p><button class="button primary" id="pwaInstallClose" type="button">متوجه شدم</button></div></dialog>
 </body></html>
