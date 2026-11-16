@@ -16,7 +16,7 @@ This folder documents the database foundation and the current staging workflow.
 5. The client receives payment instructions from YAD Center, transfers the amount, and submits a payment reference.
 6. The administrator checks the actual receipt. Approval marks the request as payment-verified; it does not create or confirm an appointment.
 7. The administrator schedules the session with the therapist selected by the client.
-8. The database records the current 70% therapist / 30% YAD Center split at request creation.
+8. The database records the current 60% therapist / 40% YAD Center split at request creation.
 
 Therapists do not need Supabase Auth accounts and cannot self-register, edit or publish profiles. The public directory exposes only profiles that are both verified and listed.
 
@@ -28,12 +28,12 @@ Therapists do not need Supabase Auth accounts and cannot self-register, edit or 
 - New requests, therapist management, payment review and scheduling are handled through RPCs that verify the caller's database role.
 
 ## Languages
-The public homepage and portal language controls expose Persian, Kurdish, English, Turkish, Arabic, Spanish, German and French. The four service-guide pages now have translated body content in Turkish, Arabic, Spanish, German and French, in addition to Persian, English and Kurdish. Full localization is not complete: the legal policy body and the full text of the articles remain Persian (the interface discloses this when another language is selected), and some admin/event-management labels still need translation. Do not advertise the site as fully translated until all content receives human-reviewed translations.
+The public homepage and portal language controls expose Persian, Kurdish, English, Turkish, Arabic, Spanish, German and French. The homepage, assistant interface and FAQ responses, therapist collaboration/proposal interface, article index, and selected client/admin labels are localized. Full localization is not complete: the legal policy body and the full text of the three articles remain Persian (the interface now discloses this when another language is selected), and many admin event-management labels still need translation. Do not advertise the site as fully translated until all content receives human-reviewed translations.
 
 ## Validation completed
 - Database migrations applied and recorded in Supabase.
 - Therapist profile creation and market-price configuration tested through the admin RPC; test profile removed.
-- End-to-end database smoke test completed for client selection, request creation, payment-reference submission, admin payment approval, scheduling with the selected therapist, and the 70/30 split. Temporary rows were removed and the admin role was restored. The newer central-tariff migration was separately tested with a rollback-only QA transaction: new requests snapshot 70/30 and 45 minutes; no QA rows remain.
+- End-to-end database smoke test completed for client selection, request creation, payment-reference submission, admin payment approval, scheduling with the selected therapist, and the then-current 60/40 split. Temporary rows were removed and the admin role was restored. The newer central-tariff migration was separately tested with a rollback-only QA transaction: new requests snapshot 70/30 and 45 minutes; no QA rows remain.
 - Anonymous execution of therapist-management and client-request creation RPCs is denied.
 - Public directory query cannot reveal unverified/unlisted therapist profiles.
 - Security advisors still report intentional warnings for role-checked SECURITY DEFINER RPCs callable by authenticated users, the public therapist-proposal endpoint (protected by input validation and a per-email rate limit), and no-policy tables such as `payout_accounts`, `site_settings`, `workshop_proposals` and `workshop_registrations` that are deliberately inaccessible through direct browser table access. The `btree_gist` extension has been moved to `extensions`.
@@ -42,26 +42,10 @@ The public homepage and portal language controls expose Persian, Kurdish, Englis
 - GitHub static validation has passed. A Playwright browser smoke-test job has passed on commit `8d3dd68`: all ten pages returned HTTP 200, the homepage and client English language switches worked, the PWA manifest/icon and service worker loaded, and no uncaught page errors were detected. The expanded Playwright run passed on commit `aebc2d3`: it checked all eight homepage/client language options, the assistant, therapist collaboration page, article index, Persian-only notices on legal/article pages, PWA assets, and uncaught browser errors.
 - Browser smoke tests do not replace a real authenticated end-to-end test against Supabase or a manual visual review on mobile and desktop.
 
-## Platform completion migration — prepared, not applied
-
-`platform-completion-2026-11.sql` is a development-branch migration draft. It has **not** been executed against the connected Supabase project. Review its SQL and security implications before applying it after the current base, workflow, workshop, AAL2 and central tariff migrations.
-
-It prepares:
-- Admin-managed 45-minute availability slots and conflict-checked scheduling after payment verification.
-- Private meeting-link storage separated from the public appointments table; client access is mediated by a client-owned RPC.
-- Client support tickets for cancellation, rescheduling, complaints, therapist changes, data requests and account deletion requests.
-- Manual cancellation/refund review (the real money transfer must be completed and verified outside the platform before an admin can mark a paid request refunded).
-- Client feedback limited to completed paid sessions and published only after admin moderation.
-- In-app notifications for scheduled sessions, meeting links and support updates.
-- Adult confirmation, self-declared session country, client timezone, recorded policy version and therapist country-scope matching.
-- Therapist experience, verified practice-country codes and intake availability metadata.
-
-The legal text is still a draft. Country-code matching is an operational gate, not a substitute for checking professional licensing rules at country and subnational level. Account deletion is a support request, not an automatic erasure operation. The prepared notifications are in-app only; email, SMS and push notifications require a separate provider integration and credentials.
-
 ## Before production
 - This is still a staging system, not ready for real clients or clinical records.
 - Manual payment references are not bank verification. An administrator must independently verify actual receipt before approval.
-- Online payment gateways and automatic payout execution/reconciliation are not implemented. The new support/refund/session/notification workflows are only prepared in an unapplied migration; refunds remain manual and email/SMS/Push notifications are not connected.
+- Online payment gateways, refunds, notifications, cancellations, payout execution and reconciliation are not implemented.
 - Supabase Auth leaked-password protection is not enabled: this project is on the Free plan, and Supabase rejects saving this setting unless the project is Pro or above. Do not treat a failed save as enabled.
 - The YAD Center administrator account must enroll a TOTP factor in the application itself. This is separate from MFA on the Supabase dashboard owner account. The admin sign-in screen guides first-time enrollment and later challenges.
 - Admin SECURITY DEFINER RPCs require both `profiles.role = 'admin'` and the JWT assurance claim `aal2` through `public.require_admin_aal2()`. The guard is enforced at the start of all 15 admin RPCs; private therapist verification reads and admin storage operations also require AAL2. The Supabase advisor may still report these authenticated SECURITY DEFINER RPCs because they are callable at the grant layer, but non-admin or AAL1 requests are rejected by the function body.
@@ -100,6 +84,6 @@ AAL2 enforcement has been exercised in database-level tests using simulated JWT 
 
 ## Central tariffs and public contact settings
 
-Apply `central-tariffs-contacts-7030.sql` after the existing workshop and admin AAL2 migrations, then apply `admin-public-contacts-only.sql`. It creates versioned central 45-minute tariffs (IRR for Iran, EUR/USD internationally), snapshots tariff and revenue percentages on each client request, and replaces per-therapist fee selection in the request RPC. The administrator can manage tariffs, the 70/30 split, and public social/contact links through the admin dashboard. Public pages read only the limited public settings RPC; direct table access is not granted. Existing requests retain their original 60/40 snapshots; new requests use the current configured percentages. All three tariff amounts must be configured before new client requests can be created.
+Apply `central-tariffs-contacts-7030.sql` after the existing workshop and admin AAL2 migrations, then apply `admin-public-contacts-only.sql`. This second migration allows the administrator to save public contact channels independently before the three tariff amounts are decided. It creates versioned central 45-minute tariffs (IRR for Iran, EUR/USD internationally), snapshots tariff and revenue percentages on each client request, and replaces per-therapist fee selection in the request RPC. The administrator can manage tariffs, the 70/30 split, and public social/contact links through the admin dashboard. Public pages read only the limited public settings RPC; direct table access is not granted. Existing requests retain their original 60/40 snapshots; new requests use the current configured percentages. All three tariff amounts must be configured before new client requests can be created.
 
 The central tariff and public contact migrations are applied to the connected test project. No tariff amounts or public contact details have been configured yet. The manager can save social/contact details independently; all three tariff amounts must be entered together before client requests can be created. Iranian amounts are entered and displayed in toman but stored internally in rial (×10) to remain compatible with the existing IRR payment records. Legacy requests retain their 60/40 split; new requests use the percentages active at request creation (initially 70/30 once the manager configures the tariffs).
