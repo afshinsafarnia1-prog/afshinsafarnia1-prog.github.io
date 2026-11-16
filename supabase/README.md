@@ -16,7 +16,7 @@ This folder documents the database foundation and the current staging workflow.
 5. The client receives payment instructions from YAD Center, transfers the amount, and submits a payment reference.
 6. The administrator checks the actual receipt. Approval marks the request as payment-verified; it does not create or confirm an appointment.
 7. The administrator schedules the session with the therapist selected by the client.
-8. The database records the current 60% therapist / 40% YAD Center split at request creation.
+8. The database records the current 70% therapist / 30% YAD Center split at request creation.
 
 Therapists do not need Supabase Auth accounts and cannot self-register, edit or publish profiles. The public directory exposes only profiles that are both verified and listed.
 
@@ -87,3 +87,17 @@ AAL2 enforcement has been exercised in database-level tests using simulated JWT 
 Apply `central-tariffs-contacts-7030.sql` after the existing workshop and admin AAL2 migrations, then apply `admin-public-contacts-only.sql`. This second migration allows the administrator to save public contact channels independently before the three tariff amounts are decided. It creates versioned central 45-minute tariffs (IRR for Iran, EUR/USD internationally), snapshots tariff and revenue percentages on each client request, and replaces per-therapist fee selection in the request RPC. The administrator can manage tariffs, the 70/30 split, and public social/contact links through the admin dashboard. Public pages read only the limited public settings RPC; direct table access is not granted. Existing requests retain their original 60/40 snapshots; new requests use the current configured percentages. All three tariff amounts must be configured before new client requests can be created.
 
 The central tariff and public contact migrations are applied to the connected test project. No tariff amounts or public contact details have been configured yet. The manager can save social/contact details independently; all three tariff amounts must be entered together before client requests can be created. Iranian amounts are entered and displayed in toman but stored internally in rial (×10) to remain compatible with the existing IRR payment records. Legacy requests retain their 60/40 split; new requests use the percentages active at request creation (initially 70/30 once the manager configures the tariffs).
+
+## 2026-11-16 — pre-launch intake gate
+
+The following migrations are applied to the connected Supabase project and included in the repository:
+
+- `20261116154010_gate_client_intake_until_policy_approval`: client request intake defaults to disabled. The client RPC checks the server-side flag and the exact approved policy version. The manager can change the flag only through an AAL2-protected RPC.
+- `20261116154154_revoke_legacy_consent_request_overload`: revokes authenticated execution of the obsolete eight-argument consent RPC overload.
+- `20261116154656_require_tariffs_before_opening_client_intake`: prevents the manager from enabling intake until all three central tariffs are active.
+
+Verified current staging state: zero active tariff rows, zero listed-and-verified therapist profiles, intake disabled, and policy version still marked draft. This is intentional; the owner will enter tariffs, therapist details and public contact information through the admin panel. Contact channels can be saved separately before tariff amounts are chosen.
+
+The application-level consent documents remain drafts and require legal review before the owner changes the policy version or opens intake. Supabase Auth leaked-password protection is still disabled on the current Free project plan; do not accept real client requests until the project is upgraded to a supported plan and this setting is enabled. Do not store clinical notes or sensitive patient records in this staging deployment.
+
+The latest Netlify Deploy Preview status was successful, but that does not establish that a custom domain or production deployment is configured.
