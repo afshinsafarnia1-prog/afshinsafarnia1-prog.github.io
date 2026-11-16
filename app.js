@@ -8,7 +8,7 @@
   nav?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>nav.classList.remove("open")));
 
   const config=window.YAD_SUPABASE_CONFIG||{};
-  let db=null, allTherapists=[], allPrices=[], publicContacts={};
+  let db=null, allTherapists=[], allPrices=[], publicContacts={}, siteBranding={};
   if(window.supabase?.createClient && config.url && config.anonKey){
     db=window.supabase.createClient(config.url,config.anonKey);
   }
@@ -78,6 +78,8 @@
     if(settingsError){directory.textContent="دریافت تعرفه‌های مرکزی با خطا روبه‌رو شد.";return;}
     allPrices=settings?.tariffs||[];
     publicContacts=settings?.contacts||{};
+    siteBranding=settings?.branding||{};
+    renderPublicBranding();
     renderPublicTariffs();
     renderPublicContacts();
     filterDirectory();
@@ -86,6 +88,31 @@
       :"فهرست درمانگران پس از تأیید مدارک و مجوزها منتشر می‌شود؛ هیچ پروفایل تأییدنشده‌ای نمایش داده نمی‌شود.";
   }
 
+  function renderPublicBranding(){
+    const name=siteBranding.brand_name||"یادسنتر";
+    document.querySelectorAll(".brand").forEach(node=>{
+      const title=node.querySelector("b");if(title)title.textContent=name;
+      const mark=node.querySelector(".brandmark");
+      if(mark&&siteBranding.logo_path&&db){
+        const {data}=db.storage.from("site-assets").getPublicUrl(siteBranding.logo_path);
+        if(data?.publicUrl){const img=el("img","yad-brand-logo");img.src=data.publicUrl;img.alt=name+" لوگو";mark.replaceChildren(img);}
+      }
+    });
+    const aboutTitle=document.getElementById("yadBrandAboutTitle");
+    const aboutText=document.getElementById("yadBrandAboutText");
+    const manager=document.getElementById("yadPublicManager");
+    if(aboutTitle&&siteBranding.tagline)aboutTitle.textContent=siteBranding.tagline;
+    if(manager&&siteBranding.manager_name){
+      document.getElementById("yadPublicManagerName").textContent=siteBranding.manager_name;
+      document.getElementById("yadPublicManagerTitle").textContent=siteBranding.manager_title||"";
+      document.getElementById("yadPublicManagerBio").textContent=siteBranding.manager_bio||"";
+      if(siteBranding.manager_photo_path&&db){
+        const {data}=db.storage.from("site-assets").getPublicUrl(siteBranding.manager_photo_path);
+        if(data?.publicUrl){const img=document.getElementById("yadPublicManagerPhoto");img.src=data.publicUrl;img.alt=siteBranding.manager_name;}
+      }else document.getElementById("yadPublicManagerPhoto").hidden=true;
+      manager.hidden=false;
+    }
+  }
   function renderPublicTariffs(){
     const target=document.getElementById("yadPublicTariffs");if(!target)return;
     target.replaceChildren();
