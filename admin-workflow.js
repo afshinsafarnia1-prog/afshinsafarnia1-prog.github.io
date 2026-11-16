@@ -66,7 +66,9 @@
       if(usd)document.getElementById("yadTariffUSD").value=usd.amount;
       const base=iran||eur||usd;
       if(base)document.getElementById("yadTherapistPercent").value=base.therapist_percent;
-      const c=data?.contacts||{};
+      document.getElementById("yadClientIntakeEnabled").checked = data?.client_intake_enabled === true;
+       document.getElementById("yadClientPolicyVersion").value = data?.client_policy_version || "2026-11-16-v1-draft";
+       const c=data?.contacts||{};
       const fields={whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail",instagram_url:"yadContactInstagram",telegram_url:"yadContactTelegram",youtube_url:"yadContactYoutube",linkedin_url:"yadContactLinkedin",facebook_url:"yadContactFacebook"};
       Object.entries(fields).forEach(([key,id])=>{document.getElementById(id).value=c[key]||"";});
       const date=document.getElementById("yadTariffEffective");
@@ -82,6 +84,11 @@
         const therapistPercent=Number(businessValue("yadTherapistPercent"));
         const effective=new Date(businessValue("yadTariffEffective"));
         if(!Number.isFinite(effective.getTime())||effective>new Date())throw new Error("تاریخ شروع اعتبار باید اکنون یا در گذشته باشد.");
+        const intakeEnabled=document.getElementById("yadClientIntakeEnabled").checked;
+        const policyVersion=businessValue("yadClientPolicyVersion");
+        if(intakeEnabled && (!policyVersion || /draft|test|preview/i.test(policyVersion))) {
+          throw new Error("برای فعال‌سازی پذیرش، نسخهٔ نهایی و تأییدشدهٔ قوانین را ثبت کنید؛ نسخهٔ پیش‌نویس قابل قبول نیست.");
+        }
         const contacts={
           whatsapp_number:businessValue("yadContactWhatsapp"),
           contact_email:businessValue("yadContactEmail"),
@@ -100,7 +107,14 @@
           p_contacts:contacts
         });
         if(error)throw error;
-        businessStatus.textContent="تعرفه‌ها و اطلاعات تماس ذخیره شد. درخواست‌های قبلی بدون تغییر باقی می‌مانند.";
+        const {error:intakeError}=await db.rpc("admin_set_client_intake",{
+          p_enabled:intakeEnabled,
+          p_policy_version:policyVersion
+        });
+        if(intakeError)throw intakeError;
+        businessStatus.textContent=intakeEnabled
+          ?"تعرفه‌ها، اطلاعات تماس و پذیرش درخواست‌های جدید ذخیره شد."
+          :"تعرفه‌ها و اطلاعات تماس ذخیره شد؛ پذیرش درخواست‌های جدید غیرفعال است.";
       }catch(error){businessStatus.textContent=error.message||"ذخیره تنظیمات ناموفق بود.";}
     });
 
