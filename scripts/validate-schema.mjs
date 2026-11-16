@@ -286,3 +286,21 @@ if (errors.length) {
 }
 console.log("Schema guardrail check passed: RLS, controlled RPCs, pinned search_path and restricted browser writes.");
 console.log("Static check only; this does not replace PostgreSQL/Supabase runtime or penetration testing.");
+
+const browserAclMigrationPath = path.join(process.cwd(), "supabase", "migrations", "20261117090000_revoke_legacy_direct_table_privileges.sql");
+if (!fs.existsSync(browserAclMigrationPath)) {
+  errors.push("Missing least-privilege browser table ACL migration");
+} else {
+  const aclSql = fs.readFileSync(browserAclMigrationPath, "utf8").toLowerCase();
+  if (!/revoke\\s+all\\s+privileges\\s+on\\s+all\\s+tables\\s+in\\s+schema\\s+public\\s+from\\s+public,\\s*anon,\\s*authenticated/i.test(aclSql)) {
+    errors.push("Browser roles must lose broad direct privileges on all public tables");
+  }
+  for (const marker of [
+    "grant select on table public.profiles to authenticated",
+    "grant select on table public.therapists to anon, authenticated",
+    "grant select on table public.workshops to anon, authenticated"
+  ]) if (!aclSql.includes(marker)) errors.push("Missing least-privilege browser read grant: " + marker);
+}
+if (!/revoke\\s+all\\s+privileges\\s+on\\s+all\\s+tables\\s+in\\s+schema\\s+public\\s+from\\s+public,\\s*anon,\\s*authenticated/i.test(sql)) {
+  errors.push("Bootstrap schema must apply least-privilege browser table ACLs");
+}
