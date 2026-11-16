@@ -150,9 +150,10 @@
 
     async function upload(bucket, file, oldPath) {
       if (!file) return oldPath || null;
-      if(file.size>5*1024*1024)throw new Error("حجم تصویر نباید بیشتر از ۵ مگابایت باشد.");
-      const allowed=bucket==="site-assets"?["image/jpeg","image/png","image/webp","image/svg+xml"]:["image/jpeg","image/png","image/webp"];
-      if(!allowed.includes(file.type))throw new Error("فرمت تصویر انتخاب‌شده مجاز نیست.");
+      const isDocument=bucket==="therapist-documents";
+      if(file.size>(isDocument?10:5)*1024*1024)throw new Error(isDocument?"حجم مدرک نباید بیشتر از ۱۰ مگابایت باشد.":"حجم تصویر نباید بیشتر از ۵ مگابایت باشد.");
+      const allowed=isDocument?["application/pdf","image/jpeg","image/png"]:["image/jpeg","image/png","image/webp"];
+      if(!allowed.includes(file.type))throw new Error("فرمت فایل انتخاب‌شده مجاز نیست.");
       const clean = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-90);
       const path = crypto.randomUUID() + "/" + clean;
       const { error } = await db.storage.from(bucket).upload(path, file, {
