@@ -1,0 +1,9 @@
+create index if not exists appointment_private_access_created_by_idx on public.appointment_private_access(created_by);
+create index if not exists client_appointment_feedback_client_id_idx on public.client_appointment_feedback(client_id);
+create index if not exists client_appointment_feedback_reviewed_by_idx on public.client_appointment_feedback(reviewed_by);
+create index if not exists client_policy_consents_request_id_idx on public.client_policy_consents(request_id);
+create index if not exists client_requests_tariff_id_idx on public.client_requests(tariff_id);
+create index if not exists client_support_tickets_appointment_id_idx on public.client_support_tickets(appointment_id);
+create index if not exists client_support_tickets_request_id_idx on public.client_support_tickets(request_id);
+create index if not exists yad_public_contacts_updated_by_idx on public.yad_public_contacts(updated_by);
+create index if not exists yad_tariff_history_created_by_idx on public.yad_tariff_history(created_by);
