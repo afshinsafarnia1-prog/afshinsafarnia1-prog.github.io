@@ -206,8 +206,45 @@ if (!fs.existsSync(workshopMigrationPath)) {
   errors.push("Missing applied workshop security migration matching the Supabase migration version");
 } else {
   const workshopSql = fs.readFileSync(workshopMigrationPath, "utf8");
-  const getWorkshopFunction = name => {
-    const escaped = name.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\if (errors.length) {");
+  const getWorkshopFunction = name => workshopSql.match(new RegExp(
+    "create\\s+or\\s+replace\\s+function\\s+public\\." + name + "[\\s\\S]*?\\$function\\$;",
+    "i"
+  ))?.[0] ?? null;
+  const workshopFunctions = [
+    ["admin_get_workshop", "admin"],
+    ["admin_upsert_workshop", "admin"],
+    ["client_list_workshop_registrations", "client"],
+    ["client_submit_workshop_payment_reference", "client"]
+  ];
+  for (const [name, role] of workshopFunctions) {
+    const body = getWorkshopFunction(name);
+    if (!body) { errors.push("Missing workshop RPC: " + name); continue; }
+    if (!/security\s+definer/i.test(body) || !/set\s+search_path\s*=\s*''/i.test(body)) {
+      errors.push(name + " must be a pinned SECURITY DEFINER RPC");
+    }
+    if (role === "admin" && (!/require_admin_aal2\(\)/i.test(body) || !/role\s*=\s*'admin'/i.test(body))) {
+      errors.push(name + " must require admin role and AAL2");
+    }
+    if (role === "client" && !/role\s*=\s*'client'/i.test(body)) {
+      errors.push(name + " must enforce the client role");
+    }
+  }
+  if (!/case\s+when\s+w\.fee_amount\s*=\s*0\s+or\s+r\.status\s*=\s*'paid'\s+then\s+w\.meeting_url\s+else\s+null/i.test(workshopSql) ||
+      !/case\s+when\s+w\.fee_amount\s*=\s*0\s+or\s+r\.status\s*=\s*'paid'\s+then\s+w\.meeting_password\s+else\s+null/i.test(workshopSql)) {
+    errors.push("Workshop meeting credentials must be hidden until free registration or confirmed payment");
+  }
+  for (const signature of [
+    "admin_get_workshop(uuid)",
+    "client_list_workshop_registrations()",
+    "client_submit_workshop_payment_reference(uuid,text)"
+  ]) {
+    const escapedSignature = signature.replaceAll("(", "\\(").replaceAll(")", "\\)");
+    const pattern = new RegExp("revoke\\s+all\\s+on\\s+function\\s+public\\." + escapedSignature + "\\s+from\\s+public,\\s*anon", "i");
+    if (!pattern.test(workshopSql)) errors.push("Workshop RPC must revoke public/anon execution: " + signature);
+  }
+}
+
+if (errors.length) {");
     return workshopSql.match(new RegExp("create\\\\ or\\\\ replace\\\\ function\\\\ public\\\\." + escaped + "[\\\\s\\\\S]*?\\\\$function\\\\$;", "i"))?.[0] ?? null;
   };
   const workshopFunctions = [
