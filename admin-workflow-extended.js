@@ -184,6 +184,7 @@
       document.getElementById("yadExistingScopeDocument").value = t?.psychotherapy_scope_evidence_reference || "";
       document.getElementById("yadJurisdictionReviewReference").value = t?.jurisdiction_review_reference || "";
       document.getElementById("yadVerified").checked = !!t?.verified;
+      document.getElementById("yadAssessmentSpecialist").checked = !!t?.is_assessment_specialist;
       document.getElementById("yadListed").checked = !!t?.is_listed;
       document.getElementById("yadExistingPhoto").value = t?.photo_path || "";
       document.getElementById("yadExistingDocument").value = t?.document_path || "";
@@ -459,6 +460,8 @@
       event.preventDefault();
       try {
         const wantsVerification = document.getElementById("yadVerified").checked;
+        const wantsAssessmentSpecialist=document.getElementById("yadAssessmentSpecialist").checked;
+        if(wantsAssessmentSpecialist&&!document.getElementById("yadListed").checked)throw new Error("متخصص ارزیابی باید پس از تأیید مدارک در فهرست عمومی منتشر شود.");
         const ownerUserId = val("yadTherapistOwnerUserId").trim();
         if (ownerUserId && !wantsVerification) {
           throw new Error("اتصال حساب کاربری درمانگر فقط پس از ثبت و تأیید صلاحیت حرفه‌ای امکان‌پذیر است.");
@@ -516,6 +519,8 @@
             if (ownerError) throw ownerError;
           }
         }
+        const {error:assessmentSpecialistError}=await db.rpc("admin_set_assessment_specialist",{p_therapist_id:metadataId,p_enabled:wantsAssessmentSpecialist});
+        if(assessmentSpecialistError)throw assessmentSpecialistError;
         root.reset();
         fillForm(null);
         document.getElementById("yadExistingPhoto").value = "";
