@@ -227,6 +227,97 @@
   Object.entries(clientPortalExtra).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
 
   const serviceGuideHeroTranslations = {"fa":{"psychology":["روان‌شناسی و مشاوره؛ شناخت بهتر مسئله و امکان‌های کمک","روان‌شناسی به مطالعهٔ رفتار، هیجان، شناخت و رابطه‌های انسانی می‌پردازد. خدمات روان‌شناختی می‌توانند به فهم دشواری‌ها، ارزیابی دقیق‌تر و پیدا کردن راه‌های سازگارانه‌تر برای مواجهه با مسائل زندگی کمک کنند."],"psychotherapy":["روان‌درمانی چیست و چگونه می‌توان درمانگر مناسب را انتخاب کرد؟","روان‌درمانی فرایندی حرفه‌ای و مبتنی بر رابطه است که در آن فرد و درمانگر برای فهم دشواری‌ها، کاهش رنج و ایجاد تغییرهای معنادار همکاری می‌کنند. شکل این همکاری با توجه به مسئله، رویکرد درمانی و ویژگی‌های فرد متفاوت است."],"psychiatry":["روان‌پزشکی؛ ارزیابی پزشکی و مراقبت از سلامت روان","روان‌پزشکی شاخه‌ای از پزشکی است که به ارزیابی، تشخیص و درمان وضعیت‌های مرتبط با سلامت روان می‌پردازد. روان‌پزشک پزشک متخصص است و می‌تواند در صورت نیاز دربارهٔ دارو، بررسی‌های پزشکی و برنامهٔ مراقبت تصمیم‌گیری کند."],"relationships":["زوج‌درمانی و خانواده‌درمانی؛ فهم رابطه به‌عنوان یک زمینهٔ مشترک","در دشواری‌های رابطه‌ای، مسئله همیشه فقط به یک فرد محدود نیست. زوج‌درمانی و خانواده‌درمانی به الگوهای تعامل، شیوه‌های گفت‌وگو، تعارض، مرزها و زمینه‌ای توجه می‌کنند که تجربهٔ هر عضو در آن شکل می‌گیرد."]},"en":{"psychology":["Psychology and counselling: understanding difficulties and possible support","Psychology studies human behaviour, emotions, cognition, and relationships. Psychological services can help people understand difficulties, clarify their needs through assessment, and identify more adaptive ways of responding to life challenges."],"psychotherapy":["What is psychotherapy, and how can you choose a therapist?","Psychotherapy is a professional, relationship-based process in which a person and a therapist work together to understand difficulties, relieve distress, and support meaningful change. The form of this work varies according to the person's needs, the therapeutic approach, and individual circumstances."],"psychiatry":["Psychiatry: medical assessment and mental health care","Psychiatry is a branch of medicine concerned with the assessment, diagnosis, and treatment of mental health conditions. A psychiatrist is a medical doctor who can assess medical factors and, when appropriate, discuss medication and a broader care plan."],"relationships":["Couples and family therapy: understanding relationships in context","Relationship difficulties do not always belong to one person alone. Couples and family therapy explore patterns of interaction, communication, conflict, boundaries, and the shared context in which each person's experience develops."]},"ku":{"psychology":["دەروونناسی و ڕاوێژکاری: تێگەیشتن لە کێشە و ڕێگاکانی یارمەتی","دەروونناسی ڕەفتار، هەست، بیرکردنەوە و پەیوەندییەکانی مرۆڤ دەخوێنێتەوە. خزمەتگوزارییە دەروونناسییەکان دەتوانن یارمەتی تێگەیشتن لە کێشەکان و دۆزینەوەی ڕێگای گونجاوتر بدەن."],"psychotherapy":["چارەسەری دەروونی چییە و چۆن چارەسەرکارێکی گونجاو هەڵبژێرین؟","چارەسەری دەروونی پرۆسەیەکی پیشەیی و پشتبەستوو بە پەیوەندییە؛ کەس و چارەسەرکار هاوکاری دەکەن بۆ تێگەیشتن لە کێشە، کەمکردنەوەی ئازار و پشتیوانی لە گۆڕانی مانادار."],"psychiatry":["دەروونپزیشکی: هەڵسەنگاندنی پزیشکی و چاودێری تەندروستی دەروونی","دەروونپزیشکی لقێکی پزیشکییە کە هەڵسەنگاندن، دەستنیشانکردن و چارەسەری بارودۆخی تەندروستی دەروونی دەگرێتەوە. دەروونپزیشک پزیشکی پسپۆڕە و دەتوانێت لە پێویستدا لەبارەی دەرمان و پلانی چاودێری بڕیار بدات."],"relationships":["چارەسەری هاوسەر و خێزان: تێگەیشتن لە پەیوەندی وەک بارودۆخێکی هاوبەش","لە کێشەی پەیوەندییەکاندا، هەمیشە کێشەکە تەنها هی تاکێک نییە. چارەسەری هاوسەر و خێزان شێوازی پەیوەندی، گفتوگۆ، ناکۆکی و سنوورەکان دەخاتە بەرچاو."]},"tr":{"psychology":["Psikoloji ve danışmanlık: güçlükleri ve destek seçeneklerini anlamak","Psikoloji insan davranışlarını, duyguları, bilişi ve ilişkileri inceler. Psikolojik hizmetler güçlükleri anlamaya, ihtiyaçları değerlendirmeye ve yaşam sorunlarıyla daha uyumlu baş etme yolları bulmaya yardımcı olabilir."],"psychotherapy":["Psikoterapi nedir ve uygun terapist nasıl seçilir?","Psikoterapi, kişinin ve terapistin güçlükleri anlamak, sıkıntıyı azaltmak ve anlamlı değişimi desteklemek için birlikte çalıştığı profesyonel ve ilişki temelli bir süreçtir."],"psychiatry":["Psikiyatri: tıbbi değerlendirme ve ruh sağlığı bakımı","Psikiyatri, ruh sağlığıyla ilgili durumların değerlendirilmesi, tanılanması ve tedavisiyle ilgilenen bir tıp dalıdır. Psikiyatrist tıp doktorudur; gerektiğinde ilaç ve bakım planı hakkında karar verebilir."],"relationships":["Çift ve aile terapisi: ilişkileri ortak bağlamında anlamak","İlişki sorunları her zaman yalnızca tek bir kişiye ait değildir. Çift ve aile terapisi etkileşim, iletişim, çatışma, sınırlar ve her kişinin deneyimini şekillendiren ortak bağlamı ele alır."]},"ar":{"psychology":["علم النفس والإرشاد: فهم الصعوبات وخيارات الدعم","يدرس علم النفس السلوك الإنساني والعواطف والإدراك والعلاقات. ويمكن للخدمات النفسية أن تساعد على فهم الصعوبات وتقييم الاحتياجات واكتشاف طرق أكثر ملاءمة للتعامل مع تحديات الحياة."],"psychotherapy":["ما العلاج النفسي وكيف تختار المعالج المناسب؟","العلاج النفسي عملية مهنية قائمة على العلاقة، يعمل فيها الشخص والمعالج معاً لفهم الصعوبات وتخفيف المعاناة ودعم التغيير ذي المعنى. وتختلف طبيعة العمل بحسب احتياجات الشخص والمنهج العلاجي وظروفه."],"psychiatry":["الطب النفسي: التقييم الطبي ورعاية الصحة النفسية","الطب النفسي فرع من الطب يهتم بتقييم الحالات المرتبطة بالصحة النفسية وتشخيصها وعلاجها. والطبيب النفسي طبيب متخصص يمكنه تقييم العوامل الطبية ومناقشة الدواء وخطة الرعاية عند الحاجة."],"relationships":["العلاج الزوجي والأسري: فهم العلاقة ضمن سياق مشترك","لا تقتصر صعوبات العلاقة دائماً على شخص واحد. يستكشف العلاج الزوجي والأسري أنماط التفاعل والتواصل والصراع والحدود والسياق المشترك الذي تتشكل فيه تجربة كل فرد."]},"es":{"psychology":["Psicología y orientación: comprender las dificultades y las opciones de apoyo","La psicología estudia la conducta, las emociones, la cognición y las relaciones humanas. Los servicios psicológicos pueden ayudar a comprender las dificultades, evaluar necesidades y encontrar formas más adaptativas de afrontar los retos de la vida."],"psychotherapy":["¿Qué es la psicoterapia y cómo elegir un terapeuta adecuado?","La psicoterapia es un proceso profesional basado en la relación, en el que la persona y el terapeuta colaboran para comprender las dificultades, aliviar el malestar y favorecer cambios significativos."],"psychiatry":["Psiquiatría: evaluación médica y atención de la salud mental","La psiquiatría es una rama de la medicina dedicada a evaluar, diagnosticar y tratar problemas de salud mental. El psiquiatra es un médico especialista que puede valorar factores médicos y, cuando procede, indicar medicación y un plan de atención."],"relationships":["Terapia de pareja y familiar: comprender la relación en su contexto","Las dificultades relacionales no siempre corresponden a una sola persona. La terapia de pareja y familiar explora los patrones de interacción, la comunicación, los conflictos, los límites y el contexto compartido de cada miembro."]},"de":{"psychology":["Psychologie und Beratung: Belastungen verstehen und Unterstützung finden","Die Psychologie untersucht menschliches Verhalten, Gefühle, Denken und Beziehungen. Psychologische Angebote können helfen, Schwierigkeiten besser zu verstehen, Bedürfnisse einzuschätzen und passendere Wege im Umgang mit Lebensbelastungen zu entwickeln."],"psychotherapy":["Was ist Psychotherapie und wie findet man eine passende therapeutische Fachperson?","Psychotherapie ist ein professioneller, beziehungsorientierter Prozess, in dem eine Person und eine therapeutische Fachperson gemeinsam Belastungen verstehen, Leidensdruck verringern und bedeutsame Veränderungen unterstützen."],"psychiatry":["Psychiatrie: medizinische Abklärung und Versorgung der psychischen Gesundheit","Psychiatrie ist ein medizinisches Fachgebiet zur Abklärung, Diagnose und Behandlung psychischer Erkrankungen. Psychiaterinnen und Psychiater sind Ärztinnen und Ärzte und können bei Bedarf Medikamente und einen Behandlungsplan besprechen."],"relationships":["Paar- und Familientherapie: Beziehungen im gemeinsamen Kontext verstehen","Beziehungsschwierigkeiten betreffen nicht immer nur eine einzelne Person. Paar- und Familientherapie untersucht Interaktionsmuster, Kommunikation, Konflikte, Grenzen und den gemeinsamen Kontext, in dem die Erfahrungen aller Beteiligten entstehen."]},"fr":{"psychology":["Psychologie et conseil : comprendre les difficultés et les possibilités de soutien","La psychologie étudie le comportement, les émotions, la cognition et les relations humaines. Les services psychologiques peuvent aider à comprendre les difficultés, à évaluer les besoins et à trouver des façons plus adaptées de faire face aux défis de la vie."],"psychotherapy":["Qu’est-ce que la psychothérapie et comment choisir un thérapeute adapté ?","La psychothérapie est un processus professionnel fondé sur la relation, dans lequel une personne et un thérapeute travaillent ensemble pour comprendre les difficultés, soulager la souffrance et favoriser des changements significatifs."],"psychiatry":["Psychiatrie : évaluation médicale et soins en santé mentale","La psychiatrie est une spécialité médicale consacrée à l’évaluation, au diagnostic et au traitement des troubles de santé mentale. Le psychiatre est un médecin spécialiste qui peut évaluer les facteurs médicaux et discuter, si nécessaire, des médicaments et du plan de soins."],"relationships":["Thérapie de couple et thérapie familiale : comprendre la relation dans son contexte","Les difficultés relationnelles ne concernent pas toujours une seule personne. Les thérapies de couple et familiales explorent les interactions, la communication, les conflits, les limites et le contexte partagé dans lequel se construit l’expérience de chacun."]}};
+  const workshopPageTranslations = {
+  "fa": {
+    "workshopPageTitle": "برنامهٔ کارگاه‌ها و نشست‌های یادسنتر",
+    "workshopPageLead": "رویدادهای منتشرشده را بر اساس موضوع، زبان و زمان بررسی کنید. ثبت‌نام و پرداخت از طریق حساب کاربری انجام می‌شود.",
+    "workshopRegistrationNote": "لینک خصوصی جلسه فقط پس از ثبت‌نام معتبر و در رویدادهای دارای هزینه، پس از تأیید پرداخت توسط مدیریت نمایش داده می‌شود.",
+    "workshopPresenter": "ارائه‌دهنده",
+    "workshopDate": "زمان",
+    "workshopLanguages": "زبان ارائه",
+    "workshopVenue": "مکان",
+    "workshopFee": "هزینه",
+    "workshopCapacity": "ظرفیت"
+  },
+  "ku": {
+    "workshopPageTitle": "پلانی وۆرکشۆپ و کۆبوونەوەکانی یادسنتر",
+    "workshopPageLead": "ڕووداوە بڵاوکراوەکان بەپێی بابەت، زمان و کات ببینە. تۆمارکردن و پارەدان لە ڕێگەی هەژماری بەکارهێنەرەوە دەکرێت.",
+    "workshopRegistrationNote": "بەستەری تایبەتی کۆبوونەوە تەنها دوای تۆمارکردنی دروست و بۆ ڕووداوی پارەدار دوای پشتڕاستکردنەوەی پارەدان پیشان دەدرێت.",
+    "workshopPresenter": "پێشکەشکار",
+    "workshopDate": "کات",
+    "workshopLanguages": "زمانی پێشکەشکردن",
+    "workshopVenue": "شوێن",
+    "workshopFee": "تێچوو",
+    "workshopCapacity": "ژمارەی بەشداربووان"
+  },
+  "en": {
+    "workshopPageTitle": "YAD Center workshops and events",
+    "workshopPageLead": "Explore published events by topic, language, and time. Registration and payment are handled through your client account.",
+    "workshopRegistrationNote": "Private meeting links are shown only after valid registration and, for paid events, after the administrator confirms payment.",
+    "workshopPresenter": "Presenter",
+    "workshopDate": "Date and time",
+    "workshopLanguages": "Languages",
+    "workshopVenue": "Venue",
+    "workshopFee": "Fee",
+    "workshopCapacity": "Capacity"
+  },
+  "tr": {
+    "workshopPageTitle": "YAD Center atölye ve etkinlikleri",
+    "workshopPageLead": "Yayımlanan etkinlikleri konu, dil ve zamana göre inceleyin. Kayıt ve ödeme kullanıcı hesabınız üzerinden yapılır.",
+    "workshopRegistrationNote": "Özel toplantı bağlantıları yalnızca geçerli kayıt sonrasında; ücretli etkinliklerde ise ödeme yönetici tarafından onaylandıktan sonra gösterilir.",
+    "workshopPresenter": "Sunucu",
+    "workshopDate": "Tarih ve saat",
+    "workshopLanguages": "Sunum dili",
+    "workshopVenue": "Yer",
+    "workshopFee": "Ücret",
+    "workshopCapacity": "Kontenjan"
+  },
+  "ar": {
+    "workshopPageTitle": "ورش وفعاليات مركز ياد",
+    "workshopPageLead": "استكشف الفعاليات المنشورة حسب الموضوع واللغة والوقت. يتم التسجيل والدفع من خلال حساب المستخدم.",
+    "workshopRegistrationNote": "لا يظهر رابط الاجتماع الخاص إلا بعد التسجيل الصحيح، وفي الفعاليات المدفوعة بعد تأكيد الإدارة للدفع.",
+    "workshopPresenter": "مقدم الفعالية",
+    "workshopDate": "التاريخ والوقت",
+    "workshopLanguages": "لغة التقديم",
+    "workshopVenue": "المكان",
+    "workshopFee": "الرسوم",
+    "workshopCapacity": "السعة"
+  },
+  "es": {
+    "workshopPageTitle": "Talleres y eventos de YAD Center",
+    "workshopPageLead": "Consulta los eventos publicados por tema, idioma y horario. La inscripción y el pago se gestionan desde tu cuenta.",
+    "workshopRegistrationNote": "El enlace privado de la sesión solo se muestra tras una inscripción válida y, en eventos de pago, después de que la administración confirme el pago.",
+    "workshopPresenter": "Ponente",
+    "workshopDate": "Fecha y hora",
+    "workshopLanguages": "Idiomas",
+    "workshopVenue": "Lugar",
+    "workshopFee": "Precio",
+    "workshopCapacity": "Aforo"
+  },
+  "de": {
+    "workshopPageTitle": "Workshops und Veranstaltungen im YAD Center",
+    "workshopPageLead": "Entdecken Sie veröffentlichte Veranstaltungen nach Thema, Sprache und Zeit. Anmeldung und Zahlung erfolgen über Ihr Benutzerkonto.",
+    "workshopRegistrationNote": "Private Meeting-Links werden erst nach gültiger Anmeldung und bei kostenpflichtigen Veranstaltungen nach Zahlungsbestätigung durch die Administration angezeigt.",
+    "workshopPresenter": "Leitung",
+    "workshopDate": "Datum und Uhrzeit",
+    "workshopLanguages": "Sprachen",
+    "workshopVenue": "Ort",
+    "workshopFee": "Gebühr",
+    "workshopCapacity": "Kapazität"
+  },
+  "fr": {
+    "workshopPageTitle": "Ateliers et événements du YAD Center",
+    "workshopPageLead": "Consultez les événements publiés par thème, langue et horaire. L’inscription et le paiement s’effectuent depuis votre compte.",
+    "workshopRegistrationNote": "Le lien privé de la séance n’est affiché qu’après une inscription valide et, pour les événements payants, après confirmation du paiement par l’administration.",
+    "workshopPresenter": "Intervenant",
+    "workshopDate": "Date et heure",
+    "workshopLanguages": "Langues",
+    "workshopVenue": "Lieu",
+    "workshopFee": "Tarif",
+    "workshopCapacity": "Capacité"
+  }
+};
+  Object.entries(workshopPageTranslations).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
   const keys = {
     ".topinner span":"tagline","#mainNav a:nth-child(1)":"services","#mainNav a:nth-child(2)":"therapists",
     "#mainNav a:nth-child(3)":"client","#mainNav a:nth-child(4)":"admin","#mainNav a:nth-child(5)":"how",
