@@ -131,6 +131,7 @@
     const target=document.getElementById("yadPublicContacts");if(!target)return;
     target.replaceChildren();
     const links=[
+      ["phone_number","تلفن",v=>"tel:"+v],
       ["whatsapp_number","واتساپ",v=>"https://wa.me/"+v.replace(/[^0-9]/g,"")],
       ["instagram_url","اینستاگرام",v=>v],["telegram_url","تلگرام",v=>v],
       ["youtube_url","یوتیوب",v=>v],["linkedin_url","لینکدین",v=>v],["facebook_url","فیسبوک",v=>v]
