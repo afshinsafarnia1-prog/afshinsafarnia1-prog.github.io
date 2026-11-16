@@ -10,7 +10,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="supabase-config.js"></script>
 <script defer src="auth.js"></script>
-<script defer src="admin-workflow-extended.js"></script><script defer src="admin-extensions.js"></script><script defer src="admin-assessment-workflow.js"></script>
+<script defer src="admin-workflow-extended.js"></script><script defer src="admin-extensions.js"></script><script defer src="admin-assessment-workflow.js"></script><script defer src="admin-articles.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#mainContent">رفتن به محتوای اصلی</a><header class="header portal-header"><div class="wrap navrow"><a class="brand" href="/"><span class="brandmark">ی</span><span><b>یادسنتر</b><small>YAD CENTER</small></span></a><nav class="portal-nav" aria-label="ناوبری مدیریت"><a href="/">نمای عمومی سایت</a><a href="/#therapists">فهرست درمانگران</a></nav><a class="navcta" href="/rules.html">قوانین و حریم خصوصی</a></div></header><main id="mainContent" class="portal-main"><div class="portal-wrap">
@@ -180,6 +180,7 @@
 </form><p id="yadAssessmentFeeAdminStatus" class="notice" role="status" aria-live="polite"></p>
 </section>
 <section class="portal-card"><div class="section-head"><div><h2>درخواست‌های ارزیابی شخصیت</h2><p>بررسی رسید پرداخت، تأیید وجه و ثبت لینک جلسه خارجی.</p></div><button class="button outline" id="yadRefreshAssessmentRequests" type="button">به‌روزرسانی</button></div><div id="yadAdminAssessmentRequests" class="portal-grid"></div></section>
+<section class="portal-card" id="yadArticleModeration"><div class="section-head"><div><h2>بررسی و انتشار مقالات درمانگران</h2><p>مقاله‌های ارسالی فقط پس از بررسی علمی، اخلاقی و محرمانگی توسط مدیر منتشر می‌شوند.</p></div><button class="button outline" id="yadRefreshArticles" type="button">به‌روزرسانی مقاله‌ها</button></div><p id="yadAdminArticlesStatus" class="notice" role="status" aria-live="polite">برای بررسی مقاله‌ها، ورود مدیر با MFA لازم است.</p><div id="yadAdminArticles" class="portal-grid"></div></section>
 <section class="portal-card">
 <h2 data-i18n="financialRules">قواعد مالی یادسنتر</h2>
 <p data-i18n="financialHelp">مراجع درمانگر تأییدشده را انتخاب می‌کند و پرداخت ابتدا به یادسنتر انجام می‌شود. پس از بررسی واقعی و تأیید وجه، مدیر زمان جلسه را با همان درمانگر ثبت می‌کند. تأیید پنل جایگزین بررسی بانکی نیست.</p><div class="notice admin-error" data-i18n="workflowWarning">پرداخت دستی را فقط پس از تطبیق شماره پیگیری با دریافت واقعی وجه تأیید کن. هنوز درگاه پرداخت آنلاین و آزمون کامل مسیر مراجع فعال نشده است.</div>
