@@ -273,6 +273,13 @@ else {
   }
 }
 
+
+const legacyRequestMigrationPath = path.join(process.cwd(), "supabase", "migrations", "20261116155203_revoke_direct_legacy_client_request.sql");
+if (!fs.existsSync(legacyRequestMigrationPath) ||
+    !/revoke all on function public\.create_client_request\(uuid,text,text,text\) from public,anon,authenticated/i.test(fs.readFileSync(legacyRequestMigrationPath, "utf8"))) {
+  errors.push("Direct legacy request creation must be revoked; all requests must pass the consent and intake gate");
+}
+
 if (errors.length) {
   console.error("Schema guardrail check failed:\n" + errors.map(error => "- " + error).join("\n"));
   process.exit(1);
