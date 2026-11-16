@@ -261,6 +261,18 @@ if (!fs.existsSync(legacyConsentMigrationPath) || !/revoke all on function publi
   errors.push("Legacy eight-argument consent RPC overload must be revoked");
 }
 
+
+const tariffGatePath = path.join(process.cwd(), "supabase", "migrations", "20261116154656_require_tariffs_before_opening_client_intake.sql");
+if (!fs.existsSync(tariffGatePath)) errors.push("Missing central-tariff requirement for enabling client intake");
+else {
+  const tariffGateSql = fs.readFileSync(tariffGatePath, "utf8");
+  if (!/admin_set_client_intake[\s\S]*?require_admin_aal2\(\)/i.test(tariffGateSql) ||
+      !/v_active_tariffs<3/i.test(tariffGateSql) ||
+      !/all_three_tariffs_must_be_configured/i.test(tariffGateSql)) {
+    errors.push("Client intake must remain closed until all three current tariffs exist and the admin has AAL2");
+  }
+}
+
 if (errors.length) {
   console.error("Schema guardrail check failed:\n" + errors.map(error => "- " + error).join("\n"));
   process.exit(1);
