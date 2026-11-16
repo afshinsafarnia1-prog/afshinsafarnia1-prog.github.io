@@ -82,10 +82,15 @@
       businessStatus.textContent="در حال ذخیره تنظیمات…";
       try{
         const therapistPercent=Number(businessValue("yadTherapistPercent"));
+        const tariffFields=["yadTariffIRR","yadTariffEUR","yadTariffUSD"].map(businessValue);
+        const hasAnyTariff=tariffFields.some(value=>value!=="");
+        const hasAllTariffs=tariffFields.every(value=>value!==""&&Number(value)>0);
+        if(hasAnyTariff&&!hasAllTariffs)throw new Error("برای ثبت تعرفه، هر سه مبلغ ایران، یورو و دلار را کامل وارد کنید.");
         const effective=new Date(businessValue("yadTariffEffective"));
-        if(!Number.isFinite(effective.getTime())||effective>new Date())throw new Error("تاریخ شروع اعتبار باید اکنون یا در گذشته باشد.");
+        if(hasAllTariffs&&(!Number.isFinite(effective.getTime())||effective>new Date()))throw new Error("تاریخ شروع اعتبار باید اکنون یا در گذشته باشد.");
         const intakeEnabled=document.getElementById("yadClientIntakeEnabled").checked;
         const policyVersion=businessValue("yadClientPolicyVersion");
+        if(intakeEnabled&&!hasAllTariffs)throw new Error("پیش از فعال‌سازی پذیرش، هر سه تعرفهٔ مرکزی باید ثبت شوند.");
         if(intakeEnabled && (!policyVersion || /draft|test|preview/i.test(policyVersion))) {
           throw new Error("برای فعال‌سازی پذیرش، نسخهٔ نهایی و تأییدشدهٔ قوانین را ثبت کنید؛ نسخهٔ پیش‌نویس قابل قبول نیست.");
         }
@@ -98,23 +103,30 @@
           linkedin_url:businessValue("yadContactLinkedin"),
           facebook_url:businessValue("yadContactFacebook")
         };
-        const {error}=await db.rpc("admin_update_yad_business_settings",{
-          p_iran_irr:Number(businessValue("yadTariffIRR"))*10,
-          p_international_eur:Number(businessValue("yadTariffEUR")),
-          p_international_usd:Number(businessValue("yadTariffUSD")),
-          p_therapist_percent:therapistPercent,
-          p_effective_from:effective.toISOString(),
-          p_contacts:contacts
-        });
-        if(error)throw error;
+        if(hasAllTariffs){
+          const {error}=await db.rpc("admin_update_yad_business_settings",{
+            p_iran_irr:Number(businessValue("yadTariffIRR"))*10,
+            p_international_eur:Number(businessValue("yadTariffEUR")),
+            p_international_usd:Number(businessValue("yadTariffUSD")),
+            p_therapist_percent:therapistPercent,
+            p_effective_from:effective.toISOString(),
+            p_contacts:contacts
+          });
+          if(error)throw error;
+        } else {
+          const {error}=await db.rpc("admin_update_yad_public_contacts",{p_contacts:contacts});
+          if(error)throw error;
+        }
         const {error:intakeError}=await db.rpc("admin_set_client_intake",{
           p_enabled:intakeEnabled,
           p_policy_version:policyVersion
         });
         if(intakeError)throw intakeError;
         businessStatus.textContent=intakeEnabled
-          ?"تعرفه‌ها، اطلاعات تماس و پذیرش درخواست‌های جدید ذخیره شد."
-          :"تعرفه‌ها و اطلاعات تماس ذخیره شد؛ پذیرش درخواست‌های جدید غیرفعال است.";
+          ?"تنظیمات، تعرفه‌ها و پذیرش درخواست‌های جدید ذخیره شد."
+          :hasAllTariffs
+            ?"تعرفه‌ها و اطلاعات تماس ذخیره شد؛ پذیرش درخواست‌های جدید غیرفعال است."
+            :"اطلاعات تماس ذخیره شد؛ تعرفه‌ها و پذیرش درخواست‌های جدید هنوز تنظیم نشده‌اند.";
       }catch(error){businessStatus.textContent=error.message||"ذخیره تنظیمات ناموفق بود.";}
     });
 
