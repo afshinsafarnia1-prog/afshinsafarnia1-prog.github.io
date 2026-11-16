@@ -15,24 +15,6 @@
     const val = id => document.getElementById(id)?.value?.trim() || "";
     const split = value => value.split(/[,،\n]/).map(x => x.trim()).filter(Boolean);
     const safe = value => value == null ? "—" : String(value);
-    const localDateTimeInZone = (value, timeZone) => {
-      const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value || "");
-      if (!match) throw new Error("فرمت تاریخ و ساعت معتبر نیست.");
-      const target = Date.UTC(Number(match[1]), Number(match[2])-1, Number(match[3]), Number(match[4]), Number(match[5]));
-      let guess = target;
-      const formatter = new Intl.DateTimeFormat("en-GB", { timeZone, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hourCycle:"h23" });
-      for (let i=0;i<5;i++) {
-        const parts = Object.fromEntries(formatter.formatToParts(new Date(guess)).map(part=>[part.type,part.value]));
-        const represented = Date.UTC(Number(parts.year),Number(parts.month)-1,Number(parts.day),Number(parts.hour),Number(parts.minute));
-        const delta = target-represented;
-        if (!delta) break;
-        guess += delta;
-      }
-      const finalParts = Object.fromEntries(formatter.formatToParts(new Date(guess)).map(part=>[part.type,part.value]));
-      const finalValue = Date.UTC(Number(finalParts.year),Number(finalParts.month)-1,Number(finalParts.day),Number(finalParts.hour),Number(finalParts.minute));
-      if (finalValue !== target) throw new Error("این ساعت در منطقهٔ زمانی مراجع وجود ندارد؛ زمان دیگری انتخاب کنید.");
-      return new Date(guess);
-    };
     let cachedTherapists = [];
     let activeAdmin = null;
     let initializing = false;
@@ -66,34 +48,25 @@
       if(usd)document.getElementById("yadTariffUSD").value=usd.amount;
       const base=iran||eur||usd;
       if(base)document.getElementById("yadTherapistPercent").value=base.therapist_percent;
-      document.getElementById("yadClientIntakeEnabled").checked = data?.client_intake_enabled === true;
-       document.getElementById("yadClientPolicyVersion").value = data?.client_policy_version || "2026-11-16-v1-draft";
-       const c=data?.contacts||{};
+      const c=data?.contacts||{};
       const fields={whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail",instagram_url:"yadContactInstagram",telegram_url:"yadContactTelegram",youtube_url:"yadContactYoutube",linkedin_url:"yadContactLinkedin",facebook_url:"yadContactFacebook"};
       Object.entries(fields).forEach(([key,id])=>{document.getElementById(id).value=c[key]||"";});
       const date=document.getElementById("yadTariffEffective");
       if(!date.value){const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());date.value=now.toISOString().slice(0,16);}
       setPlatformPercent();
-      businessStatus.textContent=tariffs.length?"تعرفه‌های فعلی بارگذاری شد.":"هنوز تعرفه‌ای ثبت نشده است؛ هر سه مبلغ را وارد کن.";
+      businessStatus.textContent=tariffs.length?"تعرفه‌های فعلی بارگذاری شد.":"هنوز تعرفه‌ای ثبت نشده است؛ می‌توانی فعلاً اطلاعات تماس را ذخیره کنی.";
     }
     document.getElementById("yadTherapistPercent")?.addEventListener("input",setPlatformPercent);
     businessForm?.addEventListener("submit",async event=>{
       event.preventDefault();
       businessStatus.textContent="در حال ذخیره تنظیمات…";
       try{
-        const therapistPercent=Number(businessValue("yadTherapistPercent"));
-        const tariffFields=["yadTariffIRR","yadTariffEUR","yadTariffUSD"].map(businessValue);
-        const hasAnyTariff=tariffFields.some(value=>value!=="");
-        const hasAllTariffs=tariffFields.every(value=>value!==""&&Number(value)>0);
-        if(hasAnyTariff&&!hasAllTariffs)throw new Error("برای ثبت تعرفه، هر سه مبلغ ایران، یورو و دلار را کامل وارد کنید.");
-        const effective=new Date(businessValue("yadTariffEffective"));
-        if(hasAllTariffs&&(!Number.isFinite(effective.getTime())||effective>new Date()))throw new Error("تاریخ شروع اعتبار باید اکنون یا در گذشته باشد.");
-        const intakeEnabled=document.getElementById("yadClientIntakeEnabled").checked;
-        const policyVersion=businessValue("yadClientPolicyVersion");
-        if(intakeEnabled&&!hasAllTariffs)throw new Error("پیش از فعال‌سازی پذیرش، هر سه تعرفهٔ مرکزی باید ثبت شوند.");
-        if(intakeEnabled && (!policyVersion || /draft|test|preview/i.test(policyVersion))) {
-          throw new Error("برای فعال‌سازی پذیرش، نسخهٔ نهایی و تأییدشدهٔ قوانین را ثبت کنید؛ نسخهٔ پیش‌نویس قابل قبول نیست.");
-        }
+        const iranValue=businessValue("yadTariffIRR");
+        const eurValue=businessValue("yadTariffEUR");
+        const usdValue=businessValue("yadTariffUSD");
+        const anyTariff=!!(iranValue||eurValue||usdValue);
+        const allTariffs=!!(iranValue&&eurValue&&usdValue);
+        if(anyTariff&&!allTariffs)throw new Error("برای ثبت تعرفه، هر سه مبلغ تومان، یورو و دلار را وارد کن؛ یا هر سه را خالی بگذار.");
         const contacts={
           whatsapp_number:businessValue("yadContactWhatsapp"),
           contact_email:businessValue("yadContactEmail"),
@@ -103,30 +76,25 @@
           linkedin_url:businessValue("yadContactLinkedin"),
           facebook_url:businessValue("yadContactFacebook")
         };
-        if(hasAllTariffs){
-          const {error}=await db.rpc("admin_update_yad_business_settings",{
-            p_iran_irr:Number(businessValue("yadTariffIRR"))*10,
-            p_international_eur:Number(businessValue("yadTariffEUR")),
-            p_international_usd:Number(businessValue("yadTariffUSD")),
-            p_therapist_percent:therapistPercent,
+        let error=null;
+        if(allTariffs){
+          const effective=new Date(businessValue("yadTariffEffective"));
+          if(!Number.isFinite(effective.getTime())||effective>new Date())throw new Error("تاریخ شروع اعتبار باید اکنون یا در گذشته باشد.");
+          const result=await db.rpc("admin_update_yad_business_settings",{
+            p_iran_irr:Number(iranValue)*10,
+            p_international_eur:Number(eurValue),
+            p_international_usd:Number(usdValue),
+            p_therapist_percent:Number(businessValue("yadTherapistPercent")),
             p_effective_from:effective.toISOString(),
             p_contacts:contacts
           });
-          if(error)throw error;
-        } else {
-          const {error}=await db.rpc("admin_update_yad_public_contacts",{p_contacts:contacts});
-          if(error)throw error;
+          error=result.error;
+        }else{
+          const result=await db.rpc("admin_update_yad_public_contacts",{p_contacts:contacts});
+          error=result.error;
         }
-        const {error:intakeError}=await db.rpc("admin_set_client_intake",{
-          p_enabled:intakeEnabled,
-          p_policy_version:policyVersion
-        });
-        if(intakeError)throw intakeError;
-        businessStatus.textContent=intakeEnabled
-          ?"تنظیمات، تعرفه‌ها و پذیرش درخواست‌های جدید ذخیره شد."
-          :hasAllTariffs
-            ?"تعرفه‌ها و اطلاعات تماس ذخیره شد؛ پذیرش درخواست‌های جدید غیرفعال است."
-            :"اطلاعات تماس ذخیره شد؛ تعرفه‌ها و پذیرش درخواست‌های جدید هنوز تنظیم نشده‌اند.";
+        if(error)throw error;
+        businessStatus.textContent=allTariffs?"تعرفه‌ها و اطلاعات تماس ذخیره شد. درخواست‌های قبلی بدون تغییر می‌مانند.":"اطلاعات تماس عمومی ذخیره شد؛ تعرفه‌ها هنوز تنظیم نشده‌اند.";
       }catch(error){businessStatus.textContent=error.message||"ذخیره تنظیمات ناموفق بود.";}
     });
 
@@ -151,16 +119,9 @@
       document.getElementById("yadSpecialties").value = (t?.specialties || []).join("، ");
       document.getElementById("yadLanguages").value = (t?.languages || ["fa"]).join(", ");
       document.getElementById("yadModalities").value = (t?.modalities || []).join("، ");
-      document.getElementById("yadYearsExperience").value = t?.years_experience ?? "";
-      document.getElementById("yadJurisdictions").value = (t?.practice_jurisdictions || []).join("، ");
-      document.getElementById("yadAcceptingNewClients").checked = !!t?.accepting_new_clients;
-      document.getElementById("yadDuration").value = 45;
+      document.getElementById("yadDuration").value = t?.session_duration_minutes || 50;
       document.getElementById("yadLicense").value = t?.license_number || "";
-      document.getElementById("yadAuthority").value = t?.issuing_authority || "سازمان نظام روان‌شناسی و مشاوره جمهوری اسلامی ایران";
-      document.getElementById("yadLicenseExpires").value = t?.license_expires_at || "";
-      document.getElementById("yadRegistryReference").value = t?.registry_reference || "";
-      document.getElementById("yadExistingScopeDocument").value = t?.psychotherapy_scope_evidence_reference || "";
-      document.getElementById("yadJurisdictionReviewReference").value = t?.jurisdiction_review_reference || "";
+      document.getElementById("yadAuthority").value = t?.issuing_authority || "";
       document.getElementById("yadVerified").checked = !!t?.verified;
       document.getElementById("yadListed").checked = !!t?.is_listed;
       document.getElementById("yadExistingPhoto").value = t?.photo_path || "";
@@ -173,9 +134,7 @@
     async function loadTherapists() {
       const { data, error } = await db.rpc("admin_list_therapists");
       if (error) throw error;
-      const { data: metadata } = await db.rpc("admin_list_therapist_public_metadata");
-      const metadataById = new Map((metadata || []).map(item => [item.therapist_id, item]));
-      cachedTherapists = (data || []).map(item => ({ ...item, ...(metadataById.get(item.therapist_id) || {}) }));
+      cachedTherapists = data || [];
       list.replaceChildren();
       if (!cachedTherapists.length) {
         list.textContent = "هنوز درمانگری ثبت نشده است.";
@@ -199,10 +158,6 @@
     async function loadRequests() {
       const { data, error } = await db.rpc("admin_list_requests", { p_limit: 100, p_offset: 0 });
       if (error) throw error;
-      const { data: timezoneRows } = await db.rpc("admin_list_request_client_timezones");
-      const timezoneByRequest = new Map((timezoneRows || []).map(item => [item.request_id, item.client_timezone]));
-      const { data: detailRows } = await db.rpc("admin_list_request_details");
-      const detailsByRequest = new Map((detailRows || []).map(item => [item.request_id, item.client_message]));
       requests.replaceChildren();
       if (!data?.length) {
         const tr = document.createElement("tr");
@@ -213,12 +168,9 @@
       data.forEach(item => {
         const tr = document.createElement("tr");
         tr.dataset.requestId = item.request_id;
-        tr.dataset.duration = String(item.session_duration_minutes || 45);
-        tr.dataset.timezone = timezoneByRequest.get(item.request_id) || Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran";
+        tr.dataset.duration = String(item.session_duration_minutes || 50);
         const add = value => { const td = document.createElement("td"); td.textContent = safe(value); tr.append(td); return td; };
-        const clientCell=add(item.client_name);
-        const clientMessage=detailsByRequest.get(item.request_id);
-        if(clientMessage){const note=document.createElement("small");note.className="request-client-note";note.textContent=clientMessage;clientCell.append(document.createElement("br"),note);}
+        add(item.client_name);
         add(item.therapist_name);
         add(new Intl.NumberFormat("fa-IR").format(item.currency==="IRR"?Number(item.amount)/10:Number(item.amount)) + (item.currency==="IRR"?" تومان":" "+item.currency));
         add(new Intl.NumberFormat("fa-IR").format(item.currency==="IRR"?Number(item.therapist_share_amount)/10:Number(item.therapist_share_amount)) + " / " + new Intl.NumberFormat("fa-IR").format(item.currency==="IRR"?Number(item.platform_share_amount)/10:Number(item.platform_share_amount)));
@@ -235,42 +187,12 @@
           reject.addEventListener("click", () => reviewPayment(item.payment_id, false));
           action.append(approve, reject);
         } else if (item.request_status === "payment_verified") {
-          const slotSelect = document.createElement("select");
-          slotSelect.setAttribute("aria-label","زمان آزاد برای جلسه");
-          const placeholder=document.createElement("option");placeholder.value="";placeholder.textContent="در حال دریافت زمان‌های آزاد…";slotSelect.append(placeholder);
+          const time = document.createElement("input");
+          time.type = "datetime-local"; time.setAttribute("aria-label", "زمان جلسه");
           const schedule = document.createElement("button");
-          schedule.type = "button"; schedule.className = "button primary"; schedule.textContent = "ثبت جلسه از زمان آزاد";
-          const loadSlots = async () => {
-            const { data: slots, error: slotsError } = await db.rpc("admin_list_available_slots_for_request",{p_request_id:item.request_id});
-            slotSelect.replaceChildren();
-            const first=document.createElement("option");first.value="";first.textContent=slotsError?"مهاجرت ظرفیت هنوز فعال نیست":(slots?.length?"انتخاب زمان آزاد":"زمان آزادی ثبت نشده است");slotSelect.append(first);
-            if(slotsError){
-              const time=document.createElement("input");time.type="datetime-local";time.setAttribute("aria-label","زمان جلسه به وقت مدیر");
-              const manual=document.createElement("button");manual.type="button";manual.className="button outline";manual.textContent="ثبت دستی با زمان هماهنگ‌شده";
-              manual.addEventListener("click",()=>scheduleRequest(item.request_id,time.value));
-              action.append(time,manual);
-              setStatus("مدیریت ظرفیت زمان‌بندی فعال نیست؛ برای ادامه از زمان دستی هماهنگ‌شده استفاده کن.");
-            } else {
-              (slots||[]).forEach(slot=>{
-                const option=document.createElement("option");option.value=slot.slot_id;
-                const zone=slot.client_timezone||"Asia/Tehran";
-                option.textContent=new Intl.DateTimeFormat("fa-IR",{dateStyle:"medium",timeStyle:"short",timeZone:zone}).format(new Date(slot.starts_at))+" · "+zone;
-                slotSelect.append(option);
-              });
-            }
-          };
-          loadSlots();
-          schedule.disabled=true;
-          slotSelect.addEventListener("change",()=>{schedule.disabled=!slotSelect.value;});
-          schedule.addEventListener("click",async()=>{
-            if(!slotSelect.value)return;
-            schedule.disabled=true;
-            const {error:scheduleError}=await db.rpc("admin_schedule_request_from_slot",{p_request_id:item.request_id,p_slot_id:slotSelect.value});
-            if(scheduleError){schedule.disabled=false;setStatus(scheduleError.message||"ثبت جلسه ناموفق بود.",true);return;}
-            setStatus("جلسه از ظرفیت آزاد انتخاب‌شده ثبت شد.");
-            await loadRequests();
-          });
-          action.append(slotSelect,schedule);
+          schedule.type = "button"; schedule.className = "button primary"; schedule.textContent = "ثبت جلسه";
+          schedule.addEventListener("click", () => scheduleRequest(item.request_id, time.value));
+          action.append(time, schedule);
         } else if (item.request_status === "scheduled") {
           action.textContent = "جلسه ثبت شده";
         }
@@ -291,21 +213,18 @@
 
     async function scheduleRequest(requestId, localValue) {
       if (!localValue) { setStatus("ابتدا تاریخ و ساعت جلسه را انتخاب کن.", true); return; }
-      const row = requests.querySelector("tr[data-request-id=\"" + requestId + "\"]");
-      const timeZone = row?.dataset.timezone || "Asia/Tehran";
-      let start;
-      try { start = localDateTimeInZone(localValue,timeZone); }
-      catch(error) { setStatus(error.message,true); return; }
+      const start = new Date(localValue);
       if (Number.isNaN(start.getTime()) || start <= new Date()) {
         setStatus("زمان جلسه باید در آینده باشد.", true); return;
       }
-      const duration = Number(row?.dataset.duration || 45);
+      const row = requests.querySelector("tr[data-request-id=\"" + requestId + "\"]");
+      const duration = Number(row?.dataset.duration || 50);
       const end = new Date(start.getTime() + duration * 60000);
       const { error } = await db.rpc("admin_schedule_request", {
         p_request_id: requestId,
         p_starts_at: start.toISOString(),
         p_ends_at: end.toISOString(),
-        p_timezone: row?.dataset.timezone || "Asia/Tehran"
+        p_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran"
       });
       if (error) { setStatus(error.message || "ثبت جلسه ناموفق بود.", true); return; }
       setStatus("جلسه با درمانگر انتخاب‌شده ثبت شد.");
@@ -316,43 +235,11 @@
     const eventStatus=document.getElementById("yadWorkshopAdminStatus");
     const eventList=document.getElementById("yadWorkshopAdminList");
     const eventForm=document.getElementById("yadWorkshopAdminForm");
-    const eventTimezone=document.getElementById("eventTimezone");
-    if(eventTimezone&&!eventTimezone.value)eventTimezone.value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
     const proposalList=document.getElementById("yadWorkshopProposals");
     const rosterBox=document.getElementById("yadWorkshopRoster");
     const rosterList=document.getElementById("yadWorkshopRosterList");
     const eventValue=id=>document.getElementById(id)?.value?.trim()||"";
-    const eventDate=id=>{const v=eventValue(id);return v?localDateTimeInZone(v,eventValue("eventTimezone")||Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran").toISOString():null;};
-    const localInputValue=(value,zone)=>{
-      if(!value)return "";
-      const parts=Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date(value)).map(p=>[p.type,p.value]));
-      return parts.year+"-"+parts.month+"-"+parts.day+"T"+parts.hour+":"+parts.minute;
-    };
-    function clearWorkshopEditor(){
-      eventForm?.reset();
-      document.getElementById("eventId").value="";
-      document.getElementById("eventFormHeading").textContent="ایجاد کارگاه یا نشست جدید";
-      document.getElementById("eventCancelEdit").hidden=true;
-      document.getElementById("eventTimezone").value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
-      document.getElementById("eventLanguages").value="fa";
-      document.getElementById("eventFee").value="0";
-    }
-    async function editWorkshop(id){
-      const {data,error}=await db.rpc("admin_get_workshop",{p_workshop_id:id});
-      if(error)throw error;
-      const item=data?.[0];if(!item)throw new Error("رویداد پیدا نشد.");
-      const zone=item.timezone||"Asia/Tehran";
-      const values={eventId:item.id,eventSlug:item.slug,eventTitle:item.title,eventSummary:item.summary,eventDescription:item.description,
-        eventPresenter:item.presenter_name,eventPresenterBio:item.presenter_bio,eventLanguages:(item.languages||["fa"]).join(","),
-        eventTopics:(item.topics||[]).join(","),eventFormat:item.format,eventPlatform:item.platform,eventVenue:item.venue||"",
-        eventStarts:localInputValue(item.starts_at,zone),eventEnds:localInputValue(item.ends_at,zone),eventTimezone:zone,
-        eventCapacity:item.capacity??"",eventFee:item.fee_amount,eventCurrency:item.currency,eventStatus:item.status,
-        eventDeadline:localInputValue(item.registration_deadline,zone),eventMeetingUrl:item.meeting_url||"",eventMeetingPassword:item.meeting_password||""};
-      Object.entries(values).forEach(([id,value])=>{const input=document.getElementById(id);if(input)input.value=value;});
-      document.getElementById("eventFormHeading").textContent="ویرایش کارگاه: "+item.title;
-      document.getElementById("eventCancelEdit").hidden=false;
-      eventForm.scrollIntoView({behavior:"smooth",block:"start"});
-    }
+    const eventDate=id=>{const v=eventValue(id);return v?new Date(v).toISOString():null;};
     async function loadWorkshops(){
       if(!eventList)return;
       const [{data:events,error},{data:proposals, error:proposalError}]=await Promise.all([
@@ -369,9 +256,7 @@
         const statusBtn=document.createElement("button");statusBtn.type="button";statusBtn.className="button outline";
         statusBtn.textContent=item.status==="published"?"لغو انتشار":item.status==="cancelled"?"انتشار دوباره":"انتشار رویداد";
         statusBtn.addEventListener("click",async()=>{const next=item.status==="published"?"cancelled":"published";const {error}=await db.rpc("admin_set_workshop_status",{p_workshop_id:item.id,p_status:next});if(error){eventStatus.textContent=error.message;return;}eventStatus.textContent=next==="published"?"رویداد منتشر شد.":"رویداد از فهرست عمومی خارج شد.";await loadWorkshops();});
-        const editBtn=document.createElement("button");editBtn.type="button";editBtn.className="button outline";editBtn.textContent="ویرایش اطلاعات";
-        editBtn.addEventListener("click",()=>editWorkshop(item.id).catch(error=>eventStatus.textContent=error.message||"بارگذاری رویداد ناموفق بود."));
-        card.append(h,p,btn,statusBtn,editBtn);eventList.append(card);
+        card.append(h,p,btn,statusBtn);eventList.append(card);
       });
       if(!(events||[]).length)eventList.textContent="هنوز رویدادی ایجاد نشده است.";
       proposalList.replaceChildren();
@@ -412,7 +297,7 @@
         if(format==="in_person")platform="In person";
         if(format==="online"&&platform==="In person")platform="Zoom";
         const args={
-          p_workshop_id:eventValue("eventId")||null,p_slug:eventValue("eventSlug"),p_title:eventValue("eventTitle"),
+          p_workshop_id:null,p_slug:eventValue("eventSlug"),p_title:eventValue("eventTitle"),
           p_summary:eventValue("eventSummary"),p_description:eventValue("eventDescription"),
           p_presenter_name:eventValue("eventPresenter"),p_presenter_bio:eventValue("eventPresenterBio"),
           p_languages:split(eventValue("eventLanguages")),p_topics:split(eventValue("eventTopics")),
@@ -426,11 +311,11 @@
         if(new Date(args.p_ends_at)<=new Date(args.p_starts_at))throw new Error("زمان پایان باید بعد از شروع باشد.");
         const {error}=await db.rpc("admin_upsert_workshop",args);
         if(error)throw error;
-        clearWorkshopEditor();
+        eventForm.reset();document.getElementById("eventTimezone").value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Europe/Berlin";
+        document.getElementById("eventLanguages").value="fa";document.getElementById("eventFee").value="0";
         eventStatus.textContent="رویداد ذخیره شد.";await loadWorkshops();
       }catch(error){eventStatus.textContent=error.message||"ذخیره رویداد ناموفق بود.";}
     });
-    document.getElementById("eventCancelEdit")?.addEventListener("click",clearWorkshopEditor);
     document.getElementById("yadRefreshWorkshops")?.addEventListener("click",()=>loadWorkshops().catch(e=>eventStatus.textContent=e.message));
 
     root.addEventListener("submit", async event => {
@@ -439,10 +324,8 @@
         setStatus("در حال ذخیره پروفایل…");
         const photo = document.getElementById("yadPhoto").files[0];
         const documentFile = document.getElementById("yadLicenseDocument").files[0];
-        const scopeDocumentFile = document.getElementById("yadScopeDocument").files[0];
         const photoPath = await upload("therapist-photos", photo, val("yadExistingPhoto"));
         const documentPath = await upload("therapist-documents", documentFile, val("yadExistingDocument"));
-        const scopeDocumentPath = await upload("therapist-documents", scopeDocumentFile, val("yadExistingScopeDocument"));
         const payload = {
           p_therapist_id: val("yadTherapistId") || null,
           p_public_slug: val("yadPublicSlug"),
@@ -453,50 +336,23 @@
           p_specialties: split(val("yadSpecialties")),
           p_languages: split(val("yadLanguages")),
           p_modalities: split(val("yadModalities")),
-          p_session_duration_minutes: 45,
-          // Legacy database columns remain required by the existing RPC; public pricing comes only from central tariffs.
-          p_fee_amount: 0,
-          p_fee_currency: "IRR",
+          p_session_duration_minutes: Number(val("yadDuration") || 50),
+          p_fee_amount: Number(val("yadFee") || 0),
+          p_fee_currency: val("yadCurrency"),
           p_photo_path: photoPath,
           p_license_number: val("yadLicense") || null,
-          p_issuing_authority: "سازمان نظام روان‌شناسی و مشاوره جمهوری اسلامی ایران",
+          p_issuing_authority: val("yadAuthority") || null,
           p_document_path: documentPath,
-          p_verified: false,
-          p_is_listed: false
+          p_verified: document.getElementById("yadVerified").checked,
+          p_is_listed: document.getElementById("yadListed").checked
         };
         const { data: savedId, error } = await db.rpc("admin_save_therapist", payload);
         if (error) throw error;
-        const metadataId = savedId || val("yadTherapistId");
-        const wantsVerification = document.getElementById("yadVerified").checked;
-        const ownerUserId = val("yadTherapistOwnerUserId").trim();
-        if (ownerUserId) {
-          const { error: ownerError } = await db.rpc("admin_assign_therapist_user", {
-            p_therapist_id: metadataId,
-            p_user_id: ownerUserId
-          });
-          if (ownerError) throw ownerError;
-        }
-        if (wantsVerification) {
-          const { error: verificationError } = await db.rpc("admin_verify_therapist", {
-            p_therapist_id: metadataId,
-            p_license_number: val("yadLicense"),
-            p_license_expires_at: val("yadLicenseExpires") || null,
-            p_registry_reference: val("yadRegistryReference"),
-            p_psychotherapy_scope_evidence_reference: scopeDocumentPath,
-            p_jurisdiction_review_reference: val("yadJurisdictionReviewReference"),
-            p_approved_jurisdictions: split(val("yadJurisdictions")).map(code => code.toUpperCase()),
-            p_years_experience: val("yadYearsExperience") ? Number(val("yadYearsExperience")) : null,
-            p_accepting_new_clients: document.getElementById("yadAcceptingNewClients").checked,
-            p_publish: document.getElementById("yadListed").checked
-          });
-          if (verificationError) throw verificationError;
-        }
         root.reset();
         fillForm(null);
         document.getElementById("yadExistingPhoto").value = "";
         document.getElementById("yadExistingDocument").value = "";
-        document.getElementById("yadExistingScopeDocument").value = "";
-        setStatus(wantsVerification ? "استعلام پروانه، صلاحیت تخصصی و قلمروهای فعالیت ثبت شد؛ وضعیت انتشار مطابق انتخاب مدیر اعمال شد." : "پروفایل ذخیره شد اما تا تکمیل استعلام رسمی، احراز صلاحیت تخصصی و بررسی قلمروها منتشر یا برای پذیرش مراجع فعال نمی‌شود.");
+        setStatus("پروفایل درمانگر ذخیره شد.");
         await loadBusinessSettings();
         await loadTherapists();
       } catch (error) {
