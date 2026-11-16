@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://elegant-otter-e1f7ef.netlify.app/sitemap.xml

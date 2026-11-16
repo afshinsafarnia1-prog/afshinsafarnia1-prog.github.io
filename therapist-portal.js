@@ -1,0 +1,122 @@
+(() => {
+  const ready = () => {
+    const panel = document.getElementById("therapistPrivatePortal");
+    if (!panel || !window.supabase?.createClient) return;
+    const cfg = window.YAD_SUPABASE_CONFIG || {};
+    if (!cfg.url || !cfg.anonKey) return;
+    const db = window.supabase.createClient(cfg.url, cfg.anonKey);
+    const sessionsRoot = document.getElementById("yadTherapistSessions");
+    const slotsRoot = document.getElementById("yadTherapistAvailabilityList");
+    const form = document.getElementById("yadTherapistAvailabilityForm");
+    const status = document.getElementById("yadTherapistAvailabilityStatus");
+    const start = document.getElementById("yadTherapistAvailabilityStart");
+    const end = document.getElementById("yadTherapistAvailabilityEnd");
+    const zone = document.getElementById("yadTherapistAvailabilityTimezone");
+    let activeUser = null;
+    const node = (tag, cls, value) => {
+      const el = document.createElement(tag);
+      if (cls) el.className = cls;
+      if (value != null) el.textContent = value;
+      return el;
+    };
+    const setStatus = (value,bad=false) => {
+      status.textContent=value;
+      status.dataset.error=bad?"true":"false";
+    };
+    const date = (value,tz) => value ? new Intl.DateTimeFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB",{dateStyle:"medium",timeStyle:"short",timeZone:tz||undefined}).format(new Date(value)) : "—";
+    const localDateTimeInZone = (value,timeZone) => {
+      const match=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value||"");
+      if(!match) throw new Error("فرمت تاریخ و ساعت معتبر نیست.");
+      const target=Date.UTC(Number(match[1]),Number(match[2])-1,Number(match[3]),Number(match[4]),Number(match[5]));
+      let guess=target;
+      const formatter=new Intl.DateTimeFormat("en-GB",{timeZone,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
+      for(let i=0;i<5;i++){
+        const parts=Object.fromEntries(formatter.formatToParts(new Date(guess)).map(x=>[x.type,x.value]));
+        const represented=Date.UTC(Number(parts.year),Number(parts.month)-1,Number(parts.day),Number(parts.hour),Number(parts.minute));
+        const delta=target-represented;
+        if(!delta)break;
+        guess+=delta;
+      }
+      const parts=Object.fromEntries(formatter.formatToParts(new Date(guess)).map(x=>[x.type,x.value]));
+      const finalValue=Date.UTC(Number(parts.year),Number(parts.month)-1,Number(parts.day),Number(parts.hour),Number(parts.minute));
+      if(finalValue!==target)throw new Error("این ساعت در منطقهٔ زمانی انتخاب‌شده وجود ندارد؛ زمان دیگری انتخاب کنید.");
+      return new Date(guess);
+    };
+    async function loadSessions(){
+      const {data,error}=await db.rpc("therapist_list_appointments");
+      sessionsRoot.replaceChildren();
+      if(error){sessionsRoot.append(node("p","notice",error.message||"بارگذاری جلسات ناموفق بود."));return;}
+      if(!data?.length){sessionsRoot.append(node("p","muted","هنوز جلسه‌ای برای این حساب ثبت نشده است. اگر پروفایل شما تأیید شده، از مدیریت بخواهید حساب را به پروفایل درمانگر متصل کند."));return;}
+      data.forEach(item=>{
+        const card=node("article","portal-card");
+        card.append(node("h3","",item.client_name));
+        card.append(node("p","muted",date(item.starts_at,item.timezone)+" تا "+date(item.ends_at,item.timezone)+" · "+item.timezone));
+        card.append(node("span","status-chip",item.appointment_status));
+        if(item.meeting_url){
+          const link=node("a","button primary","ورود به جلسه");link.href=item.meeting_url;link.target="_blank";link.rel="noopener noreferrer";card.append(link);
+          if(item.meeting_password)card.append(node("p","muted","رمز جلسه: "+item.meeting_password));
+        }else if(item.appointment_status==="confirmed"){
+          card.append(node("p","muted","لینک جلسه پس از ثبت توسط مدیریت در این قسمت نمایش داده می‌شود."));
+        }
+        sessionsRoot.append(card);
+      });
+    }
+    async function loadSlots(){
+      const {data,error}=await db.rpc("therapist_list_availability_slots");
+      slotsRoot.replaceChildren();
+      if(error){slotsRoot.append(node("p","notice",error.message||"بارگذاری زمان‌های آزاد ناموفق بود."));return;}
+      if(!data?.length){slotsRoot.append(node("p","muted","زمان آزادی ثبت نشده است."));return;}
+      data.forEach(slot=>{
+        const card=node("article","portal-card");
+        card.append(node("b","",date(slot.starts_at,slot.timezone)+" · "+slot.timezone));
+        card.append(node("p","muted",date(slot.ends_at,slot.timezone)));
+        const remove=node("button","button outline","حذف زمان آزاد");remove.type="button";
+        remove.addEventListener("click",async()=>{
+          if(!window.confirm("این زمان آزاد حذف شود؟"))return;
+          remove.disabled=true;
+          const {error:removeError}=await db.rpc("therapist_delete_availability_slot",{p_slot_id:slot.slot_id});
+          if(removeError){remove.disabled=false;setStatus(removeError.message||"حذف زمان ناموفق بود.",true);return;}
+          setStatus("زمان آزاد حذف شد.");
+          await loadSlots();
+        });
+        card.append(remove);slotsRoot.append(card);
+      });
+    }
+    async function init(session){
+      if(!session?.user||activeUser===session.user.id)return;
+      activeUser=session.user.id;
+      const {data:profile,error}=await db.from("profiles").select("role").eq("id",activeUser).maybeSingle();
+      if(error||profile?.role!=="therapist"){
+        panel.hidden=true;
+        setStatus("این پنل فقط برای حساب درمانگر فعال است.",true);
+        return;
+      }
+      zone.value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
+      await Promise.all([loadSessions(),loadSlots()]);
+    }
+    form.addEventListener("submit",async event=>{
+      event.preventDefault();
+      if(!activeUser){setStatus("ابتدا وارد حساب درمانگر شوید.",true);return;}
+      let starts,ends;
+      try{
+        starts=localDateTimeInZone(start.value,zone.value.trim());
+        ends=localDateTimeInZone(end.value,zone.value.trim());
+      }catch(error){setStatus(error.message,true);return;}
+      if(ends.getTime()-starts.getTime()!==45*60000){setStatus("هر زمان آزاد باید دقیقاً ۴۵ دقیقه باشد.",true);return;}
+      const button=form.querySelector('button[type="submit"]');button.disabled=true;
+      const {error}=await db.rpc("therapist_create_availability_slot",{p_starts_at:starts.toISOString(),p_ends_at:ends.toISOString(),p_timezone:zone.value.trim()});
+      button.disabled=false;
+      if(error){setStatus(error.message==="availability_overlap"?"این زمان با یک زمان دیگر هم‌پوشانی دارد.":error.message||"ثبت زمان آزاد ناموفق بود.",true);return;}
+      form.reset();zone.value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
+      setStatus("زمان آزاد ۴۵ دقیقه‌ای ثبت شد.");
+      await loadSlots();
+    });
+    db.auth.getSession().then(({data})=>init(data.session));
+    db.auth.onAuthStateChange((_event,session)=>{
+      if(session)init(session);
+      else{activeUser=null;panel.hidden=true;sessionsRoot.replaceChildren(node("p","muted","برای مشاهدهٔ جلسات وارد حساب شوید."));}
+    });
+  };
+  if(document.readyState==="complete")ready();
+  else window.addEventListener("load",ready,{once:true});
+})();

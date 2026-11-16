@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>همکاری درمانگران | یادسنتر</title>
+<meta name="description" content="اطلاعات همکاری حرفه‌ای با یادسنتر، روند بررسی مدارک و شرایط معرفی درمانگران و پیشنهاد کارگاه‌های تخصصی.">
+<link rel="stylesheet" href="style.css">
+<script defer src="site-i18n.js"></script>
+<script defer src="portal.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="supabase-config.js"></script><script defer src="auth.js"></script><script defer src="therapist-portal.js"></script>
+
+<link rel="canonical" href="https://elegant-otter-e1f7ef.netlify.app/therapist.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fa_IR">
+<meta property="og:title" content="همکاری درمانگران | یادسنتر">
+<meta property="og:description" content="اطلاعات همکاری حرفه‌ای با یادسنتر، روند بررسی مدارک و شرایط معرفی درمانگران و پیشنهاد کارگاه‌های تخصصی.">
+<meta property="og:url" content="https://elegant-otter-e1f7ef.netlify.app/therapist.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="همکاری درمانگران | یادسنتر">
+<meta name="twitter:description" content="اطلاعات همکاری حرفه‌ای با یادسنتر، روند بررسی مدارک و شرایط معرفی درمانگران و پیشنهاد کارگاه‌های تخصصی.">
+</head>
+<body><a class="skip-link" href="#mainContent">رفتن به محتوای اصلی</a>
+<header class="header"><div class="wrap navrow"><a class="brand" href="/"><span class="brandmark">ی</span><span><b>یادسنتر</b><small>YAD CENTER</small></span></a><nav class="portal-nav" aria-label="ناوبری"><a href="/">صفحهٔ اصلی</a><a href="/#therapists">درمانگران</a><a href="/articles/">مجله</a></nav><a class="navcta" href="/rules.html">قوانین و حریم خصوصی</a></div></header><main id="mainContent" class="portal-main"><div class="portal-wrap">
+<span class="eyebrow" data-i18n="therapistEyebrow">همکاری حرفه‌ای با یادسنتر</span>
+<h1 data-i18n="therapistTitle">معرفی درمانگران در یادسنتر</h1>
+<p class="lead" data-i18n="therapistLead">در یادسنتر، پروفایل درمانگران فقط پس از بررسی و تأیید مدارک توسط مدیریت ایجاد و منتشر می‌شود. پس از تأیید مدارک، حساب درمانگر به پروفایل متصل می‌شود و دسترسی پنل اختصاصی فعال خواهد شد.</p>
+<section class="portal-card">
+<h2 data-i18n="collabTitle">روند همکاری</h2>
+<ol>
+<li data-i18n="collab1">اطلاعات هویتی و حرفه‌ای، سوابق تحصیلی، حوزه‌های تخصصی و رویکرد درمانی را برای مدیریت یادسنتر ارسال می‌کنید.</li>
+<li data-i18n="collab2">مدارک و مجوز حرفه‌ای بررسی می‌شود؛ مدارک محرمانه در بخش خصوصی نگهداری می‌شوند و در پروفایل عمومی قرار نمی‌گیرند.</li>
+<li data-i18n="collab3">پس از تأیید، مدیریت یادسنتر پروفایل عمومی شما را ایجاد و منتشر می‌کند.</li>
+<li data-i18n="collab4">مراجعان می‌توانند پروفایل تأییدشده را ببینند و خودشان درمانگر موردنظرشان را انتخاب کنند.</li>
+<li data-i18n="collab5">درخواست، پرداخت و هماهنگی جلسه از مسیر یادسنتر پیگیری می‌شود.</li>
+</ol>
+<div class="notice" data-i18n="collabNotice">راه ارتباطی رسمی برای دریافت مدارک و درخواست همکاری هنوز در سایت ثبت نشده است. تا زمان اعلام آن، مدارک هویتی یا حرفه‌ای را در فرم‌های عمومی سایت بارگذاری نکنید.</div>
+</section>
+<section class="portal-card" id="therapistPrivatePortal" hidden>
+<h2 data-i18n="privatePortalTitle">پنل اختصاصی درمانگر</h2>
+<p data-i18n="privatePortalLead">جلسات تأییدشده و زمان‌های آزاد خود را مدیریت کنید. اطلاعات بالینی مراجعان در این پنل نمایش داده نمی‌شود.</p>
+<div class="portal-card"><h3>جلسات من</h3><div id="yadTherapistSessions" class="portal-grid"><p>برای مشاهدهٔ جلسات وارد حساب درمانگر شوید.</p></div></div>
+<div class="portal-card"><h3>مدیریت زمان‌های آزاد</h3>
+<form id="yadTherapistAvailabilityForm" class="yad-admin-form">
+<label>زمان شروع<input id="yadTherapistAvailabilityStart" type="datetime-local" required></label>
+<label>زمان پایان<input id="yadTherapistAvailabilityEnd" type="datetime-local" required></label>
+<label>منطقهٔ زمانی (IANA)<input id="yadTherapistAvailabilityTimezone" maxlength="80" required></label>
+<button class="button primary" type="submit">ثبت زمان آزاد ۴۵ دقیقه‌ای</button>
+</form>
+<p id="yadTherapistAvailabilityStatus" class="notice" role="status" aria-live="polite"></p>
+<div id="yadTherapistAvailabilityList" class="portal-grid"></div>
+</div>
+</section>
+<section class="portal-card" id="workshopProposal">
+<h2 data-i18n="proposalTitle">پیشنهاد برگزاری کارگاه یا نشست</h2>
+<p data-i18n="proposalLead">درمانگران و متخصصان می‌توانند موضوع پیشنهادی خود را برای بررسی و انتشار به مدیریت یادسنتر ارسال کنند. پس از تأیید، زمان‌بندی، ثبت‌نام، اطلاع‌رسانی و دسترسی به جلسه آنلاین از طریق یادسنتر مدیریت می‌شود.</p>
+<form id="yadWorkshopProposalForm" class="yad-admin-form">
+<label><span data-i18n="proposalName">نام و نام خانوادگی</span><input id="proposalPresenter" required maxlength="120"></label>
+<label><span data-i18n="proposalEmail">ایمیل تماس</span><input id="proposalEmail" type="email" required maxlength="254"></label>
+<label><span data-i18n="proposalContact">راه ارتباطی دیگر (اختیاری)</span><input id="proposalContact" maxlength="160"></label>
+<label><span data-i18n="proposalEventTitle">عنوان پیشنهادی کارگاه</span><input id="proposalTitle" required minlength="4" maxlength="180"></label>
+<label><span data-i18n="proposalTopic">موضوع و حوزه تخصصی</span><input id="proposalTopic" maxlength="180"></label>
+<label><span data-i18n="proposalLanguage">زبان ارائه</span><select id="proposalLanguage"><option value="fa">فارسی</option><option value="ku">کوردی</option><option value="en">English</option><option value="tr">Türkçe</option><option value="ar">العربية</option><option value="es">Español</option><option value="de">Deutsch</option><option value="fr">Français</option></select></label>
+<label><span data-i18n="proposalDescription">توضیح کوتاه درباره محتوا و مخاطبان</span><textarea id="proposalDescription" rows="4" maxlength="3000"></textarea></label>
+<button class="button primary" type="submit" data-i18n="proposalSubmit">ارسال پیشنهاد به یادسنتر</button>
+</form>
+<p id="yadWorkshopProposalStatus" class="notice" role="status" aria-live="polite"></p>
+</section>
+<script>
+(()=>{const ready=()=>{const form=document.getElementById("yadWorkshopProposalForm");if(!form||!window.supabase?.createClient)return;const cfg=window.YAD_SUPABASE_CONFIG||{};if(!cfg.url||!cfg.anonKey)return;const db=window.supabase.createClient(cfg.url,cfg.anonKey);const status=document.getElementById("yadWorkshopProposalStatus");const msg=key=>window.YAD_I18N?.translations?.[document.documentElement.lang]?.[key]||window.YAD_I18N?.translations?.fa?.[key]||"";form.addEventListener("submit",async e=>{e.preventDefault();const b=form.querySelector("button");b.disabled=true;status.textContent=msg("proposalSending");const {data,error}=await db.rpc("submit_workshop_proposal",{p_presenter_name:document.getElementById("proposalPresenter").value.trim(),p_contact_email:document.getElementById("proposalEmail").value.trim(),p_contact_method:document.getElementById("proposalContact").value.trim(),p_proposed_title:document.getElementById("proposalTitle").value.trim(),p_topic:document.getElementById("proposalTopic").value.trim(),p_preferred_language:document.getElementById("proposalLanguage").value,p_proposal:document.getElementById("proposalDescription").value.trim()});b.disabled=false;status.textContent=error?msg("proposalFailed"):msg("proposalSuccess");if(!error)form.reset();});};if(document.readyState==="complete")ready();else window.addEventListener("load",ready,{once:true});})();
+</script>
+</div></main>
+</body></html>

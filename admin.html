@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مدیریت یادسنتر | پنل مدیریت</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="site-i18n.js"></script>
+<script defer src="portal.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="supabase-config.js"></script>
+<script defer src="auth.js"></script>
+<script defer src="admin-workflow-extended.js"></script><script defer src="admin-extensions.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#mainContent">رفتن به محتوای اصلی</a><header class="header portal-header"><div class="wrap navrow"><a class="brand" href="/"><span class="brandmark">ی</span><span><b>یادسنتر</b><small>YAD CENTER</small></span></a><nav class="portal-nav" aria-label="ناوبری مدیریت"><a href="/">نمای عمومی سایت</a><a href="/#therapists">فهرست درمانگران</a></nav><a class="navcta" href="/rules.html">قوانین و حریم خصوصی</a></div></header><main id="mainContent" class="portal-main"><div class="portal-wrap">
+<span class="eyebrow" data-i18n="adminEyebrow">مدیریت متمرکز یادسنتر</span>
+<h1 data-i18n="adminTitle">پنل مدیریت یادسنتر</h1>
+<p class="lead" data-i18n="adminLead">مدیریت درمانگران، مراجعان، نوبت‌ها و پرداخت‌ها از طریق مدیریت مرکزی یادسنتر انجام می‌شود.</p>
+<section class="portal-card" id="yadBusinessSettings">
+<h2 data-i18n="businessTitle">تعرفه‌ها و راه‌های ارتباطی یادسنتر</h2>
+<p data-i18n="businessHelp">تعرفه‌ها برای همه درمانگران یکسان است. مبلغ‌ها برای جلسهٔ ۴۵ دقیقه‌ای به تفکیک بازار ثبت می‌شوند.</p>
+<div id="yadBusinessSettingsStatus" class="notice" role="status" aria-live="polite">در حال دریافت تنظیمات…</div>
+<form id="yadBusinessSettingsForm" class="yad-admin-form">
+<h3>تعرفه‌های مرکزی و تقسیم درآمد</h3>
+<div class="portal-grid">
+<label>تعرفه داخل ایران (تومان)<input id="yadTariffIRR" type="number" min="1" step="1"></label>
+<label>تعرفه بین‌المللی (یورو)<input id="yadTariffEUR" type="number" min="1" step="1"></label>
+<label>تعرفه بین‌المللی (دلار)<input id="yadTariffUSD" type="number" min="1" step="1"></label>
+<label>درصد سهم درمانگر<input id="yadTherapistPercent" type="number" min="1" max="99" value="70" required></label>
+<label>درصد سهم یادسنتر<input id="yadPlatformPercent" type="number" value="30" readonly></label>
+<label>تاریخ شروع اعتبار<input id="yadTariffEffective" type="datetime-local"></label>
+</div>
+<h3>کنترل پذیرش درخواست‌های جدید</h3>
+<div class="portal-grid">
+<label class="yad-consent"><input id="yadClientIntakeEnabled" type="checkbox"><span>پذیرش درخواست‌های جدید فعال باشد</span></label>
+<label>نسخهٔ نهایی قوانین و رضایت آگاهانه<input id="yadClientPolicyVersion" type="text" maxlength="80" placeholder="مثلاً 2026-12-v1"></label>
+</div>
+<p class="privacy-hint">پذیرش به‌صورت پیش‌فرض غیرفعال است. فقط پس از تصویب متن حقوقی و انتشار نسخهٔ نهایی قوانین، این گزینه را فعال کنید. مقدار آزمایشی یا پیش‌نویس پذیرفته نمی‌شود.</p>
+<h3>راه‌های ارتباطی عمومی</h3>
+<div class="portal-grid">
+<label>شماره واتساپ (با کد کشور)<input id="yadContactWhatsapp" type="tel" maxlength="40" placeholder="+..."></label>
+<label>ایمیل رسمی<input id="yadContactEmail" type="email" maxlength="254"></label>
+<label>لینک اینستاگرام<input id="yadContactInstagram" type="url" placeholder="https://..."></label>
+<label>لینک تلگرام<input id="yadContactTelegram" type="url" placeholder="https://..."></label>
+<label>لینک یوتیوب<input id="yadContactYoutube" type="url" placeholder="https://..."></label>
+<label>لینک لینکدین<input id="yadContactLinkedin" type="url" placeholder="https://..."></label>
+<label>لینک فیسبوک<input id="yadContactFacebook" type="url" placeholder="https://..."></label>
+</div>
+<button class="button primary" type="submit">ذخیره تعرفه‌ها، تماس و وضعیت پذیرش</button>
+</form>
+</section>
+<section class="portal-card">
+<h2 data-i18n="opsTitle">عملیات و وضعیت سامانه</h2>
+<p id="yadAdminStatus" class="notice" role="status" aria-live="polite" data-i18n="loading">در حال اتصال امن…</p>
+<div class="portal-grid">
+<div><b data-i18n="appointmentsTitle">نوبت‌ها</b><p data-i18n="appointmentsHelp">فهرست نوبت‌های ثبت‌شده در سامانه.</p><strong id="yadAppointmentCount">—</strong></div>
+<div><b data-i18n="paymentsTitle">پرداخت‌ها</b><p data-i18n="paymentsHelp">بررسی رسیدهای پرداخت و ثبت نتیجه.</p><strong id="yadPaymentCount">—</strong></div>
+</div>
+</section>
+<section class="portal-card">
+<div class="section-head"><div><h2 data-i18n="appointmentsTitle">نوبت‌ها</h2><p data-i18n="appointmentsHelp">فهرست نوبت‌های ثبت‌شده در سامانه.</p></div><button class="button outline" id="yadRefreshAppointments" type="button" data-i18n="refresh">به‌روزرسانی</button></div>
+<div style="overflow-x:auto"><table class="admin-table"><thead><tr>
+<th data-i18n="client">مراجع</th><th data-i18n="phone">تلفن</th><th data-i18n="therapist">درمانگر</th><th data-i18n="sessionTime">زمان جلسه</th><th data-i18n="market">بازار</th><th data-i18n="status">وضعیت</th>
+</tr></thead><tbody id="yadAppointmentsBody"><tr><td colspan="6" data-i18n="loading">در حال بارگذاری…</td></tr></tbody></table></div>
+</section>
+<section class="portal-card">
+<div class="section-head"><div><h2 data-i18n="paymentsTitle">پرداخت‌ها</h2><p data-i18n="paymentsReviewHelp">رسیدهای انتقال دستی را بررسی و تأیید یا رد کن.</p></div><button class="button outline" id="yadRefreshPayments" type="button" data-i18n="refresh">به‌روزرسانی</button></div>
+<div style="overflow-x:auto"><table class="admin-table"><thead><tr>
+<th data-i18n="client">مراجع</th><th data-i18n="amount">مبلغ</th><th data-i18n="reference">شماره پیگیری</th><th data-i18n="createdAt">تاریخ ثبت</th><th data-i18n="status">وضعیت</th><th data-i18n="action">اقدام</th>
+</tr></thead><tbody id="yadPaymentsBody"><tr><td colspan="6" data-i18n="loading">در حال بارگذاری…</td></tr></tbody></table></div>
+</section>
+<section class="portal-card">
+<div class="section-head"><div><h2 data-i18n="therapistManage">ثبت و مدیریت درمانگران</h2><p data-i18n="therapistManageHelp">مدارک و انتشار پروفایل فقط پس از احراز هویت و بررسی صلاحیت توسط مدیریت انجام می‌شود.</p></div></div>
+<div id="yadWorkflowStatus" class="notice" role="status" aria-live="polite">در حال اتصال…</div>
+<div id="yadTherapistList" class="portal-grid"></div>
+<form id="yadTherapistForm" class="yad-admin-form">
+<h3 id="yadFormTitle">ثبت درمانگر جدید</h3>
+<input id="yadTherapistId" type="hidden">
+<input id="yadExistingPhoto" type="hidden">
+<input id="yadExistingDocument" type="hidden">
+<input id="yadExistingScopeDocument" type="hidden">
+<div class="portal-grid">
+<label>نام نمایشی<input id="yadDisplayName" required maxlength="120"></label>
+<label>شناسهٔ صفحه (لاتین)<input id="yadPublicSlug" required pattern="[a-zA-Z0-9-]+" maxlength="100"></label>
+<label>عنوان حرفه‌ای<input id="yadHeadline" maxlength="180"></label>
+<label>مدت جلسه (دقیقه)<input id="yadDuration" type="number" min="45" max="45" value="45" readonly required><small>مدت استاندارد همهٔ جلسات یادسنتر ۴۵ دقیقه است.</small></label>
+<label>شناسهٔ حساب درمانگر در سامانه (UUID؛ پس از ایجاد حساب با نقش درمانگر)<input id="yadTherapistOwnerUserId" maxlength="36" pattern="[0-9a-fA-F-]{36}" placeholder="UUID حساب کاربری درمانگر"><small>اختیاری؛ فقط پس از احراز هویت و تأیید صلاحیت به پروفایل متصل شود.</small></label>
+<label>تحصیلات و مدارک (با ویرگول جدا کن)<input id="yadQualifications"></label>
+<label>حوزه‌های تخصصی<input id="yadSpecialties"></label>
+<label>زبان‌ها (fa, ku, en, tr, ar, es, de, fr)<input id="yadLanguages" value="fa"></label>
+<label>رویکردهای درمانی<input id="yadModalities"></label>
+<label>سابقهٔ حرفه‌ای (سال)<input id="yadYearsExperience" type="number" min="0" max="60" step="1"></label>
+<label>کشورهای مجاز فعالیت (کد دوحرفی ISO؛ با ویرگول)<input id="yadJurisdictions" maxlength="2000" placeholder="IR, DE, NL — فقط پس از بررسی مجوز"></label>
+<label>عکس پروفایل<input id="yadPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label>
+<label>مدرک مجوز / پروانه<input id="yadLicenseDocument" type="file" accept="application/pdf,image/jpeg,image/png"></label>
+<label>شمارهٔ پروانه اشتغال سازمان نظام<input id="yadLicense" maxlength="120"></label>
+<label>مرجع صادرکننده<input id="yadAuthority" value="سازمان نظام روان‌شناسی و مشاوره جمهوری اسلامی ایران" readonly></label>
+<label>تاریخ انقضای پروانه (در صورت درج روی پروانه)<input id="yadLicenseExpires" type="date"></label>
+<label>مرجع/نشانی استعلام رسمی پروانه<input id="yadRegistryReference" maxlength="2000" placeholder="نشانی یا شناسه استعلام از درگاه رسمی سازمان"></label>
+<label>مدرک تخصصی روان‌درمانگری، آموزش رویکردی و سوپرویژن<input id="yadScopeDocument" type="file" accept="application/pdf,image/jpeg,image/png"></label>
+<label>مستند بررسی مقررات هر کشور مجاز<textarea id="yadJurisdictionReviewReference" rows="3" maxlength="4000" placeholder="برای هر کشور کد ISO و مرجع/نظر حقوقی مربوط را ثبت کنید؛ نمونه: IR=...؛ DE=..."></textarea></label>
+</div>
+<label>زندگی‌نامه و معرفی حرفه‌ای<textarea id="yadBiography" rows="5"></textarea></label>
+<div class="yad-checks"><label><input id="yadVerified" type="checkbox"> پروانه رسمی، صلاحیت تخصصی روان‌درمانگری و مستندات قلمروها بررسی شده‌اند</label><label><input id="yadListed" type="checkbox"> انتشار در فهرست عمومی</label><label><input id="yadAcceptingNewClients" type="checkbox"> پذیرش مراجع جدید فعال است</label></div><p class="privacy-hint">ثبت و انتشار درمانگر فقط پس از استعلام رسمی پروانه، بررسی مدارک تخصصی روان‌درمانگری/سوپرویژن و ثبت مستندات حقوقی تک‌تک کشورهای مجاز ممکن است. پروانه ایرانی به‌تنهایی مجوز فعالیت در کشورهای دیگر نیست. مدارک در فضای خصوصی نگهداری شوند.</p>
+<div class="admin-actions"><button class="button primary" type="submit">ذخیرهٔ پروفایل</button><button class="button outline" id="yadCancelEdit" type="button" hidden>لغو ویرایش</button></div>
+</form>
+</section>
+<section class="portal-card" id="yadAvailabilityManager">
+<div class="section-head"><div><h2 data-i18n="availabilityTitle">تقویم ظرفیت و زمان‌های آزاد</h2><p data-i18n="availabilityHelp">مدیر برای درمانگر تأییدشده بازه‌های ۴۵ دقیقه‌ای تعریف می‌کند.</p></div></div>
+<form id="yadAvailabilityForm" class="yad-admin-form">
+<div class="portal-grid">
+<label>درمانگر<select id="yadAvailabilityTherapist" required><option value="">انتخاب درمانگر</option></select></label>
+<label>منطقهٔ زمانی ظرفیت<input id="yadAvailabilityTimezone" required maxlength="64" placeholder="Asia/Tehran"></label>
+<label>شروع بازه<input id="yadAvailabilityStart" type="datetime-local" required></label>
+<label>پایان بازه<input id="yadAvailabilityEnd" type="datetime-local" required></label>
+</div>
+<button class="button primary" type="submit">ثبت زمان آزاد ۴۵ دقیقه‌ای</button>
+<p id="yadAvailabilityStatus" class="notice" role="status" aria-live="polite"></p>
+</form>
+<h3>زمان‌های ثبت‌شده</h3><div id="yadAvailabilityList" class="portal-grid"><p>ابتدا درمانگر را انتخاب کنید.</p></div>
+</section>
+<section class="portal-card">
+<div class="section-head"><div><h2 data-i18n="requestsTitle">درخواست‌های مراجعان و پرداخت‌ها</h2><p data-i18n="requestsHelp">پس از تأیید واقعی وجه، زمان جلسه با درمانگر هماهنگ می‌شود.</p></div><button class="button outline" id="yadRefreshWorkflow" type="button">به‌روزرسانی</button></div>
+<div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>مراجع</th><th>درمانگر انتخابی</th><th>مبلغ</th><th>سهم درمانگر / یادسنتر</th><th>شماره پیگیری</th><th>وضعیت درخواست</th><th>وضعیت پرداخت</th><th>اقدام</th></tr></thead><tbody id="yadRequestsBody"><tr><td colspan="8">در حال بارگذاری…</td></tr></tbody></table></div>
+</section>
+<section class="portal-card" id="yadSessionAccessAdmin"><div class="section-head"><div><h2 data-i18n="sessionLinksTitle">لینک خصوصی جلسات</h2><p data-i18n="sessionLinksHelp">فقط برای نوبت پرداخت‌شده و تأییدشده لینک HTTPS ثبت کنید.</p></div><button class="button outline" id="yadRefreshSessionAccess" type="button">به‌روزرسانی</button></div><div id="yadSessionAccessList" class="portal-grid"><p>در انتظار اتصال…</p></div></section>
+<section class="portal-card" id="yadSupportAdmin"><div class="section-head"><div><h2 data-i18n="supportAdminTitle">درخواست‌های پشتیبانی و شکایت‌ها</h2><p>درخواست لغو، جابه‌جایی، تغییر درمانگر، شکایت و درخواست‌های اطلاعات حساب.</p></div><button class="button outline" id="yadRefreshSupport" type="button">به‌روزرسانی</button></div><div id="yadSupportAdminList" class="portal-grid"><p>در انتظار اتصال…</p></div></section>
+<section class="portal-card" id="yadFeedbackAdmin"><div class="section-head"><div><h2 data-i18n="feedbackAdminTitle">بازخورد جلسات</h2><p>بازخوردها پیش از نمایش عمومی باید توسط مدیریت بررسی شوند.</p></div><button class="button outline" id="yadRefreshFeedback" type="button">به‌روزرسانی</button></div><div id="yadFeedbackAdminList" class="portal-grid"><p>در انتظار اتصال…</p></div></section>
+<section class="portal-card" id="yadWorkshopAdmin">
+<div class="section-head"><div><h2 data-i18n="workshopAdminTitle">مدیریت کارگاه‌ها و نشست‌ها</h2><p>ایجاد رویداد، انتشار، مدیریت ثبت‌نام‌ها و نگهداری خصوصی لینک جلسه آنلاین.</p></div><button class="button outline" id="yadRefreshWorkshops" type="button">به‌روزرسانی رویدادها</button></div>
+<div id="yadWorkshopAdminStatus" class="notice" role="status" aria-live="polite">در انتظار اتصال…</div>
+<div id="yadWorkshopAdminList" class="portal-grid"></div>
+<form id="yadWorkshopAdminForm" class="yad-admin-form">
+<input id="eventId" type="hidden">
+<h3 id="eventFormHeading">ایجاد کارگاه یا نشست جدید</h3>
+<div class="portal-grid">
+<label>عنوان کارگاه<input id="eventTitle" required minlength="4" maxlength="180"></label>
+<label>شناسه صفحه (لاتین)<input id="eventSlug" required pattern="[a-zA-Z0-9-]+" maxlength="100"></label>
+<label>نام ارائه‌دهنده<input id="eventPresenter" required maxlength="120"></label>
+<label>زبان ارائه (کدها با ویرگول)<input id="eventLanguages" value="fa"></label>
+<label>موضوع‌ها (با ویرگول)<input id="eventTopics"></label>
+<label>نوع برگزاری<select id="eventFormat"><option value="online">آنلاین</option><option value="hybrid">حضوری و آنلاین</option><option value="in_person">حضوری</option></select></label>
+<label>بستر برگزاری<select id="eventPlatform"><option>Zoom</option><option>Google Meet</option><option>Microsoft Teams</option><option>Other</option><option>In person</option></select></label>
+<label>مکان (برای حضوری)<input id="eventVenue"></label>
+<label>تاریخ و ساعت شروع<input id="eventStarts" type="datetime-local" required></label>
+<label>تاریخ و ساعت پایان<input id="eventEnds" type="datetime-local" required></label>
+<label>منطقه زمانی<input id="eventTimezone" placeholder="به‌صورت خودکار از دستگاه" required></label>
+<label>ظرفیت (خالی = بدون محدودیت)<input id="eventCapacity" type="number" min="1"></label>
+<label>هزینه<input id="eventFee" type="number" min="0" value="0"></label>
+<label>واحد پول<select id="eventCurrency"><option>EUR</option><option>USD</option><option>IRR</option></select></label>
+<label>مهلت ثبت‌نام<input id="eventDeadline" type="datetime-local"></label>
+<label>وضعیت انتشار<select id="eventStatus"><option value="draft">پیش‌نویس</option><option value="published">انتشار عمومی</option><option value="cancelled">لغوشده</option><option value="completed">پایان‌یافته</option></select></label>
+<label>لینک خصوصی جلسه (Zoom/…؛ فقط برای ثبت‌نام‌کنندگان مجاز)<input id="eventMeetingUrl" type="url"></label>
+<label>رمز جلسه (اختیاری)<input id="eventMeetingPassword" maxlength="120"></label>
+</div>
+<label>خلاصهٔ معرفی<textarea id="eventSummary" rows="2" maxlength="500"></textarea></label>
+<label>شرح کامل<textarea id="eventDescription" rows="5"></textarea></label>
+<label>معرفی ارائه‌دهنده<textarea id="eventPresenterBio" rows="3"></textarea></label>
+<div class="admin-actions"><button class="button primary" type="submit">ذخیره کارگاه</button><button class="button outline" id="eventCancelEdit" type="button" hidden>لغو ویرایش</button></div>
+</form>
+<h3>پیشنهادهای رسیده از درمانگران</h3>
+<div id="yadWorkshopProposals" class="portal-grid"></div>
+<div id="yadWorkshopRoster" class="portal-card" hidden><h3>فهرست ثبت‌نام‌کنندگان</h3><div id="yadWorkshopRosterList"></div></div>
+</section>
+<section class="portal-card">
+<h2 data-i18n="financialRules">قواعد مالی یادسنتر</h2>
+<p data-i18n="financialHelp">مراجع درمانگر تأییدشده را انتخاب می‌کند و پرداخت ابتدا به یادسنتر انجام می‌شود. پس از بررسی واقعی و تأیید وجه، مدیر زمان جلسه را با همان درمانگر ثبت می‌کند. تأیید پنل جایگزین بررسی بانکی نیست.</p><div class="notice admin-error" data-i18n="workflowWarning">پرداخت دستی را فقط پس از تطبیق شماره پیگیری با دریافت واقعی وجه تأیید کن. هنوز درگاه پرداخت آنلاین و آزمون کامل مسیر مراجع فعال نشده است.</div>
+</section>
+</div></main>
+<style>
+.admin-table{width:100%;border-collapse:collapse;min-width:720px;font-size:13px}
+.admin-table th,.admin-table td{padding:12px 10px;border-bottom:1px solid #e5ece8;text-align:right;white-space:nowrap}
+.admin-table th{color:#123f46;background:#f4faf7}
+.admin-table td{color:#40585a}
+.admin-table button{margin:2px;padding:7px 10px;font:inherit;font-size:11px;cursor:pointer}
+.admin-actions{display:flex;gap:5px}
+.admin-muted{color:#8b9998}
+.admin-error{color:#9c3d36}
+ .yad-admin-form{display:grid;gap:14px;margin-top:24px}.yad-admin-form label{display:grid;gap:5px;font-size:12px;color:#52696a}.yad-admin-form input,.yad-admin-form textarea,.yad-admin-form select{width:100%;padding:10px;border:1px solid #dce8e3;border-radius:10px;font:inherit;background:#fff}.yad-checks{display:flex;gap:20px;flex-wrap:wrap}.yad-checks label{display:flex;align-items:center;gap:8px}.yad-checks input{width:auto}.therapist-admin-card{min-width:0}.yad-admin-form h3{margin:0;color:#123f46}#yadWorkflowStatus[data-error=true]{color:#9c3d36}#yadRequestsBody input{padding:7px;border:1px solid #dce8e3;border-radius:8px;min-width:190px}</style>
+</body></html>
