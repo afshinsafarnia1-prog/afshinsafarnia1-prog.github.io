@@ -39,6 +39,8 @@
 <section class="portal-card" id="therapistPrivatePortal" hidden>
 <h2 data-i18n="privatePortalTitle">پنل اختصاصی درمانگر</h2>
 <p data-i18n="privatePortalLead">جلسات تأییدشده و زمان‌های آزاد خود را مدیریت کنید. اطلاعات بالینی مراجعان در این پنل نمایش داده نمی‌شود.</p>
+<div class="portal-card"><h3>تعرفه‌های جلسات من</h3><p>مبلغ هر جلسهٔ ۴۵ دقیقه‌ای را خودتان تعیین کنید. قیمت‌ها در پروفایل عمومی شما نمایش داده می‌شوند. مبلغ ایران را به تومان وارد کنید؛ مبلغ در سامانه به ریال ذخیره می‌شود. سهم شما ۷۰٪ و سهم یادسنتر ۳۰٪ است.</p>
+<form id="yadTherapistFeeForm" class="yad-admin-form"><label>ایران (تومان)<input id="yadTherapistFeeIRR" type="number" min="1" step="1"></label><label>اروپا (یورو)<input id="yadTherapistFeeEUR" type="number" min="1" step="1"></label><label>آمریکا (دلار آمریکا)<input id="yadTherapistFeeUSD" type="number" min="1" step="1"></label><label>کانادا (دلار کانادا)<input id="yadTherapistFeeCAD" type="number" min="1" step="1"></label><button class="button primary" type="submit">ذخیره تعرفه‌ها</button></form><p id="yadTherapistFeeStatus" class="notice" role="status" aria-live="polite"></p></div>
 <div class="portal-card"><h3>جلسات من</h3><div id="yadTherapistSessions" class="portal-grid"><p>برای مشاهدهٔ جلسات وارد حساب درمانگر شوید.</p></div></div>
 <div class="portal-card"><h3>مدیریت زمان‌های آزاد</h3>
 <form id="yadTherapistAvailabilityForm" class="yad-admin-form">
