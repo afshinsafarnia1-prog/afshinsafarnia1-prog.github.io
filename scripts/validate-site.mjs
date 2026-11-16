@@ -117,13 +117,23 @@ for (const [condition, message] of [
   [appScript.includes('.select("id,display_name,headline,biography,specialties,modalities,languages,photo_path")'), "Public therapist directory must request migrated public therapist profile fields"],
   [fs.readFileSync(path.join(root, "supabase/upgrade-client-choice-payment-first.sql"), "utf8").includes("add column if not exists photo_path"), "Therapist profile migration must define the public photo field"],
   [fs.readFileSync(path.join(root, "therapist-profile.js"), "utf8").includes('.select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path")'), "Public therapist profile must request only migrated public profile fields"],
-  [homepage.includes('id="internationalCurrency"'), "Homepage must include EUR/USD selector"],
+  [homepage.includes('id="internationalCurrency"') && homepage.includes('value="CAD"'), "Homepage must include EUR/USD/CAD selector"],
   [homepage.includes('id="yadPublicContacts"'), "Homepage must include managed public contact links"],
-  [adminPage.includes('id="yadBusinessSettingsForm"'), "Admin must include central tariff/contact settings"],
-  [adminWorkflow.includes('admin_update_yad_business_settings'), "Admin workflow must save central tariffs"],
-  [adminWorkflow.includes('admin_update_yad_business_settings') && adminWorkflow.includes("p_contacts:contacts"), "Admin workflow must save central tariffs and public contacts through the scoped settings RPC"],
+  [adminPage.includes('id="yadBusinessSettingsForm"'), "Admin must include public contact, branding and intake settings"],
+  [adminPage.includes('id="yadAssessmentFeeAdminForm"') && adminPage.includes('id="yadAdminAssessmentRequests"'), "Admin must include paid assessment fee and request management"],
+  [adminWorkflow.includes('admin_update_yad_public_contacts') && adminWorkflow.includes("p_contacts:contacts"), "Admin workflow must save public contacts through the scoped settings RPC"],
+  [adminWorkflow.includes('admin_set_client_intake') && !adminWorkflow.includes('admin_update_yad_business_settings'), "Admin workflow must manage intake without requiring central therapy tariffs"],
+  [adminWorkflow.includes('admin_set_assessment_specialist'), "Admin must be able to designate verified assessment specialists"],
   [appScript.includes('get_public_site_settings'), "Homepage must load public settings through the scoped RPC"],
-  [!adminWorkflow.includes('admin_set_therapist_prices'), "Admin workflow must not save per-therapist prices"],
+  [!adminWorkflow.includes('admin_set_therapist_prices'), "Admin workflow must not override therapist-defined fees"],
+  [appScript.includes('get_public_therapist_fee_directory') && appScript.includes('t.fees'), "Public directory must display therapist-specific fees"],
+  [fs.readFileSync(path.join(root, "therapist-portal.js"), "utf8").includes("therapist_set_my_fee"), "Therapists must be able to set their own fees"],
+  [fs.readFileSync(path.join(root, "therapist-profile.js"), "utf8").includes("get_public_therapist_fees"), "Therapist profiles must show their individual fees"],
+  [fs.readFileSync(path.join(root, "client.html"), "utf8").includes('value="CAD"'), "Client booking must support CAD"],
+  [fs.existsSync(path.join(root, "assessment.html")) && fs.existsSync(path.join(root, "assessment-workflow.js")), "Paid external assessment service page and workflow must exist"],
+  [fs.readFileSync(path.join(root, "assessment-workflow.js"), "utf8").includes("client_create_assessment_request") && fs.readFileSync(path.join(root, "assessment-workflow.js"), "utf8").includes("p_adult_confirmation:true"), "Assessment requests must use the protected consent-gated RPC"],
+  [fs.readFileSync(path.join(root, "admin-assessment-workflow.js"), "utf8").includes("admin_update_assessment_request"), "Admin must review assessment payments and schedule external sessions"],
+  [fs.readFileSync(path.join(root, "site-i18n.js"), "utf8").includes("Evaluación de personalidad con STIPO y SWAP"), "Assessment page must include Spanish translations"],
   [adminPage.includes('id="yadDuration" type="number" min="45" max="45" value="45" readonly'), "Admin therapist form must enforce the 45-minute standard session"],
   [adminWorkflow.includes("p_session_duration_minutes: 45"), "Therapist profile saves must use the central 45-minute session duration"],
   [adminWorkflow.includes("p_fee_amount: 0") && adminWorkflow.includes('p_fee_currency: "IRR"') && !adminWorkflow.includes('val("yadFee")') && !adminWorkflow.includes('val("yadCurrency")'), "Therapist profile saves must not depend on removed per-therapist fee fields"],
@@ -166,7 +176,7 @@ if (!adminPage.includes('id="yadClientIntakeEnabled"') || !adminPage.includes('i
 if (!fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientIntakeNotice"')) errors.push("Client page must disclose whether intake is open");
 if (!adminWorkflow.includes('admin_set_client_intake')) errors.push("Admin workflow must save intake state through the protected RPC");
 if (!adminWorkflow.includes('admin_update_yad_public_contacts')) errors.push("Admin workflow must allow public contacts to be saved before tariffs are configured");
-if (!adminWorkflow.includes('هر سه تعرفه')) errors.push("Admin workflow must prevent intake activation before all central tariffs are entered");
+if (!adminWorkflow.includes('admin_set_client_intake') || adminWorkflow.includes('هر سه تعرفه')) errors.push("Intake must use the protected release gate without central tariffs");
 if (!fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("client_intake_paused")) errors.push("Client workflow must fail closed when intake is paused");
 
 if (errors.length) {
