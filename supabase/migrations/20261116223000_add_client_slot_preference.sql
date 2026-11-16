@@ -40,11 +40,22 @@ declare
   v_client uuid:=auth.uid(); v_country text:=upper(trim(coalesce(p_country_code,'')));
   v_timezone text:=trim(coalesce(p_timezone,'')); v_consent uuid;
   v_request uuid; v_payment uuid; v_amount bigint; v_currency text;
+  v_intake_enabled boolean; v_required_policy text;
 begin
   if v_client is null or not exists(select 1 from public.profiles p where p.id=v_client and p.role='client') then
     raise exception 'client_only' using errcode='42501';
   end if;
-  if p_policy_version is distinct from '2026-11-16-v1-draft' then raise exception 'current_policy_version_required' using errcode='22023'; end if;
+  select coalesce((s.value #>> '{}')::boolean,false) into v_intake_enabled
+  from public.site_settings s where s.key='client_intake_enabled';
+  if coalesce(v_intake_enabled,false) is not true then
+    raise exception 'client_intake_paused' using errcode='55000';
+  end if;
+  select coalesce(s.value #>> '{}','') into v_required_policy
+  from public.site_settings s where s.key='client_policy_version';
+  if v_required_policy='' or p_policy_version is distinct from v_required_policy
+     or v_required_policy ilike '%draft%' or v_required_policy ilike '%test%' or v_required_policy ilike '%preview%' then
+    raise exception 'current_policy_version_required' using errcode='22023';
+  end if;
   if p_adult_confirmation is distinct from true then raise exception 'adult_confirmation_required' using errcode='22023'; end if;
   if v_country !~ '^[A-Z]{2}$' then raise exception 'valid_session_country_required' using errcode='22023'; end if;
   if v_timezone='' or length(v_timezone)>80 or not exists(select 1 from pg_timezone_names z where z.name=v_timezone) then
@@ -55,11 +66,11 @@ begin
     raise exception 'therapist_not_authorized_for_client_location' using errcode='42501';
   end if;
   if p_preferred_slot_id is not null and not exists(
-    select 1 from public.availability_slots s where s.id=p_preferred_slot_id and s.therapist_id=p_therapist_id
-      and s.is_available and s.starts_at>now()
+    select 1 from public.availability_slots s where s.id=p_preferred_slot_id
+      and s.therapist_id=p_therapist_id and s.is_available and s.starts_at>now()
   ) then raise exception 'slot_unavailable' using errcode='P0001'; end if;
   insert into public.client_policy_consents(client_id,policy_version,adult_confirmation,country_code,timezone,market,currency)
-  values(v_client,p_policy_version,true,v_country,v_timezone,p_market,p_currency) returning id into v_consent;
+  values(v_client,v_required_policy,true,v_country,v_timezone,p_market,p_currency) returning id into v_consent;
   select r.request_id,r.payment_id,r.amount,r.currency into v_request,v_payment,v_amount,v_currency
   from public.create_client_request(p_therapist_id,p_market,p_currency,p_client_message) r;
   update public.client_requests set requested_slot_id=p_preferred_slot_id where id=v_request;
