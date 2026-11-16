@@ -1,4 +1,4 @@
-const CACHE = "yadcenter-shell-v10";
+const CACHE = "yadcenter-shell-v11";
 const CORE_ASSETS = [
   "/",
   "/index.html",
@@ -8,6 +8,7 @@ const CORE_ASSETS = [
   "/psychiatry.html",
   "/style.css",
   "/app.js",
+  "/pwa-install.js",
   "/portal.js",
   "/site-i18n.js",
   "/service-guides-i18n.js",
