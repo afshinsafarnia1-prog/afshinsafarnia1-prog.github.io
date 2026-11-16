@@ -6,6 +6,8 @@
     ?window.supabase.createClient(config.url,config.anonKey):null;
   const params=new URLSearchParams(window.location.search);
   const id=params.get("id");
+  const canonical=document.querySelector('link[rel="canonical"]')||document.head.appendChild(Object.assign(document.createElement("link"),{rel:"canonical"}));
+  if(id)canonical.href=location.origin+location.pathname+"?id="+encodeURIComponent(id);
   const names={fa:"فارسی",ku:"کوردی",en:"English",tr:"ترکی",ar:"العربية",es:"Español",de:"Deutsch",fr:"Français"};
   const locale=()=>document.documentElement.lang==="ku"?"en-GB":(document.documentElement.lang||"en");
   const t=(key)=>window.YAD_I18N?.translations?.[document.documentElement.lang]?.[key]||window.YAD_I18N?.translations?.fa?.[key]||key;
@@ -31,6 +33,11 @@
     const publicMeta=metaRows?.[0]||{};
     const {data:feedbackRows}=await db.rpc("get_public_therapist_feedback",{p_therapist_id:id});
     const feedback=feedbackRows||[];
+    document.title=(data.display_name||"درمانگر")+" | پروفایل متخصص | یادسنتر";
+    const description=document.querySelector('meta[name="description"]');
+    if(description)description.content="اطلاعات عمومی و تأییدشدهٔ "+(data.display_name||"درمانگر")+" شامل تحصیلات، حوزه‌های تخصصی، رویکرد و زبان‌های ارائهٔ خدمت در یادسنتر.";
+    const ogTitle=document.querySelector('meta[property="og:title"]');if(ogTitle)ogTitle.content=document.title;
+    const ogDescription=document.querySelector('meta[property="og:description"]');if(ogDescription&&description)ogDescription.content=description.content;
     root.replaceChildren();
     const hero=node("div","profile-hero");
     if(data.photo_path){
