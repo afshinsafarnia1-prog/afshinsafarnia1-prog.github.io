@@ -244,6 +244,23 @@ if (!fs.existsSync(workshopMigrationPath)) {
   }
 }
 
+
+const intakeMigrationPath = path.join(process.cwd(), "supabase", "migrations", "20261116154000_gate_client_intake_until_policy_approval.sql");
+if (!fs.existsSync(intakeMigrationPath)) {
+  errors.push("Missing fail-closed client intake migration");
+} else {
+  const intakeSql = fs.readFileSync(intakeMigrationPath, "utf8");
+  if (!/client_intake_enabled','false'::jsonb/i.test(intakeSql)) errors.push("Client intake must default to disabled");
+  if (!/admin_set_client_intake[\s\S]*?require_admin_aal2\(\)/i.test(intakeSql)) errors.push("Client intake setting must be admin AAL2 protected");
+  if (!/approved_policy_version_required/i.test(intakeSql) || !/v_version ilike '%draft%'/i.test(intakeSql)) errors.push("Client intake must reject draft policy versions");
+  if (!/client_intake_paused/i.test(intakeSql) || !/p_policy_version is distinct from v_required_policy/i.test(intakeSql)) errors.push("Client request RPC must enforce server-side intake and policy gates");
+  if (!/revoke all on function public\.create_client_request_with_consent\(uuid,text,text,text,text,boolean,text,text,uuid\) from public,anon/i.test(intakeSql)) errors.push("Slot-aware client request RPC must not be executable by anonymous users");
+}
+const legacyConsentMigrationPath = path.join(process.cwd(), "supabase", "migrations", "20261116154500_revoke_legacy_consent_request_overload.sql");
+if (!fs.existsSync(legacyConsentMigrationPath) || !/revoke all on function public\.create_client_request_with_consent\(uuid,text,text,text,text,boolean,text,text\) from public,anon,authenticated/i.test(fs.readFileSync(legacyConsentMigrationPath, "utf8"))) {
+  errors.push("Legacy eight-argument consent RPC overload must be revoked");
+}
+
 if (errors.length) {
   console.error("Schema guardrail check failed:\n" + errors.map(error => "- " + error).join("\n"));
   process.exit(1);
