@@ -83,7 +83,7 @@ for (const page of ["admin.html", "client.html"]) {
   }
 }
 
-for (const file of ["auth.js", "supabase-config.js", "admin-workflow.js", "client-workflow.js", "site-i18n.js", "therapist-profile.js", "client-extensions.js", "admin-extensions.js", "scripts/validate-schema.mjs", "supabase/schema.sql", "supabase/upgrade-client-choice-payment-first.sql", "supabase/platform-completion-2026-11.sql", "sw.js"]) {
+for (const file of ["auth.js", "supabase-config.js", "admin-workflow.js", "client-workflow.js", "site-i18n.js", "therapist-profile.js", "client-extensions.js", "admin-extensions.js", "workshops.js", "scripts/validate-schema.mjs", "supabase/schema.sql", "supabase/upgrade-client-choice-payment-first.sql", "supabase/platform-completion-2026-11.sql", "sw.js"]) {
   if (!fs.existsSync(path.join(root, file))) errors.push(`${file} is required`);
 }
 for (const file of [".env", ".env.production"]) {
@@ -98,8 +98,10 @@ const appScript = fs.readFileSync(path.join(root, "app.js"), "utf8");
 for (const [condition, message] of [
   [homepage.includes('id="yadPublicTariffs"'), "Homepage must include the central tariff display"],
   [fs.existsSync(path.join(root, "therapist-profile.html")), "Public therapist profile page must exist"],
+  [fs.existsSync(path.join(root, "workshops.html")) && fs.existsSync(path.join(root, "workshops.js")), "Public workshop directory and loader must exist"],
   [appScript.includes('therapist-profile.html?id='), "Therapist directory cards must link to public profiles"],
   [homepage.includes('id="faq"') && homepage.includes('class="faq-list"'), "Homepage must include its practical FAQ section"],
+  [homepage.includes('href="workshops.html"'), "Homepage must link to the full workshop directory"],
   [homepage.includes('id="modality"') && homepage.includes('id="therapistKeyword"') && homepage.includes('id="acceptingOnly"'), "Therapist directory must include approach, keyword and intake availability filters"],
   [appScript.includes("get_public_therapist_directory_metadata") && appScript.includes("accepting_new_clients"), "Therapist directory must read verified intake availability metadata"],
   [fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadAdultConfirm"') && fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadSessionCountry"') && fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientConsent"'), "Client request must require adult confirmation, session country and policy acknowledgement"],
