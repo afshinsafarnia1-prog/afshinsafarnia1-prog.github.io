@@ -131,11 +131,10 @@
       const values=fields.map(([currency,id,multiplier])=>({currency,id,multiplier,value:document.getElementById(id).value.trim()})).filter(x=>x.value!=="");
       if(!values.length){feeStatus.textContent="حداقل یک تعرفه وارد کنید.";return;}
       if(values.some(x=>!Number.isSafeInteger(Number(x.value))||Number(x.value)<=0)){feeStatus.textContent="همه مبالغ باید عدد صحیح و بیشتر از صفر باشند.";return;}
-      const {data:therapist,error:lookupError}=await db.from("therapists").select("id").eq("owner_user_id",activeUser).maybeSingle();
-      if(lookupError||!therapist){feeStatus.textContent="پروفایل تأییدشده به حساب شما متصل نیست؛ از مدیریت بخواهید ابتدا اتصال حساب را تکمیل کند.";return;}
+      
       const button=feeForm.querySelector('button[type="submit"]');button.disabled=true;feeStatus.textContent="در حال ذخیره تعرفه‌ها…";
       for(const item of values){
-        const {error}=await db.rpc("admin_or_therapist_set_fee",{p_therapist_id:therapist.id,p_currency:item.currency,p_amount:Number(item.value)*item.multiplier});
+        const {error}=await db.rpc("therapist_set_my_fee",{p_currency:item.currency,p_amount:Number(item.value)*item.multiplier});
         if(error){button.disabled=false;feeStatus.textContent=error.message||"ذخیره یکی از تعرفه‌ها ناموفق بود.";return;}
       }
       button.disabled=false;feeStatus.textContent="تعرفه‌ها ذخیره شدند و در پروفایل عمومی شما نمایش داده می‌شوند.";
