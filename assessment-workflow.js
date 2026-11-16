@@ -13,6 +13,7 @@
   const requests=document.getElementById("yadAssessmentRequests");
   let catalog=[];
   let activeUser=null;
+  let policyVersion="";
   const fmt=(amount,cur)=>new Intl.NumberFormat("fa-IR").format(cur==="IRR"?Number(amount)/10:Number(amount))+(cur==="IRR"?" تومان":" "+cur);
   const setStatus=(v,bad=false)=>{status.textContent=v;status.dataset.error=bad?"true":"false";};
   function refreshOptions(){
@@ -28,6 +29,9 @@
    fee.textContent=row?"هزینه مستقل ارزیابی: "+fmt(row.amount,row.currency):"پس از انتخاب متخصص دارای تعرفه، هزینه نمایش داده می‌شود.";
   }
   async function loadCatalog(){
+   const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
+   if(settingsError){setStatus("وضعیت پذیرش خدمات قابل تأیید نیست.",true);return;}
+   policyVersion=settings?.client_policy_version||"";
    const {data,error}=await db.rpc("get_public_assessment_catalog");
    if(error){setStatus("دریافت فهرست ارزیابی‌ها ممکن نشد؛ لطفاً بعداً تلاش کنید.",true);return;}
    catalog=data||[];
@@ -55,26 +59,31 @@
     if(item.status==="payment_submitted")card.append(Object.assign(document.createElement("p"),{textContent:"شماره پیگیری ثبت شده و در انتظار بررسی مدیریت است."}));
     if(item.meeting_url){const a=document.createElement("a");a.href=item.meeting_url;a.target="_blank";a.rel="noopener noreferrer";a.className="button primary";a.textContent="ورود به جلسه ارزیابی";card.append(a);if(item.meeting_password)card.append(Object.assign(document.createElement("p"),{textContent:"رمز جلسه: "+item.meeting_password}));}
     if(item.recommendations){const rec=document.createElement("p");rec.textContent="پیشنهاد متخصص: "+item.recommendations;card.append(rec);}
-    if(item.recommended_therapist_ids?.length){const p=document.createElement("p");p.textContent="شناسه پروفایل‌های پیشنهادی: "+item.recommended_therapist_ids.join("، ");card.append(p);}
+    if(item.recommended_therapist_ids?.length){
+     const {data:recommended}=await db.from("therapists").select("id,display_name").in("id",item.recommended_therapist_ids).eq("is_listed",true).not("verified_at","is",null);
+     if(recommended?.length){const wrap=document.createElement("div");wrap.append(Object.assign(document.createElement("b"),{textContent:"درمانگران پیشنهادی متخصص"}));recommended.forEach(t=>{const a=document.createElement("a");a.href="therapist-profile.html?id="+encodeURIComponent(t.id);a.textContent=t.display_name;a.className="button outline";wrap.append(a);});card.append(wrap);}
+    }
     requests.append(card);
    });
   }
   form.addEventListener("submit",async e=>{
    e.preventDefault();
    if(!activeUser){setStatus("برای ثبت درخواست ابتدا وارد حساب مراجع شوید.",true);return;}
+   if(!document.getElementById("yadAssessmentAdultConfirm").checked){setStatus("برای ثبت درخواست باید تأیید کنید که ۱۸ سال یا بیشتر دارید.",true);return;}
+   if(!document.getElementById("yadAssessmentConsent").checked){setStatus("برای ثبت درخواست، مطالعه و پذیرش شرایط و حریم خصوصی لازم است.",true);return;}
+   if(!policyVersion||/draft|test|preview/i.test(policyVersion)){setStatus("پذیرش ارزیابی تا تصویب و فعال‌سازی نسخه نهایی قوانین غیرفعال است.",true);return;}
    const row=catalog.find(x=>x.assessment_type===type.value&&x.currency===currency.value&&x.specialist_id===specialist.value);
    if(!row){setStatus("برای انتخاب فعلی تعرفه فعالی وجود ندارد.",true);return;}
    const button=form.querySelector('button[type="submit"]');button.disabled=true;
-   const {error}=await db.rpc("client_create_assessment_request",{p_assessment_type:type.value,p_specialist_id:specialist.value,p_currency:currency.value});
+   const {error}=await db.rpc("client_create_assessment_request",{p_assessment_type:type.value,p_specialist_id:specialist.value,p_currency:currency.value,p_policy_version:policyVersion,p_adult_confirmation:true});
    button.disabled=false;
-   if(error){setStatus(error.message||"ثبت درخواست ناموفق بود.",true);return;}
+   if(error){const raw=error.message||"";setStatus(raw.includes("client_intake_paused")?"پذیرش خدمات هنوز فعال نشده است.":raw.includes("current_policy_version_required")?"نسخه نهایی قوانین هنوز فعال نشده است.":raw.includes("assessment_fee_not_configured")?"تعرفه این ارزیابی هنوز ثبت نشده است.":raw||"ثبت درخواست ناموفق بود.",true);return;}
    setStatus("درخواست ارزیابی ثبت شد. هزینه آن جداگانه دریافت می‌شود؛ اطلاعات پرداخت را از مدیریت دریافت کنید.");
    await loadRequests();
   });
   type.addEventListener("change",refreshOptions);currency.addEventListener("change",refreshOptions);specialist.addEventListener("change",updateFee);
   db.auth.getSession().then(async({data})=>{activeUser=data.session?.user?.id||null;await loadCatalog();await loadRequests();});
   db.auth.onAuthStateChange(async(_event,session)=>{activeUser=session?.user?.id||null;await loadRequests();});
-  loadCatalog();
  };
  if(document.readyState==="complete")ready();else window.addEventListener("load",ready,{once:true});
 })();
