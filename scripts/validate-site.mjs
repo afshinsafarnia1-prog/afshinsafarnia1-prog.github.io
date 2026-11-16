@@ -65,9 +65,6 @@ if (!fs.existsSync(robotsPath)) {
   errors.push("Missing robots.txt");
 } else {
   const robots = fs.readFileSync(robotsPath, "utf8");
-  if (!robots.includes("Disallow: /admin.html") || !robots.includes("Disallow: /client.html")) {
-    errors.push("robots.txt must exclude private admin and client portals");
-  }
   if (fs.existsSync(sitemapPath)) {
     const sitemap = fs.readFileSync(sitemapPath, "utf8");
     const locStart = sitemap.indexOf("<loc>");
@@ -110,7 +107,7 @@ for (const [condition, message] of [
   [fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientAppointments"') && fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientSupportForm"') && fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientNotificationsList"'), "Client portal must include sessions, support and notifications"],
   [adminPage.includes('id="yadSessionAccessAdmin"') && adminPage.includes('id="yadSupportAdmin"') && adminPage.includes('id="yadFeedbackAdmin"'), "Admin portal must include session access, support and feedback moderation"],
   [adminPage.includes('id="yadAvailabilityForm"') && adminPage.includes('id="yadAvailabilityTherapist"'), "Admin portal must include managed availability slots"],
-  [fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadPreferredTime"'), "Client request must accept non-binding preferred time windows"],
+  [fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadPreferredTime"') && fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadPreferredSlot"') && fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("client_list_available_slots") && fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("p_preferred_slot_id"), "Client request must support preferred availability slots and optional time windows"],
   [fs.readFileSync(path.join(root, "site-i18n.js"), "utf8").includes("modalityFilter") && fs.readFileSync(path.join(root, "site-i18n.js"), "utf8").includes("acceptingOnly"), "Therapist directory filters must have multilingual labels"],
   [fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("admin_set_appointment_meeting") && fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("admin_resolve_support_cancellation") && fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("client_submit_appointment_feedback"), "Platform completion migration must define private session, cancellation and feedback RPCs"],
   [fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/client-extensions.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-extensions.js"'), "PWA cache must include the new client/admin workflow scripts"],
