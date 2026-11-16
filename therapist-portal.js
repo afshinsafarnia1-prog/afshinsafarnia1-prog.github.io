@@ -12,6 +12,8 @@
     const start = document.getElementById("yadTherapistAvailabilityStart");
     const end = document.getElementById("yadTherapistAvailabilityEnd");
     const zone = document.getElementById("yadTherapistAvailabilityTimezone");
+    const feeForm=document.getElementById("yadTherapistFeeForm");
+    const feeStatus=document.getElementById("yadTherapistFeeStatus");
     let activeUser = null;
     const node = (tag, cls, value) => {
       const el = document.createElement(tag);
@@ -82,6 +84,33 @@
         card.append(remove);slotsRoot.append(card);
       });
     }
+    async function loadMyFees(){
+      if(!feeForm)return;
+      const {data,error}=await db.rpc("therapist_get_my_fees");
+      if(error){feeStatus.textContent=error.message||"بارگذاری تعرفه‌ها ناموفق بود.";return;}
+      const map=Object.fromEntries((data||[]).map(x=>[x.currency,x.amount]));
+      document.getElementById("yadTherapistFeeIRR").value=map.IRR?Number(map.IRR)/10:"";
+      document.getElementById("yadTherapistFeeEUR").value=map.EUR||"";
+      document.getElementById("yadTherapistFeeUSD").value=map.USD||"";
+      document.getElementById("yadTherapistFeeCAD").value=map.CAD||"";
+    }
+    feeForm?.addEventListener("submit",async event=>{
+      event.preventDefault();
+      if(!activeUser){feeStatus.textContent="ابتدا وارد حساب درمانگر شوید.";return;}
+      const fields=[["IRR","yadTherapistFeeIRR",10],["EUR","yadTherapistFeeEUR",1],["USD","yadTherapistFeeUSD",1],["CAD","yadTherapistFeeCAD",1]];
+      const values=fields.map(([currency,id,multiplier])=>({currency,id,multiplier,value:document.getElementById(id).value.trim()})).filter(x=>x.value!=="");
+      if(!values.length){feeStatus.textContent="حداقل یک تعرفه وارد کنید.";return;}
+      if(values.some(x=>!Number.isSafeInteger(Number(x.value))||Number(x.value)<=0)){feeStatus.textContent="همه مبالغ باید عدد صحیح و بیشتر از صفر باشند.";return;}
+      const {data:therapist,error:lookupError}=await db.from("therapists").select("id").eq("owner_user_id",activeUser).maybeSingle();
+      if(lookupError||!therapist){feeStatus.textContent="پروفایل تأییدشده به حساب شما متصل نیست؛ از مدیریت بخواهید ابتدا اتصال حساب را تکمیل کند.";return;}
+      const button=feeForm.querySelector('button[type="submit"]');button.disabled=true;feeStatus.textContent="در حال ذخیره تعرفه‌ها…";
+      for(const item of values){
+        const {error}=await db.rpc("admin_or_therapist_set_fee",{p_therapist_id:therapist.id,p_currency:item.currency,p_amount:Number(item.value)*item.multiplier});
+        if(error){button.disabled=false;feeStatus.textContent=error.message||"ذخیره یکی از تعرفه‌ها ناموفق بود.";return;}
+      }
+      button.disabled=false;feeStatus.textContent="تعرفه‌ها ذخیره شدند و در پروفایل عمومی شما نمایش داده می‌شوند.";
+      await loadMyFees();
+    });
     async function init(session){
       if(!session?.user||activeUser===session.user.id)return;
       activeUser=session.user.id;
@@ -92,7 +121,7 @@
         return;
       }
       zone.value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
-      await Promise.all([loadSessions(),loadSlots()]);
+      await Promise.all([loadSessions(),loadSlots(),loadMyFees()]);
     }
     form.addEventListener("submit",async event=>{
       event.preventDefault();
