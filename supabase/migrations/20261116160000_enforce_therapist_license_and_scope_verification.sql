@@ -22,6 +22,7 @@ begin
       from public.therapist_private_verification v
       where v.therapist_id = new.id
         and nullif(btrim(v.license_number), '') is not null
+        and nullif(btrim(v.document_path), '') is not null
         and v.issuing_authority = 'سازمان نظام روان‌شناسی و مشاوره جمهوری اسلامی ایران'
         and v.registry_checked_at is not null
         and nullif(btrim(v.registry_reference), '') is not null
@@ -100,6 +101,13 @@ begin
   end if;
   if p_license_expires_at is not null and p_license_expires_at < current_date then
     raise exception 'license_expired' using errcode = '22023';
+  end if;
+  if not exists (
+    select 1 from public.therapist_private_verification v
+    where v.therapist_id = p_therapist_id
+      and nullif(btrim(v.document_path), '') is not null
+  ) then
+    raise exception 'license_document_required' using errcode = '22023';
   end if;
   if cardinality(v_countries) = 0
      or exists (select 1 from unnest(v_countries) c where c !~ '^[A-Z]{2}$') then
@@ -242,6 +250,9 @@ begin
     select 1 from public.therapist_private_verification v
     where v.therapist_id = v_id
       and v.license_number = btrim(coalesce(p_license_number,''))
+      and nullif(btrim(p_document_path), '') is not null
+      and p_issuing_authority = 'سازمان نظام روان‌شناسی و مشاوره جمهوری اسلامی ایران'
+      and v.document_path is not null
       and v.issuing_authority = 'سازمان نظام روان‌شناسی و مشاوره جمهوری اسلامی ایران'
       and v.registry_checked_at is not null
       and nullif(btrim(v.registry_reference),'') is not null
