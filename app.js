@@ -80,7 +80,7 @@
     if(Array.isArray(ratingRows)){const ratingById=new Map(ratingRows.map(x=>[x.therapist_id,x]));allTherapists=allTherapists.map(x=>({...x,...(ratingById.get(x.id)||{})}));}
     populateModalityFilter();
     const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
-    if(settingsError){directory.textContent="دریافت تعرفه‌های مرکزی با خطا روبه‌رو شد.";return;}
+    if(settingsError){directory.textContent="دریافت تنظیمات عمومی سایت با خطا روبه‌رو شد.";return;}
     
     publicContacts=settings?.contacts||{};
     siteBranding=settings?.branding||{};
