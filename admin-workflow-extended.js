@@ -464,7 +464,7 @@
       try {
         const wantsVerification = document.getElementById("yadVerified").checked;
         const wantsAssessmentSpecialist=document.getElementById("yadAssessmentSpecialist").checked;
-        if(wantsAssessmentSpecialist&&!document.getElementById("yadListed").checked)throw new Error("متخصص ارزیابی باید پس از تأیید مدارک در فهرست عمومی منتشر شود.");
+        if(wantsAssessmentSpecialist&&(!wantsVerification||!document.getElementById("yadListed").checked))throw new Error("متخصص ارزیابی باید پس از تأیید مدارک در فهرست عمومی منتشر شود.");
         const ownerUserId = val("yadTherapistOwnerUserId").trim();
         if (ownerUserId && !wantsVerification) {
           throw new Error("اتصال حساب کاربری درمانگر فقط پس از ثبت و تأیید صلاحیت حرفه‌ای امکان‌پذیر است.");
