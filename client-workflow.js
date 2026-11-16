@@ -7,6 +7,8 @@
     const db = window.supabase.createClient(cfg.url, cfg.anonKey);
     const status = document.getElementById("yadClientRequestStatus");
     const select = document.getElementById("yadChosenTherapist");
+    const slotSelect = document.getElementById("yadPreferredSlot");
+    const countryInput = document.getElementById("yadSessionCountry");
     const history = document.getElementById("yadClientRequestHistory");
     const queryTherapist = new URLSearchParams(location.search).get("therapist");
     const queryWorkshop = new URLSearchParams(location.search).get("workshop");
@@ -35,9 +37,26 @@
         select.append(option);
       });
       if (queryTherapist && directory.some(t => t.id === queryTherapist)) select.value = queryTherapist;
+      if (select.value) await loadAvailableSlots();
       if (!directory.length) setStatus("در حال حاضر پروفایل تأییدشده‌ای برای انتخاب منتشر نشده است.");
     }
 
+    async function loadAvailableSlots() {
+      if (!slotSelect) return;
+      slotSelect.replaceChildren();
+      const country=(countryInput?.value||"").trim().toUpperCase();
+      if(!select.value){slotSelect.add(new Option("ابتدا درمانگر را انتخاب کنید",""));return;}
+      if(!/^[A-Z]{2}$/.test(country)){slotSelect.add(new Option("ابتدا کشور محل حضور را وارد کنید",""));return;}
+      slotSelect.add(new Option("در حال دریافت زمان‌های آزاد…",""));
+      const {data,error}=await db.rpc("client_list_available_slots",{p_therapist_id:select.value,p_country_code:country});
+      slotSelect.replaceChildren();
+      slotSelect.add(new Option(error?"زمان‌های آزاد در دسترس نیست":(data?.length?"زمان دلخواه را انتخاب کنید":"فعلاً زمان آزادی برای این درمانگر ثبت نشده است"),""));
+      if(error){setStatus(error.message||"دریافت زمان‌های آزاد ناموفق بود.",true);return;}
+      (data||[]).forEach(slot=>{
+        const label=new Intl.DateTimeFormat(document.documentElement.lang||"fa-IR",{dateStyle:"medium",timeStyle:"short",timeZone:slot.timezone||undefined}).format(new Date(slot.starts_at));
+        slotSelect.add(new Option(label+" · "+(slot.timezone||""),slot.slot_id));
+      });
+    }
     async function loadHistory() {
       const { data, error } = await db.rpc("client_list_requests");
       if (error) throw error;
@@ -124,6 +143,8 @@
       catch (error) { setStatus(error.message || "بارگذاری اطلاعات ناموفق بود.", true); }
     }
 
+    select.addEventListener("change",loadAvailableSlots);
+    countryInput?.addEventListener("change",loadAvailableSlots);
     form.addEventListener("submit", async event => {
       event.preventDefault();
       if (!activeUser) { setStatus("برای ثبت درخواست ابتدا وارد حساب مراجع شوید.", true); return; }
@@ -142,7 +163,8 @@
         p_policy_version: "2026-11-16-v1-draft",
         p_adult_confirmation: true,
         p_country_code: sessionCountry,
-        p_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran"
+        p_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran",
+        p_preferred_slot_id: slotSelect?.value || null
       });
       if (error) {
         const raw=error.message||"";
