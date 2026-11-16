@@ -436,6 +436,11 @@
     root.addEventListener("submit", async event => {
       event.preventDefault();
       try {
+        const wantsVerification = document.getElementById("yadVerified").checked;
+        const ownerUserId = val("yadTherapistOwnerUserId").trim();
+        if (ownerUserId && !wantsVerification) {
+          throw new Error("اتصال حساب کاربری درمانگر فقط پس از ثبت و تأیید صلاحیت حرفه‌ای امکان‌پذیر است.");
+        }
         setStatus("در حال ذخیره پروفایل…");
         const photo = document.getElementById("yadPhoto").files[0];
         const documentFile = document.getElementById("yadLicenseDocument").files[0];
@@ -467,8 +472,6 @@
         const { data: savedId, error } = await db.rpc("admin_save_therapist", payload);
         if (error) throw error;
         const metadataId = savedId || val("yadTherapistId");
-        const wantsVerification = document.getElementById("yadVerified").checked;
-        const ownerUserId = val("yadTherapistOwnerUserId").trim();
         if (wantsVerification) {
           const { error: verificationError } = await db.rpc("admin_verify_therapist", {
             p_therapist_id: metadataId,
