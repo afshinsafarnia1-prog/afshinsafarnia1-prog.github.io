@@ -160,7 +160,7 @@ else {
 }
 
 
-const intakeMigration = path.join(root, "supabase", "migrations", "20261116154000_gate_client_intake_until_policy_approval.sql");
+const intakeMigration = path.join(root, "supabase", "migrations", "20261116154010_gate_client_intake_until_policy_approval.sql");
 if (!fs.existsSync(intakeMigration)) errors.push("Client intake safety migration is required");
 if (!adminPage.includes('id="yadClientIntakeEnabled"') || !adminPage.includes('id="yadClientPolicyVersion"')) errors.push("Admin must expose the legal-policy intake switch");
 if (!fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientIntakeNotice"')) errors.push("Client page must disclose whether intake is open");
