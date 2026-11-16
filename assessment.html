@@ -6,6 +6,7 @@
 <title>ارزیابی تخصصی شخصیت | یادسنتر</title>
 <meta name="description" content="درخواست ارزیابی تخصصی شخصیت با STIPO یا SWAP توسط متخصص معرفی‌شده در یادسنتر. جلسه خارج از سایت برگزار می‌شود.">
 <link rel="stylesheet" href="style.css">
+<script defer src="site-i18n.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="supabase-config.js"></script><script defer src="auth.js"></script><script defer src="assessment-workflow.js"></script>
 </head>
@@ -13,35 +14,35 @@
 <header class="header"><div class="wrap navrow"><a class="brand" href="/"><span class="brandmark">ی</span><span><b>یادسنتر</b><small>YAD CENTER</small></span></a><nav class="portal-nav"><a href="/">صفحه اصلی</a><a href="/#therapists">درمانگران</a><a href="/rules.html">قوانین</a></nav></div></header>
 <main class="portal-main"><div class="portal-wrap">
 <span class="eyebrow">ارزیابی تخصصی پیش از انتخاب مسیر درمان</span>
-<h1>ارزیابی شخصیت با STIPO و SWAP</h1>
-<p class="lead">این خدمات برای شناخت دقیق‌تر الگوهای شخصیت و کمک به تصمیم‌گیری آگاهانه درباره مسیر درمان ارائه می‌شوند. انجام ارزیابی اختیاری است و برای دریافت روان‌درمانی الزامی نیست.</p>
+<h1 data-i18n="assessmentTitle">ارزیابی شخصیت با STIPO و SWAP</h1>
+<p class="lead" data-i18n="assessmentLead">این خدمات برای شناخت دقیق‌تر الگوهای شخصیت و کمک به تصمیم‌گیری آگاهانه درباره مسیر درمان ارائه می‌شوند. انجام ارزیابی اختیاری است و برای دریافت روان‌درمانی الزامی نیست.</p>
 <div class="portal-card">
-<h2>این ارزیابی چگونه انجام می‌شود؟</h2>
+<h2 data-i18n="assessmentHowTitle">این ارزیابی چگونه انجام می‌شود؟</h2>
 <ul>
-<li>درخواست خود را در یادسنتر ثبت می‌کنید و هزینه ارزیابی را جداگانه می‌پردازید.</li>
-<li>جلسه با متخصص ارزیابی معرفی‌شده در همین صفحه برگزار می‌شود؛ نه از طریق آزمون آنلاین داخل سایت.</li>
-<li>جلسه در فضای خارج از یادسنتر، مانند Zoom یا Google Meet، هماهنگ و برگزار می‌شود.</li>
-<li>پس از پرداخت و تأیید مدیریت، اطلاعات جلسه در پنل شما نمایش داده می‌شود.</li>
-<li>متخصص می‌تواند بر اساس یافته‌های ارزیابی، درمانگران مناسب موجود در یادسنتر را پیشنهاد کند؛ انتخاب نهایی با شماست.</li>
+<li data-i18n="assessmentStep1">درخواست خود را در یادسنتر ثبت می‌کنید و هزینه ارزیابی را جداگانه می‌پردازید.</li>
+<li data-i18n="assessmentStep2">جلسه با متخصص ارزیابی معرفی‌شده در همین صفحه برگزار می‌شود؛ نه از طریق آزمون آنلاین داخل سایت.</li>
+<li data-i18n="assessmentStep3">جلسه در فضای خارج از یادسنتر، مانند Zoom یا Google Meet، هماهنگ و برگزار می‌شود.</li>
+<li data-i18n="assessmentStep4">پس از پرداخت و تأیید مدیریت، اطلاعات جلسه در پنل شما نمایش داده می‌شود.</li>
+<li data-i18n="assessmentStep5">متخصص می‌تواند بر اساس یافته‌های ارزیابی، درمانگران مناسب موجود در یادسنتر را پیشنهاد کند؛ انتخاب نهایی با شماست.</li>
 </ul>
-<p class="privacy-hint">ارزیابی جایگزین مصاحبه بالینی جامع، تشخیص تخصصی یا رابطه درمانی نیست. اطلاعات ارزیابی محرمانه‌اند و فقط در چارچوب رضایت آگاهانه و ارائه خدمت استفاده می‌شوند.</p>
+<p class="privacy-hint" data-i18n="assessmentPrivacy">ارزیابی جایگزین مصاحبه بالینی جامع، تشخیص تخصصی یا رابطه درمانی نیست. اطلاعات ارزیابی محرمانه‌اند و فقط در چارچوب رضایت آگاهانه و ارائه خدمت استفاده می‌شوند.</p>
 </div>
 <div class="portal-card">
-<h2>ثبت درخواست ارزیابی</h2>
-<p>نوع ارزیابی، متخصص و واحد پول را انتخاب کنید. هزینه ارزیابی مستقل از هزینه جلسات روان‌درمانی است.</p>
+<h2 data-i18n="assessmentRequestTitle">ثبت درخواست ارزیابی</h2>
+<p data-i18n="assessmentRequestLead">نوع ارزیابی، متخصص و واحد پول را انتخاب کنید. هزینه ارزیابی مستقل از هزینه جلسات روان‌درمانی است.</p>
 <p id="yadAssessmentStatus" class="notice" role="status" aria-live="polite">در حال دریافت فهرست متخصصان و تعرفه‌ها…</p>
 <form id="yadAssessmentForm" class="yad-client-form">
-<label>نوع ارزیابی<select id="yadAssessmentType" required><option value="STIPO">STIPO / STIPO-R</option><option value="SWAP">SWAP-200</option></select></label>
-<label>واحد پول<select id="yadAssessmentCurrency" required><option value="IRR">تومان</option><option value="EUR">یورو</option><option value="USD">دلار آمریکا</option><option value="CAD">دلار کانادا</option></select></label>
-<label>متخصص ارزیابی<select id="yadAssessmentSpecialist" required><option value="">انتخاب متخصص</option></select></label>
+<label><span data-i18n="assessmentTypeLabel">نوع ارزیابی</span><select id="yadAssessmentType" required><option value="STIPO">STIPO / STIPO-R</option><option value="SWAP">SWAP-200</option></select></label>
+<label><span data-i18n="assessmentCurrencyLabel">واحد پول</span><select id="yadAssessmentCurrency" required><option value="IRR">تومان</option><option value="EUR">یورو</option><option value="USD">دلار آمریکا</option><option value="CAD">دلار کانادا</option></select></label>
+<label><span data-i18n="assessmentSpecialistLabel">متخصص ارزیابی</span><select id="yadAssessmentSpecialist" required><option value="">انتخاب متخصص</option></select></label>
 <p id="yadAssessmentFee" class="notice">تعرفه پس از انتخاب نمایش داده می‌شود.</p>
-<label class="yad-consent"><input id="yadAssessmentAdultConfirm" type="checkbox" required><span>تأیید می‌کنم ۱۸ سال یا بیشتر دارم.</span></label>
-<label class="yad-consent"><input id="yadAssessmentConsent" type="checkbox" required><span>شرایط استفاده و اطلاعیه حریم خصوصی را خوانده‌ام و با آن موافقم. <a href="rules.html#privacy">مطالعه اطلاعیه</a></span></label>
-<button class="button primary" type="submit">ثبت درخواست و مشاهده مراحل پرداخت</button>
+<label class="yad-consent"><input id="yadAssessmentAdultConfirm" type="checkbox" required><span data-i18n="assessmentAdultConfirm">تأیید می‌کنم ۱۸ سال یا بیشتر دارم.</span></label>
+<label class="yad-consent"><input id="yadAssessmentConsent" type="checkbox" required><span><span data-i18n="assessmentConsent">شرایط استفاده و اطلاعیه حریم خصوصی را خوانده‌ام و با آن موافقم.</span> <a href="rules.html#privacy">مطالعه اطلاعیه</a></span></label>
+<button class="button primary" type="submit" data-i18n="assessmentSubmit">ثبت درخواست و مشاهده مراحل پرداخت</button>
 </form>
 </div>
 <div class="portal-card">
-<h2>درخواست‌های من</h2>
+<h2 data-i18n="assessmentMyRequests">درخواست‌های من</h2>
 <div id="yadAssessmentRequests" class="portal-grid"><p>برای مشاهده درخواست‌ها وارد حساب مراجع شوید.</p></div>
 </div>
 </div></main>
