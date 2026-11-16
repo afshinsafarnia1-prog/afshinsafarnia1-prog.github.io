@@ -27,9 +27,14 @@ jobs:
           node --check site-i18n.js
           node --check service-guides-i18n.js
           node --check admin-workflow.js
+          node --check admin-workflow-extended.js
           node --check client-workflow.js
           node --check client-extensions.js
           node --check admin-extensions.js
+          node --check therapist-portal.js
+          node --check workshops.js
+          node --check pwa-install.js
+          node --check sw.js
           node --check auth.js
       - name: Check Supabase schema security guardrails
         run: node scripts/validate-schema.mjs
