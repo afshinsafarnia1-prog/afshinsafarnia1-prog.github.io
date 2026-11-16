@@ -65,7 +65,7 @@
       document.getElementById("yadExistingLogoPath").value=branding.logo_path||"";
       document.getElementById("yadExistingManagerPhotoPath").value=branding.manager_photo_path||"";
       const contacts=data?.contacts||{};
-      const fields={whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail",instagram_url:"yadContactInstagram",telegram_url:"yadContactTelegram",youtube_url:"yadContactYoutube",linkedin_url:"yadContactLinkedin",facebook_url:"yadContactFacebook"};
+      const fields={phone_number:"yadContactPhone",whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail",instagram_url:"yadContactInstagram",telegram_url:"yadContactTelegram",youtube_url:"yadContactYoutube",linkedin_url:"yadContactLinkedin",facebook_url:"yadContactFacebook"};
       Object.entries(fields).forEach(([key,id])=>{document.getElementById(id).value=contacts[key]||"";});
       businessStatus.textContent="تعرفه‌ها توسط هر درمانگر در پنل اختصاصی خودش تعیین می‌شوند؛ سهم درآمد ثابت ۷۰/۳۰ است.";
     }
@@ -79,6 +79,7 @@
           throw new Error("برای فعال‌سازی پذیرش، نسخهٔ نهایی و تأییدشدهٔ قوانین را ثبت کنید؛ نسخهٔ پیش‌نویس قابل قبول نیست.");
         }
         const contacts={
+          phone_number:businessValue("yadContactPhone"),
           whatsapp_number:businessValue("yadContactWhatsapp"),
           contact_email:businessValue("yadContactEmail"),
           instagram_url:businessValue("yadContactInstagram"),
