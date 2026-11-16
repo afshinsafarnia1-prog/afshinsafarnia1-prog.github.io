@@ -226,3 +226,14 @@ body{background:#fbfcfa}
  .legal p,.legal li{font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){.therapist-card:hover,.service:hover,.article-card:hover{transform:none}}
+
+
+/* Accessible PWA installation prompt */
+.pwa-install-button[hidden]{display:none}
+.pwa-install-dialog{width:min(440px,calc(100% - 32px));border:1px solid #dce8e3;border-radius:22px;padding:0;color:#244746;background:#fffdfa;box-shadow:0 24px 80px #123f4630}
+.pwa-install-dialog::backdrop{background:#102f30a8;backdrop-filter:blur(3px)}
+.pwa-install-content{padding:26px}
+.pwa-install-content h2{margin:0 0 16px;color:#123f46;font-size:22px}
+.pwa-install-content p{line-height:2;margin:8px 0;color:#52696a;font-size:14px}
+.pwa-install-content .button{margin-top:14px}
+@media(max-width:620px){.hero-actions .pwa-install-button{width:100%}.pwa-install-content{padding:22px}}
