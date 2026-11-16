@@ -574,4 +574,3 @@ grant execute on function public.admin_list_payments(integer,integer) to authent
 revoke all privileges on all tables in schema public from public, anon, authenticated;
 grant select on table public.profiles to authenticated;
 grant select on table public.therapists to anon, authenticated;
-grant select on table public.workshops to anon, authenticated;
