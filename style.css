@@ -237,3 +237,13 @@ body{background:#fbfcfa}
 .pwa-install-content p{line-height:2;margin:8px 0;color:#52696a;font-size:14px}
 .pwa-install-content .button{margin-top:14px}
 @media(max-width:620px){.hero-actions .pwa-install-button{width:100%}.pwa-install-content{padding:22px}}
+
+
+/* Admin-managed brand identity */
+.yad-brand-logo{width:100%;height:100%;object-fit:contain;border-radius:inherit;display:block}
+.yad-public-manager{grid-column:1/-1;display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:22px;align-items:center;margin-top:26px;padding:22px;background:rgba(255,255,255,.78);border:1px solid rgba(18,63,70,.1);border-radius:22px;box-shadow:0 14px 38px rgba(18,63,70,.06)}
+.yad-public-manager[hidden]{display:none}
+.yad-public-manager img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:16px;background:#e8f4ef}
+.yad-public-manager h3{margin:5px 0;color:#123f46;font-size:20px}
+.yad-public-manager p{color:#52696a;line-height:1.9;margin:5px 0}
+@media(max-width:620px){.yad-public-manager{grid-template-columns:94px 1fr;gap:14px;padding:14px}.yad-public-manager img{aspect-ratio:3/4}.yad-public-manager h3{font-size:16px}}
