@@ -567,3 +567,11 @@ grant execute on function public.admin_list_payments(integer,integer) to authent
 -- This is intentionally not automatic: the first admin must be explicitly
 -- verified by the project owner, and an existing Auth user is not backfilled
 -- by the auth.users insert trigger.
+
+-- Least-privilege browser access. The app reads only a user's own profile,
+-- the verified/public therapist directory, and published workshops directly.
+-- All other workflows use scoped RPCs; RLS alone does not protect TRUNCATE.
+revoke all privileges on all tables in schema public from public, anon, authenticated;
+grant select on table public.profiles to authenticated;
+grant select on table public.therapists to anon, authenticated;
+grant select on table public.workshops to anon, authenticated;
