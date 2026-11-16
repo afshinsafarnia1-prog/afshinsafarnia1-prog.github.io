@@ -17,7 +17,7 @@ const CORE_ASSETS = [
   "/auth.js",
   "/client-workflow.js",
   "/client-extensions.js",
-  "/admin-workflow.js",
+  "/admin-workflow-extended.js",
   "/admin-extensions.js",
   "/supabase-config.js",
   "/manifest.webmanifest",
