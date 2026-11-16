@@ -54,7 +54,7 @@ if (!fs.existsSync(sitemapPath)) {
   const sitemap = fs.readFileSync(sitemapPath, "utf8");
   if (sitemap.includes("YOUR-DOMAIN.example")) errors.push("sitemap.xml still contains a placeholder domain");
   if (!sitemap.includes("<urlset") || !sitemap.includes("<loc>https://")) errors.push("sitemap.xml has no valid URL entries");
-  for (const page of ["/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/relationships.html", "/articles/choosing-a-therapist.html"]) {
+  for (const page of ["/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/relationships.html", "/articles/choosing-a-therapist.html", "/assessment.html"]) {
     if (!sitemap.includes(page)) errors.push("sitemap.xml is missing public guide: " + page);
   }
   for (const privatePage of ["/admin.html", "/client.html"]) {
@@ -112,7 +112,7 @@ for (const [condition, message] of [
   [fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadPreferredTime"') && fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadPreferredSlot"') && fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("client_list_available_slots") && fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("p_preferred_slot_id"), "Client request must support preferred availability slots and optional time windows"],
   [fs.readFileSync(path.join(root, "site-i18n.js"), "utf8").includes("modalityFilter") && fs.readFileSync(path.join(root, "site-i18n.js"), "utf8").includes("acceptingOnly"), "Therapist directory filters must have multilingual labels"],
   [fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("admin_set_appointment_meeting") && fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("admin_resolve_support_cancellation") && fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("client_submit_appointment_feedback"), "Platform completion migration must define private session, cancellation and feedback RPCs"],
-  [fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/client-extensions.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-extensions.js"'), "PWA cache must include the new client/admin workflow scripts"],
+  [fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/client-extensions.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-extensions.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/assessment-workflow.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-assessment-workflow.js"'), "PWA cache must include client, admin and assessment workflow scripts"],
   [homepage.includes('articles/choosing-a-therapist.html'), "Homepage must link to the therapist-selection guide"],
   [appScript.includes('.select("id,display_name,headline,biography,specialties,modalities,languages,photo_path")'), "Public therapist directory must request migrated public therapist profile fields"],
   [fs.readFileSync(path.join(root, "supabase/upgrade-client-choice-payment-first.sql"), "utf8").includes("add column if not exists photo_path"), "Therapist profile migration must define the public photo field"],
