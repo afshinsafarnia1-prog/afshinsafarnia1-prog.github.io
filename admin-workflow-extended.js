@@ -469,13 +469,6 @@
         const metadataId = savedId || val("yadTherapistId");
         const wantsVerification = document.getElementById("yadVerified").checked;
         const ownerUserId = val("yadTherapistOwnerUserId").trim();
-        if (ownerUserId) {
-          const { error: ownerError } = await db.rpc("admin_assign_therapist_user", {
-            p_therapist_id: metadataId,
-            p_user_id: ownerUserId
-          });
-          if (ownerError) throw ownerError;
-        }
         if (wantsVerification) {
           const { error: verificationError } = await db.rpc("admin_verify_therapist", {
             p_therapist_id: metadataId,
@@ -490,6 +483,13 @@
             p_publish: document.getElementById("yadListed").checked
           });
           if (verificationError) throw verificationError;
+          if (ownerUserId) {
+            const { error: ownerError } = await db.rpc("admin_assign_therapist_user", {
+              p_therapist_id: metadataId,
+              p_user_id: ownerUserId
+            });
+            if (ownerError) throw ownerError;
+          }
         }
         root.reset();
         fillForm(null);
