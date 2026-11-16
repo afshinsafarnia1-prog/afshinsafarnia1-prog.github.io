@@ -32,6 +32,9 @@ jobs:
           node --check client-extensions.js
           node --check admin-extensions.js
           node --check therapist-portal.js
+          node --check therapist-articles.js
+          node --check admin-articles.js
+          node --check articles/contributor-articles.js
           node --check assessment-workflow.js
           node --check admin-assessment-workflow.js
           node --check workshops.js
