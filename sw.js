@@ -1,4 +1,4 @@
-const CACHE = "yadcenter-shell-v13";
+const CACHE = "yadcenter-shell-v14";
 const CORE_ASSETS = [
   "/",
   "/index.html",
