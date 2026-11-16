@@ -159,6 +159,14 @@ else {
   if (!sw.includes('"/service-guides-i18n.js"')) errors.push("Service guide translations must be included in the offline cache");
 }
 
+
+const intakeMigration = path.join(root, "supabase", "migrations", "20261116154000_gate_client_intake_until_policy_approval.sql");
+if (!fs.existsSync(intakeMigration)) errors.push("Client intake safety migration is required");
+if (!adminPage.includes('id="yadClientIntakeEnabled"') || !adminPage.includes('id="yadClientPolicyVersion"')) errors.push("Admin must expose the legal-policy intake switch");
+if (!fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientIntakeNotice"')) errors.push("Client page must disclose whether intake is open");
+if (!adminWorkflow.includes('admin_set_client_intake')) errors.push("Admin workflow must save intake state through the protected RPC");
+if (!fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("client_intake_paused")) errors.push("Client workflow must fail closed when intake is paused");
+
 if (errors.length) {
   console.error(errors.join("\n"));
   process.exit(1);
