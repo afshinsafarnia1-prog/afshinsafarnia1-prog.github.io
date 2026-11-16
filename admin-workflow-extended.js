@@ -436,6 +436,11 @@
     root.addEventListener("submit", async event => {
       event.preventDefault();
       try {
+        const wantsVerification = document.getElementById("yadVerified").checked;
+        const ownerUserId = val("yadTherapistOwnerUserId").trim();
+        if (ownerUserId && !wantsVerification) {
+          throw new Error("اتصال حساب کاربری درمانگر فقط پس از ثبت و تأیید صلاحیت حرفه‌ای امکان‌پذیر است.");
+        }
         setStatus("در حال ذخیره پروفایل…");
         const photo = document.getElementById("yadPhoto").files[0];
         const documentFile = document.getElementById("yadLicenseDocument").files[0];
@@ -467,15 +472,6 @@
         const { data: savedId, error } = await db.rpc("admin_save_therapist", payload);
         if (error) throw error;
         const metadataId = savedId || val("yadTherapistId");
-        const wantsVerification = document.getElementById("yadVerified").checked;
-        const ownerUserId = val("yadTherapistOwnerUserId").trim();
-        if (ownerUserId) {
-          const { error: ownerError } = await db.rpc("admin_assign_therapist_user", {
-            p_therapist_id: metadataId,
-            p_user_id: ownerUserId
-          });
-          if (ownerError) throw ownerError;
-        }
         if (wantsVerification) {
           const { error: verificationError } = await db.rpc("admin_verify_therapist", {
             p_therapist_id: metadataId,
@@ -490,6 +486,13 @@
             p_publish: document.getElementById("yadListed").checked
           });
           if (verificationError) throw verificationError;
+          if (ownerUserId) {
+            const { error: ownerError } = await db.rpc("admin_assign_therapist_user", {
+              p_therapist_id: metadataId,
+              p_user_id: ownerUserId
+            });
+            if (ownerError) throw ownerError;
+          }
         }
         root.reset();
         fillForm(null);
