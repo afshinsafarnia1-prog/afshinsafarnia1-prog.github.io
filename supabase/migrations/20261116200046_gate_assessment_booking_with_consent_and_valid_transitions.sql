@@ -1,5 +1,4 @@
 alter table public.assessment_requests add column if not exists policy_version text, add column if not exists adult_confirmation boolean not null default false, add column if not exists consented_at timestamptz;
-revoke all on function public.client_create_assessment_request(text,uuid,text) from public,anon,authenticated;
 drop function if exists public.client_create_assessment_request(text,uuid,text);
 create or replace function public.client_create_assessment_request(p_assessment_type text,p_specialist_id uuid,p_currency text,p_policy_version text,p_adult_confirmation boolean)
 returns uuid language plpgsql security definer set search_path='' as $$
