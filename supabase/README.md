@@ -94,6 +94,7 @@ The following migrations are applied to the connected Supabase project and inclu
 
 - `20261116154010_gate_client_intake_until_policy_approval`: client request intake defaults to disabled. The client RPC checks the server-side flag and the exact approved policy version. The manager can change the flag only through an AAL2-protected RPC.
 - `20261116154154_revoke_legacy_consent_request_overload`: revokes authenticated execution of the obsolete eight-argument consent RPC overload.
+- `20261116155203_revoke_direct_legacy_client_request`: revokes direct execution of the internal request-creation RPC; the only client entry point is the consent- and intake-gated slot-aware RPC.
 - `20261116154656_require_tariffs_before_opening_client_intake`: prevents the manager from enabling intake until all three central tariffs are active.
 
 Verified current staging state: zero active tariff rows, zero listed-and-verified therapist profiles, intake disabled, and policy version still marked draft. This is intentional; the owner will enter tariffs, therapist details and public contact information through the admin panel. Contact channels can be saved separately before tariff amounts are chosen.
