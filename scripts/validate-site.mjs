@@ -136,11 +136,12 @@ for (const [condition, message] of [
   [fs.readFileSync(path.join(root, "site-i18n.js"), "utf8").includes("Evaluación de personalidad con STIPO y SWAP"), "Assessment page must include Spanish translations"],
   [adminPage.includes('id="yadDuration" type="number" min="45" max="45" value="45" readonly'), "Admin therapist form must enforce the 45-minute standard session"],
   [adminWorkflow.includes("p_session_duration_minutes: 45"), "Therapist profile saves must use the central 45-minute session duration"],
+  [adminPage.includes('id="yadAuthority" maxlength="240"') && adminWorkflow.includes('p_issuing_authority: val("yadAuthority").trim()'), "Therapist licensing authority must be editable and stored per jurisdiction"],
   [adminWorkflow.includes("p_fee_amount: 0") && adminWorkflow.includes('p_fee_currency: "IRR"') && !adminWorkflow.includes('val("yadFee")') && !adminWorkflow.includes('val("yadCurrency")'), "Therapist profile saves must not depend on removed per-therapist fee fields"],
   [adminWorkflow.includes("Intl.DateTimeFormat().resolvedOptions().timeZone"), "Workshop timezone must default to the administrator device timezone"],
   [!adminWorkflow.includes('"Europe/Berlin"'), "Workshop scheduling must not hard-code a Berlin timezone"]
 ]) if (!condition) errors.push(message);
-for (const file of ["supabase/migrations/20261116184730_require_verified_therapist_for_intake.sql", "supabase/migrations/20261116195646_therapist_specific_fees_and_cad_currency.sql", "supabase/migrations/20261116195852_paid_external_personality_assessment_workflow.sql", "supabase/migrations/20261116201500_add_admin_managed_public_phone_number.sql"]) {
+for (const file of ["supabase/migrations/20261116184730_require_verified_therapist_for_intake.sql", "supabase/migrations/20261116195646_therapist_specific_fees_and_cad_currency.sql", "supabase/migrations/20261116195852_paid_external_personality_assessment_workflow.sql", "supabase/migrations/20261116201500_add_admin_managed_public_phone_number.sql", "supabase/migrations/20261116202000_allow_jurisdiction_specific_therapist_license_authority.sql"]) {
   if (!fs.existsSync(path.join(root, file))) errors.push(file + " is required");
 }
 
