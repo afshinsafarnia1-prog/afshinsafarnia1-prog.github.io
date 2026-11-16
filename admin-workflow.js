@@ -296,7 +296,37 @@
     const rosterBox=document.getElementById("yadWorkshopRoster");
     const rosterList=document.getElementById("yadWorkshopRosterList");
     const eventValue=id=>document.getElementById(id)?.value?.trim()||"";
-    const eventDate=id=>{const v=eventValue(id);return v?new Date(v).toISOString():null;};
+    const eventDate=id=>{const v=eventValue(id);return v?localDateTimeInZone(v,eventValue("eventTimezone")||Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran").toISOString():null;};
+    const localInputValue=(value,zone)=>{
+      if(!value)return "";
+      const parts=Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date(value)).map(p=>[p.type,p.value]));
+      return parts.year+"-"+parts.month+"-"+parts.day+"T"+parts.hour+":"+parts.minute;
+    };
+    function clearWorkshopEditor(){
+      eventForm?.reset();
+      document.getElementById("eventId").value="";
+      document.getElementById("eventFormHeading").textContent="ایجاد کارگاه یا نشست جدید";
+      document.getElementById("eventCancelEdit").hidden=true;
+      document.getElementById("eventTimezone").value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
+      document.getElementById("eventLanguages").value="fa";
+      document.getElementById("eventFee").value="0";
+    }
+    async function editWorkshop(id){
+      const {data,error}=await db.rpc("admin_get_workshop",{p_workshop_id:id});
+      if(error)throw error;
+      const item=data?.[0];if(!item)throw new Error("رویداد پیدا نشد.");
+      const zone=item.timezone||"Asia/Tehran";
+      const values={eventId:item.id,eventSlug:item.slug,eventTitle:item.title,eventSummary:item.summary,eventDescription:item.description,
+        eventPresenter:item.presenter_name,eventPresenterBio:item.presenter_bio,eventLanguages:(item.languages||["fa"]).join(","),
+        eventTopics:(item.topics||[]).join(","),eventFormat:item.format,eventPlatform:item.platform,eventVenue:item.venue||"",
+        eventStarts:localInputValue(item.starts_at,zone),eventEnds:localInputValue(item.ends_at,zone),eventTimezone:zone,
+        eventCapacity:item.capacity??"",eventFee:item.fee_amount,eventCurrency:item.currency,eventStatus:item.status,
+        eventDeadline:localInputValue(item.registration_deadline,zone),eventMeetingUrl:item.meeting_url||"",eventMeetingPassword:item.meeting_password||""};
+      Object.entries(values).forEach(([id,value])=>{const input=document.getElementById(id);if(input)input.value=value;});
+      document.getElementById("eventFormHeading").textContent="ویرایش کارگاه: "+item.title;
+      document.getElementById("eventCancelEdit").hidden=false;
+      eventForm.scrollIntoView({behavior:"smooth",block:"start"});
+    }
     async function loadWorkshops(){
       if(!eventList)return;
       const [{data:events,error},{data:proposals, error:proposalError}]=await Promise.all([
@@ -313,7 +343,9 @@
         const statusBtn=document.createElement("button");statusBtn.type="button";statusBtn.className="button outline";
         statusBtn.textContent=item.status==="published"?"لغو انتشار":item.status==="cancelled"?"انتشار دوباره":"انتشار رویداد";
         statusBtn.addEventListener("click",async()=>{const next=item.status==="published"?"cancelled":"published";const {error}=await db.rpc("admin_set_workshop_status",{p_workshop_id:item.id,p_status:next});if(error){eventStatus.textContent=error.message;return;}eventStatus.textContent=next==="published"?"رویداد منتشر شد.":"رویداد از فهرست عمومی خارج شد.";await loadWorkshops();});
-        card.append(h,p,btn,statusBtn);eventList.append(card);
+        const editBtn=document.createElement("button");editBtn.type="button";editBtn.className="button outline";editBtn.textContent="ویرایش اطلاعات";
+        editBtn.addEventListener("click",()=>editWorkshop(item.id).catch(error=>eventStatus.textContent=error.message||"بارگذاری رویداد ناموفق بود."));
+        card.append(h,p,btn,statusBtn,editBtn);eventList.append(card);
       });
       if(!(events||[]).length)eventList.textContent="هنوز رویدادی ایجاد نشده است.";
       proposalList.replaceChildren();
@@ -354,7 +386,7 @@
         if(format==="in_person")platform="In person";
         if(format==="online"&&platform==="In person")platform="Zoom";
         const args={
-          p_workshop_id:null,p_slug:eventValue("eventSlug"),p_title:eventValue("eventTitle"),
+          p_workshop_id:eventValue("eventId")||null,p_slug:eventValue("eventSlug"),p_title:eventValue("eventTitle"),
           p_summary:eventValue("eventSummary"),p_description:eventValue("eventDescription"),
           p_presenter_name:eventValue("eventPresenter"),p_presenter_bio:eventValue("eventPresenterBio"),
           p_languages:split(eventValue("eventLanguages")),p_topics:split(eventValue("eventTopics")),
@@ -368,11 +400,11 @@
         if(new Date(args.p_ends_at)<=new Date(args.p_starts_at))throw new Error("زمان پایان باید بعد از شروع باشد.");
         const {error}=await db.rpc("admin_upsert_workshop",args);
         if(error)throw error;
-        eventForm.reset();document.getElementById("eventTimezone").value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
-        document.getElementById("eventLanguages").value="fa";document.getElementById("eventFee").value="0";
+        clearWorkshopEditor();
         eventStatus.textContent="رویداد ذخیره شد.";await loadWorkshops();
       }catch(error){eventStatus.textContent=error.message||"ذخیره رویداد ناموفق بود.";}
     });
+    document.getElementById("eventCancelEdit")?.addEventListener("click",clearWorkshopEditor);
     document.getElementById("yadRefreshWorkshops")?.addEventListener("click",()=>loadWorkshops().catch(e=>eventStatus.textContent=e.message));
 
     root.addEventListener("submit", async event => {
