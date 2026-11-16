@@ -13,6 +13,7 @@
     const queryTherapist = new URLSearchParams(location.search).get("therapist");
     const queryWorkshop = new URLSearchParams(location.search).get("workshop");
     let directory = [];
+    const feeNote=document.getElementById("yadSelectedTherapistFee");
     let activeUser = null;
     let clientIntakeEnabled = false;
     let clientPolicyVersion = "2026-11-16-v1-draft";
@@ -47,6 +48,11 @@
         .order("display_name", { ascending: true });
       if (error) throw error;
       directory = data || [];
+      const {data:feeRows,error:feeError}=await db.rpc("get_public_therapist_fee_directory");
+      if(feeError)throw feeError;
+      const feesByTherapist=new Map();
+      (feeRows||[]).forEach(row=>{if(!feesByTherapist.has(row.therapist_id))feesByTherapist.set(row.therapist_id,[]);feesByTherapist.get(row.therapist_id).push(row);});
+      directory=directory.map(t=>({...t,fees:feesByTherapist.get(t.id)||[]}));
       select.replaceChildren();
       const first = document.createElement("option");
       first.value = ""; first.textContent = "انتخاب درمانگر";
@@ -59,9 +65,21 @@
       });
       if (queryTherapist && directory.some(t => t.id === queryTherapist)) select.value = queryTherapist;
       if (select.value) await loadAvailableSlots();
+      updateSelectedFee();
       if (!directory.length) setStatus("در حال حاضر پروفایل تأییدشده‌ای برای انتخاب منتشر نشده است.");
     }
 
+    function updateSelectedFee(){
+      if(!feeNote)return;
+      const therapist=directory.find(t=>t.id===select.value);
+      if(!therapist){feeNote.textContent="پس از انتخاب درمانگر، تعرفهٔ همان متخصص نمایش داده می‌شود.";return;}
+      const market=document.getElementById("yadRequestMarket").value;
+      const currency=market==="iran"?"IRR":document.getElementById("yadRequestCurrency").value;
+      const fee=(therapist.fees||[]).find(x=>x.currency===currency);
+      feeNote.textContent=fee
+        ?"تعرفهٔ این درمانگر: "+new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(currency==="IRR"?Number(fee.amount)/10:Number(fee.amount))+(currency==="IRR"?" تومان":" "+currency)+" · هر جلسه ۴۵ دقیقه"
+        :"این درمانگر هنوز تعرفه‌ای برای ارز انتخاب‌شده ثبت نکرده است؛ لطفاً ارز دیگری انتخاب کنید یا با مدیریت تماس بگیرید.";
+    }
     async function loadAvailableSlots() {
       if (!slotSelect) return;
       slotSelect.replaceChildren();
@@ -164,7 +182,9 @@
       catch (error) { setStatus(error.message || "بارگذاری اطلاعات ناموفق بود.", true); }
     }
 
-    select.addEventListener("change",loadAvailableSlots);
+    select.addEventListener("change",()=>{loadAvailableSlots();updateSelectedFee();});
+    document.getElementById("yadRequestMarket").addEventListener("change",updateSelectedFee);
+    document.getElementById("yadRequestCurrency").addEventListener("change",updateSelectedFee);
     countryInput?.addEventListener("change",loadAvailableSlots);
     form.addEventListener("submit", async event => {
       event.preventDefault();
@@ -196,7 +216,7 @@
           :raw.includes("client_intake_paused")?"ثبت درخواست جدید فعلاً غیرفعال است."
           :raw.includes("current_policy_version_required")?"نسخهٔ نهایی قوانین هنوز تأیید نشده است."
           :raw.includes("create_client_request_with_consent")?"زیرساخت تکمیلی هنوز روی پایگاه داده فعال نشده است."
-          :raw;
+          :raw.includes("therapist_fee_not_configured_for_currency")?"این درمانگر برای واحد پول انتخاب‌شده تعرفه ثبت نکرده است.":raw;
         setStatus(friendly||"ثبت درخواست ناموفق بود.", true); return;
       }
       setStatus("درخواست ثبت شد. اطلاعات پرداخت را از مدیریت یادسنتر دریافت کنید؛ پس از پرداخت، شماره پیگیری را در همین صفحه وارد کنید.");
