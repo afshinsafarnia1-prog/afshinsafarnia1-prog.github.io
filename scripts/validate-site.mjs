@@ -83,7 +83,7 @@ for (const page of ["admin.html", "client.html"]) {
   }
 }
 
-for (const file of ["auth.js", "supabase-config.js", "admin-workflow.js", "client-workflow.js", "site-i18n.js", "therapist-profile.js", "client-extensions.js", "admin-extensions.js", "workshops.js", "scripts/validate-schema.mjs", "supabase/schema.sql", "supabase/upgrade-client-choice-payment-first.sql", "supabase/platform-completion-2026-11.sql", "sw.js"]) {
+for (const file of ["auth.js", "supabase-config.js", "admin-workflow-extended.js", "client-workflow.js", "site-i18n.js", "therapist-profile.js", "client-extensions.js", "admin-extensions.js", "workshops.js", "scripts/validate-schema.mjs", "supabase/schema.sql", "supabase/upgrade-client-choice-payment-first.sql", "supabase/platform-completion-2026-11.sql", "sw.js"]) {
   if (!fs.existsSync(path.join(root, file))) errors.push(`${file} is required`);
 }
 for (const file of [".env", ".env.production"]) {
@@ -93,7 +93,7 @@ for (const file of [".env", ".env.production"]) {
 
 const homepage = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const adminPage = fs.readFileSync(path.join(root, "admin.html"), "utf8");
-const adminWorkflow = fs.readFileSync(path.join(root, "admin-workflow.js"), "utf8");
+const adminWorkflow = fs.readFileSync(path.join(root, "admin-workflow-extended.js"), "utf8");
 const appScript = fs.readFileSync(path.join(root, "app.js"), "utf8");
 for (const [condition, message] of [
   [homepage.includes('id="yadPublicTariffs"'), "Homepage must include the central tariff display"],
