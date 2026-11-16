@@ -96,7 +96,7 @@ const adminPage = fs.readFileSync(path.join(root, "admin.html"), "utf8");
 const adminWorkflow = fs.readFileSync(path.join(root, "admin-workflow-extended.js"), "utf8");
 const appScript = fs.readFileSync(path.join(root, "app.js"), "utf8");
 for (const [condition, message] of [
-  [homepage.includes('id="yadPublicTariffs"'), "Homepage must include the central tariff display"],
+  [appScript.includes('get_public_therapist_fee_directory') && appScript.includes('t.fees'), "Homepage must display therapist-specific fees"],
   [fs.existsSync(path.join(root, "therapist-profile.html")), "Public therapist profile page must exist"],
   [fs.existsSync(path.join(root, "workshops.html")) && fs.existsSync(path.join(root, "workshops.js")), "Public workshop directory and loader must exist"],
   [appScript.includes('therapist-profile.html?id='), "Therapist directory cards must link to public profiles"],
@@ -140,7 +140,7 @@ for (const [condition, message] of [
   [adminWorkflow.includes("Intl.DateTimeFormat().resolvedOptions().timeZone"), "Workshop timezone must default to the administrator device timezone"],
   [!adminWorkflow.includes('"Europe/Berlin"'), "Workshop scheduling must not hard-code a Berlin timezone"]
 ]) if (!condition) errors.push(message);
-for (const file of ["supabase/central-tariffs-contacts-7030.sql", "supabase/admin-public-contacts-only.sql"]) {
+for (const file of ["supabase/migrations/20261116184730_require_verified_therapist_for_intake.sql", "supabase/migrations/20261116195646_therapist_specific_fees_and_cad_currency.sql", "supabase/migrations/20261116195852_paid_external_personality_assessment_workflow.sql"]) {
   if (!fs.existsSync(path.join(root, file))) errors.push(file + " is required");
 }
 
@@ -170,13 +170,13 @@ else {
 }
 
 
-const intakeMigration = path.join(root, "supabase", "migrations", "20261116154010_gate_client_intake_until_policy_approval.sql");
+const intakeMigration = path.join(root, "supabase", "migrations", "20261116184730_require_verified_therapist_for_intake.sql");
 if (!fs.existsSync(intakeMigration)) errors.push("Client intake safety migration is required");
 if (!adminPage.includes('id="yadClientIntakeEnabled"') || !adminPage.includes('id="yadClientPolicyVersion"')) errors.push("Admin must expose the legal-policy intake switch");
 if (!fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientIntakeNotice"')) errors.push("Client page must disclose whether intake is open");
 if (!adminWorkflow.includes('admin_set_client_intake')) errors.push("Admin workflow must save intake state through the protected RPC");
 if (!adminWorkflow.includes('admin_update_yad_public_contacts')) errors.push("Admin workflow must allow public contacts to be saved before tariffs are configured");
-if (!adminWorkflow.includes('admin_set_client_intake') || adminWorkflow.includes('هر سه تعرفه')) errors.push("Intake must use the protected release gate without central tariffs");
+if (!adminWorkflow.includes('admin_set_client_intake') || adminWorkflow.includes('هر سه تعرفه')) errors.push("Intake must use the protected release gate and must not require central therapy tariffs");
 if (!fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("client_intake_paused")) errors.push("Client workflow must fail closed when intake is paused");
 
 if (errors.length) {
