@@ -55,7 +55,7 @@
       const { data, error } = await db.rpc("get_public_site_settings");
       if (error) throw error;
       document.getElementById("yadClientIntakeEnabled").checked = data?.client_intake_enabled === true;
-      document.getElementById("yadClientPolicyVersion").value = data?.client_policy_version || "2026-11-16-v1-draft";
+      document.getElementById("yadClientPolicyVersion").value = data?.client_policy_version || "2026-11-17-v2-draft";
       const branding=data?.branding||{};
       document.getElementById("yadBrandName").value=branding.brand_name||"یادسنتر";
       document.getElementById("yadBrandTagline").value=branding.tagline||"";
