@@ -11,7 +11,7 @@ begin
   raise exception 'contact_field_too_long' using errcode='22023';
  end if;
  if nullif(v_contact->>'contact_email','') is not null
-    and (v_contact->>'contact_email') !~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$' then
+    and (v_contact->>'contact_email') !~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+[.][A-Z]{2,}$' then
   raise exception 'invalid_contact_email' using errcode='22023';
  end if;
  if exists(select 1 from jsonb_each_text(v_contact) e
