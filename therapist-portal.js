@@ -14,6 +14,7 @@
     const zone = document.getElementById("yadTherapistAvailabilityTimezone");
     const feeForm=document.getElementById("yadTherapistFeeForm");
     const feeStatus=document.getElementById("yadTherapistFeeStatus");
+    const assessmentRoot=document.getElementById("yadTherapistAssessmentRequests");
     let activeUser = null;
     const node = (tag, cls, value) => {
       const el = document.createElement(tag);
@@ -84,6 +85,35 @@
         card.append(remove);slotsRoot.append(card);
       });
     }
+    async function loadAssessmentRequests(){
+      if(!assessmentRoot)return;
+      const {data,error}=await db.rpc("therapist_list_assessment_requests");
+      assessmentRoot.replaceChildren();
+      if(error){assessmentRoot.append(node("p","notice",error.message||"بارگذاری درخواست‌های ارزیابی ناموفق بود."));return;}
+      if(!data?.length){assessmentRoot.append(node("p","muted","درخواست ارزیابی زمان‌بندی‌شده‌ای برای این حساب وجود ندارد."));return;}
+      const {data:therapists, error:directoryError}=await db.from("therapists").select("id,display_name").eq("is_listed",true).not("verified_at","is",null).order("display_name");
+      if(directoryError){assessmentRoot.append(node("p","notice","دریافت فهرست درمانگران پیشنهادی ناموفق بود."));return;}
+      data.forEach(item=>{
+        const card=node("article","portal-card");
+        card.append(node("b","",item.client_name+" · "+(item.assessment_type==="STIPO"?"STIPO / STIPO-R":"SWAP-200")));
+        card.append(node("p","muted",date(item.scheduled_at)+" · وضعیت: "+item.status));
+        const textarea=document.createElement("textarea");textarea.rows=4;textarea.maxLength=5000;textarea.placeholder="جمع‌بندی و پیشنهاد بالینی برای انتخاب آگاهانه درمانگر (حداقل ۱۰ نویسه)";textarea.value=item.recommendations||"";
+        const select=document.createElement("select");select.multiple=true;select.size=Math.min(6,Math.max(3,(therapists||[]).length));
+        (therapists||[]).forEach(t=>{const option=new Option(t.display_name,t.id);if((item.recommended_therapist_ids||[]).includes(t.id))option.selected=true;select.add(option);});
+        const save=node("button","button primary","ذخیره بازخورد و درمانگران پیشنهادی");save.type="button";
+        save.addEventListener("click",async()=>{
+          const ids=[...select.selectedOptions].map(x=>x.value);
+          if(textarea.value.trim().length<10){setStatus("برای ثبت پیشنهاد، جمع‌بندی بالینی کافی وارد کنید.",true);return;}
+          save.disabled=true;
+          const {error:saveError}=await db.rpc("assessment_specialist_add_recommendations",{p_request_id:item.request_id,p_recommendations:textarea.value.trim(),p_recommended_therapist_ids:ids});
+          save.disabled=false;
+          if(saveError){setStatus(saveError.message||"ذخیره پیشنهادها ناموفق بود.",true);return;}
+          setStatus("بازخورد و فهرست درمانگران پیشنهادی ذخیره شد.");
+        });
+        card.append(node("label","muted","بازخورد و توضیح بالینی"),textarea,node("label","muted","درمانگران پیشنهادی (انتخاب چندگانه)"),select,save);
+        assessmentRoot.append(card);
+      });
+    }
     async function loadMyFees(){
       if(!feeForm)return;
       const {data,error}=await db.rpc("therapist_get_my_fees");
@@ -121,7 +151,7 @@
         return;
       }
       zone.value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
-      await Promise.all([loadSessions(),loadSlots(),loadMyFees()]);
+      await Promise.all([loadSessions(),loadSlots(),loadMyFees(),loadAssessmentRequests()]);
     }
     form.addEventListener("submit",async event=>{
       event.preventDefault();
