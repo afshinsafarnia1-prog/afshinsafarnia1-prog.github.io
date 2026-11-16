@@ -22,6 +22,18 @@
 <p data-i18n="businessHelp">تعرفه‌ها برای همه درمانگران یکسان است. مبلغ‌ها برای جلسهٔ ۴۵ دقیقه‌ای به تفکیک بازار ثبت می‌شوند.</p>
 <div id="yadBusinessSettingsStatus" class="notice" role="status" aria-live="polite">در حال دریافت تنظیمات…</div>
 <form id="yadBusinessSettingsForm" class="yad-admin-form">
+<h3>هویت بصری و معرفی مدیریت</h3>
+<p class="privacy-hint">نام برند، شعار، نشان، تصویر و معرفی مدیر از همین بخش در سایت عمومی نمایش داده می‌شود. اطلاعات را هر زمان خواستی می‌توانی تکمیل یا تغییر دهی.</p>
+<input id="yadExistingLogoPath" type="hidden"><input id="yadExistingManagerPhotoPath" type="hidden">
+<div class="portal-grid">
+<label>نام نمایشی مرکز<input id="yadBrandName" maxlength="100" value="یادسنتر"></label>
+<label>شعار کوتاه برند<input id="yadBrandTagline" maxlength="220" placeholder="شعار رسمی یادسنتر"></label>
+<label>نام مدیر / بنیان‌گذار<input id="yadManagerName" maxlength="120"></label>
+<label>عنوان مدیر<input id="yadManagerTitle" maxlength="160" placeholder="مدیر و بنیان‌گذار یادسنتر"></label>
+<label>لوگوی اختصاصی مرکز<input id="yadBrandLogo" type="file" accept="image/jpeg,image/png,image/webp,image/svg+xml"></label>
+<label>تصویر مدیر / بنیان‌گذار<input id="yadManagerPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label>
+</div>
+<label>معرفی کوتاه مدیر و رویکرد مرکز<textarea id="yadManagerBio" rows="4" maxlength="1800"></textarea></label>
 <h3>تعرفه‌های مرکزی و تقسیم درآمد</h3>
 <div class="portal-grid">
 <label>تعرفه داخل ایران (تومان)<input id="yadTariffIRR" type="number" min="1" step="1"></label>
