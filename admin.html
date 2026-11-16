@@ -126,7 +126,8 @@
 <div id="yadWorkshopAdminStatus" class="notice" role="status" aria-live="polite">در انتظار اتصال…</div>
 <div id="yadWorkshopAdminList" class="portal-grid"></div>
 <form id="yadWorkshopAdminForm" class="yad-admin-form">
-<h3>ایجاد کارگاه یا نشست جدید</h3>
+<input id="eventId" type="hidden">
+<h3 id="eventFormHeading">ایجاد کارگاه یا نشست جدید</h3>
 <div class="portal-grid">
 <label>عنوان کارگاه<input id="eventTitle" required minlength="4" maxlength="180"></label>
 <label>شناسه صفحه (لاتین)<input id="eventSlug" required pattern="[a-zA-Z0-9-]+" maxlength="100"></label>
@@ -143,14 +144,14 @@
 <label>هزینه<input id="eventFee" type="number" min="0" value="0"></label>
 <label>واحد پول<select id="eventCurrency"><option>EUR</option><option>USD</option><option>IRR</option></select></label>
 <label>مهلت ثبت‌نام<input id="eventDeadline" type="datetime-local"></label>
-<label>وضعیت انتشار<select id="eventStatus"><option value="draft">پیش‌نویس</option><option value="published">انتشار عمومی</option></select></label>
+<label>وضعیت انتشار<select id="eventStatus"><option value="draft">پیش‌نویس</option><option value="published">انتشار عمومی</option><option value="cancelled">لغوشده</option><option value="completed">پایان‌یافته</option></select></label>
 <label>لینک خصوصی جلسه (Zoom/…؛ فقط برای ثبت‌نام‌کنندگان مجاز)<input id="eventMeetingUrl" type="url"></label>
 <label>رمز جلسه (اختیاری)<input id="eventMeetingPassword" maxlength="120"></label>
 </div>
 <label>خلاصهٔ معرفی<textarea id="eventSummary" rows="2" maxlength="500"></textarea></label>
 <label>شرح کامل<textarea id="eventDescription" rows="5"></textarea></label>
 <label>معرفی ارائه‌دهنده<textarea id="eventPresenterBio" rows="3"></textarea></label>
-<button class="button primary" type="submit">ذخیره کارگاه</button>
+<div class="admin-actions"><button class="button primary" type="submit">ذخیره کارگاه</button><button class="button outline" id="eventCancelEdit" type="button" hidden>لغو ویرایش</button></div>
 </form>
 <h3>پیشنهادهای رسیده از درمانگران</h3>
 <div id="yadWorkshopProposals" class="portal-grid"></div>
