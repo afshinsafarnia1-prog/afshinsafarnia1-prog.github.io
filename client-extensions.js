@@ -11,6 +11,16 @@
     const inquirySelect = document.getElementById("yadInquiryTherapist");
     const inquiryStatus = document.getElementById("yadTherapistInquiryStatus");
     let inquiryTherapists = [];
+    const inquiryContactMethod = document.getElementById("yadInquiryContactMethod");
+    const inquiryContactValue = document.getElementById("yadInquiryContactValue");
+    const syncInquiryContactInput = () => {
+      if (!inquiryContactMethod || !inquiryContactValue) return;
+      const phone = inquiryContactMethod.value === "phone";
+      inquiryContactValue.autocomplete = phone ? "tel" : "email";
+      inquiryContactValue.inputMode = phone ? "tel" : "email";
+    };
+    inquiryContactMethod?.addEventListener("change", syncInquiryContactInput);
+    syncInquiryContactInput();
     const inquiryMessage = (value, bad = false) => {
       if (!inquiryStatus) return;
       inquiryStatus.textContent = value;
