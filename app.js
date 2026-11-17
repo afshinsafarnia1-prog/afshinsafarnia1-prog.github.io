@@ -33,9 +33,11 @@
       if(t.photo_path && db){
         const {data}=db.storage.from("therapist-photos").getPublicUrl(t.photo_path);
         if(data?.publicUrl){const img=el("img","therapist-photo");img.src=data.publicUrl;img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
-      } else card.append(el("div","therapist-photo therapist-placeholder","ی"));
+      } else if(t.public_slug==="foruzan-shahla"){const img=el("img","therapist-photo");img.src="/therapists/foruzan-shahla.jpg";img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
+      else card.append(el("div","therapist-photo therapist-placeholder","ی"));
       const body=el("div","therapist-card-body");
       body.append(el("h3","",t.display_name||""));
+      if(t.manager_approved===true&&!t.verified_at)body.append(el("span","therapist-meta","تأییدشده توسط مدیریت یادسنتر؛ احراز حرفه‌ای مستقل هنوز ثبت نشده است"));
       if(t.headline)body.append(el("p","therapist-headline",t.headline));
       if(t.years_experience!=null)body.append(el("p","therapist-meta",(i18n().yearsExperience||"سابقهٔ حرفه‌ای: {years} سال").replace("{years}",String(t.years_experience))));
       if(typeof t.accepting_new_clients==="boolean")body.append(el("span",t.accepting_new_clients?"availability-open":"availability-closed",t.accepting_new_clients?(i18n().acceptingYes||"پذیرش مراجع جدید"):(i18n().acceptingNo||"فعلاً پذیرش مراجع جدید ندارد")));
@@ -64,8 +66,8 @@
     if(!db){directory.textContent="اتصال فهرست درمانگران در دسترس نیست.";return;}
     directory.textContent="در حال دریافت فهرست درمانگران…";
     const {data,error}=await db.from("therapists")
-      .select("id,display_name,headline,biography,specialties,modalities,languages,photo_path")
-      .eq("is_listed",true).not("verified_at","is",null)
+      .select("id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path,manager_approved,verified_at")
+      .eq("is_listed",true).or("verified_at.not.is.null,manager_approved.eq.true")
       .order("display_name",{ascending:true});
     if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
     allTherapists=data||[];
