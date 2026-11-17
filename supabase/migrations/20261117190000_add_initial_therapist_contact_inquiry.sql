@@ -35,7 +35,7 @@ begin
     raise exception 'therapist_not_available' using errcode = 'P0002';
   end if;
 
-  if p_contact_method not in ('phone', 'email') or char_length(v_contact) < 5 or char_length(v_contact) > 254 then
+  if p_contact_method is null or p_contact_method not in ('phone', 'email') or char_length(v_contact) < 5 or char_length(v_contact) > 254 then
     raise exception 'invalid_contact' using errcode = '22023';
   end if;
   if p_contact_method = 'email' and v_contact !~ '^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$' then
