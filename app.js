@@ -72,7 +72,7 @@
     if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
     allTherapists=data||[];
     const {data:feeRows, error:feeError}=await db.rpc("get_public_therapist_fee_directory");
-    if(feeError){directory.textContent="دریافت تعرفهٔ درمانگران با خطا روبه‌رو شد.";return;}
+    if(feeError){console.warn("YAD public fee directory unavailable; rendering therapist profiles without dynamic fees.",feeError);}
     const feesByTherapist=new Map();
     (feeRows||[]).forEach(row=>{if(!feesByTherapist.has(row.therapist_id))feesByTherapist.set(row.therapist_id,[]);feesByTherapist.get(row.therapist_id).push(row);});
     allTherapists=allTherapists.map(t=>({...t,fees:feesByTherapist.get(t.id)||[]}));
@@ -82,7 +82,7 @@
     if(Array.isArray(ratingRows)){const ratingById=new Map(ratingRows.map(x=>[x.therapist_id,x]));allTherapists=allTherapists.map(x=>({...x,...(ratingById.get(x.id)||{})}));}
     populateModalityFilter();
     const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
-    if(settingsError){directory.textContent="دریافت تنظیمات عمومی سایت با خطا روبه‌رو شد.";return;}
+    if(settingsError){console.warn("YAD public site settings unavailable; rendering therapist profiles with default branding.",settingsError);}
     
     publicContacts=settings?.contacts||{};
     siteBranding=settings?.branding||{};
