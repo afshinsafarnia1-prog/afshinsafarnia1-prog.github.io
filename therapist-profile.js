@@ -26,8 +26,8 @@
     if(!id){root.textContent=t("profileMissingId");return;}
     root.textContent=t("profileLoading");
     const {data,error}=await db.from("therapists")
-      .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path")
-      .eq("id",id).eq("is_listed",true).not("verified_at","is",null).maybeSingle();
+      .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path,manager_approved,verified_at")
+      .eq("id",id).eq("is_listed",true).or("verified_at.not.is.null,manager_approved.eq.true").maybeSingle();
     if(error||!data){root.textContent=t("profileNotFound");return;}
     const {data:metaRows}=await db.rpc("get_public_therapist_public_metadata",{p_therapist_id:id});
     const publicMeta=metaRows?.[0]||{};
@@ -40,16 +40,18 @@
     const ogDescription=document.querySelector('meta[property="og:description"]');if(ogDescription&&description)ogDescription.content=description.content;
     root.replaceChildren();
     const hero=node("div","profile-hero");
-    if(data.photo_path){
-      const {data:photo}=db.storage.from("therapist-photos").getPublicUrl(data.photo_path);
-      if(photo?.publicUrl){const img=node("img","profile-photo");img.src=photo.publicUrl;img.alt=t("profilePhotoAlt");img.loading="lazy";hero.append(img);}
+    const profilePhoto=data.photo_path
+      ?(String(data.photo_path).startsWith("http")?data.photo_path:(db.storage.from("therapist-photos").getPublicUrl(data.photo_path).data?.publicUrl||""))
+      :(data.public_slug==="foruzan-shahla"?"/therapists/foruzan-shahla.jpg":"");
+    if(profilePhoto){
+      const img=node("img","profile-photo");img.src=profilePhoto;img.alt=t("profilePhotoAlt");img.loading="lazy";hero.append(img);
     } else {
       const mark=node("div","profile-monogram","ی");
       mark.setAttribute("aria-hidden","true");
       hero.append(mark);
     }
     const intro=node("div","profile-intro");
-    intro.append(node("span","eyebrow",t("profileVerified")));
+    intro.append(node("span","eyebrow",data.verified_at?t("profileVerified"):"تأییدشده توسط مدیریت یادسنتر"));
     intro.append(node("h1","",data.display_name||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.headline));
     if(typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));

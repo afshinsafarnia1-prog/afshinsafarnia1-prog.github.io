@@ -30,12 +30,14 @@
     }
     items.forEach(t=>{
       const card=el("article","therapist-card");
-      if(t.photo_path && db){
-        const {data}=db.storage.from("therapist-photos").getPublicUrl(t.photo_path);
-        if(data?.publicUrl){const img=el("img","therapist-photo");img.src=data.publicUrl;img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
-      } else card.append(el("div","therapist-photo therapist-placeholder","ی"));
+      const photoUrl=t.photo_path
+        ?(String(t.photo_path).startsWith("http")?t.photo_path:(db?.storage.from("therapist-photos").getPublicUrl(t.photo_path).data?.publicUrl||""))
+        :(t.public_slug==="foruzan-shahla"?"/therapists/foruzan-shahla.jpg":"");
+      if(photoUrl){const img=el("img","therapist-photo");img.src=photoUrl;img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
+      else card.append(el("div","therapist-photo therapist-placeholder","ی"));
       const body=el("div","therapist-card-body");
       body.append(el("h3","",t.display_name||""));
+      body.append(el("span","therapist-approval-badge",t.verified_at?"احراز حرفه‌ای ثبت‌شده":"تأییدشده توسط مدیریت یادسنتر"));
       if(t.headline)body.append(el("p","therapist-headline",t.headline));
       if(t.years_experience!=null)body.append(el("p","therapist-meta",(i18n().yearsExperience||"سابقهٔ حرفه‌ای: {years} سال").replace("{years}",String(t.years_experience))));
       if(typeof t.accepting_new_clients==="boolean")body.append(el("span",t.accepting_new_clients?"availability-open":"availability-closed",t.accepting_new_clients?(i18n().acceptingYes||"پذیرش مراجع جدید"):(i18n().acceptingNo||"فعلاً پذیرش مراجع جدید ندارد")));
@@ -64,8 +66,8 @@
     if(!db){directory.textContent="اتصال فهرست درمانگران در دسترس نیست.";return;}
     directory.textContent="در حال دریافت فهرست درمانگران…";
     const {data,error}=await db.from("therapists")
-      .select("id,display_name,headline,biography,specialties,modalities,languages,photo_path")
-      .eq("is_listed",true).not("verified_at","is",null)
+      .select("id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path,manager_approved,verified_at")
+      .eq("is_listed",true).or("verified_at.not.is.null,manager_approved.eq.true")
       .order("display_name",{ascending:true});
     if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
     allTherapists=data||[];
@@ -225,6 +227,6 @@
     window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
   }
   const style=document.createElement("style");
-  style.textContent=".therapist-directory{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:12px}.therapist-card{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid #e5ece8;border-radius:17px;padding:15px;box-shadow:0 10px 25px #123f4608;min-width:0}.therapist-photo{width:82px;height:92px;object-fit:cover;border-radius:13px;background:#e8f7f2;flex-shrink:0}.therapist-placeholder{display:grid;place-items:center;color:#123f46;font-size:34px;font-weight:800}.therapist-card-body{min-width:0;flex:1}.therapist-card h3{margin:0;color:#123f46;font-size:16px}.therapist-headline,.therapist-meta{font-size:11px;color:#687b7c;margin:4px 0}.therapist-tags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.therapist-tags span{font-size:10px;padding:3px 7px;border-radius:20px;background:#eff8f4;color:#24665d}.therapist-tags .modality-tag{background:#fff3ec;color:#92513f}.therapist-card .button{padding:8px 12px;font-size:11px;margin-top:5px}.directory-empty{grid-column:1/-1;color:#687b7c;font-size:13px}.directory-count{grid-column:1/-1;color:#687b7c;font-size:12px;margin:0}.therapist-filters{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));align-items:end}.therapist-filters label{min-width:0}.filter-keyword input{width:100%;min-width:0;padding:10px;border:1px solid #dce8e3;border-radius:10px;font:inherit}.filter-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.filter-accepting{display:flex!important;grid-auto-flow:column;justify-content:start;align-items:center;gap:8px!important}.filter-accepting input{width:auto}.availability-open,.availability-closed{display:inline-block;margin-top:5px;padding:4px 9px;border-radius:20px;font-size:10px}.availability-open{background:#e7f7ee;color:#176b48}.availability-closed{background:#f2f3f2;color:#687b7c}.language-switch select{max-width:110px}@media(max-width:620px){.therapist-card{padding:12px}.therapist-photo{width:68px;height:80px}.filter-actions>*{flex:1}}";
+  style.textContent=".therapist-directory{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:12px}.therapist-card{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid #e5ece8;border-radius:17px;padding:15px;box-shadow:0 10px 25px #123f4608;min-width:0}.therapist-photo{width:82px;height:92px;object-fit:cover;border-radius:13px;background:#e8f7f2;flex-shrink:0}.therapist-placeholder{display:grid;place-items:center;color:#123f46;font-size:34px;font-weight:800}.therapist-card-body{min-width:0;flex:1}.therapist-card h3{margin:0;color:#123f46;font-size:16px}.therapist-approval-badge{display:inline-block;margin-top:5px;padding:3px 8px;border-radius:20px;background:#fff5df;color:#79591a;font-size:10px}.therapist-headline,.therapist-meta{font-size:11px;color:#687b7c;margin:4px 0}.therapist-tags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.therapist-tags span{font-size:10px;padding:3px 7px;border-radius:20px;background:#eff8f4;color:#24665d}.therapist-tags .modality-tag{background:#fff3ec;color:#92513f}.therapist-card .button{padding:8px 12px;font-size:11px;margin-top:5px}.directory-empty{grid-column:1/-1;color:#687b7c;font-size:13px}.directory-count{grid-column:1/-1;color:#687b7c;font-size:12px;margin:0}.therapist-filters{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));align-items:end}.therapist-filters label{min-width:0}.filter-keyword input{width:100%;min-width:0;padding:10px;border:1px solid #dce8e3;border-radius:10px;font:inherit}.filter-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.filter-accepting{display:flex!important;grid-auto-flow:column;justify-content:start;align-items:center;gap:8px!important}.filter-accepting input{width:auto}.availability-open,.availability-closed{display:inline-block;margin-top:5px;padding:4px 9px;border-radius:20px;font-size:10px}.availability-open{background:#e7f7ee;color:#176b48}.availability-closed{background:#f2f3f2;color:#687b7c}.language-switch select{max-width:110px}@media(max-width:620px){.therapist-card{padding:12px}.therapist-photo{width:68px;height:80px}.filter-actions>*{flex:1}}";
   document.head.append(style);
 })();
