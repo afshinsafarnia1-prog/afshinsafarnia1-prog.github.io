@@ -54,7 +54,7 @@ if (!fs.existsSync(sitemapPath)) {
   const sitemap = fs.readFileSync(sitemapPath, "utf8");
   if (sitemap.includes("YOUR-DOMAIN.example")) errors.push("sitemap.xml still contains a placeholder domain");
   if (!sitemap.includes("<urlset") || !sitemap.includes("<loc>https://")) errors.push("sitemap.xml has no valid URL entries");
-  for (const page of ["/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/relationships.html", "/articles/choosing-a-therapist.html"]) {
+  for (const page of ["/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/relationships.html", "/articles/choosing-a-therapist.html", "/assessment.html"]) {
     if (!sitemap.includes(page)) errors.push("sitemap.xml is missing public guide: " + page);
   }
   for (const privatePage of ["/admin.html", "/client.html"]) {
@@ -96,7 +96,7 @@ const adminPage = fs.readFileSync(path.join(root, "admin.html"), "utf8");
 const adminWorkflow = fs.readFileSync(path.join(root, "admin-workflow-extended.js"), "utf8");
 const appScript = fs.readFileSync(path.join(root, "app.js"), "utf8");
 for (const [condition, message] of [
-  [homepage.includes('id="yadPublicTariffs"'), "Homepage must include the central tariff display"],
+  [appScript.includes('get_public_therapist_fee_directory') && appScript.includes('t.fees'), "Homepage must display therapist-specific fees"],
   [fs.existsSync(path.join(root, "therapist-profile.html")), "Public therapist profile page must exist"],
   [fs.existsSync(path.join(root, "workshops.html")) && fs.existsSync(path.join(root, "workshops.js")), "Public workshop directory and loader must exist"],
   [appScript.includes('therapist-profile.html?id='), "Therapist directory cards must link to public profiles"],
@@ -112,25 +112,44 @@ for (const [condition, message] of [
   [fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadPreferredTime"') && fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadPreferredSlot"') && fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("client_list_available_slots") && fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("p_preferred_slot_id"), "Client request must support preferred availability slots and optional time windows"],
   [fs.readFileSync(path.join(root, "site-i18n.js"), "utf8").includes("modalityFilter") && fs.readFileSync(path.join(root, "site-i18n.js"), "utf8").includes("acceptingOnly"), "Therapist directory filters must have multilingual labels"],
   [fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("admin_set_appointment_meeting") && fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("admin_resolve_support_cancellation") && fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("client_submit_appointment_feedback"), "Platform completion migration must define private session, cancellation and feedback RPCs"],
-  [fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/client-extensions.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-extensions.js"'), "PWA cache must include the new client/admin workflow scripts"],
+  [fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/client-extensions.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-extensions.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/assessment-workflow.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-assessment-workflow.js"'), "PWA cache must include client, admin and assessment workflow scripts"],
   [homepage.includes('articles/choosing-a-therapist.html'), "Homepage must link to the therapist-selection guide"],
   [appScript.includes('.select("id,display_name,headline,biography,specialties,modalities,languages,photo_path")'), "Public therapist directory must request migrated public therapist profile fields"],
   [fs.readFileSync(path.join(root, "supabase/upgrade-client-choice-payment-first.sql"), "utf8").includes("add column if not exists photo_path"), "Therapist profile migration must define the public photo field"],
   [fs.readFileSync(path.join(root, "therapist-profile.js"), "utf8").includes('.select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path")'), "Public therapist profile must request only migrated public profile fields"],
-  [homepage.includes('id="internationalCurrency"'), "Homepage must include EUR/USD selector"],
-  [homepage.includes('id="yadPublicContacts"'), "Homepage must include managed public contact links"],
-  [adminPage.includes('id="yadBusinessSettingsForm"'), "Admin must include central tariff/contact settings"],
-  [adminWorkflow.includes('admin_update_yad_business_settings'), "Admin workflow must save central tariffs"],
-  [adminWorkflow.includes('admin_update_yad_business_settings') && adminWorkflow.includes("p_contacts:contacts"), "Admin workflow must save central tariffs and public contacts through the scoped settings RPC"],
+  [homepage.includes('id="internationalCurrency"') && homepage.includes('value="CAD"'), "Homepage must include EUR/USD/CAD selector"],
+  [homepage.includes('id="yadPublicContacts"') && fs.readFileSync(path.join(root, "app.js"), "utf8").includes('["phone_number","تلفن",v=>"tel:"+v]'), "Homepage must display the admin-managed phone number"],
+  [adminPage.includes('id="yadBusinessSettingsForm"'), "Admin must include public contact, branding and intake settings"],
+  [adminPage.includes('id="yadAssessmentFeeAdminForm"') && adminPage.includes('id="yadAdminAssessmentRequests"'), "Admin must include paid assessment fee and request management"],
+  [adminWorkflow.includes('admin_update_yad_public_contacts') && adminWorkflow.includes("p_contacts:contacts") && adminWorkflow.includes('phone_number:"yadContactPhone"'), "Admin workflow must save public phone and contacts through the scoped settings RPC"],
+  [adminWorkflow.includes('admin_set_client_intake') && !adminWorkflow.includes('admin_update_yad_business_settings'), "Admin workflow must manage intake without requiring central therapy tariffs"],
+  [adminWorkflow.includes('admin_set_assessment_specialist'), "Admin must be able to designate verified assessment specialists"],
   [appScript.includes('get_public_site_settings'), "Homepage must load public settings through the scoped RPC"],
-  [!adminWorkflow.includes('admin_set_therapist_prices'), "Admin workflow must not save per-therapist prices"],
+  [!adminWorkflow.includes('admin_set_therapist_prices'), "Admin workflow must not override therapist-defined fees"],
+  [appScript.includes('get_public_therapist_fee_directory') && appScript.includes('t.fees'), "Public directory must display therapist-specific fees"],
+  [fs.readFileSync(path.join(root, "therapist-portal.js"), "utf8").includes("therapist_set_my_fee"), "Therapists must be able to set their own fees"],
+  [fs.readFileSync(path.join(root, "therapist-profile.js"), "utf8").includes("get_public_therapist_fees"), "Therapist profiles must show their individual fees"],
+  [fs.readFileSync(path.join(root, "client.html"), "utf8").includes('value="CAD"'), "Client booking must support CAD"],
+  [fs.existsSync(path.join(root, "assessment.html")) && fs.existsSync(path.join(root, "assessment-workflow.js")), "Paid external assessment service page and workflow must exist"],
+  [fs.readFileSync(path.join(root, "assessment-workflow.js"), "utf8").includes("client_create_assessment_request") && fs.readFileSync(path.join(root, "assessment-workflow.js"), "utf8").includes("p_adult_confirmation:true"), "Assessment requests must use the protected consent-gated RPC"],
+  [fs.readFileSync(path.join(root, "admin-assessment-workflow.js"), "utf8").includes("admin_update_assessment_request"), "Admin must review assessment payments and schedule external sessions"],
+  [fs.readFileSync(path.join(root, "site-i18n.js"), "utf8").includes("Evaluación de personalidad con STIPO y SWAP"), "Assessment page must include Spanish translations"],
   [adminPage.includes('id="yadDuration" type="number" min="45" max="45" value="45" readonly'), "Admin therapist form must enforce the 45-minute standard session"],
   [adminWorkflow.includes("p_session_duration_minutes: 45"), "Therapist profile saves must use the central 45-minute session duration"],
+  [adminPage.includes('id="yadAuthority" maxlength="240"') && adminWorkflow.includes('p_issuing_authority: val("yadAuthority").trim()'), "Therapist licensing authority must be editable and stored per jurisdiction"],
   [adminWorkflow.includes("p_fee_amount: 0") && adminWorkflow.includes('p_fee_currency: "IRR"') && !adminWorkflow.includes('val("yadFee")') && !adminWorkflow.includes('val("yadCurrency")'), "Therapist profile saves must not depend on removed per-therapist fee fields"],
   [adminWorkflow.includes("Intl.DateTimeFormat().resolvedOptions().timeZone"), "Workshop timezone must default to the administrator device timezone"],
-  [!adminWorkflow.includes('"Europe/Berlin"'), "Workshop scheduling must not hard-code a Berlin timezone"]
+  [!adminWorkflow.includes('"Europe/Berlin"'), "Workshop scheduling must not hard-code a Berlin timezone"],
+  [fs.existsSync(path.join(root, "therapist-articles.js")) && fs.readFileSync(path.join(root, "therapist.html"), "utf8").includes('id="yadTherapistArticleForm"'), "Therapists must have an authenticated article submission form"],
+  [fs.existsSync(path.join(root, "admin-articles.js")) && fs.readFileSync(path.join(root, "admin.html"), "utf8").includes('id="yadAdminArticles"'), "Admin must have an MFA-protected article moderation interface"],
+  [fs.existsSync(path.join(root, "articles/contributor-articles.js")) && fs.readFileSync(path.join(root, "articles/index.html"), "utf8").includes('id="yadContributorArticles"'), "Public article index must display only approved therapist submissions"],
+  [fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/therapist-articles.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-articles.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/articles/contributor-articles.js"'), "PWA cache must include therapist article submission, moderation and public reader scripts"],
+  [fs.existsSync(path.join(root, "supabase/migrations/20261117000500_add_moderated_therapist_articles.sql")), "Moderated therapist article workflow migration must be present"],
+  [fs.readFileSync(path.join(root, "rules.html"), "utf8").includes("2026-11-17-v2-draft") && fs.readFileSync(path.join(root, "rules.html"), "utf8").includes("پیش‌نویس") && fs.readFileSync(path.join(root, "rules.html"), "utf8").includes("رضایت آگاهانهٔ درمان"), "Legal and privacy notice must be versioned, explicitly draft and distinguish platform consent from clinical consent"],
+  [fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("2026-11-17-v2-draft") && fs.readFileSync(path.join(root, "admin-workflow-extended.js"), "utf8").includes("2026-11-17-v2-draft"), "Client and admin consent workflows must use the current draft policy version"],
+  [fs.readFileSync(path.join(root, "client.html"), "utf8").includes("جایگزین رضایت آگاهانهٔ جداگانه برای شروع درمان نیست"), "Client request consent must not be represented as clinical informed consent"],
 ]) if (!condition) errors.push(message);
-for (const file of ["supabase/central-tariffs-contacts-7030.sql", "supabase/admin-public-contacts-only.sql"]) {
+for (const file of ["supabase/migrations/20261116184730_require_verified_therapist_for_intake.sql", "supabase/migrations/20261116195646_therapist_specific_fees_and_cad_currency.sql", "supabase/migrations/20261116195852_paid_external_personality_assessment_workflow.sql", "supabase/migrations/20261116201500_add_admin_managed_public_phone_number.sql", "supabase/migrations/20261116202000_allow_jurisdiction_specific_therapist_license_authority.sql"]) {
   if (!fs.existsSync(path.join(root, file))) errors.push(file + " is required");
 }
 
@@ -160,13 +179,13 @@ else {
 }
 
 
-const intakeMigration = path.join(root, "supabase", "migrations", "20261116154010_gate_client_intake_until_policy_approval.sql");
+const intakeMigration = path.join(root, "supabase", "migrations", "20261116184730_require_verified_therapist_for_intake.sql");
 if (!fs.existsSync(intakeMigration)) errors.push("Client intake safety migration is required");
 if (!adminPage.includes('id="yadClientIntakeEnabled"') || !adminPage.includes('id="yadClientPolicyVersion"')) errors.push("Admin must expose the legal-policy intake switch");
 if (!fs.readFileSync(path.join(root, "client.html"), "utf8").includes('id="yadClientIntakeNotice"')) errors.push("Client page must disclose whether intake is open");
 if (!adminWorkflow.includes('admin_set_client_intake')) errors.push("Admin workflow must save intake state through the protected RPC");
 if (!adminWorkflow.includes('admin_update_yad_public_contacts')) errors.push("Admin workflow must allow public contacts to be saved before tariffs are configured");
-if (!adminWorkflow.includes('هر سه تعرفه')) errors.push("Admin workflow must prevent intake activation before all central tariffs are entered");
+if (!adminWorkflow.includes('admin_set_client_intake') || adminWorkflow.includes('هر سه تعرفه')) errors.push("Intake must use the protected release gate and must not require central therapy tariffs");
 if (!fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("client_intake_paused")) errors.push("Client workflow must fail closed when intake is paused");
 
 if (errors.length) {

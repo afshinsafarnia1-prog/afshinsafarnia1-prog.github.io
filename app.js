@@ -8,7 +8,7 @@
   nav?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>nav.classList.remove("open")));
 
   const config=window.YAD_SUPABASE_CONFIG||{};
-  let db=null, allTherapists=[], allPrices=[], publicContacts={};
+  let db=null, allTherapists=[], allFees=[], publicContacts={}, siteBranding={};
   if(window.supabase?.createClient && config.url && config.anonKey){
     db=window.supabase.createClient(config.url,config.anonKey);
   }
@@ -47,8 +47,8 @@
       body.append(tags);
       const market=document.getElementById("marketSelect")?.value||"iran";
       const currency=market==="iran"?"IRR":(document.getElementById("internationalCurrency")?.value||"EUR");
-      const chosen=allPrices.find(x=>x.market===market&&x.currency===currency);
-      const priceText=chosen?new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(chosen.currency==="IRR"?Number(chosen.amount)/10:Number(chosen.amount))+(chosen.currency==="IRR"?" تومان":" "+chosen.currency):"تعرفه در حال تنظیم است";
+      const chosen=(t.fees||[]).find(x=>x.currency===currency);
+      const priceText=chosen?new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(currency==="IRR"?Number(chosen.amount)/10:Number(chosen.amount))+(currency==="IRR"?" تومان":" "+currency):"تعرفهٔ این ارز هنوز ثبت نشده است";
       const meta=el("p","therapist-meta","۴۵ دقیقه · "+priceText);
       body.append(meta);
       const link=el("a","button primary",i18n().chooseTherapist||"مشاهدهٔ پروفایل و انتخاب");
@@ -69,15 +69,22 @@
       .order("display_name",{ascending:true});
     if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
     allTherapists=data||[];
+    const {data:feeRows, error:feeError}=await db.rpc("get_public_therapist_fee_directory");
+    if(feeError){directory.textContent="دریافت تعرفهٔ درمانگران با خطا روبه‌رو شد.";return;}
+    const feesByTherapist=new Map();
+    (feeRows||[]).forEach(row=>{if(!feesByTherapist.has(row.therapist_id))feesByTherapist.set(row.therapist_id,[]);feesByTherapist.get(row.therapist_id).push(row);});
+    allTherapists=allTherapists.map(t=>({...t,fees:feesByTherapist.get(t.id)||[]}));
     const {data:publicMetadata}=await db.rpc("get_public_therapist_directory_metadata");
     if(Array.isArray(publicMetadata)){const byId=new Map(publicMetadata.map(x=>[x.therapist_id,x]));allTherapists=allTherapists.map(x=>({...x,...(byId.get(x.id)||{})}));}
     const {data:ratingRows}=await db.rpc("get_public_therapist_rating_summary");
     if(Array.isArray(ratingRows)){const ratingById=new Map(ratingRows.map(x=>[x.therapist_id,x]));allTherapists=allTherapists.map(x=>({...x,...(ratingById.get(x.id)||{})}));}
     populateModalityFilter();
     const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
-    if(settingsError){directory.textContent="دریافت تعرفه‌های مرکزی با خطا روبه‌رو شد.";return;}
-    allPrices=settings?.tariffs||[];
+    if(settingsError){directory.textContent="دریافت تنظیمات عمومی سایت با خطا روبه‌رو شد.";return;}
+    
     publicContacts=settings?.contacts||{};
+    siteBranding=settings?.branding||{};
+    renderPublicBranding();
     renderPublicTariffs();
     renderPublicContacts();
     filterDirectory();
@@ -86,26 +93,45 @@
       :"فهرست درمانگران پس از تأیید مدارک و مجوزها منتشر می‌شود؛ هیچ پروفایل تأییدنشده‌ای نمایش داده نمی‌شود.";
   }
 
+  function renderPublicBranding(){
+    const name=siteBranding.brand_name||"یادسنتر";
+    document.querySelectorAll(".brand").forEach(node=>{
+      const title=node.querySelector("b");if(title)title.textContent=name;
+      const mark=node.querySelector(".brandmark");
+      if(mark&&siteBranding.logo_path&&db){
+        const {data}=db.storage.from("site-assets").getPublicUrl(siteBranding.logo_path);
+        if(data?.publicUrl){const img=el("img","yad-brand-logo");img.src=data.publicUrl;img.alt=name+" لوگو";mark.replaceChildren(img);}
+      }
+    });
+    const topTagline=document.getElementById("yadBrandTopTagline");
+    if(topTagline&&siteBranding.tagline)topTagline.textContent=siteBranding.tagline;
+    const aboutTitle=document.getElementById("yadBrandAboutTitle");
+    const aboutText=document.getElementById("yadBrandAboutText");
+    const manager=document.getElementById("yadPublicManager");
+    if(aboutTitle&&siteBranding.tagline)aboutTitle.textContent=siteBranding.tagline;
+    if(manager&&siteBranding.manager_name){
+      document.getElementById("yadPublicManagerName").textContent=siteBranding.manager_name;
+      document.getElementById("yadPublicManagerTitle").textContent=siteBranding.manager_title||"";
+      document.getElementById("yadPublicManagerBio").textContent=siteBranding.manager_bio||"";
+      if(siteBranding.manager_photo_path&&db){
+        const {data}=db.storage.from("site-assets").getPublicUrl(siteBranding.manager_photo_path);
+        if(data?.publicUrl){const img=document.getElementById("yadPublicManagerPhoto");img.src=data.publicUrl;img.alt=siteBranding.manager_name;}
+      }else document.getElementById("yadPublicManagerPhoto").hidden=true;
+      manager.hidden=false;
+    }
+  }
   function renderPublicTariffs(){
     const target=document.getElementById("yadPublicTariffs");if(!target)return;
     target.replaceChildren();
-    const labels=[["iran","IRR","تعرفه داخل ایران"],["international","EUR","تعرفه بین‌المللی (یورو)"],["international","USD","تعرفه بین‌المللی (دلار)"]];
-    labels.forEach(([market,currency,label])=>{
-      const item=allPrices.find(x=>x.market===market&&x.currency===currency);
-      const card=el("div","tariff-item");
-      card.append(el("b","",label));
-      card.append(el("strong","",item?new Intl.NumberFormat("fa-IR").format(currency==="IRR"?Number(item.amount)/10:Number(item.amount))+(currency==="IRR"?" تومان":" "+currency):"به‌زودی"));
-      card.append(el("small","","جلسه ۴۵ دقیقه‌ای"));
-      target.append(card);
-    });
+    target.append(el("p","", "تعرفهٔ هر درمانگر به‌صورت مستقل تعیین می‌شود و در پروفایل همان متخصص قابل مشاهده است. جلسهٔ استاندارد ۴۵ دقیقه است."));
     const updated=document.getElementById("yadTariffUpdated");
-    const latest=allPrices.map(x=>new Date(x.effective_from)).sort((a,b)=>b-a)[0];
-    if(updated)updated.textContent=latest?"آخرین به‌روزرسانی: "+latest.toLocaleDateString(document.documentElement.lang==="fa"?"fa-IR":"en-GB"):"تعرفه‌ها به‌زودی اعلام می‌شوند.";
+    if(updated)updated.textContent="سهم درآمد هر جلسه: ۷۰٪ درمانگر و ۳۰٪ یادسنتر.";
   }
   function renderPublicContacts(){
     const target=document.getElementById("yadPublicContacts");if(!target)return;
     target.replaceChildren();
     const links=[
+      ["phone_number","تلفن",v=>"tel:"+v],
       ["whatsapp_number","واتساپ",v=>"https://wa.me/"+v.replace(/[^0-9]/g,"")],
       ["instagram_url","اینستاگرام",v=>v],["telegram_url","تلگرام",v=>v],
       ["youtube_url","یوتیوب",v=>v],["linkedin_url","لینکدین",v=>v],["facebook_url","فیسبوک",v=>v]
@@ -159,7 +185,7 @@
     const international=marketSelect.value==="international";
     if(notice)notice.textContent=international
       ?"مسیر بین‌المللی انتخاب شد؛ واحد پول و شرایط پرداخت بر اساس بازار مربوط نمایش داده می‌شود."
-      :"مسیر ایران انتخاب شد؛ تعرفهٔ یکسان یادسنتر به تومان نمایش داده می‌شود." ;
+      :"مسیر ایران انتخاب شد؛ تعرفهٔ اختصاصی درمانگر به تومان نمایش داده می‌شود." ;
     document.documentElement.dataset.market=marketSelect.value;
     filterDirectory();
   });

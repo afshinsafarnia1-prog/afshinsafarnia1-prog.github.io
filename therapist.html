@@ -8,7 +8,7 @@
 <script defer src="site-i18n.js"></script>
 <script defer src="portal.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="supabase-config.js"></script><script defer src="auth.js"></script><script defer src="therapist-portal.js"></script>
+<script defer src="supabase-config.js"></script><script defer src="auth.js"></script><script defer src="therapist-portal.js"></script><script defer src="therapist-articles.js"></script>
 
 <link rel="canonical" href="https://elegant-otter-e1f7ef.netlify.app/therapist.html">
 <meta property="og:type" content="website">
@@ -39,7 +39,10 @@
 <section class="portal-card" id="therapistPrivatePortal" hidden>
 <h2 data-i18n="privatePortalTitle">پنل اختصاصی درمانگر</h2>
 <p data-i18n="privatePortalLead">جلسات تأییدشده و زمان‌های آزاد خود را مدیریت کنید. اطلاعات بالینی مراجعان در این پنل نمایش داده نمی‌شود.</p>
-<div class="portal-card"><h3>جلسات من</h3><div id="yadTherapistSessions" class="portal-grid"><p>برای مشاهدهٔ جلسات وارد حساب درمانگر شوید.</p></div></div>
+<div class="portal-card"><h3>تعرفه‌های جلسات من</h3><p>مبلغ هر جلسهٔ ۴۵ دقیقه‌ای را خودتان تعیین کنید. قیمت‌ها در پروفایل عمومی شما نمایش داده می‌شوند. مبلغ ایران را به تومان وارد کنید؛ مبلغ در سامانه به ریال ذخیره می‌شود. سهم شما ۷۰٪ و سهم یادسنتر ۳۰٪ است.</p>
+<form id="yadTherapistFeeForm" class="yad-admin-form"><label>ایران (تومان)<input id="yadTherapistFeeIRR" type="number" min="1" step="1"></label><label>اروپا (یورو)<input id="yadTherapistFeeEUR" type="number" min="1" step="1"></label><label>آمریکا (دلار آمریکا)<input id="yadTherapistFeeUSD" type="number" min="1" step="1"></label><label>کانادا (دلار کانادا)<input id="yadTherapistFeeCAD" type="number" min="1" step="1"></label><button class="button primary" type="submit">ذخیره تعرفه‌ها</button></form><p id="yadTherapistFeeStatus" class="notice" role="status" aria-live="polite"></p></div>
+<div class="portal-card"><h3>درخواست‌های ارزیابی شخصیت</h3><p>اگر به‌عنوان متخصص ارزیابی تعیین شده‌اید، درخواست‌های پرداخت‌شده و زمان‌بندی‌شده در این بخش نمایش داده می‌شوند. پس از ارزیابی می‌توانید گزارش بازخورد و درمانگران پیشنهادی را ثبت کنید؛ اتصال خودکار به درمانگر انجام نمی‌شود.</p><div id="yadTherapistAssessmentRequests" class="portal-grid"><p>درخواست ارزیابی‌ای برای این حساب ثبت نشده است.</p></div></div>
+<div class="portal-card" id="yadTherapistArticles"><h3>ارسال مقاله برای مجله یادسنتر</h3><p>مقاله‌های علمی و آموزشی خود را برای بررسی تحریریه ارسال کنید. متن باید تألیفی، مستند و فاقد اطلاعات قابل‌شناسایی مراجعان باشد. مقاله تا زمان تأیید مدیر منتشر نمی‌شود.</p><form id="yadTherapistArticleForm" class="yad-admin-form"><label>عنوان مقاله<input id="yadArticleTitle" required minlength="5" maxlength="180"></label><label>خلاصه مقاله<textarea id="yadArticleExcerpt" required minlength="30" maxlength="500" rows="3"></textarea></label><label>متن کامل مقاله<textarea id="yadArticleBody" required minlength="500" maxlength="20000" rows="12" placeholder="متن مقاله را به‌صورت متن ساده وارد کنید؛ کد HTML پذیرفته نمی‌شود."></textarea></label><label>زبان مقاله<select id="yadArticleLanguage"><option value="fa">فارسی</option><option value="ku">کوردی</option><option value="en">English</option><option value="tr">Türkçe</option><option value="ar">العربية</option><option value="es">Español</option><option value="de">Deutsch</option><option value="fr">Français</option></select></label><button class="button primary" type="submit">ارسال برای بررسی مدیر</button></form><p id="yadTherapistArticleStatus" class="notice" role="status" aria-live="polite"></p><h4>وضعیت مقاله‌های من</h4><div id="yadTherapistArticleStatusList" class="portal-grid">برای مشاهده وارد حساب درمانگر شوید.</div></div><div class="portal-card"><h3>جلسات من</h3><div id="yadTherapistSessions" class="portal-grid"><p>برای مشاهدهٔ جلسات وارد حساب درمانگر شوید.</p></div></div>
 <div class="portal-card"><h3>مدیریت زمان‌های آزاد</h3>
 <form id="yadTherapistAvailabilityForm" class="yad-admin-form">
 <label>زمان شروع<input id="yadTherapistAvailabilityStart" type="datetime-local" required></label>

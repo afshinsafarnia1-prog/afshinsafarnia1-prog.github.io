@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>ارزیابی تخصصی شخصیت | یادسنتر</title>
+<meta name="description" content="درخواست ارزیابی تخصصی شخصیت با STIPO یا SWAP توسط متخصص معرفی‌شده در یادسنتر. جلسه خارج از سایت برگزار می‌شود.">
+<link rel="stylesheet" href="style.css">
+<script defer src="site-i18n.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="supabase-config.js"></script><script defer src="assessment-workflow.js"></script>
+</head>
+<body>
+<header class="header"><div class="wrap navrow"><a class="brand" href="/"><span class="brandmark">ی</span><span><b>یادسنتر</b><small>YAD CENTER</small></span></a><nav class="portal-nav"><a href="/">صفحه اصلی</a><a href="/#therapists">درمانگران</a><a href="/rules.html">قوانین</a></nav></div></header>
+<main class="portal-main"><div class="portal-wrap">
+<span class="eyebrow">ارزیابی تخصصی پیش از انتخاب مسیر درمان</span>
+<h1 data-i18n="assessmentTitle">ارزیابی شخصیت با STIPO و SWAP</h1>
+<p class="lead" data-i18n="assessmentLead">این خدمات برای شناخت دقیق‌تر الگوهای شخصیت و کمک به تصمیم‌گیری آگاهانه درباره مسیر درمان ارائه می‌شوند. انجام ارزیابی اختیاری است و برای دریافت روان‌درمانی الزامی نیست.</p>
+<div class="portal-card">
+<h2 data-i18n="assessmentHowTitle">این ارزیابی چگونه انجام می‌شود؟</h2>
+<ul>
+<li data-i18n="assessmentStep1">درخواست خود را در یادسنتر ثبت می‌کنید و هزینه ارزیابی را جداگانه می‌پردازید.</li>
+<li data-i18n="assessmentStep2">جلسه با متخصص ارزیابی معرفی‌شده در همین صفحه برگزار می‌شود؛ نه از طریق آزمون آنلاین داخل سایت.</li>
+<li data-i18n="assessmentStep3">جلسه در فضای خارج از یادسنتر، مانند Zoom یا Google Meet، هماهنگ و برگزار می‌شود.</li>
+<li data-i18n="assessmentStep4">پس از پرداخت و تأیید مدیریت، اطلاعات جلسه در پنل شما نمایش داده می‌شود.</li>
+<li data-i18n="assessmentStep5">متخصص می‌تواند بر اساس یافته‌های ارزیابی، درمانگران مناسب موجود در یادسنتر را پیشنهاد کند؛ انتخاب نهایی با شماست.</li>
+</ul>
+<p class="privacy-hint" data-i18n="assessmentPrivacy">ارزیابی جایگزین مصاحبه بالینی جامع، تشخیص تخصصی یا رابطه درمانی نیست. اطلاعات ارزیابی محرمانه‌اند و فقط در چارچوب رضایت آگاهانه و ارائه خدمت استفاده می‌شوند.</p>
+</div>
+<div class="portal-card" id="assessmentGuide">
+<h2>پیش از انتخاب ارزیابی، این تفاوت‌ها را بدانید</h2>
+<p>STIPO / STIPO-R و SWAP-200 ابزارهای تخصصی برای صورت‌بندی بالینی الگوهای شخصیت‌اند. هدف آن‌ها برچسب‌زدن یا قضاوت درباره فرد نیست؛ کمک می‌کنند تجربه‌ها، شیوه‌های رابطه، تنظیم هیجان و دشواری‌های پایدار با دقت بیشتری فهمیده شوند.</p>
+<div class="portal-grid">
+<article class="portal-card"><h3>STIPO / STIPO-R چیست؟</h3><p>STIPO-R یک مصاحبه بالینی نیمه‌ساختاریافته است که متخصص آموزش‌دیده با گفت‌وگو درباره حوزه‌هایی مانند هویت، روابط موضوعی، دفاع‌ها، پرخاشگری، ارزش‌ها و واقعیت‌آزمایی، سازمان‌یافتگی شخصیت را بررسی می‌کند. این فرایند صرفاً یک پرسش‌نامه اینترنتی یا آزمون خودسنجی نیست.</p></article>
+<article class="portal-card"><h3>SWAP-200 چیست؟</h3><p>SWAP-200 روشی تخصصی برای توصیف و صورت‌بندی الگوهای شخصیت بر پایه اطلاعات بالینی است. متخصص، پس از گردآوری اطلاعات کافی از مصاحبه و شناخت بالینی، مجموعه‌ای از توصیف‌ها را بر اساس میزان انطباق مرتب می‌کند. بنابراین SWAP-200 معمولاً ابزار خودآزمایی مستقیم مراجع نیست و کیفیت آن به آموزش و قضاوت حرفه‌ای ارزیاب وابسته است.</p></article>
+</div>
+<h3>این ارزیابی‌ها چه کمکی می‌کنند؟</h3>
+<ul><li>روشن‌ترشدن الگوهای نسبتاً پایدار در تجربه هیجانی و روابط بین‌فردی.</li><li>کمک به تدوین یک صورت‌بندی بالینی منسجم‌تر و گفت‌وگو درباره اهداف درمان.</li><li>فراهم‌کردن زبان مشترک میان مراجع و متخصص برای بررسی نقاط قوت، دشواری‌ها و نیازهای درمانی.</li></ul>
+<h3>آیا انجام آن برای شروع درمان لازم است؟</h3>
+<p><strong>خیر.</strong> ارزیابی کاملاً اختیاری است. می‌توانید بدون انجام STIPO یا SWAP نیز از خدمات روان‌درمانی استفاده کنید. هیچ‌یک از این ابزارها شرط پذیرش، معیار ارزشمندی فرد یا تضمین‌کننده نتیجه درمان نیستند.</p>
+<h3>محدودیت‌ها و محرمانگی</h3>
+<p>نتیجه این ابزارها به‌تنهایی تشخیص قطعی محسوب نمی‌شود و باید در کنار شرح‌حال، مصاحبه، زمینه فرهنگی و اجتماعی، وضعیت فعلی و قضاوت بالینی متخصص تفسیر شود. ارزیابی ممکن است زمان‌بر یا از نظر هیجانی دشوار باشد؛ هر زمان می‌توانید پرسش مطرح کنید یا درباره ادامه آن تصمیم بگیرید. پیش از شروع، درباره شیوه نگهداری گزارش، افراد مجاز به مشاهده آن، هزینه، مدت و حدود محرمانگی از متخصص سؤال کنید.</p>
+<h3>چطور برای جلسه آماده شوید؟</h3>
+<ul><li>نیازی به آماده‌کردن پاسخ «درست» یا تلاش برای خوب جلوه‌دادن خود ندارید؛ صداقت و بیان تجربه واقعی کمک‌کننده‌تر است.</li><li>اگر دارو، سابقه درمان یا ارزیابی قبلی دارید و مایلید، اطلاعات مرتبط را برای گفت‌وگو آماده کنید.</li><li>اگر پرسشی درباره هدف، روش، هزینه یا محرمانگی دارید، پیش از پرداخت آن را مطرح کنید.</li></ul>
+<p class="privacy-hint">یادسنتر آزمون آنلاین اجرا نمی‌کند و نتیجه‌ای را به‌طور خودکار تولید نمی‌کند. جلسه با متخصص ارزیابی و خارج از سایت برگزار می‌شود. هر پیشنهاد درمانگر صرفاً برای کمک به انتخاب آگاهانه است و تصمیم نهایی با خود شماست.</p>
+</div>
+<div class="portal-card">
+<h2 data-i18n="assessmentRequestTitle">ثبت درخواست ارزیابی</h2>
+<p data-i18n="assessmentRequestLead">نوع ارزیابی، متخصص و واحد پول را انتخاب کنید. هزینه ارزیابی مستقل از هزینه جلسات روان‌درمانی است.</p>
+<p id="yadAssessmentStatus" class="notice" role="status" aria-live="polite">در حال دریافت فهرست متخصصان و تعرفه‌ها…</p>
+<form id="yadAssessmentForm" class="yad-client-form">
+<label><span data-i18n="assessmentTypeLabel">نوع ارزیابی</span><select id="yadAssessmentType" required><option value="STIPO">STIPO / STIPO-R</option><option value="SWAP">SWAP-200</option></select></label>
+<label><span data-i18n="assessmentCurrencyLabel">واحد پول</span><select id="yadAssessmentCurrency" required><option value="IRR">تومان</option><option value="EUR">یورو</option><option value="USD">دلار آمریکا</option><option value="CAD">دلار کانادا</option></select></label>
+<label><span data-i18n="assessmentSpecialistLabel">متخصص ارزیابی</span><select id="yadAssessmentSpecialist" required><option value="">انتخاب متخصص</option></select></label>
+<p id="yadAssessmentFee" class="notice">تعرفه پس از انتخاب نمایش داده می‌شود.</p>
+<label class="yad-consent"><input id="yadAssessmentAdultConfirm" type="checkbox" required><span data-i18n="assessmentAdultConfirm">تأیید می‌کنم ۱۸ سال یا بیشتر دارم.</span></label>
+<label class="yad-consent"><input id="yadAssessmentConsent" type="checkbox" required><span><span data-i18n="assessmentConsent">شرایط استفاده و اطلاعیه حریم خصوصی را خوانده‌ام و با آن موافقم.</span> <a href="rules.html#privacy">مطالعه اطلاعیه</a></span></label>
+<button class="button primary" type="submit" data-i18n="assessmentSubmit">ثبت درخواست و مشاهده مراحل پرداخت</button>
+</form>
+</div>
+<div class="portal-card">
+<h2 data-i18n="assessmentMyRequests">درخواست‌های من</h2>
+<div id="yadAssessmentRequests" class="portal-grid"><p>برای مشاهده درخواست‌ها وارد حساب مراجع شوید.</p></div>
+</div>
+</div></main>
+<style>.yad-client-form{display:grid;gap:14px}.yad-client-form label{display:grid;gap:6px;font-size:12px;color:#52696a}.yad-client-form input,.yad-client-form select,.yad-client-form textarea{width:100%;padding:11px;border:1px solid #dce8e3;border-radius:10px;font:inherit}.yad-client-form button{justify-self:start}</style>
+</body></html>

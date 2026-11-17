@@ -1,0 +1,2 @@
+-- Reconciliation marker for the already-applied storage-path alignment migration.
+-- The final site-assets object-path validation is included in 20261116184600_add_admin_managed_site_branding.sql.

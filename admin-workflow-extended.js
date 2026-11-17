@@ -50,51 +50,36 @@
     const businessForm = document.getElementById("yadBusinessSettingsForm");
     const businessStatus = document.getElementById("yadBusinessSettingsStatus");
     const businessValue = id => document.getElementById(id)?.value?.trim() || "";
-    const setPlatformPercent = () => {
-      const therapist = Number(businessValue("yadTherapistPercent") || 70);
-      document.getElementById("yadPlatformPercent").value = String(100 - therapist);
-    };
     async function loadBusinessSettings() {
       if (!businessForm) return;
       const { data, error } = await db.rpc("get_public_site_settings");
       if (error) throw error;
-      const tariffs = data?.tariffs || [];
-      const find = (market,currency) => tariffs.find(x=>x.market===market&&x.currency===currency);
-      const iran=find("iran","IRR"),eur=find("international","EUR"),usd=find("international","USD");
-      if(iran)document.getElementById("yadTariffIRR").value=Number(iran.amount)/10;
-      if(eur)document.getElementById("yadTariffEUR").value=eur.amount;
-      if(usd)document.getElementById("yadTariffUSD").value=usd.amount;
-      const base=iran||eur||usd;
-      if(base)document.getElementById("yadTherapistPercent").value=base.therapist_percent;
       document.getElementById("yadClientIntakeEnabled").checked = data?.client_intake_enabled === true;
-       document.getElementById("yadClientPolicyVersion").value = data?.client_policy_version || "2026-11-16-v1-draft";
-       const c=data?.contacts||{};
-      const fields={whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail",instagram_url:"yadContactInstagram",telegram_url:"yadContactTelegram",youtube_url:"yadContactYoutube",linkedin_url:"yadContactLinkedin",facebook_url:"yadContactFacebook"};
-      Object.entries(fields).forEach(([key,id])=>{document.getElementById(id).value=c[key]||"";});
-      const date=document.getElementById("yadTariffEffective");
-      if(!date.value){const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());date.value=now.toISOString().slice(0,16);}
-      setPlatformPercent();
-      businessStatus.textContent=tariffs.length?"تعرفه‌های فعلی بارگذاری شد.":"هنوز تعرفه‌ای ثبت نشده است؛ هر سه مبلغ را وارد کن.";
+      document.getElementById("yadClientPolicyVersion").value = data?.client_policy_version || "2026-11-17-v2-draft";
+      const branding=data?.branding||{};
+      document.getElementById("yadBrandName").value=branding.brand_name||"یادسنتر";
+      document.getElementById("yadBrandTagline").value=branding.tagline||"";
+      document.getElementById("yadManagerName").value=branding.manager_name||"";
+      document.getElementById("yadManagerTitle").value=branding.manager_title||"";
+      document.getElementById("yadManagerBio").value=branding.manager_bio||"";
+      document.getElementById("yadExistingLogoPath").value=branding.logo_path||"";
+      document.getElementById("yadExistingManagerPhotoPath").value=branding.manager_photo_path||"";
+      const contacts=data?.contacts||{};
+      const fields={phone_number:"yadContactPhone",whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail",instagram_url:"yadContactInstagram",telegram_url:"yadContactTelegram",youtube_url:"yadContactYoutube",linkedin_url:"yadContactLinkedin",facebook_url:"yadContactFacebook"};
+      Object.entries(fields).forEach(([key,id])=>{document.getElementById(id).value=contacts[key]||"";});
+      businessStatus.textContent="تعرفه‌ها توسط هر درمانگر در پنل اختصاصی خودش تعیین می‌شوند؛ سهم درآمد ثابت ۷۰/۳۰ است.";
     }
-    document.getElementById("yadTherapistPercent")?.addEventListener("input",setPlatformPercent);
     businessForm?.addEventListener("submit",async event=>{
       event.preventDefault();
-      businessStatus.textContent="در حال ذخیره تنظیمات…";
+      businessStatus.textContent="در حال ذخیره تنظیمات مرکز…";
       try{
-        const therapistPercent=Number(businessValue("yadTherapistPercent"));
-        const tariffFields=["yadTariffIRR","yadTariffEUR","yadTariffUSD"].map(businessValue);
-        const hasAnyTariff=tariffFields.some(value=>value!=="");
-        const hasAllTariffs=tariffFields.every(value=>value!==""&&Number(value)>0);
-        if(hasAnyTariff&&!hasAllTariffs)throw new Error("برای ثبت تعرفه، هر سه مبلغ ایران، یورو و دلار را کامل وارد کنید.");
-        const effective=new Date(businessValue("yadTariffEffective"));
-        if(hasAllTariffs&&(!Number.isFinite(effective.getTime())||effective>new Date()))throw new Error("تاریخ شروع اعتبار باید اکنون یا در گذشته باشد.");
         const intakeEnabled=document.getElementById("yadClientIntakeEnabled").checked;
         const policyVersion=businessValue("yadClientPolicyVersion");
-        if(intakeEnabled&&!hasAllTariffs)throw new Error("پیش از فعال‌سازی پذیرش، هر سه تعرفهٔ مرکزی باید ثبت شوند.");
-        if(intakeEnabled && (!policyVersion || /draft|test|preview/i.test(policyVersion))) {
+        if(intakeEnabled&&(!policyVersion||/draft|test|preview/i.test(policyVersion))) {
           throw new Error("برای فعال‌سازی پذیرش، نسخهٔ نهایی و تأییدشدهٔ قوانین را ثبت کنید؛ نسخهٔ پیش‌نویس قابل قبول نیست.");
         }
         const contacts={
+          phone_number:businessValue("yadContactPhone"),
           whatsapp_number:businessValue("yadContactWhatsapp"),
           contact_email:businessValue("yadContactEmail"),
           instagram_url:businessValue("yadContactInstagram"),
@@ -103,35 +88,32 @@
           linkedin_url:businessValue("yadContactLinkedin"),
           facebook_url:businessValue("yadContactFacebook")
         };
-        if(hasAllTariffs){
-          const {error}=await db.rpc("admin_update_yad_business_settings",{
-            p_iran_irr:Number(businessValue("yadTariffIRR"))*10,
-            p_international_eur:Number(businessValue("yadTariffEUR")),
-            p_international_usd:Number(businessValue("yadTariffUSD")),
-            p_therapist_percent:therapistPercent,
-            p_effective_from:effective.toISOString(),
-            p_contacts:contacts
-          });
-          if(error)throw error;
-        } else {
-          const {error}=await db.rpc("admin_update_yad_public_contacts",{p_contacts:contacts});
-          if(error)throw error;
-        }
-        const {error:intakeError}=await db.rpc("admin_set_client_intake",{
-          p_enabled:intakeEnabled,
-          p_policy_version:policyVersion
-        });
+        const {error:contactsError}=await db.rpc("admin_update_yad_public_contacts",{p_contacts:contacts});
+        if(contactsError)throw contactsError;
+        const logoFile=document.getElementById("yadBrandLogo").files[0];
+        const managerPhotoFile=document.getElementById("yadManagerPhoto").files[0];
+        const logoPath=await upload("site-assets",logoFile,document.getElementById("yadExistingLogoPath").value);
+        const managerPhotoPath=await upload("site-assets",managerPhotoFile,document.getElementById("yadExistingManagerPhotoPath").value);
+        const {error:brandingError}=await db.rpc("admin_update_site_branding",{p_branding:{
+          brand_name:businessValue("yadBrandName"),tagline:businessValue("yadBrandTagline"),
+          manager_name:businessValue("yadManagerName"),manager_title:businessValue("yadManagerTitle"),
+          manager_bio:businessValue("yadManagerBio"),logo_path:logoPath,manager_photo_path:managerPhotoPath
+        }});
+        if(brandingError)throw brandingError;
+        const {error:intakeError}=await db.rpc("admin_set_client_intake",{p_enabled:intakeEnabled,p_policy_version:policyVersion});
         if(intakeError)throw intakeError;
         businessStatus.textContent=intakeEnabled
-          ?"تنظیمات، تعرفه‌ها و پذیرش درخواست‌های جدید ذخیره شد."
-          :hasAllTariffs
-            ?"تعرفه‌ها و اطلاعات تماس ذخیره شد؛ پذیرش درخواست‌های جدید غیرفعال است."
-            :"اطلاعات تماس ذخیره شد؛ تعرفه‌ها و پذیرش درخواست‌های جدید هنوز تنظیم نشده‌اند.";
+          ?"تنظیمات مرکز ذخیره شد و پذیرش درخواست‌های جدید فعال است."
+          :"اطلاعات مرکز ذخیره شد؛ پذیرش درخواست‌های جدید غیرفعال است.";
       }catch(error){businessStatus.textContent=error.message||"ذخیره تنظیمات ناموفق بود.";}
     });
 
     async function upload(bucket, file, oldPath) {
       if (!file) return oldPath || null;
+      const isDocument=bucket==="therapist-documents";
+      if(file.size>(isDocument?10:5)*1024*1024)throw new Error(isDocument?"حجم مدرک نباید بیشتر از ۱۰ مگابایت باشد.":"حجم تصویر نباید بیشتر از ۵ مگابایت باشد.");
+      const allowed=isDocument?["application/pdf","image/jpeg","image/png"]:["image/jpeg","image/png","image/webp"];
+      if(!allowed.includes(file.type))throw new Error("فرمت فایل انتخاب‌شده مجاز نیست.");
       const clean = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-90);
       const path = crypto.randomUUID() + "/" + clean;
       const { error } = await db.storage.from(bucket).upload(path, file, {
@@ -162,6 +144,7 @@
       document.getElementById("yadExistingScopeDocument").value = t?.psychotherapy_scope_evidence_reference || "";
       document.getElementById("yadJurisdictionReviewReference").value = t?.jurisdiction_review_reference || "";
       document.getElementById("yadVerified").checked = !!t?.verified;
+      document.getElementById("yadAssessmentSpecialist").checked = !!t?.is_assessment_specialist;
       document.getElementById("yadListed").checked = !!t?.is_listed;
       document.getElementById("yadExistingPhoto").value = t?.photo_path || "";
       document.getElementById("yadExistingDocument").value = t?.document_path || "";
@@ -174,8 +157,11 @@
       const { data, error } = await db.rpc("admin_list_therapists");
       if (error) throw error;
       const { data: metadata } = await db.rpc("admin_list_therapist_public_metadata");
+      const { data: specialistFlags, error: specialistFlagsError } = await db.rpc("admin_list_assessment_specialist_flags");
+      if(specialistFlagsError)throw specialistFlagsError;
       const metadataById = new Map((metadata || []).map(item => [item.therapist_id, item]));
-      cachedTherapists = (data || []).map(item => ({ ...item, ...(metadataById.get(item.therapist_id) || {}) }));
+      const specialistById = new Map((specialistFlags || []).map(item => [item.therapist_id, item.is_assessment_specialist]));
+      cachedTherapists = (data || []).map(item => ({ ...item, ...(metadataById.get(item.therapist_id) || {}), is_assessment_specialist:specialistById.get(item.therapist_id)===true }));
       list.replaceChildren();
       if (!cachedTherapists.length) {
         list.textContent = "هنوز درمانگری ثبت نشده است.";
@@ -436,6 +422,13 @@
     root.addEventListener("submit", async event => {
       event.preventDefault();
       try {
+        const wantsVerification = document.getElementById("yadVerified").checked;
+        const wantsAssessmentSpecialist=document.getElementById("yadAssessmentSpecialist").checked;
+        if(wantsAssessmentSpecialist&&(!wantsVerification||!document.getElementById("yadListed").checked))throw new Error("متخصص ارزیابی باید پس از تأیید مدارک در فهرست عمومی منتشر شود.");
+        const ownerUserId = val("yadTherapistOwnerUserId").trim();
+        if (ownerUserId && !wantsVerification) {
+          throw new Error("اتصال حساب کاربری درمانگر فقط پس از ثبت و تأیید صلاحیت حرفه‌ای امکان‌پذیر است.");
+        }
         setStatus("در حال ذخیره پروفایل…");
         const photo = document.getElementById("yadPhoto").files[0];
         const documentFile = document.getElementById("yadLicenseDocument").files[0];
@@ -454,12 +447,12 @@
           p_languages: split(val("yadLanguages")),
           p_modalities: split(val("yadModalities")),
           p_session_duration_minutes: 45,
-          // Legacy database columns remain required by the existing RPC; public pricing comes only from central tariffs.
+          // Legacy database columns remain required by the existing RPC; live prices are stored per therapist.
           p_fee_amount: 0,
           p_fee_currency: "IRR",
           p_photo_path: photoPath,
           p_license_number: val("yadLicense") || null,
-          p_issuing_authority: "سازمان نظام روان‌شناسی و مشاوره جمهوری اسلامی ایران",
+          p_issuing_authority: val("yadAuthority").trim(),
           p_document_path: documentPath,
           p_verified: false,
           p_is_listed: false
@@ -467,15 +460,6 @@
         const { data: savedId, error } = await db.rpc("admin_save_therapist", payload);
         if (error) throw error;
         const metadataId = savedId || val("yadTherapistId");
-        const wantsVerification = document.getElementById("yadVerified").checked;
-        const ownerUserId = val("yadTherapistOwnerUserId").trim();
-        if (ownerUserId) {
-          const { error: ownerError } = await db.rpc("admin_assign_therapist_user", {
-            p_therapist_id: metadataId,
-            p_user_id: ownerUserId
-          });
-          if (ownerError) throw ownerError;
-        }
         if (wantsVerification) {
           const { error: verificationError } = await db.rpc("admin_verify_therapist", {
             p_therapist_id: metadataId,
@@ -490,7 +474,16 @@
             p_publish: document.getElementById("yadListed").checked
           });
           if (verificationError) throw verificationError;
+          if (ownerUserId) {
+            const { error: ownerError } = await db.rpc("admin_assign_therapist_user", {
+              p_therapist_id: metadataId,
+              p_user_id: ownerUserId
+            });
+            if (ownerError) throw ownerError;
+          }
         }
+        const {error:assessmentSpecialistError}=await db.rpc("admin_set_assessment_specialist",{p_therapist_id:metadataId,p_enabled:wantsAssessmentSpecialist});
+        if(assessmentSpecialistError)throw assessmentSpecialistError;
         root.reset();
         fillForm(null);
         document.getElementById("yadExistingPhoto").value = "";
