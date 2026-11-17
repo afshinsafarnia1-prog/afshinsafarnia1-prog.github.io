@@ -90,9 +90,16 @@
     price.append(node("small","profile-muted",t("profile45min")));
     aside.append(price);
     const cta=node("a","button primary full-button",t("profileChoose"));
-    cta.href="client.html?therapist="+encodeURIComponent(data.id);
-    aside.append(cta);
-    aside.append(node("p","profile-muted",t("profileBookingNote")));
+    if (!data.verified_at && data.manager_approved) {
+      cta.textContent = "درخواست تماس اولیه";
+      cta.href = "client.html?therapist=" + encodeURIComponent(data.id) + "#yadTherapistInquiry";
+      aside.append(cta);
+      aside.append(node("p","profile-muted","این دکمه فقط درخواست تماس اولیه با مدیریت یادسنتر را ثبت می‌کند؛ رزرو یا شروع درمان پس از تکمیل بررسی‌های حرفه‌ای و مجوزهای لازم امکان‌پذیر خواهد بود."));
+    } else {
+      cta.href="client.html?therapist="+encodeURIComponent(data.id);
+      aside.append(cta);
+      aside.append(node("p","profile-muted",t("profileBookingNote")));
+    }
     grid.append(main,aside);root.append(grid);
   }
   load();
