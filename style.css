@@ -247,3 +247,25 @@ body{background:#fbfcfa}
 .yad-public-manager h3{margin:5px 0;color:#123f46;font-size:20px}
 .yad-public-manager p{color:#52696a;line-height:1.9;margin:5px 0}
 @media(max-width:620px){.yad-public-manager{grid-template-columns:94px 1fr;gap:14px;padding:14px}.yad-public-manager img{aspect-ratio:3/4}.yad-public-manager h3{font-size:16px}}
+
+
+/* Final mobile layout refinements */
+@media(max-width:760px){
+  .wrap{width:min(100% - 32px, 680px)}
+  .profile-grid{grid-template-columns:minmax(0,1fr)}
+  .profile-top{grid-template-columns:88px minmax(0,1fr);gap:14px;padding:18px}
+  .profile-photo{width:88px;height:100px;border-radius:18px}
+  .fee{align-items:flex-start;flex-wrap:wrap}
+  .profile-aside{position:static}
+}
+@media(max-width:480px){
+  .wrap{width:92%}
+  .profile-top{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .profile-top h1{font-size:1.55rem}
+  .profile-top p{font-size:.92rem}
+  .profile-grid{gap:12px}
+  .panel{padding:17px;border-radius:16px}
+  .panel p,.panel ul{font-size:.92rem}
+  .fee{gap:6px}
+  .fee strong{white-space:normal}
+}
