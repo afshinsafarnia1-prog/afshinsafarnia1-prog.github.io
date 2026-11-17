@@ -7,6 +7,75 @@
     const db = window.supabase.createClient(cfg.url, cfg.anonKey);
     const supportForm = document.getElementById("yadClientSupportForm");
     const supportStatus = document.getElementById("yadClientSupportStatus");
+    const inquiryForm = document.getElementById("yadTherapistInquiryForm");
+    const inquirySelect = document.getElementById("yadInquiryTherapist");
+    const inquiryStatus = document.getElementById("yadTherapistInquiryStatus");
+    let inquiryTherapists = [];
+    const inquiryMessage = (value, bad = false) => {
+      if (!inquiryStatus) return;
+      inquiryStatus.textContent = value;
+      inquiryStatus.dataset.error = bad ? "true" : "false";
+    };
+    async function loadInquiryTherapists() {
+      if (!inquirySelect) return;
+      const { data, error } = await db.from("therapists")
+        .select("id,display_name,headline")
+        .eq("is_listed", true)
+        .or("verified_at.not.is.null,manager_approved.eq.true")
+        .order("display_name", { ascending: true });
+      inquirySelect.replaceChildren();
+      if (error) {
+        inquirySelect.add(new Option("فهرست درمانگران در دسترس نیست", ""));
+        inquiryMessage("دریافت فهرست درمانگران ناموفق بود؛ لطفاً بعداً دوباره تلاش کنید.", true);
+        return;
+      }
+      inquiryTherapists = data || [];
+      inquirySelect.add(new Option("انتخاب درمانگر", ""));
+      inquiryTherapists.forEach(item => inquirySelect.add(new Option(
+        item.display_name + (item.headline ? " — " + item.headline : ""), item.id
+      )));
+      const requested = new URLSearchParams(location.search).get("therapist");
+      if (requested && inquiryTherapists.some(item => item.id === requested)) inquirySelect.value = requested;
+      if (!inquiryTherapists.length) inquiryMessage("در حال حاضر درمانگری برای درخواست تماس اولیه منتشر نشده است.", true);
+    }
+    inquiryForm?.addEventListener("submit", async event => {
+      event.preventDefault();
+      const button = inquiryForm.querySelector('button[type="submit"]');
+      if (!activeUser) {
+        inquiryMessage("برای ارسال درخواست تماس اولیه، ابتدا با حساب مراجع وارد شوید.", true);
+        return;
+      }
+      if (!inquirySelect?.value) {
+        inquiryMessage("لطفاً درمانگر موردنظر را انتخاب کنید.", true);
+        return;
+      }
+      if (!document.getElementById("yadInquiryConsent")?.checked) {
+        inquiryMessage("برای ارسال درخواست، تأیید استفاده از اطلاعات تماس لازم است.", true);
+        return;
+      }
+      button.disabled = true;
+      const { error } = await db.rpc("client_submit_therapist_inquiry", {
+        p_therapist_id: inquirySelect.value,
+        p_contact_method: document.getElementById("yadInquiryContactMethod").value,
+        p_contact_value: document.getElementById("yadInquiryContactValue").value.trim(),
+        p_message: document.getElementById("yadInquiryMessage").value.trim() || null
+      });
+      button.disabled = false;
+      if (error) {
+        const raw = error.message || "";
+        const friendly = raw.includes("inquiry_rate_limit") ? "تعداد درخواست‌های امروز شما به سقف مجاز رسیده است؛ فردا دوباره تلاش کنید."
+          : raw.includes("therapist_not_available") ? "این پروفایل دیگر برای درخواست تماس فعال نیست."
+          : raw.includes("invalid_contact") ? "شماره تلفن یا نشانی ایمیل را بررسی کنید."
+          : raw.includes("client_only") ? "این امکان فقط برای حساب مراجع فعال است."
+          : "ثبت درخواست انجام نشد؛ لطفاً اطلاعات را بررسی و دوباره تلاش کنید.";
+        inquiryMessage(friendly, true);
+        return;
+      }
+      inquiryForm.reset();
+      inquiryMessage("درخواست تماس اولیه ثبت شد. مدیریت یادسنتر آن را بررسی می‌کند و از راه تماس ثبت‌شده با شما ارتباط می‌گیرد. این پیام به معنی رزرو یا شروع درمان نیست.");
+      await loadTickets();
+    });
+
     const ticketList = document.getElementById("yadClientSupportTickets");
     const notificationsRoot = document.getElementById("yadClientNotificationsList");
     const related = document.getElementById("yadSupportAppointment");
@@ -232,6 +301,7 @@
       await loadTickets();
       await loadNotifications();
     }
+    loadInquiryTherapists();
     db.auth.getSession().then(({ data }) => init(data.session));
     db.auth.onAuthStateChange((_event, session) => {
       if (session) init(session);
