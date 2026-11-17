@@ -125,7 +125,7 @@
     target.replaceChildren();
     target.append(el("p","", "تعرفهٔ هر درمانگر به‌صورت مستقل تعیین می‌شود و در پروفایل همان متخصص قابل مشاهده است. جلسهٔ استاندارد ۴۵ دقیقه است."));
     const updated=document.getElementById("yadTariffUpdated");
-    if(updated)updated.textContent="سهم درآمد هر جلسه: ۷۰٪ درمانگر و ۳۰٪ یادسنتر.";
+    if(updated)updated.textContent="";
   }
   function renderPublicContacts(){
     const target=document.getElementById("yadPublicContacts");if(!target)return;
