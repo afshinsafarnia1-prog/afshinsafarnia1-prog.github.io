@@ -16,7 +16,7 @@ declare
   v_client uuid := auth.uid();
   v_therapist_name text;
   v_ticket_id uuid;
-  v_contact text := btrim(coalesce(p_contact_value, ''));
+  v_contact text := translate(btrim(coalesce(p_contact_value, '')), '۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩', '01234567890123456789');
   v_message text := btrim(coalesce(p_message, ''));
 begin
   if v_client is null or not exists (
