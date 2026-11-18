@@ -54,7 +54,7 @@ try {
     "/assistant.html", "/rules.html", "/articles/",
     "/articles/psychotherapy-first-session.html",
     "/articles/therapeutic-relationship.html",
-    "/articles/ai-robots-human-meaning.html"
+    "/articles/ai-robots-human-meaning.html", "/therapists/foruzan-shahla.html"
   ];
   for (const path of pages) {
     const response = await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
