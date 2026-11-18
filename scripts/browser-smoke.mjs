@@ -50,7 +50,7 @@ try {
   });
 
   const pages = [
-    "/", "/relationships.html", "/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/client.html", "/admin.html", "/therapist.html",
+    "/", "/contact.html", "/relationships.html", "/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/client.html", "/admin.html", "/therapist.html",
     "/assistant.html", "/rules.html", "/articles/",
     "/articles/psychotherapy-first-session.html",
     "/articles/therapeutic-relationship.html",
@@ -99,7 +99,10 @@ try {
     if (!navText.includes("Home") || !navText.includes("Journal")) throw new Error("Service guide navigation did not localize: " + path);
   }
 
+  await page.goto("http://127.0.0.1:4173/contact.html", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator('a[href="tel:+989999398350"]').count()) || !(await page.locator('a[href="https://wa.me/989999398350"]').count())) throw new Error("Public contact page is missing phone or WhatsApp links.");
   await page.goto("http://127.0.0.1:4173/client.html", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator("#yadBookingContact a[href=\"tel:+989999398350\"]").count()) || !(await page.locator("#yadBookingContact a[href=\"https://wa.me/989999398350\"]").count())) throw new Error("Client booking contact options are missing.");
   for (const selector of ["#yadClientConsent", "#yadAdultConfirm", "#yadSessionCountry", "#yadPreferredTime", "#yadClientAppointmentList", "#yadClientSupportForm", "#yadClientNotificationsList", "#yadExportMyData"]) {
     if (!(await page.locator(selector).count())) throw new Error("Client workflow control missing: " + selector);
   }
@@ -202,7 +205,7 @@ try {
   // Expanded small-screen checks for the primary public and portal journeys.
   await page.setViewportSize({ width: 360, height: 800 });
   for (const path of [
-    "/", "/initial-guidance.html", "/relationships.html", "/psychology.html",
+    "/", "/contact.html", "/initial-guidance.html", "/relationships.html", "/psychology.html",
     "/psychotherapy.html", "/psychiatry.html", "/therapist.html",
     "/client.html", "/admin.html", "/articles/ai-robots-human-meaning.html"
   ]) {
