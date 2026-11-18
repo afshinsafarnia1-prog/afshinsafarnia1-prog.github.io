@@ -35,6 +35,7 @@ const CORE_ASSETS = [
   "/assistant.html",
   "/therapist.html",
   "/therapist-profile.html",
+  "/therapists/foruzan-shahla.html",
   "/therapist-profile.js",
   "/client.html",
   "/admin.html",
