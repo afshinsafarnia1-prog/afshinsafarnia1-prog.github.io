@@ -198,6 +198,40 @@ try {
   const legalText=await page.locator(".legal").innerText();
   if(!legalText.includes("پیش‌نویس")||!legalText.includes("رضایت آگاهانهٔ درمان"))throw new Error("Legal draft disclosures are missing.");
 
+
+  // Expanded small-screen checks for the primary public and portal journeys.
+  await page.setViewportSize({ width: 360, height: 800 });
+  for (const path of [
+    "/", "/initial-guidance.html", "/relationships.html", "/psychology.html",
+    "/psychotherapy.html", "/psychiatry.html", "/therapist.html",
+    "/client.html", "/admin.html", "/articles/ai-robots-human-meaning.html"
+  ]) {
+    const response = await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
+    if (!response || response.status() !== 200) throw new Error("Small-screen page failed: " + path);
+    const dimensions = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      document: document.documentElement.scrollWidth
+    }));
+    if (dimensions.document > dimensions.viewport + 1) {
+      throw new Error("Small-screen horizontal overflow at 360px: " + path + " (" + dimensions.document + " > " + dimensions.viewport + ")");
+    }
+  }
+
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  const featured = page.locator("#articles .article-card.featured");
+  if (!(await featured.count())) throw new Error("Featured AI article card is missing on the homepage.");
+  const featuredContrast = await featured.evaluate(el => {
+    const rgb = value => (value.match(/[0-9.]+/g) || []).slice(0, 3).map(Number);
+    const luminance = value => {
+      const channels = rgb(value).map(x => { x /= 255; return x <= .04045 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4; });
+      return .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2];
+    };
+    const text = luminance(getComputedStyle(el).color);
+    const background = luminance(getComputedStyle(el).backgroundColor);
+    return (Math.max(text, background) + .05) / (Math.min(text, background) + .05);
+  });
+  if (featuredContrast < 4.5) throw new Error("Featured AI article card fails WCAG AA text contrast: " + featuredContrast.toFixed(2));
+
   if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
   console.log("PASS: 18 pages and integrated guidance, standards, workshop and assessment content; initial-guide filter handoff; fixed mobile access; WCAG AA contrast for fixed CTA; legal draft disclosures; existing multilingual, portal, responsive and PWA smoke checks.");
 } finally {
