@@ -189,7 +189,7 @@ try {
   }
   await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
   const floatContrast=await page.locator(".yad-assessment-float").evaluate(el=>{
-    const parse=v=>{const m=v.match(/[\\d.]+/g);return m?.length>=3?m.slice(0,3).map(Number):[0,0,0];};
+    const parse=v=>{const m=v.match(/[0-9.]+/g);return m?.length>=3?m.slice(0,3).map(Number):[0,0,0];};
     const lum=v=>{const c=parse(v).map(x=>{x/=255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4;});return .2126*c[0]+.7152*c[1]+.0722*c[2];};
     const style=getComputedStyle(el),a=lum(style.color),b=lum(style.backgroundColor);return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
   });
