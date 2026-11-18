@@ -171,6 +171,7 @@ try {
   await page.locator("#guideLanguage").selectOption("fa");
   await page.locator("#guideFormat").selectOption("online");
   await page.locator("#initialGuideForm button[type=submit]").click();
+  await page.locator("#initialGuideResult a").click();
   await page.waitForURL(/index\.html\?[^#]*specialty=/);
   if(new URL(page.url()).searchParams.get("format")!=="online")throw new Error("Initial guide did not preserve the online preference.");
   await page.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
