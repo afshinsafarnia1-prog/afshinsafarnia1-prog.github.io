@@ -412,3 +412,153 @@ body{background:#fbfcfa}
   border-color:#2b7772;
   color:#f7fffc;
 }
+
+
+/* YAD Center editorial redesign: open, calm and content-led layout */
+:root{--editorial-paper:#fff;--editorial-soft:#f7f8f5;--editorial-ink:#243b3b;--editorial-muted:#687775;--editorial-line:#e7ece8}
+html{scroll-behavior:smooth}
+body{background:var(--editorial-paper);color:var(--editorial-ink)}
+.wrap{width:min(1160px,calc(100% - 48px))}
+.topline{background:#f5f7f3;color:#60716d;border:0}
+.topinner{min-height:34px;font-size:11px}
+.header{background:rgba(255,255,255,.97);border-bottom:1px solid var(--editorial-line);box-shadow:none}
+.navrow{min-height:78px;gap:22px}
+.brand b{font-size:23px;letter-spacing:-.7px}
+.brand small{letter-spacing:2.1px}
+#mainNav{gap:17px}
+#mainNav a{font-size:12px;color:#4b605d}
+#mainNav a:hover{color:#168274}
+.navcta{border-radius:4px!important;box-shadow:none!important}
+.hero{background:#f5f7f3;border:0;overflow:hidden}
+.hero-grid{min-height:490px;gap:55px;padding-top:65px;padding-bottom:65px}
+.hero-copy{max-width:650px}
+.hero h1{font-size:clamp(34px,4.7vw,56px);line-height:1.65;letter-spacing:-1.1px;color:#183f40}
+.hero h1 em{color:#218477;font-style:normal}
+.hero .lead{max-width:610px;color:#596d69;font-size:15px;line-height:2.35}
+.eyebrow{color:#278476;letter-spacing:0;font-weight:700}
+.hero-actions{gap:20px;margin-top:28px}
+.button{border-radius:5px!important;box-shadow:none!important}
+.button.primary{background:#176c64}
+.button.outline{background:transparent!important;border-color:#b9cbc4!important}
+.textlink{color:#26796f}
+.trustline{gap:20px;color:#657772}
+.hero-visual{background:transparent;box-shadow:none}
+.hero-visual .orbit{border-color:rgba(31,119,105,.16)}
+.hero-visual .sun{background:linear-gradient(145deg,#d6e9dc,#f4e9d9);box-shadow:none}
+.visual-card{background:rgba(255,255,255,.8);border:0;border-radius:3px;box-shadow:0 8px 24px rgba(20,65,57,.06)}
+.quote-card{border:0;border-right:2px solid #5a9a89;border-radius:0;background:rgba(255,255,255,.82);box-shadow:none}
+.section{padding:78px 0}
+.section-head{align-items:end;gap:35px;margin-bottom:32px}
+.section-head h2{font-size:clamp(23px,2.6vw,32px);line-height:1.8;color:#204747}
+.section-head p{max-width:470px;color:#697a75;line-height:2.2}
+.initial-guidance{background:#fff}
+.guidance-panel{grid-template-columns:1.5fr 1fr;padding:26px 0;border:0;border-top:1px solid var(--editorial-line);border-bottom:1px solid var(--editorial-line);border-radius:0;background:transparent;gap:35px}
+.guidance-panel h3{font-size:20px;color:#204747}
+.guidance-panel p{font-size:14px;color:#667671}
+.guidance-actions{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:flex-start}
+.guidance-actions .button{width:auto}
+#sessionFees{background:#f8faf7}
+.tariff-grid{display:flex;flex-wrap:wrap;gap:18px}
+.searchband{background:#f5f7f3;border:0}
+.searchbox{padding:50px 0;background:transparent;border:0;border-radius:0;box-shadow:none}
+.searchbox>div:first-child{max-width:680px}
+.searchbox h2{font-size:30px;color:#204747}
+.searchbox>div:first-child p{color:#657570;line-height:2.2}
+.therapist-filters{padding:24px 0 18px;border-top:1px solid #dfe7e1;border-bottom:1px solid #dfe7e1}
+.filters label span{font-size:11px;color:#506763}
+.filters select,.filter-keyword input{border:1px solid #dce5df!important;border-radius:4px!important;background:#fff!important;box-shadow:none!important;min-height:43px}
+.filter-actions .button{min-height:42px}
+#directoryNotice{background:transparent;border:0;border-right:2px solid #80aa9b;border-radius:0;padding:8px 14px;color:#60736c}
+.therapist-directory{display:block!important;margin-top:22px!important}
+.therapist-card{display:flex!important;align-items:center!important;gap:22px!important;padding:20px 0!important;margin:0!important;border:0!important;border-bottom:1px solid var(--editorial-line)!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.therapist-photo{width:92px!important;height:108px!important;border-radius:3px!important}
+.therapist-card h3{font-size:18px!important;color:#204747!important}
+.therapist-headline,.therapist-meta{font-size:12px!important;color:#687873!important}
+.therapist-tags span{border-radius:3px!important}
+.service-grid{display:block!important;max-width:920px;margin:8px auto 0}
+.service-grid .service{display:grid;grid-template-columns:48px minmax(160px,.7fr) minmax(250px,1.5fr) auto;gap:18px;align-items:center;padding:24px 0!important;margin:0!important;border:0!important;border-bottom:1px solid var(--editorial-line)!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;transform:none!important}
+.service-grid .service-no{display:none!important}
+.service-grid .service-icon{font-size:25px;margin:0!important}
+.service-grid .service h3{margin:0!important;font-size:17px;color:#234847}
+.service-grid .service p{margin:0!important;font-size:13px;line-height:2;color:#697874}
+.service-grid .service>a{white-space:nowrap;color:#27796e;font-size:12px}
+.service-grid .service:hover{background:#f8faf7!important}
+.service-guide-links{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:28px;padding-top:20px;border-top:1px solid var(--editorial-line)}
+.service-guide-links a{font-size:12px;color:#34796e}
+.how{background:#204b49;padding:72px 0}
+.how-grid{gap:65px}
+.how h2{font-size:34px;line-height:1.8}
+.steps{gap:0}
+.steps>div{display:flex;gap:18px;padding:17px 0;border-bottom:1px solid rgba(255,255,255,.16)}
+.steps>div>b{display:none!important}
+.steps h3{font-size:16px;margin:0 0 4px}
+.steps p{font-size:12px;color:#d4e2dc;margin:0}
+.faq-section{background:#f8faf7}
+.faq-list{max-width:900px}
+.faq-item{background:transparent!important;border:0!important;border-bottom:1px solid #dfe7e1!important;border-radius:0!important;padding:17px 0!important}
+.faq-item summary{font-size:14px;color:#294c49}
+.faq-item p{font-size:13px;color:#667671;line-height:2.2}
+.workshop-grid{display:block!important}
+.workshop-card{display:grid;grid-template-columns:140px minmax(0,1fr) auto;align-items:center;gap:10px 24px;padding:20px 0!important;margin:0!important;border:0!important;border-bottom:1px solid var(--editorial-line)!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.workshop-card h3{margin:0;color:#254a48}
+.workshop-card .workshop-summary{grid-column:2;grid-row:2}
+.workshop-card .button{grid-column:3;grid-row:1/3}
+.articles{background:#f5f7f3}
+.articles .article-grid{display:block!important;max-width:960px;margin:0 auto}
+.articles .article-card{display:grid!important;grid-template-columns:150px minmax(0,1fr) auto;align-items:center;gap:6px 22px;min-height:0!important;padding:20px 0!important;margin:0!important;border:0!important;border-bottom:1px solid #dce5df!important;border-radius:0!important;background:transparent!important;color:inherit!important;box-shadow:none!important}
+.articles .article-card>span{grid-column:1;grid-row:1/3;background:transparent!important;border:0!important;padding:0!important;color:#6b8980!important;font-size:11px!important}
+.articles .article-card h3{grid-column:2;grid-row:1;margin:0!important;color:#254b49!important;font-size:17px!important}
+.articles .article-card p{grid-column:2;grid-row:2;margin:0!important;color:#6a7974!important;font-size:12px!important}
+.articles .article-card>b{grid-column:3;grid-row:1/3;color:#27796e!important;font-size:11px!important}
+.articles .article-card.featured{min-height:0!important;padding:22px 0!important;background:transparent!important;border:0!important;border-bottom:1px solid #dce5df!important;box-shadow:none!important}
+.articles .article-card.featured::before,.articles .article-card.featured::after{display:none!important}
+.articles .article-card.featured>span{color:#6b8980!important}
+.articles .article-card.featured h3{color:#254b49!important}
+.articles .article-card.featured p{color:#6a7974!important}
+.articles .article-card.featured>b{color:#27796e!important}
+.articles .article-card:hover{transform:none!important;background:rgba(255,255,255,.55)!important}
+.about{background:#fff;padding:78px 0}
+.about-grid{gap:55px}
+.about h2{font-size:30px;color:#204747}
+.about p{max-width:750px;color:#647570;font-size:14px;line-height:2.3}
+.yad-public-manager{background:transparent!important;border:0!important;border-top:1px solid var(--editorial-line)!important;border-radius:0!important;box-shadow:none!important;padding:25px 0!important}
+#contact{background:#f8faf7}
+#contact .guidance-panel{border-top:1px solid #dfe7e1;border-bottom:1px solid #dfe7e1}
+.closing{background:#eaf2ec}
+.closing h2{color:#204747}
+.closing p{color:#5f716b}
+footer{background:#183f40}
+.footer-grid{padding-top:38px;padding-bottom:38px}
+.footerlinks a{font-size:12px}
+.copyright{border-top:1px solid rgba(255,255,255,.14)}
+@media(max-width:760px){
+ .wrap{width:min(100% - 32px,1160px)}
+ .hero-grid{min-height:0;padding:45px 0 35px;gap:8px}
+ .hero-visual{height:220px}
+ .section{padding:54px 0}
+ .section-head{margin-bottom:22px}
+ .guidance-panel{grid-template-columns:1fr;gap:20px;padding:22px 0}
+ .guidance-actions{flex-direction:column;align-items:stretch}
+ .guidance-actions .button{width:100%}
+ .service-grid .service{grid-template-columns:36px 1fr;gap:7px 14px;padding:18px 0!important}
+ .service-grid .service-icon{grid-row:1/3;align-self:start}
+ .service-grid .service h3{grid-column:2}
+ .service-grid .service p{grid-column:2}
+ .service-grid .service>a{grid-column:2;white-space:normal}
+ .workshop-card{grid-template-columns:1fr!important;gap:7px;padding:18px 0!important}
+ .workshop-card .workshop-summary,.workshop-card .button{grid-column:1;grid-row:auto}
+ .workshop-card .button{width:max-content}
+ .articles .article-card,.articles .article-card.featured{grid-template-columns:1fr!important;gap:5px;padding:17px 0!important}
+ .articles .article-card>span,.articles .article-card h3,.articles .article-card p,.articles .article-card>b{grid-column:1!important;grid-row:auto!important}
+ .articles .article-card h3{font-size:16px!important}
+ .articles .article-card>b{margin-top:5px}
+ .about-grid{gap:25px}
+}
+@media(max-width:480px){
+ .hero h1{font-size:31px}
+ .hero .lead{font-size:13px}
+ .searchbox{padding:35px 0}
+ .searchbox h2{font-size:24px}
+ .service-grid .service{grid-template-columns:30px 1fr}
+ .footer-grid{gap:20px}
+}
