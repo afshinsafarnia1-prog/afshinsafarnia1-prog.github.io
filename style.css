@@ -404,3 +404,11 @@ body{background:#fbfcfa}
  .ai-article .article-opening{font-size:15px}
  .ai-article .references{padding:18px 16px}
 }
+
+
+/* Homepage-only correction: keep the featured AI article card dark behind its light text */
+#articles .article-card.featured{
+  background:linear-gradient(140deg,#123f46 0%,#1b5960 56%,#164b50 100%);
+  border-color:#2b7772;
+  color:#f7fffc;
+}
