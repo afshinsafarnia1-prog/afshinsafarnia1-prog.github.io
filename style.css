@@ -412,3 +412,6 @@ body{background:#fbfcfa}
   border-color:#2b7772;
   color:#f7fffc;
 }
+
+/* Keep the YAD Center wordmark text; hide the redundant standalone Persian letter across all pages. */
+.brandmark{display:none!important}
