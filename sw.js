@@ -1,7 +1,10 @@
-const CACHE = "yadcenter-shell-v21";
+const CACHE = "yadcenter-shell-v22";
 const CORE_ASSETS = [
   "/",
   "/index.html",
+  "/initial-guidance.html",
+  "/standards.html",
+  "/articles/why-assessment-matters.html",
   "/workshops.html",
   "/relationships.html",
   "/psychology.html",
@@ -32,6 +35,7 @@ const CORE_ASSETS = [
   "/assistant.html",
   "/therapist.html",
   "/therapist-profile.html",
+  "/therapists/foruzan-shahla.html",
   "/therapist-profile.js",
   "/client.html",
   "/admin.html",

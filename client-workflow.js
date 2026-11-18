@@ -137,10 +137,23 @@
 
     async function registerForRequestedWorkshop(){
       if(!queryWorkshop)return;
-      const {error}=await db.rpc("register_for_workshop",{p_workshop_id:queryWorkshop});
-      if(error){setStatus(error.message==="event_full"?"ظرفیت این کارگاه تکمیل شده است.":error.message==="registration_closed"?"مهلت ثبت‌نام این رویداد پایان یافته است.":"ثبت‌نام انجام نشد؛ لطفاً رویداد را بررسی کنید.",true);return;}
-      setStatus("درخواست ثبت‌نام شما در کارگاه ثبت شد. وضعیت و اطلاعات ورود را در بخش رویدادهای من می‌بینید.");
-      await loadWorkshopRegistrations();
+      const prompt=document.getElementById("yadWorkshopRegistrationPrompt");
+      if(!prompt){setStatus("برای ادامهٔ ثبت‌نام، از صفحهٔ کارگاه وارد پنل مراجع شوید.",true);return;}
+      prompt.replaceChildren();
+      const explanation=document.createElement("p");
+      explanation.textContent="با تأیید این مرحله، درخواست ثبت‌نام شما برای این کارگاه ارسال می‌شود. اگر رویداد هزینه داشته باشد، ثبت‌نام تا زمان تأیید پرداخت نهایی نیست. لینک جلسه فقط پس از احراز شرایط در پنل نمایش داده می‌شود.";
+      const confirm=document.createElement("button");
+      confirm.type="button";confirm.className="button primary";confirm.textContent="تأیید و ارسال درخواست ثبت‌نام";
+      confirm.addEventListener("click",async()=>{
+        confirm.disabled=true;confirm.textContent="در حال ثبت درخواست…";
+        const {error}=await db.rpc("register_for_workshop",{p_workshop_id:queryWorkshop});
+        if(error){confirm.disabled=false;confirm.textContent="تلاش دوباره برای ثبت‌نام";setStatus(error.message==="event_full"?"ظرفیت این کارگاه تکمیل شده است.":error.message==="registration_closed"?"مهلت ثبت‌نام این رویداد پایان یافته است.":"ثبت‌نام انجام نشد؛ لطفاً رویداد را بررسی کنید.",true);return;}
+        setStatus("درخواست ثبت‌نام شما در کارگاه ثبت شد. وضعیت پرداخت و اطلاعات ورود را در بخش رویدادهای من پیگیری کنید.");
+        prompt.hidden=true;
+        await loadWorkshopRegistrations();
+      });
+      prompt.append(explanation,confirm);prompt.hidden=false;
+      prompt.scrollIntoView({behavior:"smooth",block:"center"});
     }
     async function loadWorkshopRegistrations(){
       const {data,error}=await db.rpc("client_list_workshop_registrations");

@@ -92,6 +92,14 @@ for (const file of [".env", ".env.production"]) {
 
 
 const homepage = fs.readFileSync(path.join(root, "index.html"), "utf8");
+for (const requiredPage of ["initial-guidance.html","standards.html","workshops.html","articles/why-assessment-matters.html","articles/ai-robots-human-meaning.html"]) if (!fs.existsSync(path.join(root, requiredPage))) errors.push("Integrated redesign page is required: "+requiredPage);
+const workshopSecurityMigration=path.join(root,"supabase/migrations/20261118111700_restrict_public_workshop_meeting_credentials.sql");
+if(!fs.existsSync(workshopSecurityMigration)) errors.push("Workshop private meeting credential grant migration is required.");
+else {const sql=fs.readFileSync(workshopSecurityMigration,"utf8");if(!sql.includes("revoke select on table public.workshops from public, anon, authenticated")||!sql.includes("grant select (")||!sql.includes("meeting_url, meeting_password")) errors.push("Workshop public grants must exclude private meeting credentials.");}
+if (homepage.includes("elegant-otter-e1f7ef.netlify.app")) errors.push("Homepage social URLs must not point to the paused Netlify deployment.");
+for (const requiredPage of ["initial-guidance.html","standards.html","workshops.html","articles/why-assessment-matters.html","articles/ai-robots-human-meaning.html"]) if (!fs.existsSync(path.join(root, requiredPage))) errors.push("Integrated redesign page is required: "+requiredPage);
+if (homepage.includes("elegant-otter-e1f7ef.netlify.app")) errors.push("Homepage canonical/social URLs must not point to the paused Netlify deployment.");
+if (!homepage.includes("yad-assessment-float") && !fs.readFileSync(path.join(root,"site-i18n.js"),"utf8").includes("yad-assessment-float")) errors.push("Persistent initial-guidance access must be installed globally.");
 const adminPage = fs.readFileSync(path.join(root, "admin.html"), "utf8");
 const adminWorkflow = fs.readFileSync(path.join(root, "admin-workflow-extended.js"), "utf8");
 const appScript = fs.readFileSync(path.join(root, "app.js"), "utf8");

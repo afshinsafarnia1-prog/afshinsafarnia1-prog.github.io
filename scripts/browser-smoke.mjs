@@ -54,7 +54,7 @@ try {
     "/assistant.html", "/rules.html", "/articles/",
     "/articles/psychotherapy-first-session.html",
     "/articles/therapeutic-relationship.html",
-    "/articles/ai-robots-human-meaning.html"
+    "/articles/ai-robots-human-meaning.html", "/therapists/foruzan-shahla.html"
   ];
   for (const path of pages) {
     const response = await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
@@ -160,8 +160,46 @@ try {
   if (!(await page.locator(".therapist-filters").isVisible())) throw new Error("Mobile therapist filters are not visible.");
   const mobileFilterColumns = await page.locator(".therapist-filters").evaluate(el => getComputedStyle(el).gridTemplateColumns);
   if (mobileFilterColumns.split(" ").length !== 1) throw new Error("Therapist filters are not single-column on mobile.");
+
+  for (const [path, selector] of [["/initial-guidance.html","#initialGuideForm"],["/standards.html","h1"],["/workshops.html","#yadWorkshopPageList"],["/articles/why-assessment-matters.html","h1"]]) {
+    const response=await page.goto("http://127.0.0.1:4173"+path,{waitUntil:"domcontentloaded"});
+    if(!response||response.status()!==200)throw new Error("Integrated page failed: "+path);
+    if(!(await page.locator(selector).count()))throw new Error("Integrated page control missing: "+path+" "+selector);
+  }
+  await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
+  await page.locator("#guideSpecialty").selectOption("روان‌درمانی");
+  await page.locator("#guideLanguage").selectOption("fa");
+  await page.locator("#guideFormat").selectOption("online");
+  await page.locator("#initialGuideForm button[type=submit]").click();
+  await page.locator("#initialGuideResult a").click();
+  await page.waitForURL(/index\.html\?[^#]*specialty=/);
+  if(new URL(page.url()).searchParams.get("format")!=="online")throw new Error("Initial guide did not preserve the online preference.");
+  await page.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
+  if(!(await page.locator(".yad-assessment-float").count()))throw new Error("Persistent initial-guidance link is missing.");
+  if(!(await page.locator("#pwaInstallButton").count())||!(await page.locator("#pwaInstallHelp").count()))throw new Error("Mobile PWA installation entry point or help dialog is missing.");
+  await page.locator("#pwaInstallButton").click();
+  if(!(await page.locator("#pwaInstallHelp").isVisible()))throw new Error("PWA installation guidance dialog did not open.");
+  await page.locator("#pwaInstallClose").click();
+  await page.setViewportSize({width:390,height:844});
+  await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
+  for(const path of ["/","/initial-guidance.html","/standards.html","/workshops.html"]){
+    await page.goto("http://127.0.0.1:4173"+path,{waitUntil:"domcontentloaded"});
+    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1);
+    if(overflow)throw new Error("Horizontal overflow on mobile: "+path);
+  }
+  await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
+  const floatContrast=await page.locator(".yad-assessment-float").evaluate(el=>{
+    const parse=v=>{const m=v.match(/[0-9.]+/g);return m?.length>=3?m.slice(0,3).map(Number):[0,0,0];};
+    const lum=v=>{const c=parse(v).map(x=>{x/=255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4;});return .2126*c[0]+.7152*c[1]+.0722*c[2];};
+    const style=getComputedStyle(el),a=lum(style.color),b=lum(style.backgroundColor);return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+  });
+  if(floatContrast<4.5)throw new Error("Persistent guidance button fails WCAG AA text contrast: "+floatContrast.toFixed(2));
+  await page.goto("http://127.0.0.1:4173/rules.html",{waitUntil:"domcontentloaded"});
+  const legalText=await page.locator(".legal").innerText();
+  if(!legalText.includes("پیش‌نویس")||!legalText.includes("رضایت آگاهانهٔ درمان"))throw new Error("Legal draft disclosures are missing.");
+
   if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
-  console.log("PASS: 14 pages return HTTP 200; eight languages, client consent/session/support/notification controls, admin management panels, directory filters, mobile navigation and responsive filter layout, assistant, therapist, article-index, Persian-only notices and PWA assets checked; no uncaught page errors.");
+  console.log("PASS: 18 pages and integrated guidance, standards, workshop and assessment content; initial-guide filter handoff; fixed mobile access; WCAG AA contrast for fixed CTA; legal draft disclosures; existing multilingual, portal, responsive and PWA smoke checks.");
 } finally {
   if (browser) await browser.close();
   await new Promise(resolveClose => server.close(resolveClose));
