@@ -278,3 +278,19 @@ body{background:#fbfcfa}
 .yad-assessment-float{position:fixed;z-index:45;left:16px;bottom:16px;max-width:calc(100vw - 32px);padding:12px 17px;border-radius:999px;background:#123f46;color:#fff!important;font:700 13px Vazirmatn,Tahoma,sans-serif;box-shadow:0 8px 28px #123f4633;border:2px solid #35c6b0}
 .yad-assessment-float:focus-visible{outline:3px solid #ff806b;outline-offset:3px}
 @media(max-width:480px){.yad-assessment-float{left:10px;bottom:10px;padding:10px 13px;font-size:11px}}
+
+/* Integrated guide, standards and small-screen refinements */
+.initial-guide-form{grid-template-columns:repeat(2,minmax(0,1fr))}
+.initial-guide-form label{min-width:0}
+.initial-guide-form select{max-width:100%;box-sizing:border-box;background:#fff;color:#243f42}
+.initial-guide-form button{min-height:46px}
+@media(max-width:620px){
+  .initial-guide-form{grid-template-columns:minmax(0,1fr)!important}
+  .initial-guide-form>*{grid-column:1/-1!important;min-width:0}
+  .initial-guide-form select{width:100%}
+  .initial-guide-form .button{width:100%;justify-content:center}
+  .yad-assessment-float{max-width:calc(100vw - 20px)}
+  .workshop-card,.article-card,.service{min-width:0;overflow-wrap:anywhere}
+  .workshop-grid,.article-grid,.service-grid{grid-template-columns:minmax(0,1fr)}
+  img,video,iframe{max-width:100%}
+}
