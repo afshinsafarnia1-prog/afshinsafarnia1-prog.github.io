@@ -6,7 +6,7 @@
 <meta name="description" content="راهنمایی کوتاه برای روشن‌کردن نیازها و ترجیح‌ها پیش از انتخاب خدمات روان‌درمانی در یادسنتر.">
 <link rel="canonical" href="https://afshinsafarnia1-prog.github.io/initial-guidance.html">
 <meta name="theme-color" content="#123f46">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css"><script defer src="site-i18n.js"></script><script defer src="portal.js"></script>
 </head>
 <body>
 <header class="header"><div class="wrap navrow"><a class="brand" href="index.html"><span class="brandmark">ی</span><span><b>یادسنتر</b><small>YAD CENTER</small></span></a><a class="navcta" href="index.html">بازگشت به صفحهٔ اصلی ←</a></div></header>
@@ -14,7 +14,17 @@
 <span class="eyebrow">راهنمای آغاز</span>
 <h1 style="color:#123f46;font-size:clamp(30px,5vw,46px);line-height:1.6">پیش از انتخاب درمانگر، چه چیزهایی را در نظر بگیرم؟</h1>
 <p style="color:#52696a;font-size:16px;line-height:2.2">این راهنما برای کمک به جهت‌یابی و انتخاب آگاهانه طراحی شده است. پاسخ‌ها را فقط برای خودتان مرور کنید؛ در این صفحه چیزی ذخیره یا به یادسنتر ارسال نمی‌شود. این راهنما آزمون روان‌شناختی، تشخیص یا توصیهٔ درمانی شخصی نیست.</p>
-<div class="guidance-panel" style="display:block;margin:28px 0">
+<form id="initialGuideForm" class="guidance-panel initial-guide-form" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:26px 0">
+<div style="grid-column:1/-1"><h2 style="color:#123f46;margin:0">راهنمای کوتاه برای روشن‌کردن ترجیح‌ها</h2><p>این پرسش‌ها فقط به انتخاب مسیر جست‌وجو کمک می‌کنند. پاسخ‌ها ذخیره یا ارسال نمی‌شوند.</p></div>
+<label style="font-size:13px;font-weight:700;color:#52696a">به کدام حوزه نزدیک‌ترید؟
+<select id="guideSpecialty" required style="display:block;width:100%;margin-top:7px;padding:12px;border:1px solid #dce8e3;border-radius:10px;font:inherit"><option value="">انتخاب کنید</option><option value="روان‌درمانی">روان‌درمانی فردی</option><option value="زوج‌درمانی">روابط و زوج‌درمانی</option><option value="روان‌شناسی">مشاوره و روان‌شناسی</option><option value="روان‌پزشکی">ارزیابی روان‌پزشکی</option><option value="unsure">هنوز مطمئن نیستم</option></select></label>
+<label style="font-size:13px;font-weight:700;color:#52696a">زبان ترجیحی گفت‌وگو
+<select id="guideLanguage" required style="display:block;width:100%;margin-top:7px;padding:12px;border:1px solid #dce8e3;border-radius:10px;font:inherit"><option value="">انتخاب کنید</option><option value="fa">فارسی</option><option value="ku">کوردی</option><option value="en">English</option><option value="tr">Türkçe</option><option value="ar">العربية</option><option value="es">Español</option><option value="de">Deutsch</option><option value="fr">Français</option></select></label>
+<label style="font-size:13px;font-weight:700;color:#52696a">شیوهٔ برگزاری موردنظر
+<select id="guideFormat" required style="display:block;width:100%;margin-top:7px;padding:12px;border:1px solid #dce8e3;border-radius:10px;font:inherit"><option value="">انتخاب کنید</option><option value="online">آنلاین</option><option value="in-person">حضوری، در صورت ارائه</option><option value="either">هر دو برایم ممکن است</option></select></label>
+<div style="grid-column:1/-1"><button class="button primary" type="submit">نمایش مسیر پیشنهادی ←</button></div>
+<div id="initialGuideResult" hidden style="grid-column:1/-1;padding:16px;background:#fff;border:1px solid #dce8e3;border-radius:14px" aria-live="polite"></div>
+</form>\n<div class="guidance-panel" style="display:block;margin:28px 0">
 <h2 style="color:#123f46">۱. موضوعی که می‌خواهید درباره‌اش گفت‌وگو کنید</h2>
 <p>آیا بیشتر به دنبال فهم الگوهای هیجانی و رابطه‌ای هستید، با یک دشواری مشخص در زندگی روبه‌رو شده‌اید، دربارهٔ رابطه یا خانواده پرسشی دارید، یا هنوز نمی‌دانید مسئله را چگونه صورت‌بندی کنید؟ لازم نیست در این مرحله جزئیات خصوصی بنویسید.</p>
 <h2 style="color:#123f46">۲. ترجیح‌های شما</h2>
@@ -28,4 +38,6 @@
 <p class="muted" style="margin-top:32px;font-size:12px">اگر با خطر فوری برای خود یا دیگری روبه‌رو هستید، این راهنما مناسب وضعیت بحران نیست؛ با خدمات اورژانسی محل زندگی تماس بگیرید.</p>
 </div></main>
 <footer><div class="wrap"><p>یادسنتر — راهنمای اطلاعاتی، نه جایگزین ارزیابی و درمان تخصصی.</p></div></footer>
-</body></html>
+<script>
+(()=>{const form=document.getElementById("initialGuideForm");if(!form)return;form.addEventListener("submit",event=>{event.preventDefault();const specialty=document.getElementById("guideSpecialty").value;const language=document.getElementById("guideLanguage").value;const format=document.getElementById("guideFormat").value;const result=document.getElementById("initialGuideResult");const names={fa:"فارسی",ku:"کوردی",en:"English",tr:"Türkçe",ar:"العربية",es:"Español",de:"Deutsch",fr:"Français"};const areas={"روان‌درمانی":"روان‌درمانی فردی","زوج‌درمانی":"روابط و زوج‌درمانی","روان‌شناسی":"مشاوره و روان‌شناسی","روان‌پزشکی":"ارزیابی روان‌پزشکی","unsure":"هنوز در انتخاب حوزه مطمئن نیستم"};const formats={online:"آنلاین","in-person":"حضوری، در صورت ارائه",either:"آنلاین یا حضوری"};result.replaceChildren();const p=document.createElement("p");p.textContent="ترجیح‌های انتخاب‌شده: "+areas[specialty]+" · زبان "+names[language]+" · "+formats[format]+". این موارد فقط نقطهٔ شروع جست‌وجو هستند و به‌تنهایی تعیین‌کنندهٔ درمان مناسب نیستند.";const a=document.createElement("a");a.className="button primary";a.textContent="مشاهدهٔ درمانگران و اعمال فیلترهای مرتبط ←";const params=new URLSearchParams();if(specialty!=="unsure")params.set("specialty",specialty);params.set("language",language);a.href="index.html?"+params.toString()+"#therapists";result.append(p,a);result.hidden=false;});})();
+</script></body></html>
