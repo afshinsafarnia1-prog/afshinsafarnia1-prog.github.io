@@ -562,3 +562,34 @@ footer{background:#183f40}
  .service-grid .service{grid-template-columns:30px 1fr}
  .footer-grid{gap:20px}
 }
+
+
+/* Public inner pages follow the same editorial rhythm; account dashboards remain structured */
+.content-page{background:#fff}
+.content-hero{max-width:920px;padding:45px 0 30px}
+.content-hero h1{font-size:clamp(28px,4vw,42px);line-height:1.8;color:#204747}
+.content-hero .lead{max-width:820px;color:#657570;font-size:15px;line-height:2.35}
+.content-grid{grid-template-columns:minmax(0,1fr) 250px;gap:48px}
+.content-card,.content-aside{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:22px 0!important}
+.content-card{border-bottom:1px solid var(--editorial-line)!important}
+.content-card h2{color:#204747;font-size:22px}
+.content-card p,.content-card li{color:#5f716c;line-height:2.3}
+.content-aside{border-right:1px solid var(--editorial-line)!important;padding-right:22px!important}
+.topic-list>div{padding:16px 0;border-bottom:1px solid var(--editorial-line)}
+.topic-list h3{color:#2d5550}
+.legal{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:35px 0!important}
+.legal h1,.legal h2{color:#204747}
+.legal h2{border-top:1px solid var(--editorial-line)}
+.articles.section .article-grid{max-width:960px}
+.article-reader{max-width:850px;margin:35px auto;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+body:not(:has(.portal-header)) .portal-main>.portal-wrap>.portal-card{background:transparent!important;border:0!important;border-top:1px solid var(--editorial-line)!important;border-radius:0!important;box-shadow:none!important;padding:24px 0!important}
+body:not(:has(.portal-header)) .portal-main>.portal-wrap>.portal-card .portal-card{background:transparent!important;border:0!important;border-bottom:1px solid var(--editorial-line)!important;border-radius:0!important;box-shadow:none!important;padding:18px 0!important}
+body:not(:has(.portal-header)) .portal-main>.portal-wrap>.portal-card .portal-grid{gap:22px}
+.breadcrumbs{color:#80908a}
+.breadcrumbs a{color:#328074}
+@media(max-width:760px){
+ .content-grid{grid-template-columns:1fr;gap:10px}
+ .content-aside{border-right:0!important;border-top:1px solid var(--editorial-line)!important;padding:18px 0!important}
+ .content-card{padding:18px 0!important}
+ .legal{padding:24px 0!important}
+}
