@@ -411,5 +411,10 @@
     apply(saved);
     select.addEventListener("change",()=>apply(select.value));
   }
+
+  if(!document.querySelector(".yad-assessment-float")){
+    const labels={fa:"راهنمای اولیه انتخاب درمانگر",ku:"ڕێنمایی سەرەتایی بۆ هەڵبژاردنی چارەسەرکار",en:"Initial guide to choosing a therapist",tr:"Terapist seçimi için başlangıç rehberi",ar:"دليل أولي لاختيار المعالج",es:"Guía inicial para elegir terapeuta",de:"Erste Orientierung zur Therapeutenauswahl",fr:"Guide initial pour choisir un thérapeute"};
+    const link=document.createElement("a");link.className="yad-assessment-float";link.href=(location.pathname.includes("/articles/")?"../":"")+"initial-guidance.html";link.textContent=labels[document.documentElement.lang]||labels.fa;link.setAttribute("aria-label",link.textContent);document.body.appendChild(link);
+  }
   window.YAD_I18N = { apply, translations };
 })();
