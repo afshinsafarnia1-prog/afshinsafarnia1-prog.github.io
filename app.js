@@ -84,8 +84,10 @@
     const guideParams=new URLSearchParams(location.search);
     const guideLanguage=guideParams.get("language");
     const guideSpecialty=guideParams.get("specialty");
+    const guideFormat=guideParams.get("format");
     if(guideLanguage&&document.getElementById("language"))document.getElementById("language").value=guideLanguage;
     if(guideSpecialty&&document.getElementById("specialty"))document.getElementById("specialty").value=guideSpecialty;
+    if(guideFormat&&document.getElementById("modality"))document.getElementById("modality").value=guideFormat==="in-person"?"in_person":guideFormat==="online"?"online":"";
     const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
     if(settingsError){directory.textContent="دریافت تنظیمات عمومی سایت با خطا روبه‌رو شد.";return;}
     
