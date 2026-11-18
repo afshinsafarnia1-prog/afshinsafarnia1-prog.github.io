@@ -205,7 +205,7 @@
     if(!db){root.textContent=t.workshopUnavailable||"برنامهٔ کارگاه‌ها در دسترس نیست.";return;}
     root.textContent=t.workshopLoading||"در حال دریافت برنامهٔ کارگاه‌ها…";
     const {data,error}=await db.from("workshops")
-      .select("id,slug,title,summary,presenter_name,languages,topics,format,platform,venue,starts_at,ends_at,timezone,fee_amount,currency")
+      .select("id,slug,title,summary,presenter_name,languages,topics,format,platform,venue,starts_at,ends_at,timezone,fee_amount,currency,registration_deadline")
       .eq("status","published").gt("starts_at",new Date().toISOString()).order("starts_at",{ascending:true}).limit(12);
     root.replaceChildren();
     if(error){root.textContent=t.workshopLoadError||"دریافت برنامهٔ کارگاه‌ها با خطا روبه‌رو شد.";return;}
@@ -217,9 +217,9 @@
       card.append(el("span","workshop-format",format));
       card.append(el("h3","",event.title));
       card.append(el("p","workshop-summary",event.summary||""));
-      card.append(el("p","workshop-meta",event.presenter_name+" · "+when));
+      card.append(el("p","workshop-meta",event.presenter_name+" · شروع: "+when));\n      if(event.ends_at){const endWhen=new Intl.DateTimeFormat(document.documentElement.lang||"fa",{dateStyle:"medium",timeStyle:"short",timeZone:event.timezone||undefined}).format(new Date(event.ends_at));card.append(el("p","workshop-meta","پایان: "+endWhen));}\n      if(event.platform)card.append(el("p","workshop-meta","بستر برگزاری: "+event.platform));\n      if(event.registration_deadline){const deadline=new Intl.DateTimeFormat(document.documentElement.lang||"fa",{dateStyle:"medium",timeStyle:"short",timeZone:event.timezone||undefined}).format(new Date(event.registration_deadline));card.append(el("p","workshop-meta","مهلت ثبت‌نام: "+deadline));}
       const fee=Number(event.fee_amount)===0?(t.workshopFree||"رایگان"):new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(Number(event.fee_amount))+" "+event.currency;
-      card.append(el("p","workshop-meta",event.platform+" · "+fee));
+      card.append(el("p","workshop-meta","هزینه: "+fee));
       const a=el("a","button primary",t.workshopRegister||"ثبت‌نام و مشاهده جزئیات");
       a.href="client.html?workshop="+encodeURIComponent(event.id);
       card.append(a);root.append(card);
