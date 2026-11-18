@@ -232,4 +232,6 @@ function reply(q){
     setStatus(t().connecting);
   };
   window.addEventListener("load",start,{once:true});if(document.readyState==="complete")start();
+
+const assessmentLink=document.createElement("a");assessmentLink.className="yad-assessment-float";assessmentLink.href=prefix+"initial-guidance.html";assessmentLink.textContent="راهنمای اولیه انتخاب درمانگر";assessmentLink.setAttribute("aria-label","رفتن به راهنمای اولیه انتخاب درمانگر");document.body.appendChild(assessmentLink);const assessmentCss=document.createElement("style");assessmentCss.textContent='.yad-assessment-float{position:fixed;z-index:40;left:18px;bottom:18px;max-width:calc(100vw - 36px);padding:12px 18px;border-radius:999px;background:#123f46;color:#fff!important;font:700 13px Vazirmatn,Tahoma,sans-serif;box-shadow:0 8px 28px #123f4633;border:2px solid #35c6b0}.yad-assessment-float:focus-visible{outline:3px solid #ff806b;outline-offset:3px}@media(max-width:480px){.yad-assessment-float{left:12px;bottom:12px;padding:10px 14px;font-size:12px}}';document.head.appendChild(assessmentCss);
 })();
