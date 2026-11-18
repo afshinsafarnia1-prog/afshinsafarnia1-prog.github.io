@@ -92,6 +92,9 @@ for (const file of [".env", ".env.production"]) {
 
 
 const homepage = fs.readFileSync(path.join(root, "index.html"), "utf8");
+for (const requiredPage of ["initial-guidance.html","standards.html","workshops.html","articles/why-assessment-matters.html","articles/ai-robots-human-meaning.html"]) if (!fs.existsSync(path.join(root, requiredPage))) errors.push("Integrated redesign page is required: "+requiredPage);
+if (homepage.includes("elegant-otter-e1f7ef.netlify.app")) errors.push("Homepage canonical/social URLs must not point to the paused Netlify deployment.");
+if (!homepage.includes("yad-assessment-float") && !fs.readFileSync(path.join(root,"site-i18n.js"),"utf8").includes("yad-assessment-float")) errors.push("Persistent initial-guidance access must be installed globally.");
 const adminPage = fs.readFileSync(path.join(root, "admin.html"), "utf8");
 const adminWorkflow = fs.readFileSync(path.join(root, "admin-workflow-extended.js"), "utf8");
 const appScript = fs.readFileSync(path.join(root, "app.js"), "utf8");
