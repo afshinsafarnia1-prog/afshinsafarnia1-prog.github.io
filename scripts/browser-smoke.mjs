@@ -175,10 +175,18 @@ try {
   if(new URL(page.url()).searchParams.get("format")!=="online")throw new Error("Initial guide did not preserve the online preference.");
   await page.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
   if(!(await page.locator(".yad-assessment-float").count()))throw new Error("Persistent initial-guidance link is missing.");
+  if(!(await page.locator("#pwaInstallButton").count())||!(await page.locator("#pwaInstallHelp").count()))throw new Error("Mobile PWA installation entry point or help dialog is missing.");
+  await page.locator("#pwaInstallButton").click();
+  if(!(await page.locator("#pwaInstallHelp").isVisible()))throw new Error("PWA installation guidance dialog did not open.");
+  await page.locator("#pwaInstallClose").click();
   await page.setViewportSize({width:390,height:844});
   await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
-  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1);
-  if(overflow)throw new Error("Initial guidance page has horizontal overflow on mobile.");
+  for(const path of ["/","/initial-guidance.html","/standards.html","/workshops.html"]){
+    await page.goto("http://127.0.0.1:4173"+path,{waitUntil:"domcontentloaded"});
+    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1);
+    if(overflow)throw new Error("Horizontal overflow on mobile: "+path);
+  }
+  await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
   const floatContrast=await page.locator(".yad-assessment-float").evaluate(el=>{
     const parse=v=>{const m=v.match(/[\\d.]+/g);return m?.length>=3?m.slice(0,3).map(Number):[0,0,0];};
     const lum=v=>{const c=parse(v).map(x=>{x/=255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4;});return .2126*c[0]+.7152*c[1]+.0722*c[2];};
