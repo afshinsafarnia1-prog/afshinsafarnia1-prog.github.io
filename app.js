@@ -217,7 +217,10 @@
       card.append(el("span","workshop-format",format));
       card.append(el("h3","",event.title));
       card.append(el("p","workshop-summary",event.summary||""));
-      card.append(el("p","workshop-meta",event.presenter_name+" · شروع: "+when));\n      if(event.ends_at){const endWhen=new Intl.DateTimeFormat(document.documentElement.lang||"fa",{dateStyle:"medium",timeStyle:"short",timeZone:event.timezone||undefined}).format(new Date(event.ends_at));card.append(el("p","workshop-meta","پایان: "+endWhen));}\n      if(event.platform)card.append(el("p","workshop-meta","بستر برگزاری: "+event.platform));\n      if(event.registration_deadline){const deadline=new Intl.DateTimeFormat(document.documentElement.lang||"fa",{dateStyle:"medium",timeStyle:"short",timeZone:event.timezone||undefined}).format(new Date(event.registration_deadline));card.append(el("p","workshop-meta","مهلت ثبت‌نام: "+deadline));}
+      card.append(el("p","workshop-meta",event.presenter_name+" · شروع: "+when));
+      if(event.ends_at){const endWhen=new Intl.DateTimeFormat(document.documentElement.lang||"fa",{dateStyle:"medium",timeStyle:"short",timeZone:event.timezone||undefined}).format(new Date(event.ends_at));card.append(el("p","workshop-meta","پایان: "+endWhen));}
+      if(event.platform)card.append(el("p","workshop-meta","بستر برگزاری: "+event.platform));
+      if(event.registration_deadline){const deadline=new Intl.DateTimeFormat(document.documentElement.lang||"fa",{dateStyle:"medium",timeStyle:"short",timeZone:event.timezone||undefined}).format(new Date(event.registration_deadline));card.append(el("p","workshop-meta","مهلت ثبت‌نام: "+deadline));}
       const fee=Number(event.fee_amount)===0?(t.workshopFree||"رایگان"):new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(Number(event.fee_amount))+" "+event.currency;
       card.append(el("p","workshop-meta","هزینه: "+fee));
       const a=el("a","button primary",t.workshopRegister||"ثبت‌نام و مشاهده جزئیات");
