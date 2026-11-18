@@ -247,3 +247,7 @@ body{background:#fbfcfa}
 .yad-public-manager h3{margin:5px 0;color:#123f46;font-size:20px}
 .yad-public-manager p{color:#52696a;line-height:1.9;margin:5px 0}
 @media(max-width:620px){.yad-public-manager{grid-template-columns:94px 1fr;gap:14px;padding:14px}.yad-public-manager img{aspect-ratio:3/4}.yad-public-manager h3{font-size:16px}}
+
+/* Integrated initial-guidance experience */
+.guidance-panel{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;padding:28px;border:1px solid #dcebe5;border-radius:22px;background:linear-gradient(120deg,#f1faf6,#fff8ee)}.guidance-panel h3{margin:0 0 8px;color:var(--teal);font-size:20px}.guidance-panel p{margin:0;color:#52696a;font-size:13px;line-height:2.1}.guidance-actions{display:flex;flex-direction:column;gap:10px;align-items:stretch}.guidance-actions .button{width:100%;text-align:center}.initial-guidance{padding-top:55px;padding-bottom:55px}.initial-guidance .section-head{margin-bottom:22px}
+@media(max-width:620px){.guidance-panel{grid-template-columns:1fr;padding:20px}.guidance-actions{gap:9px}.hero-actions{flex-wrap:wrap;gap:12px}.hero-actions .button{width:100%}}
