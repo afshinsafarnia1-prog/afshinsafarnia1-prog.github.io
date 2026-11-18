@@ -80,7 +80,7 @@
     if(Array.isArray(publicMetadata)){const byId=new Map(publicMetadata.map(x=>[x.therapist_id,x]));allTherapists=allTherapists.map(x=>({...x,...(byId.get(x.id)||{})}));}
     const {data:ratingRows}=await db.rpc("get_public_therapist_rating_summary");
     if(Array.isArray(ratingRows)){const ratingById=new Map(ratingRows.map(x=>[x.therapist_id,x]));allTherapists=allTherapists.map(x=>({...x,...(ratingById.get(x.id)||{})}));}
-    populateModalityFilter();
+    populateModalityFilter();\n    const guideParams=new URLSearchParams(location.search);\n    const guideLanguage=guideParams.get("language");\n    const guideSpecialty=guideParams.get("specialty");\n    if(guideLanguage&&document.getElementById("language"))document.getElementById("language").value=guideLanguage;\n    if(guideSpecialty&&document.getElementById("specialty"))document.getElementById("specialty").value=guideSpecialty;
     const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
     if(settingsError){directory.textContent="دریافت تنظیمات عمومی سایت با خطا روبه‌رو شد.";return;}
     
