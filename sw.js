@@ -3,6 +3,7 @@ const CORE_ASSETS = [
   "/",
   "/index.html",
   "/initial-guidance.html",
+  "/standards.html",
   "/articles/why-assessment-matters.html",
   "/workshops.html",
   "/relationships.html",
