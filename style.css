@@ -294,3 +294,113 @@ body{background:#fbfcfa}
   .workshop-grid,.article-grid,.service-grid{grid-template-columns:minmax(0,1fr)}
   img,video,iframe{max-width:100%}
 }
+
+
+/* Featured editorial card: AI, work and human meaning */
+.articles .article-card.featured{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  min-height:250px;
+  padding:30px 28px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:8px;
+  color:#f7fffc;
+  background:linear-gradient(132deg,#102f35 0%,#15545a 58%,#1d6866 100%);
+  border:1px solid #2b7772;
+  box-shadow:0 18px 42px rgba(13,57,62,.19);
+  transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease;
+}
+.articles .article-card.featured::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  width:230px;
+  height:230px;
+  left:-74px;
+  top:-112px;
+  border:1px solid rgba(140,231,211,.22);
+  border-radius:50%;
+  box-shadow:0 0 0 24px rgba(140,231,211,.045),0 0 0 52px rgba(140,231,211,.035);
+}
+.articles .article-card.featured::after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  width:130px;
+  height:130px;
+  left:18px;
+  bottom:-85px;
+  border-radius:50%;
+  background:rgba(53,198,176,.12);
+  filter:blur(2px);
+}
+.articles .article-card.featured>span{
+  display:inline-flex;
+  align-items:center;
+  background:rgba(105,222,196,.14);
+  border:1px solid rgba(143,237,214,.28);
+  color:#a8f0dc;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:11px;
+  letter-spacing:.1px;
+}
+.articles .article-card.featured h3{
+  max-width:590px;
+  margin:8px 0 0;
+  color:#fff;
+  font-size:clamp(20px,2.5vw,27px);
+  line-height:1.85;
+  font-weight:800;
+}
+.articles .article-card.featured p{
+  max-width:560px;
+  min-height:0;
+  margin:0;
+  color:#d9eeea;
+  font-size:13px;
+  line-height:2.15;
+}
+.articles .article-card.featured>b{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:8px;
+  color:#9cebd6;
+  font-size:12px;
+  font-weight:800;
+}
+.articles .article-card.featured:hover{
+  transform:translateY(-5px);
+  border-color:#65c9b4;
+  box-shadow:0 24px 52px rgba(13,57,62,.25);
+}
+.articles .article-card.featured:focus-visible{
+  outline:3px solid #f1a58f;
+  outline-offset:4px;
+}
+.ai-article{max-width:820px}
+.ai-article h1{font-size:clamp(30px,4.2vw,43px);line-height:1.75;color:var(--teal);margin:12px 0}
+.ai-article h2{font-size:clamp(20px,2.5vw,25px);line-height:1.8;color:var(--teal);margin:38px 0 10px}
+.ai-article p{font-size:15px;line-height:2.35;color:#435b5c}
+.ai-article .article-meta{display:flex;flex-wrap:wrap;gap:10px 18px;margin:10px 0 24px;color:#748785;font-size:11px}
+.ai-article .article-opening{font-size:17px;line-height:2.3;color:#365556;border-right:3px solid var(--mint);padding:4px 18px 4px 0;margin:24px 0 30px}
+.ai-article .article-insight{margin:28px 0;padding:20px 22px;border:1px solid #d8ece4;border-radius:16px;background:linear-gradient(135deg,#f0faf6,#fffaf3);color:#315b58}
+.ai-article .article-insight strong{display:block;margin-bottom:6px;color:var(--teal)}
+.ai-article .references{padding:22px 24px;background:#f7faf8;border:1px solid #e3ece7;border-radius:16px;margin:34px 0}
+.ai-article .references h2{margin-top:0}
+.ai-article .references ol{padding-right:22px;margin-bottom:0}
+.ai-article .references li{font-size:13px;line-height:2.15;color:#506665;margin:10px 0}
+.ai-article a{color:#137f73;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+@media(max-width:620px){
+ .articles .article-card.featured{min-height:0;padding:25px 22px}
+ .articles .article-card.featured h3{font-size:21px}
+ .articles .article-card.featured p{font-size:12px}
+ .ai-article p{font-size:14px;line-height:2.25}
+ .ai-article .article-opening{font-size:15px}
+ .ai-article .references{padding:18px 16px}
+}
