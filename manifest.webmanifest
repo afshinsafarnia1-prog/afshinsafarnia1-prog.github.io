@@ -1,13 +1,13 @@
 {
-  "name": "یادسنتر | مرکز روان‌شناسی و روان‌درمانی",
-  "short_name": "یادسنتر",
+  "name": "ردیاد | مرکز روان‌شناسی و روان‌درمانی",
+  "short_name": "ردیاد",
   "lang": "fa",
   "dir": "rtl",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#fffdfa",
-  "theme_color": "#123f46",
+  "background_color": "#F4EDDF",
+  "theme_color": "#245B4D",
   "description": "فضایی برای انتخاب آگاهانه خدمات روان‌شناختی و روان‌درمانی.",
   "icons": [
     {
