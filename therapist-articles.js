@@ -10,7 +10,7 @@
   const labels={pending_review:"در انتظار بررسی مدیر",revision_requested:"نیازمند اصلاح",rejected:"پذیرفته نشد",published:"منتشرشده"};
   const languages={fa:"فارسی",ku:"کوردی",en:"English",tr:"ترکی",ar:"عربی",es:"اسپانیایی",de:"آلمانی",fr:"فرانسوی"};
   const messageFor=error=>({
-   verified_therapist_profile_required:"ارسال مقاله فقط برای درمانگری فعال است که پروفایل حرفه‌ای او تأیید و منتشر شده باشد.",
+   verified_therapist_profile_required:"ارسال مقاله فقط برای درمانگری فعال است که پروفایل حرفه‌ای او به‌طور رسمی تأیید و منتشر شده باشد.",
    therapist_only:"برای این کار باید با حساب درمانگر وارد شوید.",
    invalid_article_content:"عنوان، خلاصه، متن یا زبان مقاله با شرایط ارسال مطابقت ندارد.",
    article_not_available_for_revision:"این مقاله در حال حاضر در وضعیت اصلاح نیست یا به حساب شما تعلق ندارد."
