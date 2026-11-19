@@ -1,4 +1,4 @@
--- YAD Center follow-up hardening for the existing test project.
+-- RADYAD follow-up hardening for the existing test project.
 -- Safe, non-destructive operations only.
 -- Move the relocatable btree_gist extension out of the exposed public schema.
 ALTER EXTENSION btree_gist SET SCHEMA extensions;
