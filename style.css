@@ -142,6 +142,7 @@ body{background:#fbfcfa}
 .portal-nav{display:flex;align-items:center;gap:22px;flex:1}
 .portal-nav a{font-size:12px;font-weight:700;color:#536b69;white-space:nowrap}
 .portal-nav a:hover{color:#159b8a}
+.rules-page .portal-main{padding-top:68px}
 .portal-main{min-height:calc(100vh - 72px);padding:38px 0 80px;background:radial-gradient(ellipse at 90% 0%,rgba(53,198,176,.09),transparent 34%),linear-gradient(180deg,#f7fbf8 0%,#fffdfa 55%)}
 .portal-wrap{width:min(1080px,92%);margin:0 auto}
 .portal-wrap>h1{font-size:clamp(27px,4vw,39px);line-height:1.55;color:var(--teal);margin:7px 0 10px;letter-spacing:-.6px}
@@ -203,6 +204,7 @@ body{background:#fbfcfa}
  .portal-nav{order:3;width:100%;justify-content:space-between;border-top:1px solid var(--line);padding-top:8px;gap:10px}
  .portal-nav a{font-size:11px}
  .portal-header .navcta{font-size:10px;padding:8px 11px}
+ .rules-page .portal-main{padding-top:55px}
  .portal-main{padding:25px 0 55px}
  .portal-card{padding:18px;border-radius:18px}
  .yad-client-form,.yad-admin-form{grid-template-columns:1fr}
