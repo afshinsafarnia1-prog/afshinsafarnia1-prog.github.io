@@ -104,7 +104,7 @@
   }
 
   function renderPublicBranding(){
-    const name=siteBranding.brand_name||"ردیاد";
+    const savedName=String(siteBranding.brand_name||"").trim(); const name=(!savedName||savedName==="یادسنتر"||savedName.toLowerCase()==="yad center")?"ردیاد":savedName;
     document.querySelectorAll(".brand").forEach(node=>{
       const title=node.querySelector("b");if(title)title.textContent=name;
       const mark=node.querySelector(".brandmark");
