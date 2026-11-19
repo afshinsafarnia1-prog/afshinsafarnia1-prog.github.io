@@ -656,3 +656,8 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 
 /* YAD Center original abstract psychoanalytic identity mark */
 .brand-logo{width:46px;height:46px;display:block;flex:0 0 46px;border-radius:14px;margin-left:10px}
+
+
+/* Shared spacing correction: keep the first line of page content clear of the sticky header. */
+.header + main{margin-top:16px}
+@media(max-width:760px){.header + main{margin-top:12px}}
