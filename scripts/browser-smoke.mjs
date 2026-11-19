@@ -49,6 +49,7 @@ try {
     return url.origin === "http://127.0.0.1:4173" ? route.continue() : route.abort();
   });
 
+  const languages = ["fa", "ku", "en", "tr", "ar", "es", "de", "fr"];
   const pages = [
     "/", "/contact.html", "/relationships.html", "/psychology.html", "/psychotherapy.html", "/psychiatry.html",
     "/client.html", "/admin.html", "/therapist.html", "/therapist-profile.html", "/assistant.html", "/assessment.html",
@@ -88,7 +89,6 @@ try {
     if (await page.locator(".content-main .content-card").count() < 4) throw new Error("Service guide content is incomplete: " + path);
   }
 
-  const languages = ["fa", "ku", "en", "tr", "ar", "es", "de", "fr"];
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
   for (const language of languages) {
     await page.locator("#siteLanguage").selectOption(language);
