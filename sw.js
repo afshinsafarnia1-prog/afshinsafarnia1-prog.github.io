@@ -1,4 +1,4 @@
-const CACHE = "radyad-shell-v25";
+const CACHE = "radyad-shell-v26";
 const CORE_ASSETS = [
   "/",
   "/index.html",
@@ -11,6 +11,7 @@ const CORE_ASSETS = [
   "/psychotherapy.html",
   "/psychiatry.html",
   "/style.css",
+  "/radyad-mark.svg",
   "/app.js",
   "/workshops.js",
   "/pwa-install.js",
