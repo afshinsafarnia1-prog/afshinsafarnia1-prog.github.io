@@ -44,7 +44,7 @@
       if (assuranceError || assurance?.currentLevel !== "aal2") throw new Error("برای پنل مدیریت، ورود دومرحله‌ای (MFA) لازم است.");
       const { data: profile, error: profileError } = await db.from("profiles")
         .select("role").eq("id", data.session.user.id).maybeSingle();
-      if (profileError || profile?.role !== "admin") throw new Error("دسترسی فقط برای مدیر یادسنتر مجاز است.");
+      if (profileError || profile?.role !== "admin") throw new Error("دسترسی فقط برای مدیر ردیاد مجاز است.");
     }
 
     const businessForm = document.getElementById("yadBusinessSettingsForm");
@@ -57,7 +57,7 @@
       document.getElementById("yadClientIntakeEnabled").checked = data?.client_intake_enabled === true;
       document.getElementById("yadClientPolicyVersion").value = data?.client_policy_version || "2026-11-17-v2-draft";
       const branding=data?.branding||{};
-      document.getElementById("yadBrandName").value=branding.brand_name||"یادسنتر";
+      document.getElementById("yadBrandName").value=branding.brand_name||"ردیاد";
       document.getElementById("yadBrandTagline").value=branding.tagline||"";
       document.getElementById("yadManagerName").value=branding.manager_name||"";
       document.getElementById("yadManagerTitle").value=branding.manager_title||"";
