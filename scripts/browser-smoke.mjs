@@ -101,6 +101,19 @@ try {
 
   await page.goto("http://127.0.0.1:4173/contact.html", { waitUntil: "domcontentloaded" });
   if (!(await page.locator('a[href="tel:+989999398350"]').count()) || !(await page.locator('a[href="https://wa.me/989999398350"]').count())) throw new Error("Public contact page is missing phone or WhatsApp links.");
+  for (const [language, expected] of [["fa","برای شروع گفت‌وگو"],["ku","بۆ دەستپێکردنی گفتوگۆ"],["en","Get in touch"],["tr","Görüşmeye başlamak"],["ar","تواصل معنا"],["es","Ponte en contacto"],["de","Nehmen Sie Kontakt auf"],["fr","Contactez-nous"]]) {
+    await page.goto("http://127.0.0.1:4173/contact.html", { waitUntil: "domcontentloaded" });
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    const heading = await page.locator("h1").innerText();
+    if (!heading.includes(expected)) throw new Error("Contact page heading did not localize for " + language + ": " + heading);
+    const crisis = await page.locator(".privacy-hint").innerText();
+    if (crisis.includes("ردیاد خدمات فوریت") && language !== "fa") throw new Error("Contact crisis boundary remained Persian for " + language);
+    const direction = await page.locator("html").getAttribute("dir");
+    const expectedDirection = ["fa","ku","ar"].includes(language) ? "rtl" : "ltr";
+    if (direction !== expectedDirection) throw new Error("Contact page direction is wrong for " + language);
+  }
+
   await page.goto("http://127.0.0.1:4173/client.html", { waitUntil: "domcontentloaded" });
   if (!(await page.locator("#yadBookingContact a[href=\"tel:+989999398350\"]").count()) || !(await page.locator("#yadBookingContact a[href=\"https://wa.me/989999398350\"]").count())) throw new Error("Client booking contact options are missing.");
   for (const selector of ["#yadClientConsent", "#yadAdultConfirm", "#yadSessionCountry", "#yadPreferredTime", "#yadClientAppointmentList", "#yadClientSupportForm", "#yadClientNotificationsList", "#yadExportMyData"]) {
