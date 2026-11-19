@@ -1,4 +1,14 @@
 (() => {
+  function enforceRadyadBrand(){
+    document.querySelectorAll(".brand,.side-brand").forEach(node=>{
+      const title=node.querySelector("b");
+      if(title)title.textContent="ردیاد";
+      node.setAttribute("aria-label","ردیاد");
+    });
+  }
+  enforceRadyadBrand();
+  window.addEventListener("pageshow",enforceRadyadBrand);
+
   const menu=document.getElementById("menuToggle");
   const nav=document.getElementById("mainNav");
   menu?.addEventListener("click",()=>{
@@ -104,7 +114,7 @@
   }
 
   function renderPublicBranding(){
-    const savedName=String(siteBranding.brand_name||"").trim(); const name=(!savedName||savedName==="یادسنتر"||savedName.toLowerCase()==="yad center")?"ردیاد":savedName;
+    const name="ردیاد";
     document.querySelectorAll(".brand").forEach(node=>{
       const title=node.querySelector("b");if(title)title.textContent=name;
       const mark=node.querySelector(".brandmark");
