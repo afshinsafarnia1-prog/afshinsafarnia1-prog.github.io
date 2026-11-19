@@ -1,8 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
-<title id="title">YAD Center abstract mark</title>
-<desc id="desc">Two asymmetrical open forms stand across a deliberate central space, evoking the encounter and the room for thought within analytic work.</desc>
-<path d="M49 17C29 27 17 44 18 64c1 20 12 37 31 47" fill="none" stroke="#174F50" stroke-width="15" stroke-linecap="round"/>
-<path d="M79 18c19 10 31 27 31 46 0 20-11 37-30 47" fill="none" stroke="#2D8278" stroke-width="15" stroke-linecap="round"/>
-<path d="M43 27c-11 8-17 20-17 34 0 13 6 25 16 34" fill="none" stroke="#78A99A" stroke-width="3" stroke-linecap="round" opacity=".72"/>
-<path d="M85 29c10 8 16 19 16 32 0 13-5 24-15 33" fill="none" stroke="#78A99A" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+<title id="title">Radyad</title>
+<desc id="desc">Two opposing organic half-circle forms with four small traces of memory and experience.</desc>
+<path d="M55 12C29 6 10 28 10 63c0 35 18 56 45 51-7-16-11-32-11-51s4-35 11-51Z" fill="#245B4D"/>
+<path d="M73 12c26-6 45 16 45 51 0 35-18 56-45 51 7-16 11-32 11-51S80 28 73 12Z" fill="#D96F58"/>
+<circle cx="28" cy="43" r="6.5" fill="#F4EDDF"/>
+<circle cx="39" cy="82" r="5.5" fill="#D96F58"/>
+<circle cx="100" cy="43" r="6.5" fill="#F4EDDF"/>
+<circle cx="89" cy="82" r="5.5" fill="#245B4D"/>
 </svg>
