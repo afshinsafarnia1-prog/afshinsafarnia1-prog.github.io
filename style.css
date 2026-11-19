@@ -204,7 +204,7 @@ body{background:#fbfcfa}
  .portal-nav{order:3;width:100%;justify-content:space-between;border-top:1px solid var(--line);padding-top:8px;gap:10px}
  .portal-nav a{font-size:11px}
  .portal-header .navcta{font-size:10px;padding:8px 11px}
- .rules-page .portal-main{padding-top:55px}
+ .rules-page .portal-main{padding-top:100px}
  .portal-main{padding:25px 0 55px}
  .portal-card{padding:18px;border-radius:18px}
  .yad-client-form,.yad-admin-form{grid-template-columns:1fr}
