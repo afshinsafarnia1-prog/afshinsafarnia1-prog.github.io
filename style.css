@@ -652,3 +652,7 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 .workshop-intro{max-width:850px;margin:18px 0 38px;padding:18px 0;border-top:1px solid #e1e9e2;border-bottom:1px solid #e1e9e2}
 .workshop-intro h2{margin:0 0 8px;color:#204747;font-size:21px}
 .workshop-intro p{margin:0;color:#63746d;line-height:2.2;font-size:14px}
+
+
+/* YAD Center original abstract psychoanalytic identity mark */
+.brand-logo{width:46px;height:46px;display:block;flex:0 0 46px;border-radius:14px;margin-left:10px}
