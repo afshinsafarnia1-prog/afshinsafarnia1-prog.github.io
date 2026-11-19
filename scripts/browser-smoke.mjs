@@ -50,15 +50,31 @@ try {
   });
 
   const pages = [
-    "/", "/contact.html", "/relationships.html", "/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/client.html", "/admin.html", "/therapist.html",
-    "/assistant.html", "/rules.html", "/articles/",
-    "/articles/psychotherapy-first-session.html",
-    "/articles/therapeutic-relationship.html",
-    "/articles/ai-robots-human-meaning.html", "/therapists/foruzan-shahla.html"
+    "/", "/contact.html", "/relationships.html", "/psychology.html", "/psychotherapy.html", "/psychiatry.html",
+    "/client.html", "/admin.html", "/therapist.html", "/therapist-profile.html", "/assistant.html", "/assessment.html",
+    "/rules.html", "/standards.html", "/initial-guidance.html", "/workshops.html", "/articles/",
+    "/articles/ai-robots-human-meaning.html", "/articles/choosing-a-therapist.html",
+    "/articles/psychoanalytic-traditions.html", "/articles/psychotherapy-first-session.html",
+    "/articles/therapeutic-relationship.html", "/articles/why-assessment-matters.html",
+    "/therapists/foruzan-shahla.html"
   ];
   for (const path of pages) {
     const response = await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
     if (!response || response.status() !== 200) throw new Error(`Page failed: ${path} (${response?.status()})`);
+  }
+
+  for (const path of pages) {
+    for (const language of languages) {
+      await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
+      const picker = page.locator("#siteLanguage");
+      if (!(await picker.count())) throw new Error("Language selector is missing: " + path);
+      await picker.selectOption(language);
+      await page.waitForFunction(value => document.documentElement.lang === value, language);
+      const expectedDirection = ["fa", "ku", "ar"].includes(language) ? "rtl" : "ltr";
+      if (await page.locator("html").getAttribute("dir") !== expectedDirection) {
+        throw new Error("Language direction is wrong for " + path + " / " + language);
+      }
+    }
   }
 
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
