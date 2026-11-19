@@ -168,7 +168,7 @@ else {
   const guideScript = fs.readFileSync(guideTranslationScript, "utf8");
   for (const [page, counts] of Object.entries({
     "psychology.html": { h2: 5, h3: 6, p: 12, li: 3 },
-    "psychotherapy.html": { h2: 5, h3: 6, p: 12, li: 9 },
+    "psychotherapy.html": { h2: 5, h3: 7, p: 16, li: 9 },
     "psychiatry.html": { h2: 5, h3: 3, p: 11, li: 3 },
     "relationships.html": { h2: 6, h3: 4, p: 11, li: 8 }
   })) {
