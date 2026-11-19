@@ -37,7 +37,7 @@
       else card.append(el("div","therapist-photo therapist-placeholder","ی"));
       const body=el("div","therapist-card-body");
       body.append(el("h3","",t.display_name||""));
-      if(t.manager_approved===true&&!t.verified_at)body.append(el("span","therapist-meta","تأییدشده توسط مدیریت یادسنتر؛ احراز حرفه‌ای مستقل هنوز ثبت نشده است"));
+      if(t.manager_approved===true&&!t.verified_at)body.append(el("span","therapist-meta","تأییدشده توسط مدیریت ردیاد؛ احراز حرفه‌ای مستقل هنوز ثبت نشده است"));
       if(t.headline)body.append(el("p","therapist-headline",t.headline));
       if(t.years_experience!=null)body.append(el("p","therapist-meta",(i18n().yearsExperience||"سابقهٔ حرفه‌ای: {years} سال").replace("{years}",String(t.years_experience))));
       if(typeof t.accepting_new_clients==="boolean")body.append(el("span",t.accepting_new_clients?"availability-open":"availability-closed",t.accepting_new_clients?(i18n().acceptingYes||"پذیرش مراجع جدید"):(i18n().acceptingNo||"فعلاً پذیرش مراجع جدید ندارد")));
@@ -99,12 +99,12 @@
     renderPublicContacts();
     filterDirectory();
     if(notice)notice.textContent=allTherapists.length
-      ?"پروفایل‌های زیر توسط مدیریت یادسنتر بررسی و برای نمایش تأیید شده‌اند."
+      ?"پروفایل‌های زیر توسط مدیریت ردیاد بررسی و برای نمایش تأیید شده‌اند."
       :"فهرست درمانگران پس از تأیید مدارک و مجوزها منتشر می‌شود؛ هیچ پروفایل تأییدنشده‌ای نمایش داده نمی‌شود.";
   }
 
   function renderPublicBranding(){
-    const name=siteBranding.brand_name||"یادسنتر";
+    const name=siteBranding.brand_name||"ردیاد";
     document.querySelectorAll(".brand").forEach(node=>{
       const title=node.querySelector("b");if(title)title.textContent=name;
       const mark=node.querySelector(".brandmark");
