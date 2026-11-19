@@ -199,7 +199,7 @@ try {
   if(floatContrast<4.5)throw new Error("Persistent guidance button fails WCAG AA text contrast: "+floatContrast.toFixed(2));
   await page.goto("http://127.0.0.1:4173/rules.html",{waitUntil:"domcontentloaded"});
   const legalText=await page.locator(".legal").innerText();
-  if(!legalText.includes("پیش‌نویس")||!legalText.includes("رضایت آگاهانهٔ درمان"))throw new Error("Legal draft disclosures are missing.");
+  if(legalText.includes("پیش‌نویس")||legalText.includes("2026-11-17-v2-draft")||!legalText.includes("رضایت آگاهانهٔ درمان"))throw new Error("Public legal page exposes internal draft labels or omits the clinical informed-consent distinction.");
 
 
   // Expanded small-screen checks for the primary public and portal journeys.
