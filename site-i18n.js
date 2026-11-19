@@ -9,7 +9,7 @@
       articlesEyebrow:"فکر کردن، خواندن، فهمیدن",articlesTitle:"مجلهٔ تحلیلی روان‌درمانی",articlesLead:"نوشته‌هایی درباره روان‌درمانی، روابط انسانی، روان‌کاوی و جهان معاصر.",aboutEyebrow:"درباره ردیاد",aboutTitle:"روان‌شناسی، با احترام به پیچیدگی انسان",aboutLead:"ردیاد می‌خواهد دسترسی به اطلاعات روشن، متخصصان واجد صلاحیت و محتوای دقیق را آسان‌تر کند.",closingEyebrow:"یک قدم در زمان خودش",closingTitle:"برای شروع لازم نیست همه‌چیز را بدانید.",closingLead:"با شناخت خدمات و درمانگران می‌توانید قدم اول را آگاهانه بردارید.",workshopsEyebrow:"کارگاه‌ها و نشست‌ها",workshopsNav:"کارگاه‌ها",workshopsTitle:"کارگاه‌ها و نشست‌های تخصصی",workshopsLead:"کارگاه‌ها و نشست‌های علمی با حضور درمانگران و متخصصان؛ ثبت‌نام و هماهنگی از طریق ردیاد.",proposeWorkshop:"پیشنهاد برگزاری کارگاه"
     },
     en: {
-      tagline:"A space to understand yourself and choose a thoughtful path to care",services:"Services",therapists:"Therapists",client:"Client area",admin:"Admin",how:"How it works",articles:"Articles",assistant:"Help guide",rules:"Policies",about:"About YAD",cta:"Find a therapist",
+      tagline:"A space to understand yourself and choose a thoughtful path to care",services:"Services",therapists:"Therapists",client:"Client area",admin:"Admin",how:"How it works",articles:"Articles",assistant:"Help guide",rules:"Policies",about:"About RADYAD",cta:"Find a therapist",
       heroEyebrow:"Professional support, informed choice",heroTitle:"Understanding what is happening begins with a moment to pause.",heroLead:"RADYAD helps you explore psychological services, understand therapeutic approaches, and find a therapist suited to your needs, language, and preferences.",find:"Find a therapist",read:"How it works",
       searchEyebrow:"Thoughtful search",searchTitle:"Where should I begin?",searchLead:"Choose a therapist by language and area of expertise.",languageFilter:"Session language",specialtyFilter:"Area of support",search:"Search",directoryEmpty:"No verified therapist profiles are currently published.",
       servicesEyebrow:"RADYAD services",servicesTitle:"Different paths for different needs",servicesLead:"The right service depends on each person's needs and circumstances.",s1:"Individual psychotherapy",s1p:"A space to explore emotional experiences, relationships, and recurring patterns.",s2:"Counselling and psychology",s2p:"Support with life difficulties, decisions, anxiety, mood, and adjustment.",s3:"Couples and relationships",s3p:"Understanding relationship cycles, conflict, and difficulties with intimacy.",s4:"Psychiatry",s4p:"Assessment and psychiatric care provided by qualified specialists.",
@@ -347,6 +347,15 @@
     fr:{contactEyebrow:"Contacter RADYAD",contactTitle:"Contactez-nous pour engager un échange ou organiser une séance",contactLead:"Utilisez les moyens de contact ci-dessous pour obtenir des informations sur les services, choisir un thérapeute et connaître les disponibilités.",contactMethods:"Moyens de contact officiels",contactPhone:"Téléphone",contactCall:"Appeler RADYAD",contactWhatsapp:"WhatsApp",contactWhatsappButton:"Envoyer un message WhatsApp",contactBookingTitle:"Coordination et réservation des séances",contactBookingText:"Après un premier échange et une fois le thérapeute et un horaire adapté identifiés, nous coordonnerons votre demande et la séance. Un appel ou un message ne confirme pas à lui seul la réservation ; celle-ci devient définitive après confirmation de l’horaire par RADYAD.",contactPrivacyText:"Pour protéger votre confidentialité, ne transmettez pas dans votre premier message d’informations sensibles, de description de symptômes ou de détails de votre dossier clinique.",contactCrisis:"RADYAD ne fournit pas de services d’urgence psychiatrique ni d’intervention de crise. En cas de danger immédiat, contactez les services d’urgence du lieu où vous vous trouvez.",contactClientLink:"Accéder à l’espace client et envoyer une demande",contactHomeLink:"Retour à la page d’accueil",contactTitleTag:"Contact et rendez-vous | RADYAD",contactDescription:"Contactez RADYAD pour obtenir des informations, choisir un thérapeute et coordonner des séances de psychothérapie."}
   };
   Object.entries(contactPageTranslations).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
+  const translationCoverageNotices = {
+    fa:"",ku:"هەندێک ناوەڕۆکی ئەم لاپەڕەیە هێشتا بە فارسییە؛ وەرگێڕانی تەواو و پێداچوونەوەکراو بۆ ئەم زمانە ئامادە نییە.",
+    en:"Some of this page's content is still in Persian. A complete, reviewed translation into this language is not yet available.",
+    tr:"Bu sayfanın bazı içerikleri hâlâ Farsçadır. Bu dile tam ve gözden geçirilmiş bir çeviri henüz mevcut değildir.",
+    ar:"لا يزال بعض محتوى هذه الصفحة باللغة الفارسية. لم تتوفر بعد ترجمة كاملة ومراجعة إلى هذه اللغة.",
+    es:"Parte del contenido de esta página sigue en persa. Todavía no hay una traducción completa y revisada a este idioma.",
+    de:"Ein Teil dieser Seite ist weiterhin auf Persisch. Eine vollständige, geprüfte Übersetzung in diese Sprache liegt noch nicht vor.",
+    fr:"Une partie du contenu de cette page est encore en persan. Une traduction complète et révisée dans cette langue n’est pas encore disponible."
+  };
   const keys = {
     ".topinner span":"tagline","#mainNav a:nth-child(1)":"services","#mainNav a:nth-child(2)":"therapists",
     "#mainNav a:nth-child(3)":"client","#mainNav a:nth-child(4)":"admin","#mainNav a:nth-child(5)":"how",
@@ -391,6 +400,20 @@
     document.querySelectorAll("[data-i18n-show-non-fa]").forEach(node=>{
       node.hidden = lang === "fa";
     });
+    const untranslatedRoutes = new Set(["/rules.html","/standards.html","/initial-guidance.html","/articles/psychoanalytic-traditions.html","/articles/therapeutic-relationship.html","/articles/why-assessment-matters.html"]);
+    if(untranslatedRoutes.has(location.pathname)){
+      let notice=document.querySelector("[data-i18n-coverage-notice]");
+      if(!notice){
+        notice=document.createElement("p");
+        notice.className="notice";
+        notice.setAttribute("data-i18n-coverage-notice","");
+        notice.setAttribute("role","note");
+        const main=document.querySelector("main");
+        if(main)main.prepend(notice);
+      }
+      notice.textContent=translationCoverageNotices[lang]||translationCoverageNotices.en;
+      notice.hidden=lang==="fa";
+    }
     Object.entries(keys).forEach(([selector,key]) => {
       const node = document.querySelector(selector);
       if (node && t[key]) node.textContent = t[key];
