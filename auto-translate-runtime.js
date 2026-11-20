@@ -1,9 +1,10 @@
 (() => {
   "use strict";
+  if (window.__RADYAD_AUTO_TRANSLATE_RUNTIME__) return;
+  window.__RADYAD_AUTO_TRANSLATE_RUNTIME__ = true;
   const script = document.currentScript;
   const base = new URL(".", script?.src || location.href);
   const blocks = [...document.querySelectorAll("[data-auto-translate-block]")];
-  if (!blocks.length) return;
 
   const originals = new Map(blocks.map(node => [node, node.innerHTML]));
   const originalMeta = {
@@ -91,6 +92,98 @@
       }
     }
   }
+
+  let dynamicTranslations = null;
+  const originalText = new WeakMap();
+  const renderedText = new WeakMap();
+  const originalAttributes = new WeakMap();
+  const renderedAttributes = new WeakMap();
+  const attributeNames = ["placeholder", "aria-label", "title", "alt", "content"];
+  const excluded = "script,style,textarea,input,select,option,[contenteditable='true'],[data-user-content],[data-user-generated],.user-content,.profile-bio,.therapist-bio,.contributor-content,.user-msg,.message-body";
+
+  function isExcluded(node) {
+    const element = node.nodeType === 1 ? node : node.parentElement;
+    return !element || Boolean(element.closest(excluded));
+  }
+
+  function mapString(value, language) {
+    if (!dynamicTranslations || language === "fa") return value;
+    const pairs = dynamicTranslations.translations?.[language] || [];
+    let output = value;
+    for (const [source, translated] of pairs) {
+      if (source && output.includes(source)) output = output.split(source).join(translated);
+    }
+    return output;
+  }
+
+  function processText(node, language) {
+    if (!node || node.nodeType !== 3 || isExcluded(node)) return;
+    const previous = renderedText.get(node);
+    if (!originalText.has(node)) originalText.set(node, node.data);
+    else if (previous !== undefined && node.data !== previous && /[\\u0600-\\u06FF]/.test(node.data)) {
+      originalText.set(node, node.data);
+    }
+    const source = originalText.get(node);
+    const next = language === "fa" ? source : mapString(source, language);
+    if (node.data !== next) {
+      node.data = next;
+    }
+    renderedText.set(node, next);
+  }
+
+  function processAttributes(element, language) {
+    if (!element || element.nodeType !== 1 || isExcluded(element)) return;
+    let originals = originalAttributes.get(element);
+    if (!originals) { originals = new Map(); originalAttributes.set(element, originals); }
+    let rendered = renderedAttributes.get(element);
+    if (!rendered) { rendered = new Map(); renderedAttributes.set(element, rendered); }
+    for (const name of attributeNames) {
+      if (name === "content" && element.tagName !== "META") continue;
+      if (!element.hasAttribute(name)) continue;
+      const current = element.getAttribute(name);
+      const previous = rendered.get(name);
+      if (!originals.has(name)) originals.set(name, current);
+      else if (previous !== undefined && current !== previous && /[\\u0600-\\u06FF]/.test(current)) originals.set(name, current);
+      const source = originals.get(name);
+      const next = language === "fa" ? source : mapString(source, language);
+      if (current !== next) element.setAttribute(name, next);
+      rendered.set(name, next);
+    }
+  }
+
+  function applyDynamic(language) {
+    if (!dynamicTranslations) return;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) processText(node, language);
+    document.querySelectorAll("*").forEach(element => processAttributes(element, language));
+  }
+
+  const dynamicUrl = new URL("auto-translations/dynamic-ui.json", base);
+  fetch(dynamicUrl).then(response => response.ok ? response.json() : null).then(data => {
+    if (!data?.translations) return;
+    dynamicTranslations = data;
+    applyDynamic(document.documentElement.lang || "fa");
+    const observer = new MutationObserver(records => {
+      const language = document.documentElement.lang || "fa";
+      for (const record of records) {
+        if (record.type === "characterData") processText(record.target, language);
+        for (const added of record.addedNodes || []) {
+          if (added.nodeType === 3) processText(added, language);
+          else if (added.nodeType === 1) {
+            const walker = document.createTreeWalker(added, NodeFilter.SHOW_TEXT);
+            let child;
+            while ((child = walker.nextNode())) processText(child, language);
+            processAttributes(added, language);
+            added.querySelectorAll?.("*").forEach(element => processAttributes(element, language));
+          }
+        }
+        if (record.type === "attributes") processAttributes(record.target, language);
+      }
+    });
+    observer.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: attributeNames });
+    document.addEventListener("yad:languagechange", event => applyDynamic(event.detail?.language || document.documentElement.lang));
+  }).catch(() => {});
 
   document.addEventListener("yad:languagechange", event => apply(event.detail?.language || document.documentElement.lang));
   apply(document.documentElement.lang || "fa");
