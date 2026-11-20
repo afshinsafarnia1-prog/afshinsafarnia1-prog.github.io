@@ -19,7 +19,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: radyad-translation-${{ github.ref }}
+  group: radyad-translation-monthly
   cancel-in-progress: false
 
 jobs:
