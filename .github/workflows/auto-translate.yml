@@ -12,7 +12,9 @@ on:
       - "scripts/translation-budget.mjs"
       - ".github/workflows/auto-translate.yml"
   schedule:
-    - cron: "17 3 1 * *"
+    # Run after midnight in America/Los_Angeles, when Google's monthly
+    # translation allowance has rolled over.
+    - cron: "17 12 1 * *"
   workflow_dispatch:
 
 permissions:
