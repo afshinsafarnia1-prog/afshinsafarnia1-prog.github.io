@@ -93,8 +93,9 @@
     }
   }
 
-  let dynamicTranslations = null;
   const dynamicPairs = new Map();
+  const dynamicLoads = new Map();
+  let dynamicGeneration = 0;
   const originalText = new WeakMap();
   const renderedText = new WeakMap();
   const manualTextOverrides = new WeakSet();
@@ -110,9 +111,8 @@
   }
 
   function mapString(value, language) {
-    if (!dynamicTranslations || language === "fa") return value;
-    if (!dynamicPairs.has(language)) dynamicPairs.set(language, (dynamicTranslations.translations?.[language] || []).slice().sort((a, b) => b[0].length - a[0].length));
-    const pairs = dynamicPairs.get(language);
+    if (language === "fa") return value;
+    const pairs = dynamicPairs.get(language) || [];
     let output = value;
     for (const [source, translated] of pairs) {
       if (source && output.includes(source)) output = output.split(source).join(translated);
@@ -189,39 +189,48 @@
     }
   }
 
-  function applyDynamic(language) {
-    if (!dynamicTranslations) return;
+  async function loadDynamic(language) {
+    if (language === "fa" || dynamicPairs.has(language)) return;
+    if (!dynamicLoads.has(language)) {
+      const url = new URL(`auto-translations/dynamic-ui.${encodeURIComponent(language)}.json`, base);
+      const request = fetch(url).then(response => response.ok ? response.json() : null).then(data => {
+        if (data?.translations) dynamicPairs.set(language, data.translations.slice().sort((a, b) => b[0].length - a[0].length));
+      }).catch(() => {});
+      dynamicLoads.set(language, request);
+    }
+    await dynamicLoads.get(language);
+  }
+
+  async function applyDynamic(language) {
+    const current = ++dynamicGeneration;
+    if (language !== "fa") await loadDynamic(language);
+    if (current !== dynamicGeneration) return;
     const walker = document.createTreeWalker(document.documentElement, NodeFilter.SHOW_TEXT);
     let node;
     while ((node = walker.nextNode())) processText(node, language);
     document.querySelectorAll("*").forEach(element => processAttributes(element, language));
   }
 
-  const dynamicUrl = new URL("auto-translations/dynamic-ui.json", base);
-  fetch(dynamicUrl).then(response => response.ok ? response.json() : null).then(data => {
-    if (!data?.translations) return;
-    dynamicTranslations = data;
-    applyDynamic(document.documentElement.lang || "fa");
-    const observer = new MutationObserver(records => {
-      const language = document.documentElement.lang || "fa";
-      for (const record of records) {
-        if (record.type === "characterData") processText(record.target, language);
-        for (const added of record.addedNodes || []) {
-          if (added.nodeType === 3) processText(added, language);
-          else if (added.nodeType === 1) {
-            const walker = document.createTreeWalker(added, NodeFilter.SHOW_TEXT);
-            let child;
-            while ((child = walker.nextNode())) processText(child, language);
-            processAttributes(added, language);
-            added.querySelectorAll?.("*").forEach(element => processAttributes(element, language));
-          }
+  const observer = new MutationObserver(records => {
+    const language = document.documentElement.lang || "fa";
+    for (const record of records) {
+      if (record.type === "characterData") processText(record.target, language);
+      for (const added of record.addedNodes || []) {
+        if (added.nodeType === 3) processText(added, language);
+        else if (added.nodeType === 1) {
+          const walker = document.createTreeWalker(added, NodeFilter.SHOW_TEXT);
+          let child;
+          while ((child = walker.nextNode())) processText(child, language);
+          processAttributes(added, language);
+          added.querySelectorAll?.("*").forEach(element => processAttributes(element, language));
         }
-        if (record.type === "attributes") processAttributes(record.target, language);
       }
-    });
-    observer.observe(document.documentElement, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: attributeNames });
-    document.addEventListener("yad:languagechange", event => applyDynamic(event.detail?.language || document.documentElement.lang));
-  }).catch(() => {});
+      if (record.type === "attributes") processAttributes(record.target, language);
+    }
+  });
+  observer.observe(document.documentElement, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: attributeNames });
+  document.addEventListener("yad:languagechange", event => applyDynamic(event.detail?.language || document.documentElement.lang));
+  applyDynamic(document.documentElement.lang || "fa");
 
   document.addEventListener("yad:languagechange", event => apply(event.detail?.language || document.documentElement.lang));
   apply(document.documentElement.lang || "fa");
