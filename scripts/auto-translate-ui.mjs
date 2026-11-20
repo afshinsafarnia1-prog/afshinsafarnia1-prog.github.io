@@ -172,9 +172,9 @@ for (const [locale, providerCode] of Object.entries(targets)) {
       stopForBudget = true;
       break;
     }
+    await recordUsage(root, cost);
     const output = await translate(batch, providerCode);
     output.forEach((translated, index) => cache.set(batch[index], translated));
-    await recordUsage(root, cost);
     changed = true;
     const translations = list.filter(value => cache.has(value)).map(value => [value, cache.get(value)]);
     await writeFile(resolve(outputDir, `dynamic-ui.${locale}.json`), JSON.stringify({
