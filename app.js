@@ -42,8 +42,8 @@
       const card=el("article","therapist-card");
       if(t.photo_path && db){
         const {data}=db.storage.from("therapist-photos").getPublicUrl(t.photo_path);
-        if(data?.publicUrl){const img=el("img","therapist-photo");img.src=data.publicUrl;img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
-      } else if(t.public_slug==="foruzan-shahla"){const img=el("img","therapist-photo");img.src="/therapists/foruzan-shahla.jpg";img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
+        if(data?.publicUrl){const img=el("img","therapist-photo"+(t.public_slug==="foruzan-shahla"?" shahla-list-photo":""));img.src=data.publicUrl;img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
+      } else if(t.public_slug==="foruzan-shahla"){const img=el("img","therapist-photo"+(t.public_slug==="foruzan-shahla"?" shahla-list-photo":""));img.src="/therapists/foruzan-shahla.jpg";img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
       else card.append(el("div","therapist-photo therapist-placeholder","ی"));
       const body=el("div","therapist-card-body");
       body.append(el("h3","",t.display_name||""));
