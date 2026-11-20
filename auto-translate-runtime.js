@@ -62,8 +62,7 @@
       const ogd = document.querySelector('meta[property="og:description"]'); if (ogd) ogd.content = originalMeta.ogDescription;
       const tt = document.querySelector('meta[name="twitter:title"]'); if (tt) tt.content = originalMeta.twitterTitle;
       const td = document.querySelector('meta[name="twitter:description"]'); if (td) td.content = originalMeta.twitterDescription;
-      const notice = document.querySelector("[data-i18n-show-non-fa]");
-      if (notice) notice.hidden = true;
+      document.querySelectorAll("[data-i18n-show-non-fa], [data-i18n-coverage-notice]").forEach(node => { node.hidden = true; });
       return;
     }
 
@@ -77,11 +76,12 @@
         node.lang = language;
         node.dir = rtl.has(language) ? "rtl" : "ltr";
         updateMeta(translated);
-        const notice = document.querySelector("[data-i18n-show-non-fa]");
+        const notice = document.querySelector("[data-i18n-show-non-fa]") || document.querySelector("[data-i18n-coverage-notice]");
         if (notice) {
           notice.textContent = notes[language] || notes.en;
           notice.hidden = false;
         }
+        document.querySelectorAll("[data-i18n-coverage-notice]").forEach(node => { if (node !== notice) node.hidden = true; });
       } else {
         node.innerHTML = originals.get(node);
         node.lang = "fa";
