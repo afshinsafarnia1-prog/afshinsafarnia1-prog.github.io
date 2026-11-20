@@ -671,3 +671,6 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 .radyad-brand-story p{margin:0 0 10px;max-width:none!important}
 .radyad-brand-story p:last-child{margin-bottom:0}
 @media(max-width:620px){.radyad-brand-story{grid-template-columns:1fr;gap:8px;margin:22px 0;padding:20px 0}.radyad-brand-story>img{width:66px;height:66px;margin:0 auto 8px}.radyad-brand-story h3{text-align:center}}
+
+/* Keep Shahla's portrait clear of the white edge in the therapist directory */
+.therapist-photo.shahla-list-photo{transform:translateY(10px)}
