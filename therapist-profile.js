@@ -89,12 +89,11 @@
     }
     price.append(node("small","profile-muted",t("profile45min")));
     aside.append(price);
-    const cta=node("a","button primary full-button","هماهنگی جلسه در واتساپ");
+    const contactActions=node("div","profile-contact-actions");
     const whatsappMessage="سلام، برای دریافت اطلاعات و هماهنگی جلسه با درمانگر "+(data.display_name||"منتخب")+" از طریق ردیاد پیام می‌دهم.";
-    cta.href="https://wa.me/989999398350?text="+encodeURIComponent(whatsappMessage);
-    cta.target="_blank";
-    cta.rel="noopener noreferrer";
-    aside.append(cta);
+    const contactLinks=[["https://wa.me/989999398350?text="+encodeURIComponent(whatsappMessage),"پیام در واتساپ","primary"],["https://t.me/RADYAD","پیام در تلگرام","outline"],["https://eitaa.com/RADYAD","پیام در ایتا","outline"]];
+    contactLinks.forEach(([href,label,style])=>{const link=node("a","button "+style+" full-button",label);link.href=href;link.target="_blank";link.rel="noopener noreferrer";contactActions.append(link);});
+    aside.append(contactActions);
     aside.append(node("p","profile-muted","زمان جلسه ابتدا با مدیریت و درمانگر هماهنگ می‌شود؛ پس از اعلام مبلغ و تأیید پرداخت، نوبت قطعی خواهد شد."));
     grid.append(main,aside);root.append(grid);
   }
