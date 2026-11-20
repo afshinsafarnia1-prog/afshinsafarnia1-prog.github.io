@@ -80,9 +80,11 @@ Do not merge until every route has been tested in all eight locales, untranslate
 
 ## Monthly translation quota (2026-11-20)
 
-- Both machine-translation pipelines share `auto-translations/monthly-budget.json` and a hard internal cap of 450,000 source characters per UTC calendar month. This is below Google Cloud Translation's published 500,000-character monthly free allowance for NMT text translation (Basic and Advanced combined).
+- Both machine-translation pipelines share `auto-translations/monthly-budget.json` and a hard internal cap of 450,000 source characters per America/Los_Angeles calendar month. This is below Google Cloud Translation's published 500,000-character monthly free allowance for NMT text translation (Basic and Advanced combined).
 - The content generator saves each completed locale incrementally; the dynamic UI generator saves each completed batch. When the shared cap is reached, remaining work stays queued for the next monthly run.
-- GitHub Actions runs the queue on the first day of each month and also on relevant source-code changes. A shared concurrency group prevents simultaneous workflow runs from spending the same monthly budget twice.
+- GitHub Actions runs the queue after midnight Pacific Time on the first day of each month and also on relevant source-code changes. A shared concurrency group prevents simultaneous workflow runs from spending the same monthly budget twice.
 - The current estimate is approximately 1.27 million source characters across seven target locales. At 450,000 characters per month, this is expected to fit in three monthly allowances, provided other Cloud Translation usage on the same account remains below the 50,000-character monthly buffer.
 - The budget is an application-side guardrail, not visibility into the Google Cloud account's total usage. If another project or service uses the same monthly free credit, the remaining free allowance may be lower. No provider calls occur until the Actions secret `GOOGLE_TRANSLATE_API_KEY` is configured.
 - The monthly schedule starts only when this workflow exists on the repository's default branch. While the PR remains unmerged, feature-branch pushes can run the same capped queue once the secret is configured, but the production schedule is not active yet.
+
+- The local budget period follows the Pacific calendar month rather than UTC, and the scheduled run starts after midnight Pacific Time. A damaged or unreadable usage ledger causes the queue to stop instead of resetting usage to zero.
