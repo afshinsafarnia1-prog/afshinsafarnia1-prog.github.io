@@ -166,6 +166,18 @@ try {
   await page.goto("http://127.0.0.1:4173/articles/", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Psychotherapy articles")) throw new Error("Article index translation did not apply.");
+  const articleIndexHeadings={fa:"روان‌کاوی در چند صدا",ku:"ڕوانکاوی بە چەند دەنگ",en:"Psychoanalysis in many voices",tr:"Çok sesli psikanaliz",ar:"التحليل النفسي بأصوات متعددة",es:"El psicoanálisis en distintas voces",de:"Psychoanalyse in mehreren Stimmen",fr:"La psychanalyse au pluriel"};
+  for(const language of languages){
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value=>document.documentElement.lang===value,language);
+    const feature=await page.locator('[data-i18n="article4title"]').innerText();
+    if(!feature.includes(articleIndexHeadings[language]))throw new Error("Article index theoretical card did not localize for "+language+": "+feature);
+    const assessment=await page.locator('[data-i18n="article5title"]').innerText();
+    if(!assessment.trim()||(language!=="fa"&&assessment.includes("چرا ارزیابی در روان‌درمانی")))throw new Error("Article index assessment card did not localize for "+language);
+    const originalLanguage=await page.locator('[data-i18n="contributorLanguageNote"]').innerText();
+    if(!originalLanguage.trim()||(language!=="fa"&&originalLanguage.includes("مقاله‌های ارسالی")))throw new Error("Contributor original-language notice did not localize for "+language);
+    if(await page.locator("[data-i18n-coverage-notice]").count())throw new Error("Article index incorrectly displays a Persian-only coverage notice.");
+  }
   await page.goto("http://127.0.0.1:4173/standards.html", { waitUntil: "domcontentloaded" });
   const standardsHeadings = {
     fa: "روان‌درمانی با شفافیت",
