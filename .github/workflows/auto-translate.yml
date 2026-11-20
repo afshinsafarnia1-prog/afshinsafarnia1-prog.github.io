@@ -1,0 +1,39 @@
+name: Generate RADYAD machine translations
+
+on:
+  push:
+    branches: [feature/full-site-i18n]
+    paths:
+      - "articles/**"
+      - "rules.html"
+      - "scripts/auto-translation-manifest.json"
+      - "scripts/auto-translate.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  translate:
+    if: ${{ secrets.GOOGLE_TRANSLATE_API_KEY != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/full-site-i18n
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate or refresh changed translations
+        env:
+          GOOGLE_TRANSLATE_API_KEY: ${{ secrets.GOOGLE_TRANSLATE_API_KEY }}
+        run: node scripts/auto-translate.mjs
+      - name: Commit generated translations
+        run: |
+          if [ -n "$(git status --porcelain auto-translations)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add auto-translations/
+            git commit -m "chore(i18n): refresh generated translations"
+            git push origin HEAD:feature/full-site-i18n
+          fi
