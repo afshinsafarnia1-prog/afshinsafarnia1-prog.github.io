@@ -1,6 +1,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { dirname, resolve } from "node:path";
+import { characterCount, readBudget, remainingBudget, recordUsage } from "./translation-budget.mjs";
 
 const root = process.cwd();
 const key = process.env.GOOGLE_TRANSLATE_API_KEY;
@@ -50,44 +51,56 @@ async function translate(values, target) {
   return data.data.translations.map(item => item.translatedText);
 }
 
+const maxChars = Number(process.env.MAX_TRANSLATION_CHARS_PER_MONTH || 450000);
+let stopForBudget = false;
 for (const block of manifest.blocks) {
+  if (stopForBudget) break;
   const source = await readFile(resolve(root, block.file), "utf8");
   const html = extract(source, block.id);
   const meta = metadata(source);
   const sourceHash = hash(JSON.stringify({ html, meta }));
-  const estimatedChars = (html.length + Object.values(meta).reduce((sum, value) => sum + value.length, 0)) * Object.keys(targets).length;
-  const maxChars = Number(process.env.MAX_TRANSLATION_CHARS_PER_RUN || 400000);
-  if (estimatedChars > maxChars) throw new Error(`Translation batch estimate (${estimatedChars} characters) exceeds the safety limit (${maxChars}). Split the update into smaller commits.`);
+  const values = [html, meta.title, meta.description, meta.ogTitle, meta.ogDescription, meta.twitterTitle, meta.twitterDescription];
   const outputPath = resolve(root, "auto-translations", `${block.id}.json`);
   let previous = null;
   try { previous = JSON.parse(await readFile(outputPath, "utf8")); } catch {}
-  if (previous?.sourceHash === sourceHash && Object.keys(previous.translations || {}).length === Object.keys(targets).length) {
+  const sameSource = previous?.sourceHash === sourceHash;
+  const translations = sameSource ? { ...(previous.translations || {}) } : {};
+  if (Object.keys(targets).every(locale => translations[locale])) {
     console.log(`Unchanged; cached translations retained: ${block.id}`);
     continue;
   }
 
-  const translations = {};
   for (const [locale, providerCode] of Object.entries(targets)) {
-    const values = await translate([html, meta.title, meta.description, meta.ogTitle, meta.ogDescription, meta.twitterTitle, meta.twitterDescription], providerCode);
+    if (translations[locale]) continue;
+    const cost = characterCount(values);
+    const remaining = await remainingBudget(root);
+    if (cost > remaining) {
+      const budget = await readBudget(root);
+      console.log(`Monthly translation budget reached (${budget.used}/${budget.limit}); remaining content deferred: ${block.id} -> ${locale}`);
+      stopForBudget = true;
+      break;
+    }
+    const output = await translate(values, providerCode);
     translations[locale] = {
-      html: values[0],
-      title: values[1],
-      description: values[2],
-      ogTitle: values[3],
-      ogDescription: values[4],
-      twitterTitle: values[5],
-      twitterDescription: values[6]
+      html: output[0],
+      title: output[1],
+      description: output[2],
+      ogTitle: output[3],
+      ogDescription: output[4],
+      twitterTitle: output[5],
+      twitterDescription: output[6]
     };
+    await recordUsage(root, cost);
+    await mkdir(dirname(outputPath), { recursive: true });
+    await writeFile(outputPath, JSON.stringify({
+      schemaVersion: 1,
+      sourceLanguage: manifest.sourceLanguage,
+      sourceHash,
+      generatedAt: new Date().toISOString(),
+      provider: "Google Cloud Translation",
+      machineTranslated: true,
+      translations
+    }, null, 2) + "\n", "utf8");
     console.log(`Translated ${block.id} -> ${locale}`);
   }
-  await mkdir(dirname(outputPath), { recursive: true });
-  await writeFile(outputPath, JSON.stringify({
-    schemaVersion: 1,
-    sourceLanguage: manifest.sourceLanguage,
-    sourceHash,
-    generatedAt: new Date().toISOString(),
-    provider: "Google Cloud Translation",
-    machineTranslated: true,
-    translations
-  }, null, 2) + "\n", "utf8");
 }
