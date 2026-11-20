@@ -1,6 +1,7 @@
 import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
 import { createHash } from "node:crypto";
-import { dirname, relative, resolve } from "node:path";
+import { relative, resolve } from "node:path";
+import { characterCount, readBudget, remainingBudget, recordUsage } from "./translation-budget.mjs";
 
 const root = process.cwd();
 const dryRun = process.argv.includes("--dry-run");
@@ -114,23 +115,17 @@ for (const locale of Object.keys(targets)) {
   previousFiles.set(locale, previous);
   localeCaches.set(locale, new Map(previous?.translations || []));
 }
-if ([...previousFiles].every(([locale, file]) => file?.sourceHash === sourceHash && localeCaches.get(locale).size === list.length)) {
-  console.log("Dynamic UI source strings unchanged; cached locale files retained.");
-  process.exit(0);
-}
 const missingByLocale = new Map(
   [...localeCaches].map(([locale, cache]) => [locale, list.filter(value => !cache.has(value))])
 );
-const estimated = [...missingByLocale.values()].flat().reduce((sum, value) => sum + value.length, 0);
 const missingCount = [...missingByLocale.values()].reduce((sum, values) => sum + values.length, 0);
-const maxChars = Number(process.env.MAX_UI_TRANSLATION_CHARS_PER_RUN || 1000000);
-console.log(`Found ${list.length} unique Persian UI/content strings; ${missingCount} locale-string entries need translation; estimated new translation input: ${estimated} characters.`);
-if (estimated > maxChars) {
-  if (dryRun) {
-    console.warn(`Warning: estimate exceeds the safety limit (${maxChars}); the provider run will stop before making requests.`);
-    process.exit(0);
-  }
-  throw new Error(`Dynamic UI translation estimate exceeds the safety limit (${maxChars}). Narrow the source set or split the update.`);
+const estimated = [...missingByLocale.values()].flat().reduce((sum, value) => sum + characterCount([value]), 0);
+const budget = await readBudget(root);
+const remaining = await remainingBudget(root);
+console.log(`Found ${list.length} unique Persian UI/content strings; ${missingCount} locale-string entries need translation; estimated new input: ${estimated} characters. Monthly budget: ${budget.used}/${budget.limit}; remaining: ${remaining}.`);
+if ([...previousFiles].every(([locale, file]) => file?.sourceHash === sourceHash && localeCaches.get(locale).size === list.length)) {
+  console.log("Dynamic UI source strings unchanged; cached locale files retained.");
+  process.exit(0);
 }
 if (dryRun) process.exit(0);
 
@@ -151,33 +146,47 @@ function batches(values) {
   const output = [];
   let batch = [], chars = 0;
   for (const value of values) {
-    if (batch.length && (batch.length >= 50 || chars + value.length > 20000)) {
+    const size = characterCount([value]);
+    if (batch.length && (batch.length >= 50 || chars + size > 20000)) {
       output.push(batch); batch = []; chars = 0;
     }
-    batch.push(value); chars += value.length;
+    batch.push(value); chars += size;
   }
   if (batch.length) output.push(batch);
   return output;
 }
 
 await mkdir(outputDir, { recursive: true });
+let stopForBudget = false;
 for (const [locale, providerCode] of Object.entries(targets)) {
+  if (stopForBudget) break;
   const cache = localeCaches.get(locale);
   const missing = missingByLocale.get(locale);
+  let changed = false;
   for (const batch of batches(missing)) {
+    const cost = characterCount(batch);
+    const available = await remainingBudget(root);
+    if (cost > available) {
+      const current = await readBudget(root);
+      console.log(`Monthly translation budget reached (${current.used}/${current.limit}); remaining UI strings deferred from locale ${locale}.`);
+      stopForBudget = true;
+      break;
+    }
     const output = await translate(batch, providerCode);
     output.forEach((translated, index) => cache.set(batch[index], translated));
+    await recordUsage(root, cost);
+    changed = true;
+    const translations = list.filter(value => cache.has(value)).map(value => [value, cache.get(value)]);
+    await writeFile(resolve(outputDir, `dynamic-ui.${locale}.json`), JSON.stringify({
+      schemaVersion: 1,
+      sourceLanguage: "fa",
+      targetLanguage: locale,
+      sourceHash,
+      generatedAt: new Date().toISOString(),
+      provider: "Google Cloud Translation",
+      machineTranslated: true,
+      translations
+    }, null, 2) + "\n", "utf8");
   }
-  const translations = list.map(value => [value, cache.get(value)]);
-  await writeFile(resolve(outputDir, `dynamic-ui.${locale}.json`), JSON.stringify({
-    schemaVersion: 1,
-    sourceLanguage: "fa",
-    targetLanguage: locale,
-    sourceHash,
-    generatedAt: new Date().toISOString(),
-    provider: "Google Cloud Translation",
-    machineTranslated: true,
-    translations
-  }, null, 2) + "\n", "utf8");
-  console.log(`Dynamic UI cache ready -> ${locale}; newly translated: ${missing.length}`);
+  if (changed) console.log(`Dynamic UI cache updated -> ${locale}`);
 }
