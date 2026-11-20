@@ -94,6 +94,7 @@
   }
 
   let dynamicTranslations = null;
+  const dynamicPairs = new Map();
   const originalText = new WeakMap();
   const renderedText = new WeakMap();
   const manualTextOverrides = new WeakSet();
@@ -110,7 +111,8 @@
 
   function mapString(value, language) {
     if (!dynamicTranslations || language === "fa") return value;
-    const pairs = (dynamicTranslations.translations?.[language] || []).slice().sort((a, b) => b[0].length - a[0].length);
+    if (!dynamicPairs.has(language)) dynamicPairs.set(language, (dynamicTranslations.translations?.[language] || []).slice().sort((a, b) => b[0].length - a[0].length));
+    const pairs = dynamicPairs.get(language);
     let output = value;
     for (const [source, translated] of pairs) {
       if (source && output.includes(source)) output = output.split(source).join(translated);
