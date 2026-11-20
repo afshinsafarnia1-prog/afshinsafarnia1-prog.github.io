@@ -238,6 +238,7 @@ try {
     if(!(await page.locator(selector).count()))throw new Error("Integrated page control missing: "+path+" "+selector);
   }
   await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
+  await page.locator("#siteLanguage").selectOption("en");
   await page.locator("#guideSpecialty").selectOption("روان‌درمانی");
   await page.locator("#guideLanguage").selectOption("fa");
   await page.locator("#guideFormat").selectOption("online");
