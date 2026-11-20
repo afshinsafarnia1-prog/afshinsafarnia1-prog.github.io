@@ -33,9 +33,9 @@
     const publicMeta=metaRows?.[0]||{};
     const {data:feedbackRows}=await db.rpc("get_public_therapist_feedback",{p_therapist_id:id});
     const feedback=feedbackRows||[];
-    document.title=(data.display_name||"درمانگر")+" | پروفایل متخصص | یادسنتر";
+    document.title=(data.display_name||"درمانگر")+" | پروفایل متخصص | ردیاد";
     const description=document.querySelector('meta[name="description"]');
-    if(description)description.content="اطلاعات عمومی و تأییدشدهٔ "+(data.display_name||"درمانگر")+" شامل تحصیلات، حوزه‌های تخصصی، رویکرد و زبان‌های ارائهٔ خدمت در یادسنتر.";
+    if(description)description.content="اطلاعات عمومی و تأییدشدهٔ "+(data.display_name||"درمانگر")+" شامل تحصیلات، حوزه‌های تخصصی، رویکرد و زبان‌های ارائهٔ خدمت در ردیاد.";
     const ogTitle=document.querySelector('meta[property="og:title"]');if(ogTitle)ogTitle.content=document.title;
     const ogDescription=document.querySelector('meta[property="og:description"]');if(ogDescription&&description)ogDescription.content=description.content;
     root.replaceChildren();
@@ -51,7 +51,7 @@
       hero.append(mark);
     }
     const intro=node("div","profile-intro");
-    intro.append(node("span","eyebrow",data.verified_at?t("profileVerified"):"تأییدشده توسط مدیریت یادسنتر؛ احراز حرفه‌ای مستقل هنوز ثبت نشده است"));
+    intro.append(node("span","eyebrow",data.manager_approved?"تأییدشده توسط مدیریت ردیاد":t("profileVerified")));
     intro.append(node("h1","user-content",data.display_name||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline user-content",data.headline));
     if(typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
@@ -90,11 +90,11 @@
     price.append(node("small","profile-muted",t("profile45min")));
     aside.append(price);
     const cta=node("a","button primary full-button",t("profileChoose"));
-    if (!data.verified_at && data.manager_approved) {
+    if (!data.manager_approved) {
       cta.textContent = "درخواست تماس اولیه";
       cta.href = "client.html?therapist=" + encodeURIComponent(data.id) + "#yadTherapistInquiry";
       aside.append(cta);
-      aside.append(node("p","profile-muted","این دکمه فقط درخواست تماس اولیه با مدیریت یادسنتر را ثبت می‌کند؛ رزرو یا شروع درمان پس از تکمیل بررسی‌های حرفه‌ای و مجوزهای لازم امکان‌پذیر خواهد بود."));
+      aside.append(node("p","profile-muted","این دکمه برای تماس با مدیریت ردیاد است."));
     } else {
       cta.href="client.html?therapist="+encodeURIComponent(data.id);
       aside.append(cta);
