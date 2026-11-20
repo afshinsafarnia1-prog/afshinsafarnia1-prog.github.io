@@ -674,3 +674,8 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 
 /* Keep therapist portrait beside the name on narrow portrait screens */
 @media(max-width:480px){.profile-hero{display:flex;align-items:flex-start;gap:12px}.profile-photo{width:82px;height:98px;flex:0 0 82px}.profile-intro{min-width:0;flex:1}.profile-intro h1{margin-top:0}}
+
+
+/* Consistent stacked contact buttons for therapist profiles */
+.profile-contact-actions{display:grid;gap:10px;margin:12px 0}
+.profile-contact-actions .button{display:block;text-align:center}
