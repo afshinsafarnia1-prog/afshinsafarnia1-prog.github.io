@@ -245,6 +245,25 @@ try {
     if(overflow)throw new Error("Horizontal overflow on mobile: "+path);
   }
   await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
+  const guideHeadings={fa:"پیش از انتخاب درمانگر",ku:"پێش هەڵبژاردنی چارەسەرکار",en:"What should I consider",tr:"Bir terapist seçmeden",ar:"ما الأمور التي ينبغي",es:"¿Qué debo tener",de:"Was sollte ich beachten",fr:"Quels éléments prendre"};
+  for(const language of languages){
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value=>document.documentElement.lang===value,language);
+    const heading=await page.locator("h1").innerText();
+    if(!heading.includes(guideHeadings[language]))throw new Error("Initial guidance heading did not localize for "+language+": "+heading);
+    const lead=await page.locator("main .wrap>p").innerText();
+    if(!lead.trim()||(language!=="fa"&&lead.includes("این راهنما برای کمک")))throw new Error("Initial guidance lead remained Persian or empty for "+language);
+    const direction=await page.locator("html").getAttribute("dir");
+    const expectedDirection=["fa","ku","ar"].includes(language)?"rtl":"ltr";
+    if(direction!==expectedDirection)throw new Error("Initial guidance direction is wrong for "+language);
+  }
+  await page.locator("#guideSpecialty").selectOption("روان‌درمانی");
+  await page.locator("#guideLanguage").selectOption("en");
+  await page.locator("#guideFormat").selectOption("online");
+  await page.locator('#initialGuideForm button[type="submit"]').click();
+  const guideResult=await page.locator("#initialGuideResult").innerText();
+  if(!guideResult.includes("Selected preferences")||!guideResult.includes("Individual psychotherapy")||!guideResult.includes("Online"))throw new Error("Initial guidance dynamic result did not localize into English: "+guideResult);
+  if(await page.locator("[data-i18n-coverage-notice]").count())throw new Error("Completed initial guidance page still displays an untranslated-content notice.");
   const floatContrast=await page.locator(".yad-assessment-float").evaluate(el=>{
     const parse=v=>{const m=v.match(/[0-9.]+/g);return m?.length>=3?m.slice(0,3).map(Number):[0,0,0];};
     const lum=v=>{const c=parse(v).map(x=>{x/=255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4;});return .2126*c[0]+.7152*c[1]+.0722*c[2];};
