@@ -48,6 +48,11 @@ try {
     const url = new URL(route.request().url());
     return url.origin === "http://127.0.0.1:4173" ? route.continue() : route.abort();
   });
+  await page.route("**/auto-translations/dynamic-ui.en.json", route => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ sourceLanguage: "fa", targetLanguage: "en", translations: [["آزمایش ترجمه پویا", "Dynamic translation test"]] })
+  }));
 
   const languages = ["fa", "ku", "en", "tr", "ar", "es", "de", "fr"];
   const pages = [
@@ -348,11 +353,6 @@ try {
   });
   if (featuredContrast < 4.5) throw new Error("Featured AI article card fails WCAG AA text contrast: " + featuredContrast.toFixed(2));
 
-  await page.route("**/auto-translations/dynamic-ui.en.json", route => route.fulfill({
-    status: 200,
-    contentType: "application/json",
-    body: JSON.stringify({ sourceLanguage: "fa", targetLanguage: "en", translations: [["آزمایش ترجمه پویا", "Dynamic translation test"]] })
-  }));
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => window.__RADYAD_AUTO_TRANSLATE_RUNTIME__ === true);
   await page.locator("#siteLanguage").selectOption("en");
