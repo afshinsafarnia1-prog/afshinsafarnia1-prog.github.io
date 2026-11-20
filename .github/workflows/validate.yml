@@ -27,6 +27,7 @@ jobs:
           node --check site-i18n.js
           node --check auto-translate-runtime.js
           node --check scripts/auto-translate.mjs
+          node --check scripts/auto-translate-ui.mjs
           node --check service-guides-i18n.js
           node --check admin-workflow.js
           node --check admin-workflow-extended.js
@@ -47,6 +48,8 @@ jobs:
         run: node scripts/validate-schema.mjs
       - name: Validate automatic translation coverage and markers
         run: node scripts/validate-auto-translation.mjs
+      - name: Estimate dynamic UI translation coverage without provider calls
+        run: node scripts/auto-translate-ui.mjs --dry-run
       - name: Install Chromium for browser smoke tests
         run: |
           npm install --no-save playwright
