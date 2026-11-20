@@ -4,10 +4,11 @@ on:
   push:
     branches: [feature/full-site-i18n]
     paths:
-      - "articles/**"
-      - "rules.html"
+      - "**/*.html"
+      - "**/*.js"
       - "scripts/auto-translation-manifest.json"
       - "scripts/auto-translate.mjs"
+      - "scripts/auto-translate-ui.mjs"
   workflow_dispatch:
 
 permissions:
@@ -40,7 +41,9 @@ jobs:
         if: steps.config.outputs.configured == 'true'
         env:
           GOOGLE_TRANSLATE_API_KEY: ${{ secrets.GOOGLE_TRANSLATE_API_KEY }}
-        run: node scripts/auto-translate.mjs
+        run: |
+          node scripts/auto-translate.mjs
+          node scripts/auto-translate-ui.mjs
       - name: Commit generated translations
         if: steps.config.outputs.configured == 'true'
         run: |
