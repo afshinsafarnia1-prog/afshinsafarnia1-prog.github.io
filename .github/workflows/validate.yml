@@ -45,6 +45,8 @@ jobs:
           node --check auth.js
       - name: Check Supabase schema security guardrails
         run: node scripts/validate-schema.mjs
+      - name: Validate automatic translation coverage and markers
+        run: node scripts/validate-auto-translation.mjs
       - name: Install Chromium for browser smoke tests
         run: |
           npm install --no-save playwright
