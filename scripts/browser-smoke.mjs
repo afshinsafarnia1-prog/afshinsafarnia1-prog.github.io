@@ -277,6 +277,7 @@ try {
     const expectedDirection=["fa","ku","ar"].includes(language)?"rtl":"ltr";
     if(direction!==expectedDirection)throw new Error("Initial guidance direction is wrong for "+language);
   }
+  await page.locator("#siteLanguage").selectOption("en");
   await page.locator("#guideSpecialty").selectOption("روان‌درمانی");
   await page.locator("#guideLanguage").selectOption("en");
   await page.locator("#guideFormat").selectOption("online");
