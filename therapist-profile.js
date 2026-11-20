@@ -27,15 +27,15 @@
     root.textContent=t("profileLoading");
     const {data,error}=await db.from("therapists")
       .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path,manager_approved,verified_at")
-      .eq("id",id).eq("is_listed",true).or("verified_at.not.is.null,manager_approved.eq.true").maybeSingle();
+      .eq("id",id).eq("is_listed",true).eq("manager_approved",true).maybeSingle();
     if(error||!data){root.textContent=t("profileNotFound");return;}
     const {data:metaRows}=await db.rpc("get_public_therapist_public_metadata",{p_therapist_id:id});
     const publicMeta=metaRows?.[0]||{};
     const {data:feedbackRows}=await db.rpc("get_public_therapist_feedback",{p_therapist_id:id});
     const feedback=feedbackRows||[];
-    document.title=(data.display_name||"درمانگر")+" | پروفایل متخصص | یادسنتر";
+    document.title=(data.display_name||"درمانگر")+" | پروفایل متخصص | ردیاد";
     const description=document.querySelector('meta[name="description"]');
-    if(description)description.content="اطلاعات عمومی و تأییدشدهٔ "+(data.display_name||"درمانگر")+" شامل تحصیلات، حوزه‌های تخصصی، رویکرد و زبان‌های ارائهٔ خدمت در یادسنتر.";
+    if(description)description.content="اطلاعات عمومی و تأییدشدهٔ "+(data.display_name||"درمانگر")+" شامل تحصیلات، حوزه‌های تخصصی، رویکرد و زبان‌های ارائهٔ خدمت در ردیاد.";
     const ogTitle=document.querySelector('meta[property="og:title"]');if(ogTitle)ogTitle.content=document.title;
     const ogDescription=document.querySelector('meta[property="og:description"]');if(ogDescription&&description)ogDescription.content=description.content;
     root.replaceChildren();
@@ -51,7 +51,7 @@
       hero.append(mark);
     }
     const intro=node("div","profile-intro");
-    intro.append(node("span","eyebrow",data.verified_at?t("profileVerified"):"تأییدشده توسط مدیریت یادسنتر؛ احراز حرفه‌ای مستقل هنوز ثبت نشده است"));
+    intro.append(node("span","eyebrow",data.verified_at?t("profileVerified"):"تأییدشده توسط مدیریت ردیاد؛ احراز حرفه‌ای مستقل هنوز ثبت نشده است"));
     intro.append(node("h1","",data.display_name||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.headline));
     if(typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
@@ -89,17 +89,13 @@
     }
     price.append(node("small","profile-muted",t("profile45min")));
     aside.append(price);
-    const cta=node("a","button primary full-button",t("profileChoose"));
-    if (!data.verified_at && data.manager_approved) {
-      cta.textContent = "درخواست تماس اولیه";
-      cta.href = "client.html?therapist=" + encodeURIComponent(data.id) + "#yadTherapistInquiry";
-      aside.append(cta);
-      aside.append(node("p","profile-muted","این دکمه فقط درخواست تماس اولیه با مدیریت یادسنتر را ثبت می‌کند؛ رزرو یا شروع درمان پس از تکمیل بررسی‌های حرفه‌ای و مجوزهای لازم امکان‌پذیر خواهد بود."));
-    } else {
-      cta.href="client.html?therapist="+encodeURIComponent(data.id);
-      aside.append(cta);
-      aside.append(node("p","profile-muted",t("profileBookingNote")));
-    }
+    const cta=node("a","button primary full-button","هماهنگی جلسه در واتساپ");
+    const whatsappMessage="سلام، برای دریافت اطلاعات و هماهنگی جلسه با درمانگر "+(data.display_name||"منتخب")+" از طریق ردیاد پیام می‌دهم.";
+    cta.href="https://wa.me/989999398350?text="+encodeURIComponent(whatsappMessage);
+    cta.target="_blank";
+    cta.rel="noopener noreferrer";
+    aside.append(cta);
+    aside.append(node("p","profile-muted","زمان جلسه ابتدا با مدیریت و درمانگر هماهنگ می‌شود؛ پس از اعلام مبلغ و تأیید پرداخت، نوبت قطعی خواهد شد."));
     grid.append(main,aside);root.append(grid);
   }
   load();
