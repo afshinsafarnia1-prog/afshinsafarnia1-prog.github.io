@@ -77,7 +77,7 @@
     directory.textContent="در حال دریافت فهرست درمانگران…";
     const {data,error}=await db.from("therapists")
       .select("id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path,manager_approved,verified_at")
-      .eq("is_listed",true).or("verified_at.not.is.null,manager_approved.eq.true")
+      .eq("is_listed",true).eq("manager_approved",true).eq("accepting_new_clients",true)
       .order("display_name",{ascending:true});
     if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
     allTherapists=data||[];
@@ -110,7 +110,7 @@
     filterDirectory();
     if(notice)notice.textContent=allTherapists.length
       ?"پروفایل‌های زیر توسط مدیریت ردیاد بررسی و برای نمایش تأیید شده‌اند."
-      :"فهرست درمانگران پس از تأیید مدارک و مجوزها منتشر می‌شود؛ هیچ پروفایل تأییدنشده‌ای نمایش داده نمی‌شود.";
+      :"در حال حاضر درمانگر فعالی برای نمایش وجود ندارد.";
   }
 
   function renderPublicBranding(){
