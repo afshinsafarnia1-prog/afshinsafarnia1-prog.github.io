@@ -39,7 +39,7 @@
     const ogTitle=document.querySelector('meta[property="og:title"]');if(ogTitle)ogTitle.content=document.title;
     const ogDescription=document.querySelector('meta[property="og:description"]');if(ogDescription&&description)ogDescription.content=description.content;
     root.replaceChildren();
-    const hero=node("div","profile-hero");
+    const hero=node("div","profile-hero"+(data.public_slug==="foruzan-shahla"?" shahla-profile":""));
     if(data.photo_path){
       const {data:photo}=db.storage.from("therapist-photos").getPublicUrl(data.photo_path);
       if(photo?.publicUrl){const img=node("img","profile-photo");img.src=photo.publicUrl;img.alt=t("profilePhotoAlt");img.loading="lazy";hero.append(img);}
