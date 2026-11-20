@@ -207,7 +207,9 @@ try {
   if (await page.locator("[data-i18n-show-non-fa]").isHidden()) throw new Error("Legal Persian-only notice was not shown for English.");
   await page.goto("http://127.0.0.1:4173/articles/psychotherapy-first-session.html", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
-  if (await page.locator("[data-i18n-show-non-fa]").isHidden()) throw new Error("Article Persian-only notice was not shown for English.");
+  await page.waitForFunction(value => document.documentElement.lang === value, "en");
+  if (!(await page.locator("h1").innerText()).includes("The first psychotherapy session")) throw new Error("First-session article did not translate into English.");
+  if (await page.locator("[data-i18n-show-non-fa]").count()) throw new Error("Obsolete Persian-only notice remains on the translated first-session article.");
 
   const manifest = await page.request.get("http://127.0.0.1:4173/manifest.webmanifest");
   if (!manifest.ok()) throw new Error("PWA manifest is not reachable.");
