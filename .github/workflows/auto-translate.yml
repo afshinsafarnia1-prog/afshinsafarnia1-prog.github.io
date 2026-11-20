@@ -54,7 +54,7 @@ jobs:
           node scripts/auto-translate.mjs
           node scripts/auto-translate-ui.mjs
       - name: Commit generated translations
-        if: steps.config.outputs.configured == 'true'
+        if: always() && steps.config.outputs.configured == 'true'
         run: |
           if [ -n "$(git status --porcelain auto-translations)" ]; then
             git config user.name "github-actions[bot]"
