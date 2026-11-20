@@ -55,6 +55,9 @@ for (const block of manifest.blocks) {
   const html = extract(source, block.id);
   const meta = metadata(source);
   const sourceHash = hash(JSON.stringify({ html, meta }));
+  const estimatedChars = (html.length + Object.values(meta).reduce((sum, value) => sum + value.length, 0)) * Object.keys(targets).length;
+  const maxChars = Number(process.env.MAX_TRANSLATION_CHARS_PER_RUN || 400000);
+  if (estimatedChars > maxChars) throw new Error(`Translation batch estimate (${estimatedChars} characters) exceeds the safety limit (${maxChars}). Split the update into smaller commits.`);
   const outputPath = resolve(root, "auto-translations", `${block.id}.json`);
   let previous = null;
   try { previous = JSON.parse(await readFile(outputPath, "utf8")); } catch {}
