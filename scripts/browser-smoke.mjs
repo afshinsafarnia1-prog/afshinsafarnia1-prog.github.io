@@ -166,6 +166,30 @@ try {
   await page.goto("http://127.0.0.1:4173/articles/", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Psychotherapy articles")) throw new Error("Article index translation did not apply.");
+  await page.goto("http://127.0.0.1:4173/standards.html", { waitUntil: "domcontentloaded" });
+  const standardsHeadings = {
+    fa: "روان‌درمانی با شفافیت",
+    ku: "چارەسەری دەروونی بە ڕوونی",
+    en: "Psychotherapy grounded in transparency",
+    tr: "Şeffaflık, sorumluluk",
+    ar: "علاج نفسي يقوم على الشفافية",
+    es: "Psicoterapia basada en la transparencia",
+    de: "Psychotherapie mit Transparenz",
+    fr: "Une psychothérapie fondée sur la transparence"
+  };
+  for (const language of languages) {
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    const heading = await page.locator("h1").innerText();
+    if (!heading.includes(standardsHeadings[language])) throw new Error("Standards page did not fully localize its heading for " + language + ": " + heading);
+    const mission = await page.locator('[data-editorial-i18n="mission"]').innerText();
+    if (!mission.trim() || (language !== "fa" && mission.includes("ما بر اهمیت رابطه"))) throw new Error("Standards page mission remained untranslated for " + language);
+    const legalNote = await page.locator('[data-editorial-i18n="legalNote"]').innerText();
+    if (!legalNote.trim() || (language !== "fa" && legalNote.includes("این متن چارچوب"))) throw new Error("Standards page legal caveat remained untranslated for " + language);
+    const direction = await page.locator("html").getAttribute("dir");
+    const expectedDirection = ["fa", "ku", "ar"].includes(language) ? "rtl" : "ltr";
+    if (direction !== expectedDirection) throw new Error("Standards page direction is wrong for " + language);
+  }
   await page.goto("http://127.0.0.1:4173/rules.html", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
   if (await page.locator("[data-i18n-show-non-fa]").isHidden()) throw new Error("Legal Persian-only notice was not shown for English.");
