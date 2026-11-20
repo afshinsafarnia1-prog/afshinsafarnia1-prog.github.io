@@ -112,10 +112,21 @@ if (previous?.sourceHash === sourceHash && Object.keys(previous.translations || 
   console.log("Dynamic UI strings unchanged; cached translations retained.");
   process.exit(0);
 }
-const estimated = list.reduce((sum, value) => sum + value.length, 0) * Object.keys(targets).length;
-const maxChars = Number(process.env.MAX_UI_TRANSLATION_CHARS_PER_RUN || 200000);
-console.log(`Found ${list.length} unique Persian UI/content strings; estimated translation input: ${estimated} characters.`);
-if (estimated > maxChars) throw new Error(`Dynamic UI translation estimate exceeds the safety limit (${maxChars}). Narrow the source set or split the update.`);
+const cachedByLocale = Object.fromEntries(Object.keys(targets).map(locale => [
+  locale,
+  new Map(previous?.translations?.[locale] || [])
+]));
+const missing = list.filter(value => Object.values(cachedByLocale).some(cache => !cache.has(value)));
+const estimated = missing.reduce((sum, value) => sum + value.length, 0) * Object.keys(targets).length;
+const maxChars = Number(process.env.MAX_UI_TRANSLATION_CHARS_PER_RUN || 1000000);
+console.log(`Found ${list.length} unique Persian UI/content strings; ${missing.length} need translation; estimated new translation input: ${estimated} characters.`);
+if (estimated > maxChars) {
+  if (dryRun) {
+    console.warn(`Warning: estimate exceeds the safety limit (${maxChars}); the provider run will stop before making requests.`);
+    process.exit(0);
+  }
+  throw new Error(`Dynamic UI translation estimate exceeds the safety limit (${maxChars}). Narrow the source set or split the update.`);
+}
 if (dryRun) process.exit(0);
 
 async function translate(values, target) {
@@ -133,14 +144,15 @@ async function translate(values, target) {
 
 const translations = {};
 for (const [locale, providerCode] of Object.entries(targets)) {
-  const pairs = [];
-  for (let i = 0; i < list.length; i += 50) {
-    const batch = list.slice(i, i + 50);
+  const cache = cachedByLocale[locale];
+  const missingForLocale = list.filter(value => !cache.has(value));
+  for (let i = 0; i < missingForLocale.length; i += 50) {
+    const batch = missingForLocale.slice(i, i + 50);
     const output = await translate(batch, providerCode);
-    output.forEach((translated, index) => pairs.push([batch[index], translated]));
+    output.forEach((translated, index) => cache.set(batch[index], translated));
   }
-  translations[locale] = pairs;
-  console.log(`Translated dynamic UI strings -> ${locale}`);
+  translations[locale] = list.map(value => [value, cache.get(value)]);
+  console.log(`Dynamic UI cache ready -> ${locale}; newly translated: ${missingForLocale.length}`);
 }
 await mkdir(dirname(outputPath), { recursive: true });
 await writeFile(outputPath, JSON.stringify({ schemaVersion: 1, sourceLanguage: "fa", sourceHash, generatedAt: new Date().toISOString(), provider: "Google Cloud Translation", machineTranslated: true, translations }, null, 2) + "\n", "utf8");
