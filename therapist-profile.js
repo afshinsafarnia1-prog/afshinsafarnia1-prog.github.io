@@ -51,7 +51,7 @@
       hero.append(mark);
     }
     const intro=node("div","profile-intro");
-    intro.append(node("span","eyebrow",data.verified_at?t("profileVerified"):"تأییدشده توسط مدیریت ردیاد؛ احراز حرفه‌ای مستقل هنوز ثبت نشده است"));
+    intro.append(node("span","eyebrow","تأییدشده توسط مدیریت ردیاد"));
     intro.append(node("h1","",data.display_name||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.headline));
     if(typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
