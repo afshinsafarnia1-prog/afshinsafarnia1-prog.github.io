@@ -348,6 +348,23 @@ try {
   });
   if (featuredContrast < 4.5) throw new Error("Featured AI article card fails WCAG AA text contrast: " + featuredContrast.toFixed(2));
 
+  await page.route("**/auto-translations/dynamic-ui.en.json", route => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ sourceLanguage: "fa", targetLanguage: "en", translations: [["آزمایش ترجمه پویا", "Dynamic translation test"]] })
+  }));
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => window.__RADYAD_AUTO_TRANSLATE_RUNTIME__ === true);
+  await page.locator("#siteLanguage").selectOption("en");
+  await page.evaluate(() => {
+    const probe = document.createElement("p");
+    probe.id = "autoTranslationProbe";
+    probe.textContent = "آزمایش ترجمه پویا";
+    document.body.append(probe);
+  });
+  await page.waitForFunction(() => document.querySelector("#autoTranslationProbe")?.textContent === "Dynamic translation test");
+  await page.locator("#siteLanguage").selectOption("fa");
+  await page.waitForFunction(() => document.querySelector("#autoTranslationProbe")?.textContent === "آزمایش ترجمه پویا");
   if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
   console.log("PASS: 18 pages and integrated guidance, standards, workshop and assessment content; initial-guide filter handoff; fixed mobile access; WCAG AA contrast for fixed CTA; legal draft disclosures; existing multilingual, portal, responsive and PWA smoke checks.");
 } finally {
