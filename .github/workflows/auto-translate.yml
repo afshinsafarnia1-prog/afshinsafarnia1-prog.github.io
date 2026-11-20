@@ -1,0 +1,67 @@
+name: Generate RADYAD machine translations
+
+on:
+  push:
+    branches: [feature/full-site-i18n, main]
+    paths:
+      - "**/*.html"
+      - "**/*.js"
+      - "scripts/auto-translation-manifest.json"
+      - "scripts/auto-translate.mjs"
+      - "scripts/auto-translate-ui.mjs"
+      - "scripts/translation-budget.mjs"
+      - ".github/workflows/auto-translate.yml"
+  schedule:
+    # Run after midnight in America/Los_Angeles, when Google's monthly
+    # translation allowance has rolled over.
+    - cron: "17 12 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radyad-translation-monthly
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check translation provider configuration
+        id: config
+        env:
+          GOOGLE_TRANSLATE_API_KEY: ${{ secrets.GOOGLE_TRANSLATE_API_KEY }}
+        run: |
+          if [ -z "$GOOGLE_TRANSLATE_API_KEY" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Automatic translation is ready but paused. Add GOOGLE_TRANSLATE_API_KEY as a repository Actions secret to activate it."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.config.outputs.configured == 'true'
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-node@v4
+        if: steps.config.outputs.configured == 'true'
+        with:
+          node-version: 22
+      - name: Generate or refresh changed translations
+        if: steps.config.outputs.configured == 'true'
+        env:
+          GOOGLE_TRANSLATE_API_KEY: ${{ secrets.GOOGLE_TRANSLATE_API_KEY }}
+          MAX_TRANSLATION_CHARS_PER_MONTH: 450000
+        run: |
+          node scripts/auto-translate.mjs
+          node scripts/auto-translate-ui.mjs
+      - name: Commit generated translations
+        if: always() && steps.config.outputs.configured == 'true'
+        run: |
+          if [ -n "$(git status --porcelain auto-translations)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add auto-translations/
+            git commit -m "chore(i18n): refresh generated translations"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi

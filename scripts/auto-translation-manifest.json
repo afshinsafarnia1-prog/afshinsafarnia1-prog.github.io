@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "sourceLanguage": "fa",
+  "targets": {
+    "ku": "ckb",
+    "en": "en",
+    "tr": "tr",
+    "ar": "ar",
+    "es": "es",
+    "de": "de",
+    "fr": "fr"
+  },
+  "blocks": [
+    {"id":"ai-robots-human-meaning","file":"articles/ai-robots-human-meaning.html"},
+    {"id":"choosing-a-therapist","file":"articles/choosing-a-therapist.html"},
+    {"id":"psychoanalytic-traditions","file":"articles/psychoanalytic-traditions.html"},
+    {"id":"therapeutic-relationship","file":"articles/therapeutic-relationship.html"},
+    {"id":"rules","file":"rules.html"}
+  ]
+}

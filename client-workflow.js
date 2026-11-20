@@ -33,7 +33,7 @@
         if(submit)submit.disabled=!clientIntakeEnabled;
         if(notice)notice.textContent=clientIntakeEnabled
           ?"پذیرش درخواست فعال است. پیش از ارسال، قوانین و اطلاعیهٔ حریم خصوصی را مطالعه کنید."
-          :"ثبت درخواست جدید فعلاً غیرفعال است. یادسنتر پس از تکمیل بررسی‌های حقوقی و فعال‌سازی رسمی، پذیرش را آغاز می‌کند.";
+          :"ثبت درخواست جدید فعلاً غیرفعال است. ردیاد پس از تکمیل بررسی‌های حقوقی و فعال‌سازی رسمی، پذیرش را آغاز می‌کند.";
       } catch(error) {
         clientIntakeEnabled=false;
         if(submit)submit.disabled=true;
@@ -44,7 +44,7 @@
     async function loadDirectory() {
       const { data, error } = await db.from("therapists")
         .select("id,display_name,headline,languages,specialties,modalities")
-        .eq("is_listed", true).not("verified_at", "is", null)
+        .eq("is_listed", true).eq("manager_approved", true).eq("accepting_new_clients", true)
         .order("display_name", { ascending: true });
       if (error) throw error;
       directory = data || [];
@@ -66,7 +66,7 @@
       if (queryTherapist && directory.some(t => t.id === queryTherapist)) select.value = queryTherapist;
       if (select.value) await loadAvailableSlots();
       updateSelectedFee();
-      if (!directory.length) setStatus("در حال حاضر پروفایل تأییدشده‌ای برای انتخاب منتشر نشده است.");
+      if (!directory.length) setStatus("در حال حاضر درمانگر فعالی برای انتخاب وجود ندارد.");
     }
 
     function updateSelectedFee(){

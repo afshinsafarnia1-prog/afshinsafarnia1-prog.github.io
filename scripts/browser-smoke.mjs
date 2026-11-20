@@ -48,17 +48,39 @@ try {
     const url = new URL(route.request().url());
     return url.origin === "http://127.0.0.1:4173" ? route.continue() : route.abort();
   });
+  await page.route("**/auto-translations/dynamic-ui.en.json", route => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ sourceLanguage: "fa", targetLanguage: "en", translations: [["آزمایش ترجمه پویا", "Dynamic translation test"]] })
+  }));
 
+  const languages = ["fa", "ku", "en", "tr", "ar", "es", "de", "fr"];
   const pages = [
-    "/", "/contact.html", "/relationships.html", "/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/client.html", "/admin.html", "/therapist.html",
-    "/assistant.html", "/rules.html", "/articles/",
-    "/articles/psychotherapy-first-session.html",
-    "/articles/therapeutic-relationship.html",
-    "/articles/ai-robots-human-meaning.html", "/therapists/foruzan-shahla.html"
+    "/", "/contact.html", "/relationships.html", "/psychology.html", "/psychotherapy.html", "/psychiatry.html",
+    "/client.html", "/admin.html", "/therapist.html", "/therapist-profile.html", "/assistant.html", "/assessment.html",
+    "/rules.html", "/standards.html", "/initial-guidance.html", "/workshops.html", "/articles/",
+    "/articles/ai-robots-human-meaning.html", "/articles/choosing-a-therapist.html",
+    "/articles/psychoanalytic-traditions.html", "/articles/psychotherapy-first-session.html",
+    "/articles/therapeutic-relationship.html", "/articles/why-assessment-matters.html",
+    "/therapists/foruzan-shahla.html"
   ];
   for (const path of pages) {
     const response = await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
     if (!response || response.status() !== 200) throw new Error(`Page failed: ${path} (${response?.status()})`);
+  }
+
+  for (const path of pages) {
+    for (const language of languages) {
+      await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
+      const picker = page.locator("#siteLanguage");
+      if (!(await picker.count())) throw new Error("Language selector is missing: " + path);
+      await picker.selectOption(language);
+      await page.waitForFunction(value => document.documentElement.lang === value, language);
+      const expectedDirection = ["fa", "ku", "ar"].includes(language) ? "rtl" : "ltr";
+      if (await page.locator("html").getAttribute("dir") !== expectedDirection) {
+        throw new Error("Language direction is wrong for " + path + " / " + language);
+      }
+    }
   }
 
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
@@ -68,11 +90,11 @@ try {
 
   for (const [path, heading] of [["/relationships.html","زوج‌درمانی و خانواده‌درمانی"],["/psychology.html","روان‌شناسی و مشاوره"],["/psychotherapy.html","روان‌درمانی"],["/psychiatry.html","روان‌پزشکی"]]) {
     await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
+    await page.locator("#siteLanguage").selectOption("fa");
     if (!(await page.locator("h1").innerText()).includes(heading)) throw new Error("Service guide heading missing: " + path);
     if (await page.locator(".content-main .content-card").count() < 4) throw new Error("Service guide content is incomplete: " + path);
   }
 
-  const languages = ["fa", "ku", "en", "tr", "ar", "es", "de", "fr"];
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
   for (const language of languages) {
     await page.locator("#siteLanguage").selectOption(language);
@@ -101,6 +123,19 @@ try {
 
   await page.goto("http://127.0.0.1:4173/contact.html", { waitUntil: "domcontentloaded" });
   if (!(await page.locator('a[href="tel:+989999398350"]').count()) || !(await page.locator('a[href="https://wa.me/989999398350"]').count())) throw new Error("Public contact page is missing phone or WhatsApp links.");
+  for (const [language, expected] of [["fa","برای شروع گفت‌وگو"],["ku","بۆ دەستپێکردنی گفتوگۆ"],["en","Get in touch"],["tr","Görüşmeye başlamak"],["ar","تواصل معنا"],["es","Ponte en contacto"],["de","Nehmen Sie Kontakt auf"],["fr","Contactez-nous"]]) {
+    await page.goto("http://127.0.0.1:4173/contact.html", { waitUntil: "domcontentloaded" });
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    const heading = await page.locator("h1").innerText();
+    if (!heading.includes(expected)) throw new Error("Contact page heading did not localize for " + language + ": " + heading);
+    const crisis = await page.locator(".privacy-hint").innerText();
+    if (crisis.includes("ردیاد خدمات فوریت") && language !== "fa") throw new Error("Contact crisis boundary remained Persian for " + language);
+    const direction = await page.locator("html").getAttribute("dir");
+    const expectedDirection = ["fa","ku","ar"].includes(language) ? "rtl" : "ltr";
+    if (direction !== expectedDirection) throw new Error("Contact page direction is wrong for " + language);
+  }
+
   await page.goto("http://127.0.0.1:4173/client.html", { waitUntil: "domcontentloaded" });
   if (!(await page.locator("#yadBookingContact a[href=\"tel:+989999398350\"]").count()) || !(await page.locator("#yadBookingContact a[href=\"https://wa.me/989999398350\"]").count())) throw new Error("Client booking contact options are missing.");
   for (const selector of ["#yadClientConsent", "#yadAdultConfirm", "#yadSessionCountry", "#yadPreferredTime", "#yadClientAppointmentList", "#yadClientSupportForm", "#yadClientNotificationsList", "#yadExportMyData"]) {
@@ -136,12 +171,50 @@ try {
   await page.goto("http://127.0.0.1:4173/articles/", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Psychotherapy articles")) throw new Error("Article index translation did not apply.");
+  const articleIndexHeadings={fa:"روان‌کاوی در چند صدا",ku:"ڕوانکاوی بە چەند دەنگ",en:"Psychoanalysis in many voices",tr:"Çok sesli psikanaliz",ar:"التحليل النفسي بأصوات متعددة",es:"El psicoanálisis en distintas voces",de:"Psychoanalyse in mehreren Stimmen",fr:"La psychanalyse au pluriel"};
+  for(const language of languages){
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value=>document.documentElement.lang===value,language);
+    const feature=await page.locator('[data-i18n="article4title"]').innerText();
+    if(!feature.includes(articleIndexHeadings[language]))throw new Error("Article index theoretical card did not localize for "+language+": "+feature);
+    const assessment=await page.locator('[data-i18n="article5title"]').innerText();
+    if(!assessment.trim()||(language!=="fa"&&assessment.includes("چرا ارزیابی در روان‌درمانی")))throw new Error("Article index assessment card did not localize for "+language);
+    const originalLanguage=await page.locator('[data-i18n="contributorLanguageNote"]').innerText();
+    if(!originalLanguage.trim()||(language!=="fa"&&originalLanguage.includes("مقاله‌های ارسالی")))throw new Error("Contributor original-language notice did not localize for "+language);
+    if(await page.locator("[data-i18n-coverage-notice]").count())throw new Error("Article index incorrectly displays a Persian-only coverage notice.");
+  }
+  await page.goto("http://127.0.0.1:4173/standards.html", { waitUntil: "domcontentloaded" });
+  const standardsHeadings = {
+    fa: "روان‌درمانی با شفافیت",
+    ku: "چارەسەری دەروونی بە ڕوونی",
+    en: "Psychotherapy grounded in transparency",
+    tr: "Şeffaflık, sorumluluk",
+    ar: "علاج نفسي يقوم على الشفافية",
+    es: "Psicoterapia basada en la transparencia",
+    de: "Psychotherapie mit Transparenz",
+    fr: "Une psychothérapie fondée sur la transparence"
+  };
+  for (const language of languages) {
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    const heading = await page.locator("h1").innerText();
+    if (!heading.includes(standardsHeadings[language])) throw new Error("Standards page did not fully localize its heading for " + language + ": " + heading);
+    const mission = await page.locator('[data-editorial-i18n="mission"]').innerText();
+    if (!mission.trim() || (language !== "fa" && mission.includes("ما بر اهمیت رابطه"))) throw new Error("Standards page mission remained untranslated for " + language);
+    const legalNote = await page.locator('[data-editorial-i18n="legalNote"]').innerText();
+    if (!legalNote.trim() || (language !== "fa" && legalNote.includes("این متن چارچوب"))) throw new Error("Standards page legal caveat remained untranslated for " + language);
+    const direction = await page.locator("html").getAttribute("dir");
+    const expectedDirection = ["fa", "ku", "ar"].includes(language) ? "rtl" : "ltr";
+    if (direction !== expectedDirection) throw new Error("Standards page direction is wrong for " + language);
+  }
   await page.goto("http://127.0.0.1:4173/rules.html", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
   if (await page.locator("[data-i18n-show-non-fa]").isHidden()) throw new Error("Legal Persian-only notice was not shown for English.");
   await page.goto("http://127.0.0.1:4173/articles/psychotherapy-first-session.html", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
-  if (await page.locator("[data-i18n-show-non-fa]").isHidden()) throw new Error("Article Persian-only notice was not shown for English.");
+  await page.waitForFunction(value => document.documentElement.lang === value, "en");
+  if (!(await page.locator("h1").innerText()).includes("The first psychotherapy session")) throw new Error("First-session article did not translate into English.");
+  if (await page.locator("[data-i18n-show-non-fa]").count()) throw new Error("Obsolete Persian-only notice remains on the translated first-session article.");
 
   const manifest = await page.request.get("http://127.0.0.1:4173/manifest.webmanifest");
   if (!manifest.ok()) throw new Error("PWA manifest is not reachable.");
@@ -170,6 +243,7 @@ try {
     if(!(await page.locator(selector).count()))throw new Error("Integrated page control missing: "+path+" "+selector);
   }
   await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
+  await page.locator("#siteLanguage").selectOption("en");
   await page.locator("#guideSpecialty").selectOption("روان‌درمانی");
   await page.locator("#guideLanguage").selectOption("fa");
   await page.locator("#guideFormat").selectOption("online");
@@ -191,12 +265,57 @@ try {
     if(overflow)throw new Error("Horizontal overflow on mobile: "+path);
   }
   await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
+  const guideHeadings={fa:"پیش از انتخاب درمانگر",ku:"پێش هەڵبژاردنی چارەسەرکار",en:"What should I consider",tr:"Bir terapist seçmeden",ar:"ما الأمور التي ينبغي",es:"¿Qué debo tener",de:"Was sollte ich beachten",fr:"Quels éléments prendre"};
+  for(const language of languages){
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value=>document.documentElement.lang===value,language);
+    const heading=await page.locator("h1").innerText();
+    if(!heading.includes(guideHeadings[language]))throw new Error("Initial guidance heading did not localize for "+language+": "+heading);
+    const lead=await page.locator("main .wrap>p:first-of-type").innerText();
+    if(!lead.trim()||(language!=="fa"&&lead.includes("این راهنما برای کمک")))throw new Error("Initial guidance lead remained Persian or empty for "+language);
+    const direction=await page.locator("html").getAttribute("dir");
+    const expectedDirection=["fa","ku","ar"].includes(language)?"rtl":"ltr";
+    if(direction!==expectedDirection)throw new Error("Initial guidance direction is wrong for "+language);
+  }
+  await page.locator("#siteLanguage").selectOption("en");
+  await page.locator("#guideSpecialty").selectOption("روان‌درمانی");
+  await page.locator("#guideLanguage").selectOption("en");
+  await page.locator("#guideFormat").selectOption("online");
+  await page.locator('#initialGuideForm button[type="submit"]').click();
+  const guideResult=await page.locator("#initialGuideResult").innerText();
+  if(!guideResult.includes("Selected preferences")||!guideResult.includes("Individual psychotherapy")||!guideResult.includes("Online"))throw new Error("Initial guidance dynamic result did not localize into English: "+guideResult);
+  if(await page.locator("[data-i18n-coverage-notice]").count())throw new Error("Completed initial guidance page still displays an untranslated-content notice.");
   const floatContrast=await page.locator(".yad-assessment-float").evaluate(el=>{
     const parse=v=>{const m=v.match(/[0-9.]+/g);return m?.length>=3?m.slice(0,3).map(Number):[0,0,0];};
     const lum=v=>{const c=parse(v).map(x=>{x/=255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4;});return .2126*c[0]+.7152*c[1]+.0722*c[2];};
     const style=getComputedStyle(el),a=lum(style.color),b=lum(style.backgroundColor);return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
   });
   if(floatContrast<4.5)throw new Error("Persistent guidance button fails WCAG AA text contrast: "+floatContrast.toFixed(2));
+  await page.goto("http://127.0.0.1:4173/articles/psychotherapy-first-session.html",{waitUntil:"domcontentloaded"});
+  const firstSessionTitles={fa:"جلسهٔ اول روان‌درمانی",ku:"یەکەم دانیشتنی چارەسەری دەروونی",en:"The first psychotherapy session",tr:"İlk psikoterapi seansı",ar:"الجلسة الأولى للعلاج النفسي",es:"La primera sesión de psicoterapia",de:"Die erste Psychotherapiesitzung",fr:"La première séance de psychothérapie"};
+  for(const language of languages){
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value=>document.documentElement.lang===value,language);
+    const title=await page.locator("article h1").innerText();
+    if(!title.includes(firstSessionTitles[language]))throw new Error("First-session article title did not localize for "+language+": "+title);
+    const body=await page.locator('[data-session-i18n="p1"]').innerText();
+    if(!body.trim()||(language!=="fa"&&body.includes("جلسهٔ نخست معمولاً")))throw new Error("First-session article body remained Persian or empty for "+language);
+    const direction=await page.locator("article").getAttribute("dir");
+    if(direction!==(["fa","ku","ar"].includes(language)?"rtl":"ltr"))throw new Error("First-session article direction mismatch for "+language);
+  }
+  if(await page.locator("[data-i18n-coverage-notice]").count())throw new Error("Translated first-session article still displays a Persian-only notice.");
+  await page.goto("http://127.0.0.1:4173/articles/why-assessment-matters.html",{waitUntil:"domcontentloaded"});
+  const assessmentTitles={fa:"چرا ارزیابی در روان‌درمانی",ku:"بۆچی هەڵسەنگاندن",en:"Why does assessment matter",tr:"Psikoterapide değerlendirme",ar:"لماذا يُعد التقييم",es:"¿Por qué importa la evaluación",de:"Warum ist eine Einschätzung",fr:"Pourquoi l’évaluation"};
+  for(const language of languages){
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value=>document.documentElement.lang===value,language);
+    const title=await page.locator("article h1").innerText();
+    if(!title.includes(assessmentTitles[language]))throw new Error("Assessment article title did not localize for "+language+": "+title);
+    const body=await page.locator('[data-assess-i18n="p1"]').innerText();
+    if(!body.trim()||(language!=="fa"&&body.includes("دو نفر ممکن است")))throw new Error("Assessment article body remained Persian or empty for "+language);
+    const direction=await page.locator("article").getAttribute("dir");
+    if(direction!==(["fa","ku","ar"].includes(language)?"rtl":"ltr"))throw new Error("Assessment article direction mismatch for "+language);
+  }
   await page.goto("http://127.0.0.1:4173/rules.html",{waitUntil:"domcontentloaded"});
   const legalText=await page.locator(".legal").innerText();
   if(!legalText.includes("پیش‌نویس")||!legalText.includes("رضایت آگاهانهٔ درمان"))throw new Error("Legal draft disclosures are missing.");
@@ -235,6 +354,18 @@ try {
   });
   if (featuredContrast < 4.5) throw new Error("Featured AI article card fails WCAG AA text contrast: " + featuredContrast.toFixed(2));
 
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => window.__RADYAD_AUTO_TRANSLATE_RUNTIME__ === true);
+  await page.locator("#siteLanguage").selectOption("en");
+  await page.evaluate(() => {
+    const probe = document.createElement("p");
+    probe.id = "autoTranslationProbe";
+    probe.textContent = "آزمایش ترجمه پویا";
+    document.body.append(probe);
+  });
+  await page.waitForFunction(() => document.querySelector("#autoTranslationProbe")?.textContent === "Dynamic translation test");
+  await page.locator("#siteLanguage").selectOption("fa");
+  await page.waitForFunction(() => document.querySelector("#autoTranslationProbe")?.textContent === "آزمایش ترجمه پویا");
   if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
   console.log("PASS: 18 pages and integrated guidance, standards, workshop and assessment content; initial-guide filter handoff; fixed mobile access; WCAG AA contrast for fixed CTA; legal draft disclosures; existing multilingual, portal, responsive and PWA smoke checks.");
 } finally {

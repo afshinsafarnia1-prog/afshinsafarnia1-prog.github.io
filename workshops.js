@@ -22,17 +22,17 @@
         const card=el("article","workshop-card");
         const format=event.format==="online"?(tr.workshopOnline||"Online"):event.format==="hybrid"?(tr.workshopHybrid||"Hybrid"):(tr.workshopInPerson||"In person");
         card.append(el("span","workshop-format",format));
-        card.append(el("h2","",event.title));
-        if(event.summary)card.append(el("p","workshop-summary",event.summary));
-        if(event.description)card.append(el("p","",event.description));
-        card.append(el("p","workshop-meta",(tr.workshopPresenter||"ارائه‌دهنده")+": "+event.presenter_name));
+        card.append(el("h2","user-content",event.title));
+        if(event.summary)card.append(el("p","workshop-summary user-content",event.summary));
+        if(event.description)card.append(el("p","user-content",event.description));
+        const presenter=el("p","workshop-meta");presenter.append(document.createTextNode((tr.workshopPresenter||"ارائه‌دهنده")+": "),el("span","user-content",event.presenter_name||""));card.append(presenter);
         const when=new Intl.DateTimeFormat(document.documentElement.lang==="fa"?"fa-IR":document.documentElement.lang,{dateStyle:"full",timeStyle:"short",timeZone:event.timezone||undefined}).format(new Date(event.starts_at));
         card.append(el("p","workshop-meta",(tr.workshopDate||"زمان شروع")+": "+when+" · "+(event.timezone||"")));
         if(event.ends_at){const endWhen=new Intl.DateTimeFormat(document.documentElement.lang==="fa"?"fa-IR":document.documentElement.lang,{dateStyle:"medium",timeStyle:"short",timeZone:event.timezone||undefined}).format(new Date(event.ends_at));card.append(el("p","workshop-meta","زمان پایان: "+endWhen));}
-        if(event.platform)card.append(el("p","workshop-meta","بستر برگزاری: "+event.platform));
+        if(event.platform){const platform=el("p","workshop-meta");platform.append(document.createTextNode("بستر برگزاری: "),el("span","user-content",event.platform));card.append(platform);}
         if(event.registration_deadline){const deadline=new Intl.DateTimeFormat(document.documentElement.lang==="fa"?"fa-IR":document.documentElement.lang,{dateStyle:"medium",timeStyle:"short",timeZone:event.timezone||undefined}).format(new Date(event.registration_deadline));card.append(el("p","workshop-meta","مهلت ثبت‌نام: "+deadline));}
         card.append(el("p","workshop-meta",(tr.workshopLanguages||"زبان")+": "+(event.languages||[]).join("، ")));
-        if(event.venue)card.append(el("p","workshop-meta",(tr.workshopVenue||"مکان")+": "+event.venue));
+        if(event.venue){const venue=el("p","workshop-meta");venue.append(document.createTextNode((tr.workshopVenue||"مکان")+": "),el("span","user-content",event.venue));card.append(venue);}
         const fee=Number(event.fee_amount)===0?(tr.workshopFree||"رایگان"):new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(Number(event.fee_amount))+" "+event.currency;
         card.append(el("p","workshop-meta",(tr.workshopFee||"هزینه")+": "+fee));
         if(event.capacity)card.append(el("p","workshop-meta",(tr.workshopCapacity||"ظرفیت محدود")+": "+event.capacity));
