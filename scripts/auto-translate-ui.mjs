@@ -178,6 +178,6 @@ for (const [locale, providerCode] of Object.entries(targets)) {
     provider: "Google Cloud Translation",
     machineTranslated: true,
     translations
-  }, null, 2) + "\\n", "utf8");
+  }, null, 2) + "\n", "utf8");
   console.log(`Dynamic UI cache ready -> ${locale}; newly translated: ${missing.length}`);
 }
