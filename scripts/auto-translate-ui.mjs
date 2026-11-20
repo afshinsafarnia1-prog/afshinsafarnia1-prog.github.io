@@ -107,10 +107,16 @@ const list = [...strings].sort();
 const sourceHash = createHash("sha256").update(JSON.stringify(list)).digest("hex");
 const outputDir = resolve(root, "auto-translations");
 const localeCaches = new Map();
+const previousFiles = new Map();
 for (const locale of Object.keys(targets)) {
   let previous = null;
   try { previous = JSON.parse(await readFile(resolve(outputDir, `dynamic-ui.${locale}.json`), "utf8")); } catch {}
+  previousFiles.set(locale, previous);
   localeCaches.set(locale, new Map(previous?.translations || []));
+}
+if ([...previousFiles].every(([locale, file]) => file?.sourceHash === sourceHash && localeCaches.get(locale).size === list.length)) {
+  console.log("Dynamic UI source strings unchanged; cached locale files retained.");
+  process.exit(0);
 }
 const missingByLocale = new Map(
   [...localeCaches].map(([locale, cache]) => [locale, list.filter(value => !cache.has(value))])
