@@ -102,7 +102,7 @@
     if(settingsError){directory.textContent="دریافت تنظیمات عمومی سایت با خطا روبه‌رو شد.";return;}
     
     const storedContacts=settings?.contacts||{};
-    publicContacts={...storedContacts,phone_number:storedContacts.phone_number||"09999398350",whatsapp_number:storedContacts.whatsapp_number||"09999398350"};
+    publicContacts={...storedContacts,phone_number:storedContacts.phone_number||"09999398350",whatsapp_number:storedContacts.whatsapp_number||"09999398350",telegram_url:storedContacts.telegram_url||"https://t.me/RADYAD",eitaa_url:storedContacts.eitaa_url||"https://eitaa.com/RADYAD"};
     siteBranding=settings?.branding||{};
     renderPublicBranding();
     renderPublicTariffs();
@@ -153,7 +153,7 @@
     const links=[
       ["phone_number","تلفن",v=>"tel:"+v],
       ["whatsapp_number","واتساپ",v=>"https://wa.me/"+(v.replace(/[^0-9]/g,"").replace(/^0/,"98"))],
-      ["instagram_url","اینستاگرام",v=>v],["telegram_url","تلگرام",v=>v],
+      ["instagram_url","اینستاگرام",v=>v],["telegram_url","تلگرام",v=>v],["eitaa_url","ایتا",v=>v],
       ["youtube_url","یوتیوب",v=>v],["linkedin_url","لینکدین",v=>v],["facebook_url","فیسبوک",v=>v]
     ];
     links.forEach(([key,label,url])=>{const value=publicContacts[key];if(!value)return;const visibleLabel=(key==="phone_number"||key==="whatsapp_number")?label+": "+value:label;const a=el("a","",visibleLabel);a.href=url(value);if(key!=="phone_number"){a.target="_blank";a.rel="noopener noreferrer";}target.append(a);});
