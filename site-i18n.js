@@ -381,6 +381,17 @@
     fr:{article4tag:"Dossier théorique",article4title:"La psychanalyse au pluriel : des relations d’objet à l’approche relationnelle",article4desc:"Un aperçu des penseurs et traditions marquants, de Winnicott et Guntrip à Kohut et à la psychanalyse contemporaine.",article5tag:"Évaluation et choix",article5title:"Pourquoi l’évaluation est-elle importante en psychothérapie ?",article5desc:"Le rôle de l’évaluation pour comprendre le contexte individuel et choisir un parcours thérapeutique en connaissance de cause.",contributorArticlesTitle:"Articles des thérapeutes de RADYAD",contributorArticlesLead:"Cette rubrique présente des textes scientifiques et pédagogiques de thérapeutes partenaires de RADYAD. Chaque article est examiné avant publication au regard de la qualité scientifique, de l’éthique professionnelle, de la confidentialité et de la qualité rédactionnelle. La publication ne signifie pas que RADYAD approuve toutes les opinions de son auteur.",contributorArticlesLoading:"Chargement des articles approuvés…"}
   };
   Object.entries(articleIndexSupplement).forEach(([lang,values])=>Object.assign(translations[lang],values));
+  const contributorLanguageNotes = {
+    fa:"مقاله‌های ارسالی به زبان اصلی نویسنده نمایش داده می‌شوند و ترجمهٔ آن‌ها تضمین نشده است.",
+    ku:"وتارە نێردراوەکان بە زمانی سەرەکی نووسەر پیشان دەدرێن و وەرگێڕانیان مسۆگەر نییە.",
+    en:"Contributor-submitted articles are displayed in the author's original language; translation is not guaranteed.",
+    tr:"Katkıda bulunanların gönderdiği yazılar yazarın özgün dilinde gösterilir; çeviri garanti edilmez.",
+    ar:"تُعرض المقالات المقدمة من المساهمين بلغتها الأصلية، ولا يُضمن توفير ترجمة لها.",
+    es:"Los artículos enviados por colaboradores se muestran en el idioma original del autor; no se garantiza su traducción.",
+    de:"Von Mitwirkenden eingereichte Beiträge werden in der Originalsprache der Autorin oder des Autors angezeigt; eine Übersetzung ist nicht garantiert.",
+    fr:"Les articles soumis par les contributeurs sont affichés dans la langue originale de leur auteur ; leur traduction n’est pas garantie."
+  };
+  Object.entries(contributorLanguageNotes).forEach(([lang,value])=>{translations[lang].contributorLanguageNote=value;});
   function apply(lang) {
     const t = translations[lang] || translations.fa;
     const rtl = ["fa","ku","ar"].includes(lang);
@@ -411,7 +422,7 @@
     document.querySelectorAll("[data-i18n-show-non-fa]").forEach(node=>{
       node.hidden = lang === "fa";
     });
-    const untranslatedRoutes = new Set(["/rules.html","/standards.html","/articles/","/articles/index.html","/articles/psychoanalytic-traditions.html","/articles/therapeutic-relationship.html","/articles/why-assessment-matters.html","/therapist-profile.html","/therapists/foruzan-shahla.html","/workshops.html"]);
+    const untranslatedRoutes = new Set(["/rules.html","/standards.html","/articles/psychoanalytic-traditions.html","/articles/therapeutic-relationship.html","/articles/why-assessment-matters.html","/therapist-profile.html","/therapists/foruzan-shahla.html","/workshops.html"]);
     if(untranslatedRoutes.has(location.pathname)){
       let notice=document.querySelector("[data-i18n-coverage-notice]");
       if(!notice){
