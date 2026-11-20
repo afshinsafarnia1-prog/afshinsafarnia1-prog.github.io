@@ -282,6 +282,19 @@ try {
     const style=getComputedStyle(el),a=lum(style.color),b=lum(style.backgroundColor);return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
   });
   if(floatContrast<4.5)throw new Error("Persistent guidance button fails WCAG AA text contrast: "+floatContrast.toFixed(2));
+  await page.goto("http://127.0.0.1:4173/articles/psychotherapy-first-session.html",{waitUntil:"domcontentloaded"});
+  const firstSessionTitles={fa:"جلسهٔ اول روان‌درمانی",ku:"یەکەم دانیشتنی چارەسەری دەروونی",en:"The first psychotherapy session",tr:"İlk psikoterapi seansı",ar:"الجلسة الأولى للعلاج النفسي",es:"La primera sesión de psicoterapia",de:"Die erste Psychotherapiesitzung",fr:"La première séance de psychothérapie"};
+  for(const language of languages){
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value=>document.documentElement.lang===value,language);
+    const title=await page.locator("article h1").innerText();
+    if(!title.includes(firstSessionTitles[language]))throw new Error("First-session article title did not localize for "+language+": "+title);
+    const body=await page.locator('[data-session-i18n="p1"]').innerText();
+    if(!body.trim()||(language!=="fa"&&body.includes("جلسهٔ نخست معمولاً")))throw new Error("First-session article body remained Persian or empty for "+language);
+    const direction=await page.locator("article").getAttribute("dir");
+    if(direction!==(["fa","ku","ar"].includes(language)?"rtl":"ltr"))throw new Error("First-session article direction mismatch for "+language);
+  }
+  if(await page.locator("[data-i18n-coverage-notice]").count())throw new Error("Translated first-session article still displays a Persian-only notice.");
   await page.goto("http://127.0.0.1:4173/rules.html",{waitUntil:"domcontentloaded"});
   const legalText=await page.locator(".legal").innerText();
   if(!legalText.includes("پیش‌نویس")||!legalText.includes("رضایت آگاهانهٔ درمان"))throw new Error("Legal draft disclosures are missing.");
