@@ -484,4 +484,12 @@
     const link=document.createElement("a");link.className="yad-assessment-float";link.href=(location.pathname.includes("/articles/")?"../":"")+"initial-guidance.html";link.textContent=labels[document.documentElement.lang]||labels.fa;link.setAttribute("aria-label",link.textContent);document.body.appendChild(link);
   }
   window.YAD_I18N = { apply, translations };
+  const i18nScript = document.currentScript;
+  if (i18nScript?.src && !document.querySelector('script[data-radyad-auto-runtime]')) {
+    const runtime = document.createElement("script");
+    runtime.src = new URL("auto-translate-runtime.js", i18nScript.src).href;
+    runtime.async = true;
+    runtime.dataset.radyadAutoRuntime = "true";
+    document.head.appendChild(runtime);
+  }
 })();
