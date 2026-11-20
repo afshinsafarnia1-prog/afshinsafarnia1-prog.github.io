@@ -96,8 +96,10 @@
   let dynamicTranslations = null;
   const originalText = new WeakMap();
   const renderedText = new WeakMap();
+  const manualTextOverrides = new WeakSet();
   const originalAttributes = new WeakMap();
   const renderedAttributes = new WeakMap();
+  const manualAttributeOverrides = new WeakMap();
   const attributeNames = ["placeholder", "aria-label", "title", "alt", "content", "data-q"];
   const excluded = "script,style,textarea,input,select,option,[contenteditable='true'],[data-user-content],[data-user-generated],.user-content,.profile-bio,.therapist-bio,.contributor-content,.user-msg,.message-body";
 
@@ -119,9 +121,24 @@
   function processText(node, language) {
     if (!node || node.nodeType !== 3 || isExcluded(node)) return;
     const previous = renderedText.get(node);
+    const isPersian = /[\u0600-\u06FF]/.test(node.data);
+    if (manualTextOverrides.has(node)) {
+      if (language === "fa" && isPersian) {
+        manualTextOverrides.delete(node);
+        originalText.set(node, node.data);
+      } else {
+        renderedText.set(node, node.data);
+        return;
+      }
+    }
     if (!originalText.has(node)) originalText.set(node, node.data);
-    else if (previous !== undefined && node.data !== previous && /[\u0600-\u06FF]/.test(node.data)) {
-      originalText.set(node, node.data);
+    else if (previous !== undefined && node.data !== previous) {
+      if (isPersian) originalText.set(node, node.data);
+      else {
+        manualTextOverrides.add(node);
+        renderedText.set(node, node.data);
+        return;
+      }
     }
     const source = originalText.get(node);
     const next = language === "fa" ? source : mapString(source, language);
@@ -142,8 +159,27 @@
       if (!element.hasAttribute(name)) continue;
       const current = element.getAttribute(name);
       const previous = rendered.get(name);
+      let suppressed = manualAttributeOverrides.get(element);
+      if (!suppressed) { suppressed = new Set(); manualAttributeOverrides.set(element, suppressed); }
+      const isPersian = /[\u0600-\u06FF]/.test(current);
+      if (suppressed.has(name)) {
+        if (language === "fa" && isPersian) {
+          suppressed.delete(name);
+          originals.set(name, current);
+        } else {
+          rendered.set(name, current);
+          continue;
+        }
+      }
       if (!originals.has(name)) originals.set(name, current);
-      else if (previous !== undefined && current !== previous && /[\u0600-\u06FF]/.test(current)) originals.set(name, current);
+      else if (previous !== undefined && current !== previous) {
+        if (isPersian) originals.set(name, current);
+        else {
+          suppressed.add(name);
+          rendered.set(name, current);
+          continue;
+        }
+      }
       const source = originals.get(name);
       const next = language === "fa" ? source : mapString(source, language);
       if (current !== next) element.setAttribute(name, next);
