@@ -102,7 +102,7 @@
   const renderedAttributes = new WeakMap();
   const manualAttributeOverrides = new WeakMap();
   const attributeNames = ["placeholder", "aria-label", "title", "alt", "content", "data-q"];
-  const excluded = "script,style,textarea,input,select,option,[contenteditable='true'],[data-user-content],[data-user-generated],.user-content,.profile-bio,.therapist-bio,.contributor-content,.user-msg,.message-body";
+  const excluded = "script,style,textarea,input,select,option,[contenteditable='true'],[data-user-content],[data-user-generated],.user-content,.profile-bio,.therapist-bio,.contributor-content,.user-msg,.message-body,.client-message,.support-message,.private-message,.message-content,.client-notes,.article-submission-body";
 
   function isExcluded(node) {
     const element = node.nodeType === 1 ? node : node.parentElement;
