@@ -265,7 +265,7 @@ try {
     await page.waitForFunction(value=>document.documentElement.lang===value,language);
     const heading=await page.locator("h1").innerText();
     if(!heading.includes(guideHeadings[language]))throw new Error("Initial guidance heading did not localize for "+language+": "+heading);
-    const lead=await page.locator("main .wrap>p").innerText();
+    const lead=await page.locator("main .wrap>p:first-of-type").innerText();
     if(!lead.trim()||(language!=="fa"&&lead.includes("این راهنما برای کمک")))throw new Error("Initial guidance lead remained Persian or empty for "+language);
     const direction=await page.locator("html").getAttribute("dir");
     const expectedDirection=["fa","ku","ar"].includes(language)?"rtl":"ltr";
