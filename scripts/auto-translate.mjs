@@ -80,6 +80,7 @@ for (const block of manifest.blocks) {
       stopForBudget = true;
       break;
     }
+    await recordUsage(root, cost);
     const output = await translate(values, providerCode);
     translations[locale] = {
       html: output[0],
@@ -90,7 +91,6 @@ for (const block of manifest.blocks) {
       twitterTitle: output[5],
       twitterDescription: output[6]
     };
-    await recordUsage(root, cost);
     await mkdir(dirname(outputPath), { recursive: true });
     await writeFile(outputPath, JSON.stringify({
       schemaVersion: 1,
