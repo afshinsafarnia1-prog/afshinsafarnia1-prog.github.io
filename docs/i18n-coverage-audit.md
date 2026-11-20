@@ -29,7 +29,7 @@ This is a working implementation checklist. A locale is not considered complete 
 | /articles/ai-robots-human-meaning.html | Very few page markers; long Persian body | Translate full article or clearly mark it unavailable in that locale |
 | /articles/choosing-a-therapist.html | Very few page markers; long Persian body | Translate full article or clearly mark it unavailable in that locale |
 | /articles/psychoanalytic-traditions.html | No page-body translation markers observed | Translate full article or clearly mark it unavailable in that locale |
-| /articles/psychotherapy-first-session.html | Partial markers | Verify full article body and metadata |
+| /articles/psychotherapy-first-session.html | Full eight-language page translation, body copy, lists, safety note, direction and social metadata | Eight-locale browser smoke assertions added; CI verification pending |
 | /articles/therapeutic-relationship.html | No page-body translation markers observed | Translate full article or clearly mark it unavailable in that locale |
 | /articles/why-assessment-matters.html | No page-body translation markers observed | Translate full article or clearly mark it unavailable in that locale |
 
