@@ -92,9 +92,9 @@ for (const file of files) {
   const source = await readFile(file, "utf8");
   if (rel.endsWith(".html")) {
     let html = source
-      .replace(/<script\b[\\s\\S]*?<\\/script>/gi, "")
-      .replace(/<style\b[\\s\\S]*?<\\/style>/gi, "");
-    html = html.replace(/<!-- RADYAD_AUTO_TRANSLATE:[^:]+:START -->[\\s\\S]*?<!-- RADYAD_AUTO_TRANSLATE:[^:]+:END -->/g, "");
+      .replace(/<script\b[\s\S]*?<\/script>/gi, "")
+      .replace(/<style\b[\s\S]*?<\/style>/gi, "");
+    html = html.replace(/<!-- RADYAD_AUTO_TRANSLATE:[^:]+:START -->[\s\S]*?<!-- RADYAD_AUTO_TRANSLATE:[^:]+:END -->/g, "");
     for (const match of html.matchAll(/>([^<>]+)</g)) add(strings, match[1]);
     for (const match of html.matchAll(/(?:placeholder|aria-label|title|alt)=["']([^"']+)["']/gi)) add(strings, match[1]);
   } else {
@@ -142,4 +142,4 @@ for (const [locale, providerCode] of Object.entries(targets)) {
   console.log(`Translated dynamic UI strings -> ${locale}`);
 }
 await mkdir(dirname(outputPath), { recursive: true });
-await writeFile(outputPath, JSON.stringify({ schemaVersion: 1, sourceLanguage: "fa", sourceHash, generatedAt: new Date().toISOString(), provider: "Google Cloud Translation", machineTranslated: true, translations }, null, 2) + "\\n", "utf8");
+await writeFile(outputPath, JSON.stringify({ schemaVersion: 1, sourceLanguage: "fa", sourceHash, generatedAt: new Date().toISOString(), provider: "Google Cloud Translation", machineTranslated: true, translations }, null, 2) + "\n", "utf8");
