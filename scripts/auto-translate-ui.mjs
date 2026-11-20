@@ -12,7 +12,7 @@ if (!key && !dryRun) {
 const targets = { ku: "ckb", en: "en", tr: "tr", ar: "ar", es: "es", de: "de", fr: "fr" };
 const persian = /[\u0600-\u06FF]/;
 const ignoredDirs = new Set([".git", "node_modules", "auto-translations", "supabase", "docs", ".github"]);
-const ignoredFiles = new Set(["auto-translate-runtime.js", "articles/contributor-articles.js", "therapist-profile.html"]);
+const ignoredFiles = new Set(["auto-translate-runtime.js", "therapist-profile.html"]);
 const decodeEntities = value => value
   .replace(/&amp;/g, "&").replace(/&nbsp;/g, " ").replace(/&lt;/g, "<")
   .replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
