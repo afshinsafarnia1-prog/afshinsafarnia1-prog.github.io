@@ -9,10 +9,18 @@ on:
       - "scripts/auto-translation-manifest.json"
       - "scripts/auto-translate.mjs"
       - "scripts/auto-translate-ui.mjs"
+      - "scripts/translation-budget.mjs"
+      - ".github/workflows/auto-translate.yml"
+  schedule:
+    - cron: "17 3 1 * *"
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: radyad-translation-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   translate:
@@ -41,6 +49,7 @@ jobs:
         if: steps.config.outputs.configured == 'true'
         env:
           GOOGLE_TRANSLATE_API_KEY: ${{ secrets.GOOGLE_TRANSLATE_API_KEY }}
+          MAX_TRANSLATION_CHARS_PER_MONTH: 450000
         run: |
           node scripts/auto-translate.mjs
           node scripts/auto-translate-ui.mjs
