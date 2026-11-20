@@ -98,7 +98,7 @@
   const renderedText = new WeakMap();
   const originalAttributes = new WeakMap();
   const renderedAttributes = new WeakMap();
-  const attributeNames = ["placeholder", "aria-label", "title", "alt", "content"];
+  const attributeNames = ["placeholder", "aria-label", "title", "alt", "content", "data-q"];
   const excluded = "script,style,textarea,input,select,option,[contenteditable='true'],[data-user-content],[data-user-generated],.user-content,.profile-bio,.therapist-bio,.contributor-content,.user-msg,.message-body";
 
   function isExcluded(node) {
