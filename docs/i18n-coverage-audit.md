@@ -31,7 +31,7 @@ This is a working implementation checklist. A locale is not considered complete 
 | /articles/psychoanalytic-traditions.html | No page-body translation markers observed | Translate full article or clearly mark it unavailable in that locale |
 | /articles/psychotherapy-first-session.html | Full eight-language page translation, body copy, lists, safety note, direction and social metadata | Eight-locale browser smoke assertions added; CI verification pending |
 | /articles/therapeutic-relationship.html | No page-body translation markers observed | Translate full article or clearly mark it unavailable in that locale |
-| /articles/why-assessment-matters.html | No page-body translation markers observed | Translate full article or clearly mark it unavailable in that locale |
+| /articles/why-assessment-matters.html | Full eight-language translation of headings, body paragraphs, CTA, direction and social metadata | Eight-locale browser assertions added; CI verification pending |
 
 ## Cross-cutting requirements
 
@@ -64,3 +64,5 @@ Do not merge until every route has been tested in all eight locales, untranslate
 - Follow-up QA found a language-switch regression on `/standards.html`: after switching from another locale back to Persian, the page could retain translated text because the Persian source pack was implicit. Updated `editorial-pages-i18n.js` to preserve and restore the original Persian text and metadata. The previous CI run exposed this issue; the fix is committed, but a fresh run against the newest branch head is still required.
 
 - `/articles/psychotherapy-first-session.html`: completed a full page-specific translation pack for all eight languages, covering breadcrumbs, headings, body paragraphs, lists, safety note, page direction, title, description, Open Graph and Twitter metadata. Removed the obsolete Persian-only notice. Browser smoke tests now assert localized title/body and RTL/LTR behavior in all eight locales. This does not mean the other five article bodies are translated; they remain outstanding.
+
+- `/articles/why-assessment-matters.html`: completed full translations in all eight languages, including the article's clinical distinctions, collaborative-assessment framing, limits of standardized testing, therapist-fit discussion, and the description of RADYAD's non-diagnostic initial guide. Added page metadata and browser assertions for localized title/body and direction.
