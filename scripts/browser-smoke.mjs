@@ -295,6 +295,18 @@ try {
     if(direction!==(["fa","ku","ar"].includes(language)?"rtl":"ltr"))throw new Error("First-session article direction mismatch for "+language);
   }
   if(await page.locator("[data-i18n-coverage-notice]").count())throw new Error("Translated first-session article still displays a Persian-only notice.");
+  await page.goto("http://127.0.0.1:4173/articles/why-assessment-matters.html",{waitUntil:"domcontentloaded"});
+  const assessmentTitles={fa:"چرا ارزیابی در روان‌درمانی",ku:"بۆچی هەڵسەنگاندن",en:"Why does assessment matter",tr:"Psikoterapide değerlendirme",ar:"لماذا يُعد التقييم",es:"¿Por qué importa la evaluación",de:"Warum ist eine Einschätzung",fr:"Pourquoi l’évaluation"};
+  for(const language of languages){
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value=>document.documentElement.lang===value,language);
+    const title=await page.locator("article h1").innerText();
+    if(!title.includes(assessmentTitles[language]))throw new Error("Assessment article title did not localize for "+language+": "+title);
+    const body=await page.locator('[data-assess-i18n="p1"]').innerText();
+    if(!body.trim()||(language!=="fa"&&body.includes("دو نفر ممکن است")))throw new Error("Assessment article body remained Persian or empty for "+language);
+    const direction=await page.locator("article").getAttribute("dir");
+    if(direction!==(["fa","ku","ar"].includes(language)?"rtl":"ltr"))throw new Error("Assessment article direction mismatch for "+language);
+  }
   await page.goto("http://127.0.0.1:4173/rules.html",{waitUntil:"domcontentloaded"});
   const legalText=await page.locator(".legal").innerText();
   if(!legalText.includes("پیش‌نویس")||!legalText.includes("رضایت آگاهانهٔ درمان"))throw new Error("Legal draft disclosures are missing.");
