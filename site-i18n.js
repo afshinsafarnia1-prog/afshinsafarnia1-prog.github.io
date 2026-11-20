@@ -400,7 +400,7 @@
     document.querySelectorAll("[data-i18n-show-non-fa]").forEach(node=>{
       node.hidden = lang === "fa";
     });
-    const untranslatedRoutes = new Set(["/rules.html","/standards.html","/initial-guidance.html","/articles/","/articles/index.html","/articles/psychoanalytic-traditions.html","/articles/therapeutic-relationship.html","/articles/why-assessment-matters.html","/therapist-profile.html","/therapists/foruzan-shahla.html","/workshops.html"]);
+    const untranslatedRoutes = new Set(["/rules.html","/standards.html","/articles/","/articles/index.html","/articles/psychoanalytic-traditions.html","/articles/therapeutic-relationship.html","/articles/why-assessment-matters.html","/therapist-profile.html","/therapists/foruzan-shahla.html","/workshops.html"]);
     if(untranslatedRoutes.has(location.pathname)){
       let notice=document.querySelector("[data-i18n-coverage-notice]");
       if(!notice){
