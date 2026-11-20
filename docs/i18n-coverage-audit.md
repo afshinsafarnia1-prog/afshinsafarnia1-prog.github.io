@@ -25,7 +25,7 @@ This is a working implementation checklist. A locale is not considered complete 
 | /rules.html | Only limited translation markers; Persian-only notice | Translate complete legal text and metadata; legal review of equivalent meaning in all locales |
 | /standards.html | Full visible body, section headings, commitments, safety caveats and metadata translated in all seven non-Persian locales; Persian remains the source | Browser verification in all eight locales; independent linguistic review recommended before release |
 | /workshops.html | Partial page markers | Audit descriptions, registration, errors, dates and dynamic content |
-| /articles/ | Article index has partial translations | Audit all article cards, tags, excerpts and pagination/empty states |
+| /articles/ | Static article cards, section labels, descriptions and metadata translated in all eight locales; contributor-submitted article bodies remain in their original language with an explicit notice | Browser verification in all eight locales; audit dynamic loading and accessibility states |
 | /articles/ai-robots-human-meaning.html | Very few page markers; long Persian body | Translate full article or clearly mark it unavailable in that locale |
 | /articles/choosing-a-therapist.html | Very few page markers; long Persian body | Translate full article or clearly mark it unavailable in that locale |
 | /articles/psychoanalytic-traditions.html | No page-body translation markers observed | Translate full article or clearly mark it unavailable in that locale |
@@ -58,3 +58,5 @@ Do not merge until every route has been tested in all eight locales, untranslate
 
 - `/initial-guidance.html`: added `initial-guidance-i18n.js` with full page translations for Sorani Kurdish, English, Turkish, Arabic, Spanish, German and French. The form's generated result now follows the selected interface language, while preserving the original filter values in the URL. Removed the obsolete Persian-only coverage notice for this route.
 - Added browser smoke assertions for all eight language variants, RTL/LTR direction, localized lead copy, and the English dynamic form result. These assertions require a CI run against the latest branch head.
+
+- `/articles/` and `/articles/index.html`: completed translations for the previously untranslated theoretical and assessment cards and the contributor-article section. Added an explicit eight-language notice that contributor-submitted articles remain in the author's original language rather than being silently presented as translated. Added eight-locale browser assertions and removed the misleading generic Persian-only notice for the article index.
