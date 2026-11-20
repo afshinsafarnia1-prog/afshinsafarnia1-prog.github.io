@@ -21,9 +21,9 @@ This is a working implementation checklist. A locale is not considered complete 
 | /therapists/foruzan-shahla.html | Shared shell; no page-body markers observed | Translate profile content and metadata |
 | /assistant.html | Shared dictionary and page markers | Audit prompts, replies, fallback and emergency text |
 | /assessment.html | Shared dictionary and page markers | Audit questions, options, results, validation and recommendations |
-| /initial-guidance.html | No page-body translation markers observed | Translate complete guide and metadata |
+| /initial-guidance.html | Persian body; guide form and generated result need localization | Translate complete guide, form options, generated result and metadata |
 | /rules.html | Only limited translation markers; Persian-only notice | Translate complete legal text and metadata; legal review of equivalent meaning in all locales |
-| /standards.html | No page-body translation markers observed | Translate complete standards and metadata |
+| /standards.html | Full visible body, section headings, commitments, safety caveats and metadata translated in all seven non-Persian locales; Persian remains the source | Browser verification in all eight locales; independent linguistic review recommended before release |
 | /workshops.html | Partial page markers | Audit descriptions, registration, errors, dates and dynamic content |
 | /articles/ | Article index has partial translations | Audit all article cards, tags, excerpts and pagination/empty states |
 | /articles/ai-robots-human-meaning.html | Very few page markers; long Persian body | Translate full article or clearly mark it unavailable in that locale |
@@ -47,3 +47,10 @@ This is a working implementation checklist. A locale is not considered complete 
 ## Release gate
 
 Do not merge until every route has been tested in all eight locales, untranslated Persian content is either translated or explicitly identified as not yet available, and browser smoke tests cover both static and dynamic UI states. The production branch and live site remain unchanged until the release gate passes.
+
+
+## Work completed on `feature/full-site-i18n` (2026-11-20)
+
+- `/standards.html`: added complete editorial translations for Sorani Kurdish, English, Turkish, Arabic, Spanish, German and French, including every section, all commitment bullets, online-session caveats, footer, navigation, title and meta description. Persian remains the source language.
+- Added `editorial-pages-i18n.js` as the page-specific translation pack and browser smoke assertions for all eight locales. The new assertions are pending a CI run against the latest branch head.
+- `/initial-guidance.html`, legal rules, articles, dynamic portal messages and user-generated content are still release blockers; the language selector alone must not be interpreted as full translation.
