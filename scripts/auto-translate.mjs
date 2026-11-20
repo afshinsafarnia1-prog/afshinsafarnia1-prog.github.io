@@ -25,7 +25,7 @@ function extract(html, id) {
 }
 
 function metadata(html) {
-  const title = html.match(/<title>([\\s\\S]*?)<\\/title>/i)?.[1]?.trim() || "";
+  const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.trim() || "";
   const meta = name => {
     const tag = html.match(new RegExp(`<meta[^>]+name=["']${name}["'][^>]*>`, "i"))?.[0];
     return tag?.match(/content=["']([^"']*)["']/i)?.[1] || "";
@@ -86,5 +86,5 @@ for (const block of manifest.blocks) {
     provider: "Google Cloud Translation",
     machineTranslated: true,
     translations
-  }, null, 2) + "\\n", "utf8");
+  }, null, 2) + "\n", "utf8");
 }
