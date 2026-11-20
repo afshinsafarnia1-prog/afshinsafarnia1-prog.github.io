@@ -18,10 +18,10 @@
    if(!data?.length){status.textContent="مقاله‌ای برای بررسی ارسال نشده است.";return;}
    status.textContent="تعداد مقاله‌ها: "+data.length;
    data.forEach(a=>{
-    const card=node("article","portal-card");card.append(node("h3","",a.title));
-    card.append(node("p","muted","نویسنده: "+a.therapist_name+" · زبان: "+a.language+" · وضعیت: "+a.status));
-    card.append(node("p","",a.excerpt));
-    const preview=node("details","");const summary=node("summary","", "مشاهده متن کامل");preview.append(summary,node("pre","article-submission-body",a.body));card.append(preview);
+    const card=node("article","portal-card");card.append(node("h3","user-content",a.title));
+    const meta=node("p","muted");meta.append(document.createTextNode("نویسنده: "),node("span","user-content",a.therapist_name||""),document.createTextNode(" · زبان: "+a.language+" · وضعیت: "+a.status));card.append(meta);
+    card.append(node("p","user-content",a.excerpt));
+    const preview=node("details","");const summary=node("summary","", "مشاهده متن کامل");preview.append(summary,node("pre","article-submission-body user-content",a.body));card.append(preview);
     const note=node("textarea","");note.rows=2;note.maxLength=2000;note.placeholder="یادداشت ویرایشی برای نویسنده (اختیاری)";note.value=a.editor_note||"";card.append(note);
     const actions=node("div","filter-actions");
     const publish=node("button","button primary","تأیید و انتشار");publish.type="button";
