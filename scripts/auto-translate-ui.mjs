@@ -96,7 +96,7 @@ for (const file of files) {
       .replace(/<style\b[\s\S]*?<\/style>/gi, "");
     html = html.replace(/<!-- RADYAD_AUTO_TRANSLATE:[^:]+:START -->[\s\S]*?<!-- RADYAD_AUTO_TRANSLATE:[^:]+:END -->/g, "");
     for (const match of html.matchAll(/>([^<>]+)</g)) add(strings, match[1]);
-    for (const match of html.matchAll(/(?:placeholder|aria-label|title|alt)=["']([^"']+)["']/gi)) add(strings, match[1]);
+    for (const match of html.matchAll(/(?:placeholder|aria-label|title|alt|data-q)=["']([^"']+)["']/gi)) add(strings, match[1]);
     for (const match of html.matchAll(/<meta[^>]+content=[\x22\x27]([^\x22\x27]+)[\x22\x27][^>]*>/gi)) add(strings, match[1]);
   } else {
     scanJsStrings(source, strings);
