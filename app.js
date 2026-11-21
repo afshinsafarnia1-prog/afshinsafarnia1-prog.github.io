@@ -47,7 +47,7 @@
       else card.append(el("div","therapist-photo therapist-placeholder","ی"));
       const body=el("div","therapist-card-body");
       body.append(el("h3","",t.display_name||""));
-      if(t.manager_approved===true&&!t.verified_at)body.append(el("span","therapist-meta","تأییدشده توسط مدیریت ردیاد؛ احراز حرفه‌ای مستقل هنوز ثبت نشده است"));
+      if(t.manager_approved===true)body.append(el("span","therapist-meta","تأییدشده توسط مدیریت ردیاد"));
       if(t.headline)body.append(el("p","therapist-headline",t.headline));
       if(t.years_experience!=null)body.append(el("p","therapist-meta",(i18n().yearsExperience||"سابقهٔ حرفه‌ای: {years} سال").replace("{years}",String(t.years_experience))));
       if(typeof t.accepting_new_clients==="boolean")body.append(el("span",t.accepting_new_clients?"availability-open":"availability-closed",t.accepting_new_clients?(i18n().acceptingYes||"پذیرش مراجع جدید"):(i18n().acceptingNo||"فعلاً پذیرش مراجع جدید ندارد")));
