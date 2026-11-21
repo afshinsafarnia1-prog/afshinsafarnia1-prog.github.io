@@ -112,7 +112,7 @@ const adminPage = fs.readFileSync(path.join(root, "admin.html"), "utf8");
 const adminWorkflow = fs.readFileSync(path.join(root, "admin-workflow-extended.js"), "utf8");
 const appScript = fs.readFileSync(path.join(root, "app.js"), "utf8");
 for (const [condition, message] of [
-  [appScript.includes('get_public_therapist_fee_directory') && appScript.includes('t.fees'), "Homepage must display therapist-specific fees"],
+  [!appScript.includes('get_public_therapist_fee_directory') && appScript.includes('therapist-profile.html?id='), "Homepage directory must omit fees and link to therapist profiles"],
   [fs.existsSync(path.join(root, "therapist-profile.html")), "Public therapist profile page must exist"],
   [fs.existsSync(path.join(root, "workshops.html")) && fs.existsSync(path.join(root, "workshops.js")), "Public workshop directory and loader must exist"],
   [appScript.includes('therapist-profile.html?id='), "Therapist directory cards must link to public profiles"],
@@ -142,7 +142,7 @@ for (const [condition, message] of [
   [adminWorkflow.includes('admin_set_assessment_specialist'), "Admin must be able to designate verified assessment specialists"],
   [appScript.includes('get_public_site_settings'), "Homepage must load public settings through the scoped RPC"],
   [!adminWorkflow.includes('admin_set_therapist_prices'), "Admin workflow must not override therapist-defined fees"],
-  [appScript.includes('get_public_therapist_fee_directory') && appScript.includes('t.fees'), "Public directory must display therapist-specific fees"],
+  [!appScript.includes('get_public_therapist_fee_directory'), "Public directory must not load or display therapist-specific fees"],
   [fs.readFileSync(path.join(root, "therapist-portal.js"), "utf8").includes("therapist_set_my_fee"), "Therapists must be able to set their own fees"],
   [fs.readFileSync(path.join(root, "therapist-profile.js"), "utf8").includes("get_public_therapist_fees"), "Therapist profiles must show their individual fees"],
   [fs.readFileSync(path.join(root, "client.html"), "utf8").includes('value="CAD"'), "Client booking must support CAD"],
