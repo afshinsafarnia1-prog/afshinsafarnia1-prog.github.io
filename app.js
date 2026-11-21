@@ -64,19 +64,37 @@
     if(featured)cards.push(featured);
     directory.replaceChildren();
     if(!cards.length){const hasFilters=Boolean(document.getElementById("language")?.value||document.getElementById("specialty")?.value||document.getElementById("modality")?.value||document.getElementById("therapistKeyword")?.value.trim());directory.append(el("p","directory-empty",hasFilters?"با فیلترهای انتخاب‌شده درمانگری پیدا نشد؛ فیلترها را تغییر دهید یا همهٔ گزینه‌ها را انتخاب کنید.":(i18n().directoryEmpty||"در حال حاضر درمانگر تأییدشده‌ای برای نمایش وجود ندارد.")));return;}
-    const pageSize=3,pageCount=Math.ceil(cards.length/pageSize);
-    directoryPage=Math.min(directoryPage,pageCount-1);
-    const grid=el("div","therapist-cards-grid");
-    cards.slice(directoryPage*pageSize,(directoryPage+1)*pageSize).forEach(card=>grid.append(card));
-    directory.append(grid);
-    if(pageCount>1){
-      const pager=el("nav","therapist-pagination");
-      pager.setAttribute("aria-label","صفحه‌بندی درمانگران");
-      const prev=el("button","button outline","صفحهٔ قبل");prev.type="button";prev.disabled=directoryPage===0;prev.addEventListener("click",()=>{directoryPage--;renderDirectory(items);});
-      const status=el("span","therapist-page-status","صفحهٔ "+(directoryPage+1)+" از "+pageCount);
-      const next=el("button","button outline","صفحهٔ بعد");next.type="button";next.disabled=directoryPage===pageCount-1;next.addEventListener("click",()=>{directoryPage++;renderDirectory(items);});
-      pager.append(prev,status,next);directory.append(pager);
-    }
+    const track=el("div","therapist-cards-track");
+    track.setAttribute("aria-label","فهرست درمانگران");
+    cards.forEach((card,index)=>{card.dataset.cardIndex=String(index);track.append(card);});
+    const controls=el("nav","therapist-carousel-controls");
+    controls.setAttribute("aria-label","حرکت میان درمانگران");
+    const prev=el("button","button outline therapist-carousel-prev","→ قبلی");
+    prev.type="button";
+    const next=el("button","button outline therapist-carousel-next","بعدی ←");
+    next.type="button";
+    const status=el("span","therapist-page-status","۱ از "+cards.length);
+    const updateControls=()=>{
+      const first=track.querySelector(".therapist-card");
+      const cardWidth=first?first.getBoundingClientRect().width+14:280;
+      const maxIndex=Math.max(0,cards.length-1);
+      const index=Math.max(0,Math.min(maxIndex,Math.round(track.scrollLeft/(cardWidth||1))*-1));
+      status.textContent=(Math.min(cards.length,index+1))+" از "+cards.length;
+      prev.disabled=track.scrollLeft>=-2;
+      next.disabled=Math.abs(track.scrollLeft)>=track.scrollWidth-track.clientWidth-2;
+    };
+    prev.addEventListener("click",()=>{
+      const first=track.querySelector(".therapist-card");
+      track.scrollBy({left:first?first.getBoundingClientRect().width+14:-280,behavior:"smooth"});
+    });
+    next.addEventListener("click",()=>{
+      const first=track.querySelector(".therapist-card");
+      track.scrollBy({left:first?-(first.getBoundingClientRect().width+14):280,behavior:"smooth"});
+    });
+    track.addEventListener("scroll",updateControls,{passive:true});
+    controls.append(prev,status,next);
+    directory.append(controls,track);
+    requestAnimationFrame(updateControls);
   }
 
   async function loadDirectory(){
