@@ -28,111 +28,82 @@
   const i18n=()=>window.YAD_I18N?.translations?.[document.documentElement.lang]||window.YAD_I18N?.translations?.fa||{};
   const el=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!=null)node.textContent=text;return node;};
 
-  let directoryPage=0;
-  function createFeaturedHediyehCard(){
-    const card=el("article","therapist-card featured-therapist-card");
-    const img=el("img","therapist-photo");
-    img.src="therapists/hediyeh-sabbaghpour.jpg";
-    img.alt="تصویر دکتر هدیه صباغ‌پور";
-    img.loading="lazy";
-    img.addEventListener("error",()=>{const fallback=el("div","therapist-photo therapist-placeholder","هـ");img.replaceWith(fallback);},{once:true});
-    card.append(img);
+  function therapistPhotoUrl(path, slug){
+    if(path){
+      if(/^https?:\\/\\//i.test(path)||path.startsWith("/")||/\\.(?:jpe?g|png|webp)$/i.test(path)){
+        return path.startsWith("/")?path:"/"+path.replace(/^\\/+/, "");
+      }
+      if(db){const {data}=db.storage.from("therapist-photos").getPublicUrl(path);return data?.publicUrl||"";}
+    }
+    if(slug==="foruzan-shahla")return "/therapists/foruzan-shahla.jpg";
+    return "";
+  }
+
+  function createTherapistCard(t){
+    const card=el("article","therapist-card");
+    card.dataset.therapistSlug=t.public_slug||"";
+    const photoUrl=therapistPhotoUrl(t.photo_path,t.public_slug);
+    if(photoUrl){
+      const img=el("img","therapist-photo");
+      img.src=photoUrl;img.alt="تصویر "+(t.display_name||"درمانگر");img.loading="lazy";
+      img.addEventListener("error",()=>{const fallback=el("div","therapist-photo therapist-placeholder",(t.display_name||"د").slice(0,1));img.replaceWith(fallback);},{once:true});
+      card.append(img);
+    }else card.append(el("div","therapist-photo therapist-placeholder",(t.display_name||"د").slice(0,1)));
+
     const body=el("div","therapist-card-body");
-    body.append(el("h3","","دکتر هدیه صباغ‌پور"));
-    body.append(el("p","therapist-headline","دکترای روان‌شناسی · بابل، مازندران"));
-    body.append(el("p","therapist-meta","۱۵ سال سابقهٔ فعالیت · کودک، نوجوان و بزرگسال"));
+    body.append(el("h3","",t.display_name||""));
+    if(t.manager_approved===true||t.verified_at){
+      body.append(el("span","therapist-verification","تأییدشده توسط مدیریت ردیاد"));
+    }
+    if(t.headline)body.append(el("p","therapist-headline",t.headline));
+    if(t.years_experience!=null)body.append(el("p","therapist-meta",String(t.years_experience)+" سال سابقهٔ فعالیت"));
     const tags=el("div","therapist-tags");
-    ["CBT","MBCT","ACT","افسردگی","اضطراب","وسواس"].forEach(x=>tags.append(el("span","",x)));
+    [...(t.specialties||[]).slice(0,3),...(t.modalities||[]).slice(0,2)].forEach(x=>tags.append(el("span","",x)));
     body.append(tags);
-    body.append(el("p","therapist-meta","شماره عضویت: ۲۶۶۱۷"));
-    body.append(el("p","therapist-meta","۱٬۸۰۰٬۰۰۰ تومان · ۳۰ یورو · ۳۵ دلار"));
-    const link=el("a","button primary","مشاهدهٔ پروفایل و تعرفه‌ها ←");
-    link.href="therapists/hediyeh-sabbaghpour.html";
-    body.append(link);
-    card.append(body);
+    const market=document.getElementById("marketSelect")?.value||"iran";
+    const currency=market==="iran"?"IRR":(document.getElementById("internationalCurrency")?.value||"EUR");
+    const chosen=(t.fees||[]).find(x=>x.currency===currency);
+    if(chosen){
+      const amount=currency==="IRR"?Number(chosen.amount)/10:Number(chosen.amount);
+      const formatted=new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(amount);
+      body.append(el("p","therapist-meta",formatted+(currency==="IRR"?" تومان":" "+currency)));
+    }
+    const link=el("a","button primary",i18n().chooseTherapist||"مشاهدهٔ پروفایل");
+    link.href="therapist-profile.html?id="+encodeURIComponent(t.id);
+    body.append(link);card.append(body);
     return card;
   }
 
   function renderDirectory(items){
     if(!directory)return;
-    const cards=[];
-    items.forEach(t=>{
-      const card=el("article","therapist-card");
-      card.dataset.therapistSlug=t.public_slug||"";
-      if(t.photo_path && db){
-        const {data}=db.storage.from("therapist-photos").getPublicUrl(t.photo_path);
-        if(data?.publicUrl){const img=el("img","therapist-photo"+(t.public_slug==="foruzan-shahla"?" shahla-list-photo":""));img.src=data.publicUrl;img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
-      } else if(t.public_slug==="foruzan-shahla"){const img=el("img","therapist-photo shahla-list-photo");img.src="/therapists/foruzan-shahla.jpg";img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
-      else card.append(el("div","therapist-photo therapist-placeholder","ی"));
-      const body=el("div","therapist-card-body");
-      body.append(el("h3","",t.display_name||""));
-      if(t.manager_approved===true)body.append(el("span","therapist-meta","تأییدشده توسط مدیریت ردیاد"));
-      if(t.headline)body.append(el("p","therapist-headline",t.headline));
-      if(t.years_experience!=null)body.append(el("p","therapist-meta",(i18n().yearsExperience||"سابقهٔ حرفه‌ای: {years} سال").replace("{years}",String(t.years_experience))));
-      if(typeof t.accepting_new_clients==="boolean")body.append(el("span",t.accepting_new_clients?"availability-open":"availability-closed",t.accepting_new_clients?(i18n().acceptingYes||"پذیرش مراجع جدید"):(i18n().acceptingNo||"فعلاً پذیرش مراجع جدید ندارد")));
-      const tags=el("div","therapist-tags");
-      (t.specialties||[]).slice(0,3).forEach(x=>tags.append(el("span","",x)));
-      (t.modalities||[]).slice(0,3).forEach(x=>tags.append(el("span","modality-tag",x)));
-      (t.languages||[]).forEach(code=>tags.append(el("span","language-tag",languageNames[code]||code)));
-      if(Number(t.review_count)>0)tags.append(el("span","rating-tag","★ "+Number(t.average_rating).toFixed(1)+" ("+t.review_count+")"));
-      body.append(tags);
-      const market=document.getElementById("marketSelect")?.value||"iran";
-      const currency=market==="iran"?"IRR":(document.getElementById("internationalCurrency")?.value||"EUR");
-      const chosen=(t.fees||[]).find(x=>x.currency===currency);
-      const priceText=chosen?new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(currency==="IRR"?Number(chosen.amount)/10:Number(chosen.amount))+(currency==="IRR"?" تومان":" "+currency):"تعرفهٔ این ارز هنوز ثبت نشده است";
-      body.append(el("p","therapist-meta","۴۵ دقیقه · "+priceText));
-      const link=el("a","button primary",i18n().chooseTherapist||"مشاهدهٔ پروفایل و انتخاب");
-      link.href="therapist-profile.html?id="+encodeURIComponent(t.id);
-      body.append(link);card.append(body);cards.push(card);
-    });
-    const featured=createFeaturedHediyehCard();
-    const shahlaIndex=cards.findIndex(card=>card.dataset.therapistSlug==="foruzan-shahla");
-    if(shahlaIndex>=0)cards.splice(shahlaIndex+1,0,featured);
-    else cards.unshift(featured);
-
+    const cards=items.map(createTherapistCard);
     directory.replaceChildren();
+    if(!cards.length){
+      directory.append(el("p","directory-empty","در حال حاضر درمانگر تأییدشده‌ای برای نمایش وجود ندارد."));
+      return;
+    }
     const controls=el("nav","therapist-carousel-controls");
     controls.setAttribute("aria-label","حرکت افقی میان درمانگران");
-    const prev=el("button","button outline","→ قبلی");
-    prev.type="button";
-    prev.setAttribute("aria-label","درمانگر قبلی");
-    const next=el("button","button outline","بعدی ←");
-    next.type="button";
-    next.setAttribute("aria-label","درمانگر بعدی");
+    const prev=el("button","button outline","→ قبلی");prev.type="button";prev.setAttribute("aria-label","درمانگر قبلی");
+    const next=el("button","button outline","بعدی ←");next.type="button";next.setAttribute("aria-label","درمانگر بعدی");
     const status=el("span","therapist-page-status","");
-    const track=el("div","therapist-cards-track");
-    track.setAttribute("aria-label","کارت‌های افقی درمانگران");
-    track.setAttribute("tabindex","0");
-    cards.forEach(card=>{card.hidden=false;track.append(card);});
-
+    const track=el("div","therapist-cards-track");track.setAttribute("aria-label","کارت‌های افقی درمانگران");track.setAttribute("tabindex","0");
+    cards.forEach(card=>track.append(card));
     let start=0;
     const visibleCount=()=>window.matchMedia("(max-width: 620px)").matches?1:2;
     const maxStart=()=>Math.max(0,cards.length-visibleCount());
     const updateStatus=()=>{
       const bounds=track.getBoundingClientRect();
-      const firstVisible=cards.findIndex(card=>{
-        const r=card.getBoundingClientRect();
-        return r.right>bounds.left+4&&r.left<bounds.right-4;
-      });
-      if(firstVisible>=0)start=firstVisible;
-      const count=visibleCount();
-      status.textContent=(start+1)+"–"+Math.min(cards.length,start+count)+" از "+cards.length;
-      prev.disabled=start<=0;
-      next.disabled=start>=maxStart();
+      const first=cards.findIndex(card=>{const r=card.getBoundingClientRect();return r.right>bounds.left+4&&r.left<bounds.right-4;});
+      if(first>=0)start=first;
+      status.textContent=(start+1)+"–"+Math.min(cards.length,start+visibleCount())+" از "+cards.length;
+      prev.disabled=start<=0;next.disabled=start>=maxStart();
     };
-    const goTo=index=>{
-      start=Math.max(0,Math.min(maxStart(),index));
-      cards[start]?.scrollIntoView({behavior:"smooth",block:"nearest",inline:"start"});
-      updateStatus();
-    };
-    prev.addEventListener("click",()=>goTo(start-1));
-    next.addEventListener("click",()=>goTo(start+1));
+    const goTo=index=>{start=Math.max(0,Math.min(maxStart(),index));cards[start]?.scrollIntoView({behavior:"smooth",block:"nearest",inline:"start"});updateStatus();};
+    prev.addEventListener("click",()=>goTo(start-1));next.addEventListener("click",()=>goTo(start+1));
     track.addEventListener("scroll",()=>window.requestAnimationFrame(updateStatus),{passive:true});
-    let resizeTimer;
-    window.addEventListener("resize",()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(updateStatus,120);},{passive:true});
-    controls.append(prev,status,next);
-    directory.append(controls,track);
-    updateStatus();
+    window.addEventListener("resize",updateStatus,{passive:true});
+    controls.append(prev,status,next);directory.append(controls,track);updateStatus();
   }
 
   async function loadDirectory(){
@@ -140,7 +111,7 @@
     if(!db){renderDirectory([]);if(notice)notice.textContent="برای مشاهدهٔ پروفایل‌های بیشتر، فهرست آنلاین موقتاً در دسترس نیست.";return;}
     directory.textContent="در حال دریافت فهرست درمانگران…";
     const {data,error}=await db.from("therapists")
-      .select("id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path,manager_approved,verified_at")
+      .select("id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path,manager_approved,verified_at,years_experience")
       .eq("is_listed",true).or("verified_at.not.is.null,manager_approved.eq.true")
       .order("display_name",{ascending:true});
     if(error){renderDirectory([]);if(notice)notice.textContent="فهرست آنلاین موقتاً در دسترس نیست؛ پروفایل معرفی‌شده در دسترس است.";return;}
