@@ -129,32 +129,57 @@
         data=await restRequest("therapists?"+params.toString());
       }
       allTherapists=data||[];
-      // Fees are intentionally not loaded into homepage directory cards; they belong on tariff/profile pages.
-      let publicMetadata;
-      if(db){const result=await db.rpc("get_public_therapist_directory_metadata");if(result.error)throw result.error;publicMetadata=result.data;}
-      else publicMetadata=await restRequest("rpc/get_public_therapist_directory_metadata","POST");
-      if(Array.isArray(publicMetadata)){const byId=new Map(publicMetadata.map(x=>[x.therapist_id,x]));allTherapists=allTherapists.map(x=>({...x,...(byId.get(x.id)||{})}));}
-      let ratingRows;
-      if(db){const result=await db.rpc("get_public_therapist_rating_summary");if(result.error)throw result.error;ratingRows=result.data;}
-      else ratingRows=await restRequest("rpc/get_public_therapist_rating_summary","POST");
-      if(Array.isArray(ratingRows)){const ratingById=new Map(ratingRows.map(x=>[x.therapist_id,x]));allTherapists=allTherapists.map(x=>({...x,...(ratingById.get(x.id)||{})}));}
+      // Render the primary directory immediately; optional public RPCs must never hide valid therapist cards.
       populateModalityFilter();
       const guideParams=new URLSearchParams(location.search);
       const guideLanguage=guideParams.get("language"),guideSpecialty=guideParams.get("specialty"),guideFormat=guideParams.get("format");
       if(guideLanguage&&document.getElementById("language"))document.getElementById("language").value=guideLanguage;
       if(guideSpecialty&&document.getElementById("specialty"))document.getElementById("specialty").value=guideSpecialty;
       if(guideFormat&&document.getElementById("modality"))document.getElementById("modality").value=guideFormat==="in-person"?"in_person":guideFormat==="online"?"online":"";
-      let settings;
-      if(db){const result=await db.rpc("get_public_site_settings");if(result.error)throw result.error;settings=result.data;}
-      else settings=await restRequest("rpc/get_public_site_settings","POST");
-      const storedContacts=settings?.contacts||{};
-      publicContacts={...storedContacts,phone_number:storedContacts.phone_number||"09999398350",whatsapp_number:storedContacts.whatsapp_number||"09999398350",telegram_url:storedContacts.telegram_url||"https://t.me/RADYAD",eitaa_url:storedContacts.eitaa_url||"https://eitaa.com/RADYAD"};
-      siteBranding=settings?.branding||{};
-      renderPublicBranding();renderPublicTariffs();renderPublicContacts();filterDirectory();
-      if(notice)notice.textContent=allTherapists.length?"پروفایل‌های زیر توسط مدیریت ردیاد بررسی و برای نمایش تأیید شده‌اند.":"فهرست درمانگران پس از تأیید مدارک و مجوزها منتشر می‌شود؛ هیچ پروفایل تأییدنشده‌ای نمایش داده نمی‌شود.";
+      filterDirectory();
+
+      try{
+        const publicMetadata=db
+          ? await db.rpc("get_public_therapist_directory_metadata")
+          : {data:await restRequest("rpc/get_public_therapist_directory_metadata","POST"),error:null};
+        if(publicMetadata.error)throw publicMetadata.error;
+        if(Array.isArray(publicMetadata.data)){
+          const byId=new Map(publicMetadata.data.map(x=>[x.therapist_id,x]));
+          allTherapists=allTherapists.map(x=>({...x,...(byId.get(x.id)||{})}));
+        }
+      }catch(error){console.warn("RADYAD public therapist metadata unavailable:",error);}
+
+      try{
+        const ratingResult=db
+          ? await db.rpc("get_public_therapist_rating_summary")
+          : {data:await restRequest("rpc/get_public_therapist_rating_summary","POST"),error:null};
+        if(ratingResult.error)throw ratingResult.error;
+        if(Array.isArray(ratingResult.data)){
+          const ratingById=new Map(ratingResult.data.map(x=>[x.therapist_id,x]));
+          allTherapists=allTherapists.map(x=>({...x,...(ratingById.get(x.id)||{})}));
+        }
+      }catch(error){console.warn("RADYAD public therapist ratings unavailable:",error);}
+
+      filterDirectory();
+      try{
+        const settingsResult=db
+          ? await db.rpc("get_public_site_settings")
+          : {data:await restRequest("rpc/get_public_site_settings","POST"),error:null};
+        if(settingsResult.error)throw settingsResult.error;
+        const storedContacts=settingsResult.data?.contacts||{};
+        publicContacts={...storedContacts,phone_number:storedContacts.phone_number||"09999398350",whatsapp_number:storedContacts.whatsapp_number||"09999398350",telegram_url:storedContacts.telegram_url||"https://t.me/RADYAD",eitaa_url:storedContacts.eitaa_url||"https://eitaa.com/RADYAD"};
+        siteBranding=settingsResult.data?.branding||{};
+      }catch(error){console.warn("RADYAD public site settings unavailable:",error);}
+      renderPublicBranding();renderPublicTariffs();renderPublicContacts();
+      if(notice)notice.textContent=allTherapists.length
+        ?"پروفایل‌های زیر توسط مدیریت ردیاد بررسی و برای نمایش تأیید شده‌اند."
+        :"فهرست درمانگران پس از تأیید مدارک و مجوزها منتشر می‌شود؛ هیچ پروفایل تأییدنشده‌ای نمایش داده نمی‌شود.";
     }catch(error){
-      console.error("RADYAD directory load failed:",error);
+      console.error("RADYAD therapist directory request failed:",error);
+      allTherapists=[];
       renderDirectory([]);
+      const count=document.getElementById("directoryCount");
+      if(count)count.textContent="";
       if(notice)notice.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد: "+(error?.message||"خطای ارتباط با پایگاه داده");
     }
   }
