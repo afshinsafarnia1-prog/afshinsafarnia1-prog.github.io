@@ -877,3 +877,10 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-card-body{min-width:0!important}
  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-headline{font-size:11px!important}
 }
+
+
+/* Therapist card typography: distinct title, expertise and location */
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-headline-role{font-size:14px!important;font-weight:700!important;color:#315b53!important;margin:2px 0!important;line-height:1.8!important}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-headline-detail{font-size:12px!important;color:#64766f!important;margin:0!important;line-height:1.85!important}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-meta{font-size:11px!important;color:#778780!important;margin:0!important;line-height:1.7!important}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-tags{margin:7px 0 4px!important;gap:6px!important}
