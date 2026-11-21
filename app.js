@@ -87,24 +87,33 @@
     directory.replaceChildren();
     const controls=el("nav","therapist-carousel-controls");
     controls.setAttribute("aria-label","حرکت میان درمانگران");
-    const prev=el("button","button outline","← قبلی");
+    const prev=el("button","button outline","قبلی ←");
     prev.type="button";
-    const next=el("button","button outline","بعدی →");
+    const next=el("button","button outline","→ بعدی");
     next.type="button";
     const status=el("span","therapist-page-status","");
-    let active=0;
-    const showCard=(index)=>{
-      active=Math.max(0,Math.min(cards.length-1,index));
-      cards.forEach((card,i)=>{card.hidden=i!==active;});
-      status.textContent=(active+1)+" از "+cards.length;
-      prev.disabled=active===0;
-      next.disabled=active===cards.length-1;
+    const track=el("div","therapist-cards-track");
+    track.setAttribute("aria-label","کارت‌های درمانگران");
+    cards.forEach(card=>track.append(card));
+    let start=0;
+    const visibleCount=()=>window.matchMedia("(max-width: 620px)").matches?1:(window.matchMedia("(max-width: 980px)").matches?2:3);
+    const renderSlide=()=>{
+      const count=visibleCount();
+      const maxStart=Math.max(0,cards.length-count);
+      start=Math.min(start,maxStart);
+      cards.forEach((card,i)=>{card.hidden=!(i>=start&&i<start+count);});
+      status.textContent=(start+1)+"–"+Math.min(cards.length,start+count)+" از "+cards.length;
+      prev.disabled=start===0;
+      next.disabled=start>=maxStart;
+      track.dataset.visible=String(count);
     };
-    prev.addEventListener("click",()=>showCard(active-1));
-    next.addEventListener("click",()=>showCard(active+1));
+    prev.addEventListener("click",()=>{start=Math.max(0,start-1);renderSlide();});
+    next.addEventListener("click",()=>{start=Math.min(cards.length-visibleCount(),start+1);renderSlide();});
+    let resizeTimer;
+    window.addEventListener("resize",()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(renderSlide,120);},{passive:true});
     controls.append(prev,status,next);
-    directory.append(controls,...cards);
-    showCard(0);
+    directory.append(controls,track);
+    renderSlide();
   }
 
   async function loadDirectory(){
