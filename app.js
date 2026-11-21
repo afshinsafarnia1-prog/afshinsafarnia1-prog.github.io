@@ -31,8 +31,9 @@
   function therapistPhotoUrl(path, slug){
     if(path){
       const lower=path.toLowerCase();
-      const isDirect=path.startsWith("http://")||path.startsWith("https://")||path.startsWith("/")||[".jpg",".jpeg",".png",".webp"].some(ext=>lower.endsWith(ext));
-      if(isDirect)return path.startsWith("/")?path:"/"+path.replace(/^\\/+/, "");
+      const isHttp=path.startsWith("http://")||path.startsWith("https://");
+      const isLocal=path.startsWith("/")||[".jpg",".jpeg",".png",".webp"].some(ext=>lower.endsWith(ext));
+      if(isHttp||isLocal)return path.startsWith("/")||isHttp?path:"/"+path;
       if(db){const {data}=db.storage.from("therapist-photos").getPublicUrl(path);return data?.publicUrl||"";}
     }
     if(slug==="foruzan-shahla")return "/therapists/foruzan-shahla.jpg";
