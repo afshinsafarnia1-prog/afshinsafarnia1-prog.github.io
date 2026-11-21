@@ -53,12 +53,17 @@
 
     const body=el("div","therapist-card-body");
     body.append(el("h3","",t.display_name||""));
-    if(t.manager_approved===true||t.verified_at){
-      body.append(el("span","therapist-verification","تأییدشده توسط مدیریت ردیاد"));
+    if(t.headline){
+      const parts=t.headline.split("|").map(x=>x.trim()).filter(Boolean);
+      if(parts[0])body.append(el("p","therapist-headline therapist-headline-role",parts[0]));
+      if(parts[1])body.append(el("p","therapist-headline therapist-headline-detail",parts[1]));
+      if(parts[2]){
+        const place=parts[2].replace(/\s*و?\s*آنلاین/g,"").replace(/\s*و?\s*حضوری/g,"").trim();
+        if(place)body.append(el("p","therapist-meta",place));
+      }
     }
-    if(t.headline)body.append(el("p","therapist-headline",t.headline));
     const tags=el("div","therapist-tags");
-    const modalityLabels={online:"آنلاین",in_person:"حضوری",hybrid:"حضوری و آنلاین"};
+    const modalityLabels={online:"آنلاین",in_person:"حضوری",hybrid:"آنلاین و حضوری"};
     const values=[...(t.specialties||[]).slice(0,3),...(t.modalities||[]).slice(0,2).map(x=>modalityLabels[x]||x)];
     values.forEach(value=>tags.append(el("span","",value)));
     if(values.length)body.append(tags);
