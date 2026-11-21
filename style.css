@@ -839,3 +839,41 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
  }
  #therapistDirectory .therapist-cards-track>.therapist-card h3{font-size:15px!important}
 }
+
+
+/* Final therapist card layout: calm hierarchy, readable text, no fee duplication */
+#therapistDirectory .therapist-cards-track>.therapist-card{
+  height:auto!important;min-height:220px!important;max-height:none!important;
+  overflow:visible!important;align-items:flex-start!important;padding:18px!important;gap:16px!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-card-body{
+  height:auto!important;min-height:0!important;overflow:visible!important;
+  display:flex!important;flex:1 1 0!important;flex-direction:column!important;
+  align-items:flex-start!important;justify-content:flex-start!important;gap:5px!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-headline{
+  display:block!important;overflow:visible!important;-webkit-line-clamp:unset!important;
+  font-size:12px!important;line-height:1.9!important;margin:3px 0 6px!important;
+  overflow-wrap:anywhere!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-tags{
+  max-height:none!important;overflow:visible!important;margin:4px 0 8px!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-tags span{
+  font-size:11px!important;line-height:1.6!important;padding:4px 9px!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card .button{
+  margin-top:8px!important;align-self:flex-start!important;
+}
+.therapist-verification{font-size:10px!important;line-height:1.7!important;padding:3px 9px!important}
+@media(max-width:760px){
+ #therapistDirectory .therapist-cards-track>.therapist-card{
+  flex:0 0 88%!important;height:auto!important;min-height:0!important;max-height:none!important;
+  padding:14px!important;gap:12px!important;
+ }
+ #therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo{
+  width:88px!important;height:112px!important;flex-basis:88px!important;
+ }
+ #therapistDirectory .therapist-cards-track>.therapist-card .therapist-card-body{min-width:0!important}
+ #therapistDirectory .therapist-cards-track>.therapist-card .therapist-headline{font-size:11px!important}
+}
