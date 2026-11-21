@@ -52,6 +52,14 @@ if (!fs.existsSync(sitemapPath)) {
   errors.push("Missing sitemap.xml");
 } else {
   const sitemap = fs.readFileSync(sitemapPath, "utf8");
+  const canonicalSiteOrigin = "https://afshinsafarnia1-prog.github.io";
+  if (!sitemap.includes("<loc>" + canonicalSiteOrigin + "/</loc>")) {
+    errors.push("sitemap.xml must use the canonical GitHub Pages site origin");
+  }
+  const sitemapLocations = [...sitemap.matchAll(/<loc>(.*?)<\\/loc>/g)].map(match => match[1]);
+  if (sitemapLocations.some(url => !url.startsWith(canonicalSiteOrigin + "/") && url !== canonicalSiteOrigin)) {
+    errors.push("sitemap.xml contains URLs outside the canonical site origin");
+  }
   if (sitemap.includes("YOUR-DOMAIN.example")) errors.push("sitemap.xml still contains a placeholder domain");
   if (!sitemap.includes("<urlset") || !sitemap.includes("<loc>https://")) errors.push("sitemap.xml has no valid URL entries");
   for (const page of ["/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/relationships.html", "/articles/choosing-a-therapist.html", "/assessment.html"]) {
