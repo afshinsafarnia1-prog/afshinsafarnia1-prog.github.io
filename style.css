@@ -884,3 +884,7 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 #therapistDirectory .therapist-cards-track>.therapist-card .therapist-headline-detail{font-size:12px!important;color:#64766f!important;margin:0!important;line-height:1.85!important}
 #therapistDirectory .therapist-cards-track>.therapist-card .therapist-meta{font-size:11px!important;color:#778780!important;margin:0!important;line-height:1.7!important}
 #therapistDirectory .therapist-cards-track>.therapist-card .therapist-tags{margin:7px 0 4px!important;gap:6px!important}
+
+/* Public listing status for profiles awaiting document review */
+#therapistDirectory .therapist-review-note{margin:5px 0 2px!important;padding:6px 9px;border-right:3px solid #b68b45;background:#fbf7ee;color:#765b2d;border-radius:6px;font-size:11px;line-height:1.8}
+.profile-review-note{margin:10px 0;padding:10px 13px;border-right:3px solid #b68b45;background:#fbf7ee;color:#765b2d;border-radius:8px;font-size:.9rem;line-height:1.9}
