@@ -759,3 +759,55 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 #therapistDirectory .therapist-page-status{font-size:12px!important;color:var(--muted)!important;min-width:60px;text-align:center}
 @media(max-width:980px){#therapistDirectory .therapist-cards-track{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}}
 @media(max-width:620px){#therapistDirectory .therapist-cards-track{grid-template-columns:minmax(0,1fr)!important}#therapistDirectory .therapist-cards-track>.therapist-card{padding:16px!important}#therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo{width:92px!important;height:108px!important;flex-basis:92px!important}}
+
+
+/* Final compact two-card therapist carousel: readable cards, no vertical list */
+#therapistDirectory .therapist-cards-track{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:18px!important;
+ width:100%!important;
+ direction:rtl!important;
+ align-items:stretch!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card{
+ display:flex!important;
+ flex-direction:row!important;
+ align-items:flex-start!important;
+ gap:16px!important;
+ min-width:0!important;
+ width:auto!important;
+ padding:20px!important;
+ margin:0!important;
+ border:1px solid var(--editorial-line)!important;
+ border-radius:16px!important;
+ background:var(--surface,#fff)!important;
+ box-shadow:0 5px 18px #123f4609!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card[hidden]{display:none!important}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo{
+ width:112px!important;height:132px!important;flex:0 0 112px!important;
+ object-fit:cover!important;border-radius:8px!important;margin:0!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card h3{font-size:18px!important;line-height:1.7!important}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-meta,
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-headline{font-size:13px!important;line-height:1.9!important}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-tags span{font-size:11px!important;padding:4px 7px!important}
+#therapistDirectory .therapist-cards-track>.therapist-card .button{font-size:12px!important;padding:9px 12px!important}
+@media(max-width:700px){
+ #therapistDirectory .therapist-cards-track{gap:10px!important}
+ #therapistDirectory .therapist-cards-track>.therapist-card{
+  display:flex!important;flex-direction:column!important;gap:8px!important;padding:12px!important;
+ }
+ #therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo{
+  width:100%!important;height:118px!important;flex-basis:auto!important;
+ }
+ #therapistDirectory .therapist-cards-track>.therapist-card h3{font-size:14px!important}
+ #therapistDirectory .therapist-cards-track>.therapist-card .therapist-meta,
+ #therapistDirectory .therapist-cards-track>.therapist-card .therapist-headline{font-size:11px!important}
+ #therapistDirectory .therapist-cards-track>.therapist-card .button{font-size:10px!important;padding:7px 8px!important}
+}
+@media(max-width:360px){
+ #therapistDirectory .therapist-cards-track>.therapist-card{padding:8px!important}
+ #therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo{height:96px!important}
+}
