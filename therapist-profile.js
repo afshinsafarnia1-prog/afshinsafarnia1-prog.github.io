@@ -26,7 +26,7 @@
     if(!id){root.textContent=t("profileMissingId");return;}
     root.textContent=t("profileLoading");
     const {data,error}=await db.from("therapists")
-      .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path,manager_approved,verified_at,years_experience")
+      .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path,manager_approved,verified_at")
       .eq("id",id).eq("is_listed",true).eq("manager_approved",true).maybeSingle();
     if(error||!data){root.textContent=t("profileNotFound");return;}
     const {data:metaRows}=await db.rpc("get_public_therapist_public_metadata",{p_therapist_id:id});
