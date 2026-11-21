@@ -111,7 +111,7 @@
     if(!db){renderDirectory([]);if(notice)notice.textContent="برای مشاهدهٔ پروفایل‌های بیشتر، فهرست آنلاین موقتاً در دسترس نیست.";return;}
     directory.textContent="در حال دریافت فهرست درمانگران…";
     const {data,error}=await db.from("therapists")
-      .select("id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path,manager_approved,verified_at,years_experience")
+      .select("id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path,manager_approved,verified_at")
       .eq("is_listed",true).or("verified_at.not.is.null,manager_approved.eq.true")
       .order("display_name",{ascending:true});
     if(error){renderDirectory([]);if(notice)notice.textContent="فهرست آنلاین موقتاً در دسترس نیست؛ پروفایل معرفی‌شده در دسترس است.";return;}
