@@ -26,7 +26,7 @@
     if(!id){root.textContent=t("profileMissingId");return;}
     root.textContent=t("profileLoading");
     const {data,error}=await db.from("therapists")
-      .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path,manager_approved,verified_at")
+      .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path,manager_approved,verified_at,years_experience")
       .eq("id",id).eq("is_listed",true).eq("manager_approved",true).maybeSingle();
     if(error||!data){root.textContent=t("profileNotFound");return;}
     const {data:metaRows}=await db.rpc("get_public_therapist_public_metadata",{p_therapist_id:id});
@@ -41,17 +41,16 @@
     root.replaceChildren();
     const hero=node("div","profile-hero");
     if(data.photo_path){
-      const {data:photo}=db.storage.from("therapist-photos").getPublicUrl(data.photo_path);
-      if(photo?.publicUrl){const img=node("img","profile-photo");img.src=photo.publicUrl;img.alt=t("profilePhotoAlt");img.loading="lazy";hero.append(img);}
+      const isDirect=data.photo_path.startsWith("/")||data.photo_path.includes(".jpg")||data.photo_path.includes(".jpeg")||data.photo_path.includes(".png")||data.photo_path.includes(".webp")||data.photo_path.startsWith("http");
+      const photoUrl=isDirect?(data.photo_path.startsWith("/")?data.photo_path:"/"+data.photo_path.replace(/^\/+/, "")):db.storage.from("therapist-photos").getPublicUrl(data.photo_path).data?.publicUrl;
+      if(photoUrl){const img=node("img","profile-photo");img.src=photoUrl;img.alt=t("profilePhotoAlt");img.loading="lazy";hero.append(img);}
     } else if(data.public_slug==="foruzan-shahla"){
       const img=node("img","profile-photo");img.src="/therapists/foruzan-shahla.jpg";img.alt=t("profilePhotoAlt");img.loading="lazy";hero.append(img);
     } else {
-      const mark=node("div","profile-monogram","ی");
-      mark.setAttribute("aria-hidden","true");
-      hero.append(mark);
+      const mark=node("div","profile-monogram","ی");mark.setAttribute("aria-hidden","true");hero.append(mark);
     }
     const intro=node("div","profile-intro");
-    intro.append(node("span","eyebrow","تأییدشده توسط مدیریت ردیاد"));
+    if(data.manager_approved===true||data.verified_at)intro.append(node("span","eyebrow","تأییدشده توسط مدیریت ردیاد"));
     intro.append(node("h1","",data.display_name||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.headline));
     if(typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
