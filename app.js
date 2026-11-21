@@ -53,7 +53,6 @@
 
     const body=el("div","therapist-card-body");
     body.append(el("h3","",t.display_name||""));
-    if(t.manager_approved!==true&&!t.verified_at)body.append(el("p","therapist-review-note","معرفی عمومی؛ بررسی مدارک تکمیل نشده است."));
     if(t.headline){
       const parts=t.headline.split("|").map(x=>x.trim()).filter(Boolean);
       if(parts[0])body.append(el("p","therapist-headline therapist-headline-role",parts[0]));
@@ -119,7 +118,7 @@
       return payload;
     };
     try{
-      const select="id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path,manager_approved,verified_at";
+      const select="id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path";
       let data;
       if(db){
         const result=await db.from("therapists").select(select).eq("is_listed",true).order("display_name",{ascending:true});
