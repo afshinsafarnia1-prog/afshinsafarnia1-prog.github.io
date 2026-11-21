@@ -35,6 +35,7 @@
     img.src="therapists/hediyeh-sabbaghpour.jpg";
     img.alt="تصویر دکتر هدیه صباغ‌پور";
     img.loading="lazy";
+    img.addEventListener("error",()=>{const fallback=el("div","therapist-photo therapist-placeholder","هـ");img.replaceWith(fallback);},{once:true});
     card.append(img);
     const body=el("div","therapist-card-body");
     body.append(el("h3","","دکتر هدیه صباغ‌پور"));
@@ -312,7 +313,4 @@
   if("serviceWorker" in navigator){
     window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
   }
-  const style=document.createElement("style");
-  style.textContent=".therapist-directory{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:12px}.therapist-card{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid #e5ece8;border-radius:17px;padding:15px;box-shadow:0 10px 25px #123f4608;min-width:0}.therapist-photo{width:82px;height:92px;object-fit:cover;border-radius:13px;background:#e8f7f2;flex-shrink:0}.therapist-placeholder{display:grid;place-items:center;color:#123f46;font-size:34px;font-weight:800}.therapist-card-body{min-width:0;flex:1}.therapist-card h3{margin:0;color:#123f46;font-size:16px}.therapist-headline,.therapist-meta{font-size:11px;color:#687b7c;margin:4px 0}.therapist-tags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.therapist-tags span{font-size:10px;padding:3px 7px;border-radius:20px;background:#eff8f4;color:#24665d}.therapist-tags .modality-tag{background:#fff3ec;color:#92513f}.therapist-card .button{padding:8px 12px;font-size:11px;margin-top:5px}.directory-empty{grid-column:1/-1;color:#687b7c;font-size:13px}.directory-count{grid-column:1/-1;color:#687b7c;font-size:12px;margin:0}.therapist-filters{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));align-items:end}.therapist-filters label{min-width:0}.filter-keyword input{width:100%;min-width:0;padding:10px;border:1px solid #dce8e3;border-radius:10px;font:inherit}.filter-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.filter-accepting{display:flex!important;grid-auto-flow:column;justify-content:start;align-items:center;gap:8px!important}.filter-accepting input{width:auto}.availability-open,.availability-closed{display:inline-block;margin-top:5px;padding:4px 9px;border-radius:20px;font-size:10px}.availability-open{background:#e7f7ee;color:#176b48}.availability-closed{background:#f2f3f2;color:#687b7c}.language-switch select{max-width:110px}@media(max-width:620px){.therapist-card{padding:12px}.therapist-photo{width:68px;height:80px}.filter-actions>*{flex:1}}";
-  document.head.append(style);
 })();
