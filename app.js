@@ -29,9 +29,31 @@
   const el=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!=null)node.textContent=text;return node;};
 
   let directoryPage=0;
+  function createFeaturedHediyehCard(){
+    const card=el("article","therapist-card featured-therapist-card");
+    const img=el("img","therapist-photo");
+    img.src="therapists/hediyeh-sabbaghpour.jpg";
+    img.alt="تصویر دکتر هدیه صباغ‌پور";
+    img.loading="lazy";
+    card.append(img);
+    const body=el("div","therapist-card-body");
+    body.append(el("h3","","دکتر هدیه صباغ‌پور"));
+    body.append(el("p","therapist-headline","دکترای روان‌شناسی · بابل، مازندران"));
+    body.append(el("p","therapist-meta","۱۵ سال سابقهٔ فعالیت · کودک، نوجوان و بزرگسال"));
+    const tags=el("div","therapist-tags");
+    ["CBT","MBCT","ACT","افسردگی","اضطراب","وسواس"].forEach(x=>tags.append(el("span","",x)));
+    body.append(tags);
+    body.append(el("p","therapist-meta","شماره عضویت: ۲۶۶۱۷"));
+    body.append(el("p","therapist-meta","۱٬۸۰۰٬۰۰۰ تومان · ۳۰ یورو · ۳۵ دلار"));
+    const link=el("a","button primary","مشاهدهٔ پروفایل و تعرفه‌ها ←");
+    link.href="therapists/hediyeh-sabbaghpour.html";
+    body.append(link);
+    card.append(body);
+    return card;
+  }
+
   function renderDirectory(items){
     if(!directory)return;
-    const featured=directory.querySelector(".featured-therapist-card");
     const cards=[];
     items.forEach(t=>{
       const card=el("article","therapist-card");
@@ -61,54 +83,42 @@
       link.href="therapist-profile.html?id="+encodeURIComponent(t.id);
       body.append(link);card.append(body);cards.push(card);
     });
-    if(featured)cards.push(featured);
+    cards.push(createFeaturedHediyehCard());
     directory.replaceChildren();
-    if(!cards.length){const hasFilters=Boolean(document.getElementById("language")?.value||document.getElementById("specialty")?.value||document.getElementById("modality")?.value||document.getElementById("therapistKeyword")?.value.trim());directory.append(el("p","directory-empty",hasFilters?"با فیلترهای انتخاب‌شده درمانگری پیدا نشد؛ فیلترها را تغییر دهید یا همهٔ گزینه‌ها را انتخاب کنید.":(i18n().directoryEmpty||"در حال حاضر درمانگر تأییدشده‌ای برای نمایش وجود ندارد.")));return;}
-    const track=el("div","therapist-cards-track");
-    track.setAttribute("aria-label","فهرست درمانگران");
-    cards.forEach((card,index)=>{card.dataset.cardIndex=String(index);track.append(card);});
     const controls=el("nav","therapist-carousel-controls");
     controls.setAttribute("aria-label","حرکت میان درمانگران");
-    const prev=el("button","button outline therapist-carousel-prev","→ قبلی");
+    const prev=el("button","button outline","← قبلی");
     prev.type="button";
-    const next=el("button","button outline therapist-carousel-next","بعدی ←");
+    const next=el("button","button outline","بعدی →");
     next.type="button";
-    const status=el("span","therapist-page-status","۱ از "+cards.length);
-    const updateControls=()=>{
-      const first=track.querySelector(".therapist-card");
-      const cardWidth=first?first.getBoundingClientRect().width+14:280;
-      const maxIndex=Math.max(0,cards.length-1);
-      const index=Math.max(0,Math.min(maxIndex,Math.round(track.scrollLeft/(cardWidth||1))*-1));
-      status.textContent=(Math.min(cards.length,index+1))+" از "+cards.length;
-      prev.disabled=track.scrollLeft>=-2;
-      next.disabled=Math.abs(track.scrollLeft)>=track.scrollWidth-track.clientWidth-2;
+    const status=el("span","therapist-page-status","");
+    let active=0;
+    const showCard=(index)=>{
+      active=Math.max(0,Math.min(cards.length-1,index));
+      cards.forEach((card,i)=>{card.style.display=i===active?"flex":"none";});
+      status.textContent=(active+1)+" از "+cards.length;
+      prev.disabled=active===0;
+      next.disabled=active===cards.length-1;
     };
-    prev.addEventListener("click",()=>{
-      const first=track.querySelector(".therapist-card");
-      track.scrollBy({left:first?first.getBoundingClientRect().width+14:-280,behavior:"smooth"});
-    });
-    next.addEventListener("click",()=>{
-      const first=track.querySelector(".therapist-card");
-      track.scrollBy({left:first?-(first.getBoundingClientRect().width+14):280,behavior:"smooth"});
-    });
-    track.addEventListener("scroll",updateControls,{passive:true});
+    prev.addEventListener("click",()=>showCard(active-1));
+    next.addEventListener("click",()=>showCard(active+1));
     controls.append(prev,status,next);
-    directory.append(controls,track);
-    requestAnimationFrame(updateControls);
+    directory.append(controls,...cards);
+    showCard(0);
   }
 
   async function loadDirectory(){
     if(!directory)return;
-    if(!db){directory.textContent="اتصال فهرست درمانگران در دسترس نیست.";return;}
+    if(!db){renderDirectory([]);if(notice)notice.textContent="برای مشاهدهٔ پروفایل‌های بیشتر، فهرست آنلاین موقتاً در دسترس نیست.";return;}
     directory.textContent="در حال دریافت فهرست درمانگران…";
     const {data,error}=await db.from("therapists")
       .select("id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path,manager_approved,verified_at")
       .eq("is_listed",true).or("verified_at.not.is.null,manager_approved.eq.true")
       .order("display_name",{ascending:true});
-    if(error){directory.textContent="دریافت فهرست درمانگران با خطا روبه‌رو شد. لطفاً بعداً دوباره تلاش کنید.";return;}
+    if(error){renderDirectory([]);if(notice)notice.textContent="فهرست آنلاین موقتاً در دسترس نیست؛ پروفایل معرفی‌شده در دسترس است.";return;}
     allTherapists=data||[];
     const {data:feeRows, error:feeError}=await db.rpc("get_public_therapist_fee_directory");
-    if(feeError){directory.textContent="دریافت تعرفهٔ درمانگران با خطا روبه‌رو شد.";return;}
+    if(feeError){renderDirectory([]);if(notice)notice.textContent="دریافت تعرفه‌های آنلاین با خطا روبه‌رو شد؛ پروفایل معرفی‌شده در دسترس است.";return;}
     const feesByTherapist=new Map();
     (feeRows||[]).forEach(row=>{if(!feesByTherapist.has(row.therapist_id))feesByTherapist.set(row.therapist_id,[]);feesByTherapist.get(row.therapist_id).push(row);});
     allTherapists=allTherapists.map(t=>({...t,fees:feesByTherapist.get(t.id)||[]}));
@@ -125,7 +135,7 @@
     if(guideSpecialty&&document.getElementById("specialty"))document.getElementById("specialty").value=guideSpecialty;
     if(guideFormat&&document.getElementById("modality"))document.getElementById("modality").value=guideFormat==="in-person"?"in_person":guideFormat==="online"?"online":"";
     const {data:settings,error:settingsError}=await db.rpc("get_public_site_settings");
-    if(settingsError){directory.textContent="دریافت تنظیمات عمومی سایت با خطا روبه‌رو شد.";return;}
+    if(settingsError){renderDirectory([]);if(notice)notice.textContent="تنظیمات عمومی موقتاً در دسترس نیست؛ پروفایل معرفی‌شده در دسترس است.";return;}
     
     const storedContacts=settings?.contacts||{};
     publicContacts={...storedContacts,phone_number:storedContacts.phone_number||"09999398350",whatsapp_number:storedContacts.whatsapp_number||"09999398350",telegram_url:storedContacts.telegram_url||"https://t.me/RADYAD",eitaa_url:storedContacts.eitaa_url||"https://eitaa.com/RADYAD"};
