@@ -96,7 +96,7 @@
     track.setAttribute("aria-label","کارت‌های درمانگران");
     cards.forEach(card=>track.append(card));
     let start=0;
-    const visibleCount=()=>window.matchMedia("(max-width: 620px)").matches?1:(window.matchMedia("(max-width: 980px)").matches?2:3);
+    const visibleCount=()=>2;
     const renderSlide=()=>{
       const count=visibleCount();
       const maxStart=Math.max(0,cards.length-count);
@@ -231,8 +231,9 @@
       const acceptingOk=!acceptingOnly||t.accepting_new_clients===true;
       return langOk&&specOk&&modalityOk&&keywordOk&&acceptingOk;
     });
-    const count=document.getElementById("directoryCount");if(count)count.textContent=(i18n().directoryCount||"{shown} از {total}").replace("{shown}",String(items.length+(directory.querySelector(".featured-therapist-card")?1:0))).replace("{total}",String(allTherapists.length+(directory.querySelector(".featured-therapist-card")?1:0)));
     renderDirectory(items);
+    const count=document.getElementById("directoryCount");
+    if(count)count.textContent=(i18n().directoryCount||"{shown} از {total} درمانگر").replace("{shown}",String(items.length+1)).replace("{total}",String(allTherapists.length+1));
   }
 
   document.getElementById("searchForm")?.addEventListener("submit",e=>{
