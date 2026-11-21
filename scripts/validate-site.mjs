@@ -56,7 +56,7 @@ if (!fs.existsSync(sitemapPath)) {
   if (!sitemap.includes("<loc>" + canonicalSiteOrigin + "/</loc>")) {
     errors.push("sitemap.xml must use the canonical GitHub Pages site origin");
   }
-  const sitemapLocations = [...sitemap.matchAll(/<loc>(.*?)<\\/loc>/g)].map(match => match[1]);
+  const sitemapLocations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
   if (sitemapLocations.some(url => !url.startsWith(canonicalSiteOrigin + "/") && url !== canonicalSiteOrigin)) {
     errors.push("sitemap.xml contains URLs outside the canonical site origin");
   }
