@@ -1,4 +1,4 @@
-const CACHE = "radyad-shell-v29";
+const CACHE = "radyad-shell-v30";
 const CORE_ASSETS = [
   "/",
   "/index.html",
