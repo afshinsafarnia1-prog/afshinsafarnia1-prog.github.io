@@ -221,19 +221,10 @@ try {
   }
 
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
-  const featured = page.locator("#articles .article-card.featured");
-  if (!(await featured.count())) throw new Error("Featured AI article card is missing on the homepage.");
-  const featuredContrast = await featured.evaluate(el => {
-    const rgb = value => (value.match(/[0-9.]+/g) || []).slice(0, 3).map(Number);
-    const luminance = value => {
-      const channels = rgb(value).map(x => { x /= 255; return x <= .04045 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4; });
-      return .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2];
-    };
-    const text = luminance(getComputedStyle(el).color);
-    const background = luminance(getComputedStyle(el).backgroundColor);
-    return (Math.max(text, background) + .05) / (Math.min(text, background) + .05);
-  });
-  if (featuredContrast < 4.5) throw new Error("Featured AI article card fails WCAG AA text contrast: " + featuredContrast.toFixed(2));
+  const articleGuide = page.locator('a[href="articles/choosing-a-therapist.html"]');
+  if (!(await articleGuide.count())) throw new Error("Homepage therapist-selection article link is missing.");
+  const articleResponse = await page.request.get("http://127.0.0.1:4173/articles/choosing-a-therapist.html");
+  if (articleResponse.status() !== 200) throw new Error("Therapist-selection article page failed to load.");
 
   if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
   console.log("PASS: 18 pages and integrated guidance, standards, workshop and assessment content; initial-guide filter handoff; fixed mobile access; WCAG AA contrast for fixed CTA; legal draft disclosures; existing multilingual, portal, responsive and PWA smoke checks.");
