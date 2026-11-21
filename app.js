@@ -78,7 +78,7 @@
     const cards=items.map(createTherapistCard);
     directory.replaceChildren();
     if(!cards.length){
-      directory.append(el("p","directory-empty","در حال حاضر درمانگر تأییدشده‌ای برای نمایش وجود ندارد."));
+      directory.append(el("p","directory-empty","در حال حاضر درمانگری برای نمایش وجود ندارد."));
       return;
     }
     const controls=el("nav","therapist-carousel-controls");
@@ -128,7 +128,11 @@
         const params=new URLSearchParams({select,is_listed:"eq.true",order:"display_name.asc"});
         data=await restRequest("therapists?"+params.toString());
       }
-      allTherapists=data||[];
+      allTherapists=(data||[]).sort((a,b)=>{
+        const priority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1};
+        const pa=priority[a.public_slug]??2, pb=priority[b.public_slug]??2;
+        return pa-pb || String(a.display_name||"").localeCompare(String(b.display_name||""),"fa");
+      });
       // Render the primary directory immediately; optional public RPCs must never hide valid therapist cards.
       populateModalityFilter();
       const guideParams=new URLSearchParams(location.search);
@@ -172,8 +176,8 @@
       }catch(error){console.warn("RADYAD public site settings unavailable:",error);}
       renderPublicBranding();renderPublicTariffs();renderPublicContacts();
       if(notice)notice.textContent=allTherapists.length
-        ?"پروفایل‌های معرفی‌شده در فهرست ردیاد؛ وضعیت بررسی مدارک در صفحهٔ هر درمانگر مشخص شده است."
-        :"فهرست درمانگران پس از تأیید مدارک و مجوزها منتشر می‌شود؛ هیچ پروفایل تأییدنشده‌ای نمایش داده نمی‌شود.";
+        ?"فهرست درمانگران ردیاد"
+        :"در حال حاضر درمانگری برای نمایش وجود ندارد.";
     }catch(error){
       console.error("RADYAD therapist directory request failed:",error);
       allTherapists=[];
