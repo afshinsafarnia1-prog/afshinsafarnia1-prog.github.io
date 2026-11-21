@@ -57,6 +57,7 @@
     const cards=[];
     items.forEach(t=>{
       const card=el("article","therapist-card");
+      card.dataset.therapistSlug=t.public_slug||"";
       if(t.photo_path && db){
         const {data}=db.storage.from("therapist-photos").getPublicUrl(t.photo_path);
         if(data?.publicUrl){const img=el("img","therapist-photo"+(t.public_slug==="foruzan-shahla"?" shahla-list-photo":""));img.src=data.publicUrl;img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
@@ -83,37 +84,54 @@
       link.href="therapist-profile.html?id="+encodeURIComponent(t.id);
       body.append(link);card.append(body);cards.push(card);
     });
-    cards.push(createFeaturedHediyehCard());
+    const featured=createFeaturedHediyehCard();
+    const shahlaIndex=cards.findIndex(card=>card.dataset.therapistSlug==="foruzan-shahla");
+    if(shahlaIndex>=0)cards.splice(shahlaIndex+1,0,featured);
+    else cards.unshift(featured);
+
     directory.replaceChildren();
     const controls=el("nav","therapist-carousel-controls");
-    controls.setAttribute("aria-label","حرکت میان درمانگران");
-    const prev=el("button","button outline","قبلی ←");
+    controls.setAttribute("aria-label","حرکت افقی میان درمانگران");
+    const prev=el("button","button outline","→ قبلی");
     prev.type="button";
-    const next=el("button","button outline","→ بعدی");
+    prev.setAttribute("aria-label","درمانگر قبلی");
+    const next=el("button","button outline","بعدی ←");
     next.type="button";
+    next.setAttribute("aria-label","درمانگر بعدی");
     const status=el("span","therapist-page-status","");
     const track=el("div","therapist-cards-track");
-    track.setAttribute("aria-label","کارت‌های درمانگران");
-    cards.forEach(card=>track.append(card));
+    track.setAttribute("aria-label","کارت‌های افقی درمانگران");
+    track.setAttribute("tabindex","0");
+    cards.forEach(card=>{card.hidden=false;track.append(card);});
+
     let start=0;
-    const visibleCount=()=>2;
-    const renderSlide=()=>{
+    const visibleCount=()=>window.matchMedia("(max-width: 620px)").matches?1:2;
+    const maxStart=()=>Math.max(0,cards.length-visibleCount());
+    const updateStatus=()=>{
+      const bounds=track.getBoundingClientRect();
+      const firstVisible=cards.findIndex(card=>{
+        const r=card.getBoundingClientRect();
+        return r.right>bounds.left+4&&r.left<bounds.right-4;
+      });
+      if(firstVisible>=0)start=firstVisible;
       const count=visibleCount();
-      const maxStart=Math.max(0,cards.length-count);
-      start=Math.min(start,maxStart);
-      cards.forEach((card,i)=>{card.hidden=!(i>=start&&i<start+count);});
       status.textContent=(start+1)+"–"+Math.min(cards.length,start+count)+" از "+cards.length;
-      prev.disabled=start===0;
-      next.disabled=start>=maxStart;
-      track.dataset.visible=String(count);
+      prev.disabled=start<=0;
+      next.disabled=start>=maxStart();
     };
-    prev.addEventListener("click",()=>{start=Math.max(0,start-1);renderSlide();});
-    next.addEventListener("click",()=>{start=Math.min(cards.length-visibleCount(),start+1);renderSlide();});
+    const goTo=index=>{
+      start=Math.max(0,Math.min(maxStart(),index));
+      cards[start]?.scrollIntoView({behavior:"smooth",block:"nearest",inline:"start"});
+      updateStatus();
+    };
+    prev.addEventListener("click",()=>goTo(start-1));
+    next.addEventListener("click",()=>goTo(start+1));
+    track.addEventListener("scroll",()=>window.requestAnimationFrame(updateStatus),{passive:true});
     let resizeTimer;
-    window.addEventListener("resize",()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(renderSlide,120);},{passive:true});
+    window.addEventListener("resize",()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(updateStatus,120);},{passive:true});
     controls.append(prev,status,next);
     directory.append(controls,track);
-    renderSlide();
+    updateStatus();
   }
 
   async function loadDirectory(){
