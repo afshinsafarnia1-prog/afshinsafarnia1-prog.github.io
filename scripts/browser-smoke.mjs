@@ -44,9 +44,21 @@ try {
   const page = await context.newPage();
   const pageErrors = [];
   page.on("pageerror", error => pageErrors.push(error.message));
-  await page.route("**/*", route => {
+  await page.route("**/*", async route => {
     const url = new URL(route.request().url());
-    return url.origin === "http://127.0.0.1:4173" ? route.continue() : route.abort();
+    if (url.origin === "http://127.0.0.1:4173") return route.continue();
+    if (url.hostname === "dszwzoiqgslnbnmryajs.supabase.co" && url.pathname.startsWith("/rest/v1/")) {
+      const therapist = {id:"449e7b02-e14f-4c83-946f-7aff706d0c53",public_slug:"foruzan-shahla",display_name:"فروزان شهلا",headline:"روان‌درمانگر تحلیلی",biography:"معرفی آزمایشی برای آزمون فهرست عمومی",specialties:["روان‌درمانی تحلیلی"],modalities:["online","in_person"],languages:["fa","en"],photo_path:null,manager_approved:true,verified_at:null};
+      let body = [];
+      if (url.pathname.endsWith("/therapists")) body = [therapist];
+      else if (url.pathname.endsWith("/rpc/get_public_therapist_fee_directory")) body = [];
+      else if (url.pathname.endsWith("/rpc/get_public_therapist_directory_metadata")) body = [];
+      else if (url.pathname.endsWith("/rpc/get_public_therapist_rating_summary")) body = [];
+      else if (url.pathname.endsWith("/rpc/get_public_site_settings")) body = {contacts:{},branding:{},tariffs:[]};
+      else return route.fulfill({status:404,contentType:"application/json",body:JSON.stringify({message:"Mock endpoint not found"})});
+      return route.fulfill({status:200,contentType:"application/json",headers:{"access-control-allow-origin":"*","access-control-allow-headers":"*","access-control-allow-methods":"GET,POST,OPTIONS"},body:JSON.stringify(body)});
+    }
+    return route.abort();
   });
 
   const pages = [
@@ -74,6 +86,8 @@ try {
 
   const languages = ["fa", "ku", "en", "tr", "ar", "es", "de", "fr"];
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  await page.locator('.therapist-card[data-therapist-slug="foruzan-shahla"]').waitFor({timeout:10000});
+  if (!(await page.locator(".therapist-card h3").filter({hasText:"فروزان شهلا"}).count())) throw new Error("Public therapist directory did not render the approved therapist through the REST fallback.");
   for (const language of languages) {
     await page.locator("#siteLanguage").selectOption(language);
     await page.waitForFunction(value => document.documentElement.lang === value, language);
