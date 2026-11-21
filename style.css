@@ -738,3 +738,5 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 #therapistDirectory .therapist-carousel-controls button:disabled{opacity:.35!important;cursor:not-allowed!important}
 #therapistDirectory .therapist-page-status{font-size:12px!important;color:var(--muted)!important}
 @media(max-width:620px){#therapistDirectory>.therapist-card{gap:14px!important;padding:16px 0!important}#therapistDirectory>.therapist-card .therapist-photo{width:76px!important;height:90px!important;flex-basis:76px!important}#therapistDirectory>.therapist-card h3{font-size:16px!important}#therapistDirectory>.therapist-card .therapist-meta,#therapistDirectory>.therapist-card .therapist-headline{font-size:12px!important}#therapistDirectory>.therapist-card .button{font-size:12px!important}}
+
+#therapistDirectory>.therapist-card[hidden]{display:none!important}

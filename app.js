@@ -95,7 +95,7 @@
     let active=0;
     const showCard=(index)=>{
       active=Math.max(0,Math.min(cards.length-1,index));
-      cards.forEach((card,i)=>{card.style.display=i===active?"flex":"none";});
+      cards.forEach((card,i)=>{card.hidden=i!==active;});
       status.textContent=(active+1)+" از "+cards.length;
       prev.disabled=active===0;
       next.disabled=active===cards.length-1;
