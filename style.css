@@ -686,3 +686,22 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 .featured-therapist-card .therapist-photo{width:92px;height:108px;flex:0 0 92px;object-fit:cover;}
 .featured-therapist-card .therapist-card-body{flex:1;min-width:0;}
 @media(max-width:620px){.featured-therapist-card{gap:14px}.featured-therapist-card .therapist-photo{width:76px;height:90px;flex-basis:76px}}
+
+/* Compact, paginated therapist directory */
+#therapistDirectory{display:block!important;margin-top:14px!important}
+#therapistDirectory .therapist-cards-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
+#therapistDirectory .therapist-card{display:flex!important;flex-direction:row!important;align-items:flex-start!important;gap:12px!important;padding:14px!important;margin:0!important;border:1px solid #e5ece8!important;border-bottom:1px solid #e5ece8!important;border-radius:16px!important;background:#fff!important;box-shadow:0 8px 22px #123f4608!important;min-width:0}
+#therapistDirectory .therapist-photo{width:76px!important;height:90px!important;object-fit:cover!important;border-radius:10px!important;flex:0 0 76px!important}
+#therapistDirectory .therapist-card-body{min-width:0!important;flex:1!important}
+#therapistDirectory .therapist-card h3{font-size:15px!important;line-height:1.7}
+#therapistDirectory .therapist-meta,#therapistDirectory .therapist-headline{font-size:10px!important;line-height:1.8}
+#therapistDirectory .therapist-tags{gap:4px!important}
+#therapistDirectory .therapist-tags span{font-size:9px!important;padding:2px 6px!important}
+#therapistDirectory .therapist-card .button{font-size:10px!important;padding:7px 9px!important;white-space:normal}
+#therapistDirectory .therapist-pagination{display:flex!important;grid-column:1/-1;justify-content:center;align-items:center;gap:14px;margin:18px auto 0}
+#therapistDirectory .therapist-pagination button{font:inherit;font-size:11px;padding:7px 14px;cursor:pointer}
+#therapistDirectory .therapist-pagination button:disabled{opacity:.4;cursor:not-allowed}
+#therapistDirectory .therapist-page-status{font-size:11px;color:#687b7c}
+@media(max-width:900px){#therapistDirectory .therapist-cards-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){#therapistDirectory .therapist-cards-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}#therapistDirectory .therapist-card{display:block!important;padding:10px!important}#therapistDirectory .therapist-photo{width:100%!important;height:112px!important;margin-bottom:7px}#therapistDirectory .therapist-card h3{font-size:13px!important}#therapistDirectory .therapist-card .button{width:100%}}
+@media(max-width:360px){#therapistDirectory .therapist-cards-grid{grid-template-columns:1fr}}
