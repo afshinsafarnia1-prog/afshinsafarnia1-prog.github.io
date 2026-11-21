@@ -749,3 +749,55 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 @media(prefers-reduced-motion:reduce){
  #therapistDirectory .therapist-cards-track{scroll-behavior:auto!important}
 }
+
+
+/* RADYAD concise homepage and horizontal therapist carousel */
+.hero-grid{min-height:0!important;padding:34px 0!important;gap:26px}
+.hero h1{font-size:clamp(29px,3.6vw,43px)!important;line-height:1.45!important;margin:12px 0!important}
+.hero .lead{font-size:14px!important;line-height:1.9!important;max-width:570px}
+.hero-visual{height:270px!important;transform:scale(.88)}
+.hero-actions{margin-top:18px!important;gap:14px!important;flex-wrap:wrap}
+.trustline{margin-top:18px!important}
+.featured-therapist-intro{background:#fff;padding:26px 0;border-bottom:1px solid #e7eee9}
+.featured-therapist-inner{display:grid;grid-template-columns:190px minmax(0,1fr);gap:26px;align-items:center;max-width:980px}
+.featured-therapist-photo{width:190px;height:220px;object-fit:cover;object-position:center 25%;border-radius:14px;background:#eef3ef}
+.featured-therapist-copy h2{font-size:25px;color:#204747;margin:6px 0}
+.featured-therapist-copy p{font-size:13px;line-height:1.9;color:#63736e;margin:5px 0 10px}
+.featured-therapist-copy .button{margin-top:8px}
+#services{padding:38px 0!important}
+#services .section-head{margin-bottom:18px!important}
+#services .section-head h2{font-size:25px!important}
+#services .service-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:none}
+#services .service-grid .service{display:block!important;padding:18px!important;min-height:0!important;border:1px solid #e3ece6!important;border-radius:14px!important;background:#fff!important}
+#services .service-grid .service-icon{margin:0 0 8px!important}
+#services .service-grid .service h3{margin:5px 0!important;font-size:15px!important}
+#services .service-grid .service p{min-height:0!important;font-size:11px!important;line-height:1.8!important;margin:4px 0 8px!important}
+#services .service-guide-links{display:none!important}
+#therapists{padding:25px 0!important}
+#therapists .searchbox{padding:12px 0!important}
+#therapists .searchbox h2{font-size:24px!important}
+#therapists .therapist-filters{padding:14px 0!important;gap:9px!important}
+.therapist-directory{display:block!important;overflow:hidden}
+.therapist-carousel-controls{display:flex;align-items:center;justify-content:center;gap:14px;margin:10px 0}
+.therapist-page-status{font-size:12px;color:#65756e;min-width:72px;text-align:center}
+.therapist-cards-track{display:flex!important;flex-flow:row nowrap!important;gap:16px!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory!important;scroll-behavior:smooth!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-x pan-y!important;padding:8px 2px 18px!important;direction:rtl}
+.therapist-cards-track>.therapist-card{display:flex!important;flex:0 0 calc((100% - 16px)/2)!important;width:calc((100% - 16px)/2)!important;min-width:0!important;min-height:240px!important;box-sizing:border-box!important;align-items:flex-start!important;gap:16px!important;padding:17px!important;margin:0!important;border:1px solid #e1eae4!important;border-radius:16px!important;background:#fff!important;box-shadow:0 8px 24px rgba(18,63,70,.06)!important;scroll-snap-align:start!important}
+.therapist-cards-track .therapist-photo{width:116px!important;height:138px!important;flex:0 0 116px!important;object-fit:cover!important;border-radius:10px!important}
+.therapist-cards-track .therapist-card-body{min-width:0!important}
+.therapist-cards-track .therapist-card h3{font-size:17px!important;margin:0 0 7px!important}
+.therapist-cards-track .therapist-meta,.therapist-cards-track .therapist-headline{font-size:11px!important;line-height:1.8!important}
+.therapist-cards-track .therapist-tags{display:flex;flex-wrap:wrap;gap:5px}
+.therapist-cards-track .therapist-tags span{font-size:10px!important}
+.therapist-cards-track .button{font-size:11px!important;padding:10px 13px!important}
+@media(max-width:700px){
+ .hero-grid{grid-template-columns:1fr!important;padding:26px 0!important}
+ .hero-visual{display:none!important}
+ .featured-therapist-inner{grid-template-columns:112px minmax(0,1fr)!important;gap:14px!important}
+ .featured-therapist-photo{width:112px!important;height:138px!important}
+ .featured-therapist-copy h2{font-size:19px!important}
+ .featured-therapist-copy p{font-size:11px!important}
+ .featured-therapist-copy .button{font-size:10px!important;padding:10px 12px!important}
+ #services .service-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .therapist-cards-track>.therapist-card{flex-basis:86%!important;width:86%!important;min-height:0!important}
+ .therapist-cards-track .therapist-photo{width:94px!important;height:116px!important;flex-basis:94px!important}
+}
