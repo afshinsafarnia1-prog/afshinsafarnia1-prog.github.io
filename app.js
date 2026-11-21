@@ -57,19 +57,12 @@
       body.append(el("span","therapist-verification","تأییدشده توسط مدیریت ردیاد"));
     }
     if(t.headline)body.append(el("p","therapist-headline",t.headline));
-    if(t.years_experience!=null)body.append(el("p","therapist-meta",String(t.years_experience)+" سال سابقهٔ فعالیت"));
     const tags=el("div","therapist-tags");
-    [...(t.specialties||[]).slice(0,3),...(t.modalities||[]).slice(0,2)].forEach(x=>tags.append(el("span","",x)));
-    body.append(tags);
-    const market=document.getElementById("marketSelect")?.value||"iran";
-    const currency=market==="iran"?"IRR":(document.getElementById("internationalCurrency")?.value||"EUR");
-    const chosen=(t.fees||[]).find(x=>x.currency===currency);
-    if(chosen){
-      const amount=currency==="IRR"?Number(chosen.amount)/10:Number(chosen.amount);
-      const formatted=new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(amount);
-      body.append(el("p","therapist-meta",formatted+(currency==="IRR"?" تومان":" "+currency)));
-    }
-    const link=el("a","button primary",i18n().chooseTherapist||"مشاهدهٔ پروفایل");
+    const modalityLabels={online:"آنلاین",in_person:"حضوری",hybrid:"حضوری و آنلاین"};
+    const values=[...(t.specialties||[]).slice(0,3),...(t.modalities||[]).slice(0,2).map(x=>modalityLabels[x]||x)];
+    values.forEach(value=>tags.append(el("span","",value)));
+    if(values.length)body.append(tags);
+    const link=el("a","button primary","مشاهدهٔ پروفایل");
     link.href="therapist-profile.html?id="+encodeURIComponent(t.id);
     body.append(link);card.append(body);
     return card;
