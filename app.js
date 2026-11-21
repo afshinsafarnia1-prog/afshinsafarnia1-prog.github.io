@@ -129,12 +129,7 @@
         data=await restRequest("therapists?"+params.toString());
       }
       allTherapists=data||[];
-      let feeRows;
-      if(db){const result=await db.rpc("get_public_therapist_fee_directory");if(result.error)throw result.error;feeRows=result.data;}
-      else feeRows=await restRequest("rpc/get_public_therapist_fee_directory","POST");
-      const feesByTherapist=new Map();
-      (feeRows||[]).forEach(row=>{if(!feesByTherapist.has(row.therapist_id))feesByTherapist.set(row.therapist_id,[]);feesByTherapist.get(row.therapist_id).push(row);});
-      allTherapists=allTherapists.map(t=>({...t,fees:feesByTherapist.get(t.id)||[]}));
+      // Fees are intentionally not loaded into homepage directory cards; they belong on tariff/profile pages.
       let publicMetadata;
       if(db){const result=await db.rpc("get_public_therapist_directory_metadata");if(result.error)throw result.error;publicMetadata=result.data;}
       else publicMetadata=await restRequest("rpc/get_public_therapist_directory_metadata","POST");
