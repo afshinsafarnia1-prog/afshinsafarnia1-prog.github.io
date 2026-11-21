@@ -30,9 +30,9 @@
 
   function therapistPhotoUrl(path, slug){
     if(path){
-      if(/^https?:\\/\\//i.test(path)||path.startsWith("/")||/\\.(?:jpe?g|png|webp)$/i.test(path)){
-        return path.startsWith("/")?path:"/"+path.replace(/^\\/+/, "");
-      }
+      const lower=path.toLowerCase();
+      const isDirect=path.startsWith("http://")||path.startsWith("https://")||path.startsWith("/")||[".jpg",".jpeg",".png",".webp"].some(ext=>lower.endsWith(ext));
+      if(isDirect)return path.startsWith("/")?path:"/"+path.replace(/^\\/+/, "");
       if(db){const {data}=db.storage.from("therapist-photos").getPublicUrl(path);return data?.publicUrl||"";}
     }
     if(slug==="foruzan-shahla")return "/therapists/foruzan-shahla.jpg";
@@ -223,7 +223,7 @@
     });
     renderDirectory(items);
     const count=document.getElementById("directoryCount");
-    if(count)count.textContent=(i18n().directoryCount||"{shown} از {total} درمانگر").replace("{shown}",String(items.length+1)).replace("{total}",String(allTherapists.length+1));
+    if(count)count.textContent=(i18n().directoryCount||"{shown} از {total} درمانگر").replace("{shown}",String(items.length)).replace("{total}",String(allTherapists.length));
   }
 
   document.getElementById("searchForm")?.addEventListener("submit",e=>{
