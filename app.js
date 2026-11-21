@@ -75,7 +75,12 @@
 
   function renderDirectory(items){
     if(!directory)return;
-    const cards=items.map(createTherapistCard);
+    const displayPriority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1};
+    const orderedItems=[...items].sort((a,b)=>{
+      const pa=displayPriority[a.public_slug]??2, pb=displayPriority[b.public_slug]??2;
+      return pa-pb || String(a.display_name||"").localeCompare(String(b.display_name||""),"fa");
+    });
+    const cards=orderedItems.map(createTherapistCard);
     directory.replaceChildren();
     if(!cards.length){
       directory.append(el("p","directory-empty","در حال حاضر درمانگری برای نمایش وجود ندارد."));
