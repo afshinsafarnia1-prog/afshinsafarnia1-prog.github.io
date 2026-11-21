@@ -53,6 +53,7 @@
 
     const body=el("div","therapist-card-body");
     body.append(el("h3","",t.display_name||""));
+    if(t.manager_approved!==true&&!t.verified_at)body.append(el("p","therapist-review-note","معرفی عمومی؛ بررسی مدارک تکمیل نشده است."));
     if(t.headline){
       const parts=t.headline.split("|").map(x=>x.trim()).filter(Boolean);
       if(parts[0])body.append(el("p","therapist-headline therapist-headline-role",parts[0]));
@@ -121,11 +122,11 @@
       const select="id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path,manager_approved,verified_at";
       let data;
       if(db){
-        const result=await db.from("therapists").select(select).eq("is_listed",true).or("verified_at.not.is.null,manager_approved.eq.true").order("display_name",{ascending:true});
+        const result=await db.from("therapists").select(select).eq("is_listed",true).order("display_name",{ascending:true});
         if(result.error)throw result.error;
         data=result.data;
       }else{
-        const params=new URLSearchParams({select,is_listed:"eq.true",or:"(verified_at.not.is.null,manager_approved.eq.true)",order:"display_name.asc"});
+        const params=new URLSearchParams({select,is_listed:"eq.true",order:"display_name.asc"});
         data=await restRequest("therapists?"+params.toString());
       }
       allTherapists=data||[];
@@ -172,7 +173,7 @@
       }catch(error){console.warn("RADYAD public site settings unavailable:",error);}
       renderPublicBranding();renderPublicTariffs();renderPublicContacts();
       if(notice)notice.textContent=allTherapists.length
-        ?"پروفایل‌های زیر توسط مدیریت ردیاد بررسی و برای نمایش تأیید شده‌اند."
+        ?"پروفایل‌های معرفی‌شده در فهرست ردیاد؛ وضعیت بررسی مدارک در صفحهٔ هر درمانگر مشخص شده است."
         :"فهرست درمانگران پس از تأیید مدارک و مجوزها منتشر می‌شود؛ هیچ پروفایل تأییدنشده‌ای نمایش داده نمی‌شود.";
     }catch(error){
       console.error("RADYAD therapist directory request failed:",error);
