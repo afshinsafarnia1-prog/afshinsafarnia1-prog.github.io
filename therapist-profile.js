@@ -26,7 +26,7 @@
     if(!id){root.textContent=t("profileMissingId");return;}
     root.textContent=t("profileLoading");
     const {data,error}=await db.from("therapists")
-      .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path,manager_approved,verified_at")
+      .select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path")
       .eq("id",id).eq("is_listed",true).maybeSingle();
     if(error||!data){root.textContent=t("profileNotFound");return;}
     const {data:metaRows}=await db.rpc("get_public_therapist_public_metadata",{p_therapist_id:id});
@@ -50,8 +50,6 @@
       const mark=node("div","profile-monogram","ی");mark.setAttribute("aria-hidden","true");hero.append(mark);
     }
     const intro=node("div","profile-intro");
-    if(data.manager_approved===true||data.verified_at)intro.append(node("span","eyebrow","تأییدشده توسط مدیریت ردیاد"));
-    if(data.manager_approved!==true&&!data.verified_at)intro.append(node("p","profile-review-note","این پروفایل برای آشنایی عمومی منتشر شده است؛ بررسی مدارک و تأیید نهایی توسط مدیریت ردیاد هنوز تکمیل نشده است."));
     intro.append(node("h1","",data.display_name||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.headline));
     if(typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
