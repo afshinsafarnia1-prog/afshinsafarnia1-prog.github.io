@@ -887,13 +887,16 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 
 
 
-/* Therapist profile: keep the complete identity block readable on portrait phones. */
+/* Compact therapist profile header on portrait phones; keep name and intro above the fold. */
+.therapist-profile-page{padding:16px 0 48px!important;}
+.therapist-profile-page .breadcrumbs{margin:3px 0 12px!important;}
 @media(max-width:600px){
-  .profile-hero{display:grid!important;grid-template-columns:minmax(0,1fr)!important;justify-items:center!important;align-items:start!important;gap:12px!important;padding:18px 14px!important;text-align:center!important;}
-  .profile-photo{width:132px!important;height:148px!important;max-width:100%!important;flex:none!important;}
-  .profile-intro{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important;}
-  .profile-intro h1{font-size:clamp(21px,6vw,28px)!important;line-height:1.45!important;margin:4px 0 8px!important;overflow-wrap:anywhere!important;}
-  .profile-headline,.profile-intro p{font-size:13px!important;line-height:1.85!important;overflow-wrap:anywhere!important;}
+  .therapist-profile-page .wrap{width:calc(100% - 24px)!important;}
+  .profile-hero{display:flex!important;flex-direction:row!important;align-items:flex-start!important;gap:12px!important;padding:12px!important;margin:10px 0 16px!important;text-align:right!important;}
+  .profile-photo{width:82px!important;height:98px!important;flex:0 0 82px!important;max-width:82px!important;}
+  .profile-intro{display:block!important;flex:1 1 auto!important;width:auto!important;min-width:0!important;max-width:none!important;overflow-wrap:anywhere!important;}
+  .profile-intro h1{font-size:clamp(19px,5.4vw,24px)!important;line-height:1.4!important;margin:0 0 5px!important;overflow-wrap:anywhere!important;}
+  .profile-headline,.profile-intro p{font-size:12px!important;line-height:1.7!important;margin:3px 0!important;overflow-wrap:anywhere!important;}
   .profile-content-grid{grid-template-columns:minmax(0,1fr)!important;}
   .profile-aside{position:static!important;min-width:0!important;}
 }
