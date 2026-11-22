@@ -900,3 +900,10 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
   .profile-content-grid{grid-template-columns:minmax(0,1fr)!important;}
   .profile-aside{position:static!important;min-width:0!important;}
 }
+/* On portrait phones, bring the therapist fee/contact panel directly below the profile header. */
+@media(max-width:600px){
+  .therapist-profile-page #therapistProfile .profile-content-grid{display:flex!important;flex-direction:column!important;gap:14px!important;}
+  .therapist-profile-page #therapistProfile .profile-aside{display:grid!important;order:-1!important;position:static!important;width:100%!important;min-width:0!important;}
+  .therapist-profile-page #therapistProfile .profile-main{display:grid!important;order:1!important;width:100%!important;min-width:0!important;}
+  .therapist-profile-page #therapistProfile .profile-aside .profile-section{display:block!important;visibility:visible!important;opacity:1!important;}
+}
