@@ -40,6 +40,7 @@
     const ogDescription=document.querySelector('meta[property="og:description"]');if(ogDescription&&description)ogDescription.content=description.content;
     root.replaceChildren();
     const hero=node("div","profile-hero");
+    if(data.id==="f5732cee-8463-440e-885b-b6e58b92f0d0")hero.classList.add("hediyeh-profile");
     if(data.photo_path){
       const isDirect=data.photo_path.startsWith("/")||data.photo_path.includes(".jpg")||data.photo_path.includes(".jpeg")||data.photo_path.includes(".png")||data.photo_path.includes(".webp")||data.photo_path.startsWith("http");
       const photoUrl=isDirect?(data.photo_path.startsWith("/")?data.photo_path:"/"+data.photo_path.replace(/^\/+/, "")):db.storage.from("therapist-photos").getPublicUrl(data.photo_path).data?.publicUrl;
