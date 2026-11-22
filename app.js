@@ -68,7 +68,7 @@
     values.forEach(value=>tags.append(el("span","",value)));
     if(values.length)body.append(tags);
     const link=el("a","button primary","مشاهدهٔ پروفایل");
-    link.href="therapist-profile.html?id="+encodeURIComponent(t.id);
+    link.href=t.public_slug==="foruzan-shahla"?"/therapists/foruzan-shahla.html":"therapist-profile.html?id="+encodeURIComponent(t.id);
     body.append(link);card.append(body);
     return card;
   }
