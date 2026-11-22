@@ -907,3 +907,11 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
   .therapist-profile-page #therapistProfile .profile-main{display:grid!important;order:1!important;width:100%!important;min-width:0!important;}
   .therapist-profile-page #therapistProfile .profile-aside .profile-section{display:block!important;visibility:visible!important;opacity:1!important;}
 }
+/* Ensure the therapist identity, credentials and session line remain visible beside the portrait on phones. */
+@media(max-width:600px){
+  #therapistProfile .profile-hero{display:flex!important;flex-direction:row!important;align-items:flex-start!important;justify-content:flex-start!important;}
+  #therapistProfile .profile-intro{display:flex!important;flex:1 1 0!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important;min-width:0!important;width:auto!important;max-width:none!important;overflow:visible!important;}
+  #therapistProfile .profile-intro h1{display:block!important;width:100%!important;color:#123f46!important;white-space:normal!important;visibility:visible!important;opacity:1!important;}
+  #therapistProfile .profile-intro .profile-headline{display:block!important;width:100%!important;color:#435e5e!important;font-size:12px!important;line-height:1.8!important;white-space:normal!important;visibility:visible!important;opacity:1!important;}
+  #therapistProfile .profile-intro .profile-session{display:block!important;width:100%!important;color:#087d70!important;font-size:11px!important;line-height:1.8!important;white-space:normal!important;visibility:visible!important;opacity:1!important;}
+}
