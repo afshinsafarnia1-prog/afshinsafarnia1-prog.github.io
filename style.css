@@ -885,3 +885,15 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 #therapistDirectory .therapist-cards-track>.therapist-card .therapist-meta{font-size:11px!important;color:#778780!important;margin:0!important;line-height:1.7!important}
 #therapistDirectory .therapist-cards-track>.therapist-card .therapist-tags{margin:7px 0 4px!important;gap:6px!important}
 
+
+
+/* Therapist profile: keep the complete identity block readable on portrait phones. */
+@media(max-width:600px){
+  .profile-hero{display:grid!important;grid-template-columns:minmax(0,1fr)!important;justify-items:center!important;align-items:start!important;gap:12px!important;padding:18px 14px!important;text-align:center!important;}
+  .profile-photo{width:132px!important;height:148px!important;max-width:100%!important;flex:none!important;}
+  .profile-intro{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important;}
+  .profile-intro h1{font-size:clamp(21px,6vw,28px)!important;line-height:1.45!important;margin:4px 0 8px!important;overflow-wrap:anywhere!important;}
+  .profile-headline,.profile-intro p{font-size:13px!important;line-height:1.85!important;overflow-wrap:anywhere!important;}
+  .profile-content-grid{grid-template-columns:minmax(0,1fr)!important;}
+  .profile-aside{position:static!important;min-width:0!important;}
+}
