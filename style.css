@@ -915,3 +915,9 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
   #therapistProfile .profile-intro .profile-headline{display:block!important;width:100%!important;color:#435e5e!important;font-size:12px!important;line-height:1.8!important;white-space:normal!important;visibility:visible!important;opacity:1!important;}
   #therapistProfile .profile-intro .profile-session{display:block!important;width:100%!important;color:#087d70!important;font-size:11px!important;line-height:1.8!important;white-space:normal!important;visibility:visible!important;opacity:1!important;}
 }
+
+
+/* Add a little breathing room above the therapist portrait and identity block on portrait phones. */
+@media(max-width:600px) and (orientation:portrait){
+  .therapist-profile-page #therapistProfile .profile-hero{margin-top:28px!important;}
+}
