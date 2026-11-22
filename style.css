@@ -888,3 +888,12 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 
 
 }
+
+
+/* Mitra Pahlavan profile-only corrections */
+.mitra-profile .profile-hero{margin-top:34px;min-height:210px;align-items:center}
+.mitra-profile .profile-photo{width:170px;height:190px;flex:0 0 170px;object-fit:cover;object-position:center 35%;display:block}
+.mitra-profile .profile-intro h1{visibility:visible;opacity:1;position:relative;z-index:1}
+.mitra-profile .profile-headline{color:#355f5e;font-weight:700}
+@media(max-width:760px){.mitra-profile .profile-hero{margin-top:28px;gap:16px}.mitra-profile .profile-photo{width:112px;height:132px;flex-basis:112px}}
+@media(max-width:480px){.mitra-profile .profile-hero{display:flex;align-items:center}.mitra-profile .profile-photo{width:100px;height:120px;flex-basis:100px}}
