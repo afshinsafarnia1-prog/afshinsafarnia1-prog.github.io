@@ -885,33 +885,7 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 #therapistDirectory .therapist-cards-track>.therapist-card .therapist-meta{font-size:11px!important;color:#778780!important;margin:0!important;line-height:1.7!important}
 #therapistDirectory .therapist-cards-track>.therapist-card .therapist-tags{margin:7px 0 4px!important;gap:6px!important}
 
-
-
-/* Compact therapist profile header on portrait phones; keep name and intro above the fold. */
-.therapist-profile-page{padding:16px 0 48px!important;}
-.therapist-profile-page .breadcrumbs{margin:3px 0 12px!important;}
-@media(max-width:600px){
-  .therapist-profile-page .wrap{width:calc(100% - 24px)!important;}
-  .profile-hero{display:flex!important;flex-direction:row!important;align-items:flex-start!important;gap:12px!important;padding:12px!important;margin:10px 0 16px!important;text-align:right!important;}
-  .profile-photo{width:82px!important;height:98px!important;flex:0 0 82px!important;max-width:82px!important;}
-  .profile-intro{display:block!important;flex:1 1 auto!important;width:auto!important;min-width:0!important;max-width:none!important;overflow-wrap:anywhere!important;}
-  .profile-intro h1{font-size:clamp(19px,5.4vw,24px)!important;line-height:1.4!important;margin:0 0 5px!important;overflow-wrap:anywhere!important;}
-  .profile-headline,.profile-intro p{font-size:12px!important;line-height:1.7!important;margin:3px 0!important;overflow-wrap:anywhere!important;}
-  .profile-content-grid{grid-template-columns:minmax(0,1fr)!important;}
-  .profile-aside{position:static!important;min-width:0!important;}
-}
-/* Keep fee and contact details in their original document position below the profile content. */
-/* Ensure the therapist identity, credentials and session line remain visible beside the portrait on phones. */
-@media(max-width:600px){
-  #therapistProfile .profile-hero{display:flex!important;flex-direction:row!important;align-items:flex-start!important;justify-content:flex-start!important;}
-  #therapistProfile .profile-intro{display:flex!important;flex:1 1 0!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important;min-width:0!important;width:auto!important;max-width:none!important;overflow:visible!important;}
-  #therapistProfile .profile-intro h1{display:block!important;width:100%!important;color:#123f46!important;white-space:normal!important;visibility:visible!important;opacity:1!important;}
-  #therapistProfile .profile-intro .profile-headline{display:block!important;width:100%!important;color:#435e5e!important;font-size:12px!important;line-height:1.8!important;white-space:normal!important;visibility:visible!important;opacity:1!important;}
-  #therapistProfile .profile-intro .profile-session{display:block!important;width:100%!important;color:#087d70!important;font-size:11px!important;line-height:1.8!important;white-space:normal!important;visibility:visible!important;opacity:1!important;}
-}
-
-
-/* Add a little breathing room above the therapist portrait and identity block on portrait phones. */
+/* Small top spacing for the profile header on portrait phones; retain the original responsive layout. */
 @media(max-width:600px) and (orientation:portrait){
-  .therapist-profile-page #therapistProfile .profile-hero{margin-top:28px!important;}
+  .therapist-profile-page #therapistProfile .profile-hero{margin-top:24px;}
 }
