@@ -39,6 +39,12 @@
     const ogTitle=document.querySelector('meta[property="og:title"]');if(ogTitle)ogTitle.content=document.title;
     const ogDescription=document.querySelector('meta[property="og:description"]');if(ogDescription&&description)ogDescription.content=description.content;
     root.replaceChildren();
+    const isMitra=data.public_slug==="mitra-pahlavan";
+    if(isMitra){
+      root.classList.add("mitra-profile");
+      const topLink=document.querySelector(".navcta");
+      if(topLink)topLink.textContent="بازگشت به فهرست و انتخاب درمانگر ←";
+    }
     const hero=node("div","profile-hero");
     if(data.id==="f5732cee-8463-440e-885b-b6e58b92f0d0")hero.classList.add("hediyeh-profile");
     if(data.photo_path){
@@ -52,13 +58,22 @@
     }
     const intro=node("div","profile-intro");
     intro.append(node("h1","",data.display_name||t("profileNoName")));
-    if(data.headline)intro.append(node("p","profile-headline",data.headline));
+    if(data.headline)intro.append(node("p","profile-headline",isMitra&&document.documentElement.lang==="fa"?"روان‌شناس بالینی | روان‌کاو | درمانگر متمرکز بر تروما · ویژهٔ بزرگسالان":data.headline));
     if(typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
     intro.append(node("p","profile-session",t("profileSession")));
     hero.append(intro);root.append(hero);
     const grid=node("div","profile-content-grid");
     const main=node("div","profile-main");
-    if(data.biography){const bio=node("section","profile-section");bio.append(node("h2","",t("profileAbout")),node("p","profile-biography",data.biography));main.append(bio);}
+    if(data.biography){
+      const bio=node("section","profile-section");
+      let biographyText=data.biography;
+      if(isMitra){
+        const match=data.biography.match(/فارسی:\s*([\s\S]*?)\s*English:\s*([\s\S]*)/);
+        if(match)biographyText=document.documentElement.lang==="fa"?match[1].trim():match[2].trim();
+      }
+      bio.append(node("h2","",t("profileAbout")),node("p","profile-biography",biographyText));
+      main.append(bio);
+    }
     const qualifications=list(data.qualifications);
     if(qualifications.length)main.append(section(t("profileQualifications"),qualifications));
     const specialties=list(data.specialties);
