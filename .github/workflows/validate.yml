@@ -28,6 +28,8 @@ jobs:
           node --check initial-guidance-i18n.js
           node --check articles-content-i18n.js
           node --check articles-assessment-i18n.js
+          node --check editorial-pages-i18n.js
+          node --check articles/articles-index-i18n.js
           node --check service-guides-i18n.js
           node --check admin-workflow.js
           node --check admin-workflow-extended.js
