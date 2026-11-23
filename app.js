@@ -29,7 +29,7 @@
         :(i18n().directoryEmpty||"در حال حاضر درمانگر تأییدشده‌ای برای نمایش وجود ندارد.")));
       return;
     }
-    const displayPriority={"niko-ghasemi":999};
+    const displayPriority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1,"mitra-pahlavan":2,"niko-ghasemi":3};
     items=[...items].sort((a,b)=>(displayPriority[a.public_slug]??4)-(displayPriority[b.public_slug]??4)||String(a.display_name||"").localeCompare(String(b.display_name||""),"fa"));
     items.forEach(t=>{
       const card=el("article","therapist-card");
