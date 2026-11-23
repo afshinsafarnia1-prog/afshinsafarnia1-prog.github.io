@@ -126,11 +126,11 @@
       const select="id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path";
       let data;
       if(db){
-        const result=await db.from("therapists").select(select).eq("is_listed",true).order("display_name",{ascending:true});
+        const result=await db.from("therapists").select(select).eq("is_listed",true).eq("manager_approved",true).not("verified_at","is",null).order("display_name",{ascending:true});
         if(result.error)throw result.error;
         data=result.data;
       }else{
-        const params=new URLSearchParams({select,is_listed:"eq.true",order:"display_name.asc"});
+        const params=new URLSearchParams({select,is_listed:"eq.true",manager_approved:"eq.true",verified_at:"not.is.null",order:"display_name.asc"});
         data=await restRequest("therapists?"+params.toString());
       }
       allTherapists=(data||[]).sort((a,b)=>{
