@@ -54,7 +54,7 @@
 @media(max-width:760px){.profile-monogram{width:105px;height:125px;font-size:42px}}@media(max-width:480px){.profile-monogram{width:100px;height:110px}}
 
 
-/* YAD Center completion: responsive interaction, client workflows and accessible focus */
+/* YADSHIN completion: responsive interaction, client workflows and accessible focus */
 :root{--focus-ring:0 0 0 3px #35c6b055}
 :where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{outline:3px solid #e87562;outline-offset:3px}
 button:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
@@ -131,7 +131,7 @@ button:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
 .crisis-notice{margin:12px 0 20px;padding:13px 16px;border:1px solid #e7c4b7;border-inline-start:4px solid #c86c51;border-radius:12px;background:#fff8f4;color:#70493f;font-size:12px;line-height:2}
 
 
-/* YAD Center visual system refresh — portal, editorial and mobile consistency */
+/* YADSHIN visual system refresh — portal, editorial and mobile consistency */
 :root{
  --yad-surface:#ffffff;--yad-bg:#f7faf8;--yad-border:#e2ece7;
  --yad-shadow:0 16px 42px rgba(18,63,70,.075);
