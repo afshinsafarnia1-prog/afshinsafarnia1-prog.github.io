@@ -19,9 +19,9 @@
    db.rpc("public_list_therapist_articles").then(({data,error})=>{
     root.replaceChildren();
     if(error){root.append(node("p","notice","دریافت مقاله‌ها در حال حاضر ممکن نیست."));return;}
-    if(!data?.length){root.append(node("p","muted","مقاله‌ای از درمانگران یادسنتر هنوز منتشر نشده است."));return;}
+    if(!data?.length){root.append(node("p","muted","مقاله‌ای از درمانگران یادشین هنوز منتشر نشده است."));return;}
     data.forEach(a=>{
-     const card=node("article","article-card");card.append(node("span","", "نوشتهٔ درمانگران یادسنتر"),node("h2","",a.title),node("p","",a.excerpt),node("small","muted","نویسنده: "+a.therapist_name));
+     const card=node("article","article-card");card.append(node("span","", "نوشتهٔ درمانگران یادشین"),node("h2","",a.title),node("p","",a.excerpt),node("small","muted","نویسنده: "+a.therapist_name));
      const link=node("a","", "مطالعه مقاله ←");link.href="?slug="+encodeURIComponent(a.slug);card.append(link);root.append(card);
     });
    });
