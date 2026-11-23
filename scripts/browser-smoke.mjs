@@ -44,17 +44,29 @@ try {
   const page = await context.newPage();
   const pageErrors = [];
   page.on("pageerror", error => pageErrors.push(error.message));
-  await page.route("**/*", route => {
+  await page.route("**/*", async route => {
     const url = new URL(route.request().url());
-    return url.origin === "http://127.0.0.1:4173" ? route.continue() : route.abort();
+    if (url.origin === "http://127.0.0.1:4173") return route.continue();
+    if (url.hostname === "dszwzoiqgslnbnmryajs.supabase.co" && url.pathname.startsWith("/rest/v1/")) {
+      const therapist = {id:"449e7b02-e14f-4c83-946f-7aff706d0c53",public_slug:"foruzan-shahla",display_name:"فروزان شهلا",headline:"روان‌درمانگر تحلیلی",biography:"معرفی آزمایشی برای آزمون فهرست عمومی",specialties:["روان‌درمانی تحلیلی"],modalities:["online","in_person"],languages:["fa","en"],photo_path:null,manager_approved:true,verified_at:null};
+      let body = [];
+      if (url.pathname.endsWith("/therapists")) body = [therapist];
+      else if (url.pathname.endsWith("/rpc/get_public_therapist_fee_directory")) body = [];
+      else if (url.pathname.endsWith("/rpc/get_public_therapist_directory_metadata")) body = [];
+      else if (url.pathname.endsWith("/rpc/get_public_therapist_rating_summary")) body = [];
+      else if (url.pathname.endsWith("/rpc/get_public_site_settings")) body = {contacts:{},branding:{},tariffs:[]};
+      else return route.fulfill({status:404,contentType:"application/json",body:JSON.stringify({message:"Mock endpoint not found"})});
+      return route.fulfill({status:200,contentType:"application/json",headers:{"access-control-allow-origin":"*","access-control-allow-headers":"*","access-control-allow-methods":"GET,POST,OPTIONS"},body:JSON.stringify(body)});
+    }
+    return route.abort();
   });
 
   const pages = [
-    "/", "/relationships.html", "/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/client.html", "/admin.html", "/therapist.html",
+    "/", "/contact.html", "/relationships.html", "/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/client.html", "/admin.html", "/therapist.html",
     "/assistant.html", "/rules.html", "/articles/",
     "/articles/psychotherapy-first-session.html",
     "/articles/therapeutic-relationship.html",
-    "/articles/ai-robots-human-meaning.html"
+    "/articles/ai-robots-human-meaning.html", "/therapists/foruzan-shahla.html"
   ];
   for (const path of pages) {
     const response = await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
@@ -74,6 +86,8 @@ try {
 
   const languages = ["fa", "ku", "en", "tr", "ar", "es", "de", "fr"];
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  await page.locator('.therapist-card[data-therapist-slug="foruzan-shahla"]').waitFor({timeout:10000});
+  if (!(await page.locator(".therapist-card h3").filter({hasText:"فروزان شهلا"}).count())) throw new Error("Public therapist directory did not render the approved therapist through the REST fallback.");
   for (const language of languages) {
     await page.locator("#siteLanguage").selectOption(language);
     await page.waitForFunction(value => document.documentElement.lang === value, language);
@@ -99,7 +113,10 @@ try {
     if (!navText.includes("Home") || !navText.includes("Journal")) throw new Error("Service guide navigation did not localize: " + path);
   }
 
+  await page.goto("http://127.0.0.1:4173/contact.html", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator('a[href="tel:+989999398350"]').count()) || !(await page.locator('a[href="https://wa.me/989999398350"]').count())) throw new Error("Public contact page is missing phone or WhatsApp links.");
   await page.goto("http://127.0.0.1:4173/client.html", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator("#yadBookingContact a[href=\"tel:+989999398350\"]").count()) || !(await page.locator("#yadBookingContact a[href=\"https://wa.me/989999398350\"]").count())) throw new Error("Client booking contact options are missing.");
   for (const selector of ["#yadClientConsent", "#yadAdultConfirm", "#yadSessionCountry", "#yadPreferredTime", "#yadClientAppointmentList", "#yadClientSupportForm", "#yadClientNotificationsList", "#yadExportMyData"]) {
     if (!(await page.locator(selector).count())) throw new Error("Client workflow control missing: " + selector);
   }
@@ -160,8 +177,71 @@ try {
   if (!(await page.locator(".therapist-filters").isVisible())) throw new Error("Mobile therapist filters are not visible.");
   const mobileFilterColumns = await page.locator(".therapist-filters").evaluate(el => getComputedStyle(el).gridTemplateColumns);
   if (mobileFilterColumns.split(" ").length !== 1) throw new Error("Therapist filters are not single-column on mobile.");
+
+  for (const [path, selector] of [["/initial-guidance.html","#initialGuideForm"],["/standards.html","h1"],["/workshops.html","#yadWorkshopPageList"],["/articles/why-assessment-matters.html","h1"]]) {
+    const response=await page.goto("http://127.0.0.1:4173"+path,{waitUntil:"domcontentloaded"});
+    if(!response||response.status()!==200)throw new Error("Integrated page failed: "+path);
+    if(!(await page.locator(selector).count()))throw new Error("Integrated page control missing: "+path+" "+selector);
+  }
+  await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
+  await page.locator("#guideSpecialty").selectOption("روان‌درمانی");
+  await page.locator("#guideLanguage").selectOption("fa");
+  await page.locator("#guideFormat").selectOption("online");
+  await page.locator("#initialGuideForm button[type=submit]").click();
+  await page.locator("#initialGuideResult a").click();
+  await page.waitForURL(/index\.html\?[^#]*specialty=/);
+  if(new URL(page.url()).searchParams.get("format")!=="online")throw new Error("Initial guide did not preserve the online preference.");
+  await page.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
+  if(!(await page.locator(".yad-assessment-float").count()))throw new Error("Persistent initial-guidance link is missing.");
+  if(!(await page.locator("#pwaInstallButton").count())||!(await page.locator("#pwaInstallHelp").count()))throw new Error("Mobile PWA installation entry point or help dialog is missing.");
+  await page.locator("#pwaInstallButton").click();
+  if(!(await page.locator("#pwaInstallHelp").isVisible()))throw new Error("PWA installation guidance dialog did not open.");
+  await page.locator("#pwaInstallClose").click();
+  await page.setViewportSize({width:390,height:844});
+  await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
+  for(const path of ["/","/initial-guidance.html","/standards.html","/workshops.html"]){
+    await page.goto("http://127.0.0.1:4173"+path,{waitUntil:"domcontentloaded"});
+    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1);
+    if(overflow)throw new Error("Horizontal overflow on mobile: "+path);
+  }
+  await page.goto("http://127.0.0.1:4173/initial-guidance.html",{waitUntil:"domcontentloaded"});
+  const floatContrast=await page.locator(".yad-assessment-float").evaluate(el=>{
+    const parse=v=>{const m=v.match(/[0-9.]+/g);return m?.length>=3?m.slice(0,3).map(Number):[0,0,0];};
+    const lum=v=>{const c=parse(v).map(x=>{x/=255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4;});return .2126*c[0]+.7152*c[1]+.0722*c[2];};
+    const style=getComputedStyle(el),a=lum(style.color),b=lum(style.backgroundColor);return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+  });
+  if(floatContrast<4.5)throw new Error("Persistent guidance button fails WCAG AA text contrast: "+floatContrast.toFixed(2));
+  await page.goto("http://127.0.0.1:4173/rules.html",{waitUntil:"domcontentloaded"});
+  const legalText=await page.locator(".legal").innerText();
+  if(!legalText.includes("پیش‌نویس")||!legalText.includes("رضایت آگاهانهٔ درمان"))throw new Error("Legal draft disclosures are missing.");
+
+
+  // Expanded small-screen checks for the primary public and portal journeys.
+  await page.setViewportSize({ width: 360, height: 800 });
+  for (const path of [
+    "/", "/contact.html", "/initial-guidance.html", "/relationships.html", "/psychology.html",
+    "/psychotherapy.html", "/psychiatry.html", "/therapist.html",
+    "/client.html", "/admin.html", "/articles/ai-robots-human-meaning.html"
+  ]) {
+    const response = await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
+    if (!response || response.status() !== 200) throw new Error("Small-screen page failed: " + path);
+    const dimensions = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      document: document.documentElement.scrollWidth
+    }));
+    if (dimensions.document > dimensions.viewport + 1) {
+      throw new Error("Small-screen horizontal overflow at 360px: " + path + " (" + dimensions.document + " > " + dimensions.viewport + ")");
+    }
+  }
+
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  const articleGuide = page.locator('a[href="articles/choosing-a-therapist.html"]');
+  if (!(await articleGuide.count())) throw new Error("Homepage therapist-selection article link is missing.");
+  const articleResponse = await page.request.get("http://127.0.0.1:4173/articles/choosing-a-therapist.html");
+  if (articleResponse.status() !== 200) throw new Error("Therapist-selection article page failed to load.");
+
   if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
-  console.log("PASS: 14 pages return HTTP 200; eight languages, client consent/session/support/notification controls, admin management panels, directory filters, mobile navigation and responsive filter layout, assistant, therapist, article-index, Persian-only notices and PWA assets checked; no uncaught page errors.");
+  console.log("PASS: 18 pages and integrated guidance, standards, workshop and assessment content; initial-guide filter handoff; fixed mobile access; WCAG AA contrast for fixed CTA; legal draft disclosures; existing multilingual, portal, responsive and PWA smoke checks.");
 } finally {
   if (browser) await browser.close();
   await new Promise(resolveClose => server.close(resolveClose));

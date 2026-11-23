@@ -1,13 +1,17 @@
-const CACHE = "yadshin-shell-v21";
+const CACHE = "yadshin-shell-v47";
 const CORE_ASSETS = [
   "/",
   "/index.html",
+  "/initial-guidance.html",
+  "/standards.html",
+  "/articles/why-assessment-matters.html",
   "/workshops.html",
   "/relationships.html",
   "/psychology.html",
   "/psychotherapy.html",
   "/psychiatry.html",
   "/style.css",
+  "/yadshin-mark.svg",
   "/app.js",
   "/workshops.js",
   "/pwa-install.js",
@@ -32,6 +36,7 @@ const CORE_ASSETS = [
   "/assistant.html",
   "/therapist.html",
   "/therapist-profile.html",
+  "/therapists/foruzan-shahla.html",
   "/therapist-profile.js",
   "/client.html",
   "/admin.html",

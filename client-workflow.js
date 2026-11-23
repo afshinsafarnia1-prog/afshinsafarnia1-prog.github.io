@@ -33,7 +33,7 @@
         if(submit)submit.disabled=!clientIntakeEnabled;
         if(notice)notice.textContent=clientIntakeEnabled
           ?"پذیرش درخواست فعال است. پیش از ارسال، قوانین و اطلاعیهٔ حریم خصوصی را مطالعه کنید."
-          :"ثبت درخواست جدید فعلاً غیرفعال است. یادشین پس از تکمیل بررسی‌های حقوقی و فعال‌سازی رسمی، پذیرش را آغاز می‌کند.";
+          :"ثبت درخواست جدید فعلاً غیرفعال است. یادسنتر پس از تکمیل بررسی‌های حقوقی و فعال‌سازی رسمی، پذیرش را آغاز می‌کند.";
       } catch(error) {
         clientIntakeEnabled=false;
         if(submit)submit.disabled=true;
@@ -137,10 +137,23 @@
 
     async function registerForRequestedWorkshop(){
       if(!queryWorkshop)return;
-      const {error}=await db.rpc("register_for_workshop",{p_workshop_id:queryWorkshop});
-      if(error){setStatus(error.message==="event_full"?"ظرفیت این کارگاه تکمیل شده است.":error.message==="registration_closed"?"مهلت ثبت‌نام این رویداد پایان یافته است.":"ثبت‌نام انجام نشد؛ لطفاً رویداد را بررسی کنید.",true);return;}
-      setStatus("درخواست ثبت‌نام شما در کارگاه ثبت شد. وضعیت و اطلاعات ورود را در بخش رویدادهای من می‌بینید.");
-      await loadWorkshopRegistrations();
+      const prompt=document.getElementById("yadWorkshopRegistrationPrompt");
+      if(!prompt){setStatus("برای ادامهٔ ثبت‌نام، از صفحهٔ کارگاه وارد پنل مراجع شوید.",true);return;}
+      prompt.replaceChildren();
+      const explanation=document.createElement("p");
+      explanation.textContent="با تأیید این مرحله، درخواست ثبت‌نام شما برای این کارگاه ارسال می‌شود. اگر رویداد هزینه داشته باشد، ثبت‌نام تا زمان تأیید پرداخت نهایی نیست. لینک جلسه فقط پس از احراز شرایط در پنل نمایش داده می‌شود.";
+      const confirm=document.createElement("button");
+      confirm.type="button";confirm.className="button primary";confirm.textContent="تأیید و ارسال درخواست ثبت‌نام";
+      confirm.addEventListener("click",async()=>{
+        confirm.disabled=true;confirm.textContent="در حال ثبت درخواست…";
+        const {error}=await db.rpc("register_for_workshop",{p_workshop_id:queryWorkshop});
+        if(error){confirm.disabled=false;confirm.textContent="تلاش دوباره برای ثبت‌نام";setStatus(error.message==="event_full"?"ظرفیت این کارگاه تکمیل شده است.":error.message==="registration_closed"?"مهلت ثبت‌نام این رویداد پایان یافته است.":"ثبت‌نام انجام نشد؛ لطفاً رویداد را بررسی کنید.",true);return;}
+        setStatus("درخواست ثبت‌نام شما در کارگاه ثبت شد. وضعیت پرداخت و اطلاعات ورود را در بخش رویدادهای من پیگیری کنید.");
+        prompt.hidden=true;
+        await loadWorkshopRegistrations();
+      });
+      prompt.append(explanation,confirm);prompt.hidden=false;
+      prompt.scrollIntoView({behavior:"smooth",block:"center"});
     }
     async function loadWorkshopRegistrations(){
       const {data,error}=await db.rpc("client_list_workshop_registrations");
@@ -154,7 +167,7 @@
         const detail=document.createElement("p");detail.textContent=new Date(item.starts_at).toLocaleString()+" · "+item.status+" · "+item.platform;
         card.append(title,detail);
         if(item.status==="pending_payment"){
-          const hint=document.createElement("p");hint.textContent="پس از پرداخت به یادشین، شماره پیگیری را ثبت کنید؛ لینک ورود پس از تأیید پرداخت نمایش داده می‌شود.";
+          const hint=document.createElement("p");hint.textContent="پس از پرداخت به یادسنتر، شماره پیگیری را ثبت کنید؛ لینک ورود پس از تأیید پرداخت نمایش داده می‌شود.";
           const input=document.createElement("input");input.maxLength=120;input.placeholder="شماره پیگیری پرداخت";
           const btn=document.createElement("button");btn.type="button";btn.className="button primary";btn.textContent="ارسال شماره پیگیری";
           btn.addEventListener("click",async()=>{const {error}=await db.rpc("client_submit_workshop_payment_reference",{p_registration_id:item.registration_id,p_reference:input.value.trim()});if(error){setStatus(error.message||"ثبت شماره پیگیری ناموفق بود.",true);return;}setStatus("شماره پیگیری برای بررسی ارسال شد.");await loadWorkshopRegistrations();});
@@ -219,7 +232,7 @@
           :raw.includes("therapist_fee_not_configured_for_currency")?"این درمانگر برای واحد پول انتخاب‌شده تعرفه ثبت نکرده است.":raw;
         setStatus(friendly||"ثبت درخواست ناموفق بود.", true); return;
       }
-      setStatus("درخواست ثبت شد. اطلاعات پرداخت را از مدیریت یادشین دریافت کنید؛ پس از پرداخت، شماره پیگیری را در همین صفحه وارد کنید.");
+      setStatus("درخواست ثبت شد. اطلاعات پرداخت را از مدیریت یادسنتر دریافت کنید؛ پس از پرداخت، شماره پیگیری را در همین صفحه وارد کنید.");
       form.reset();
       await loadHistory();
     });

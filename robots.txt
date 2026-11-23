@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://elegant-otter-e1f7ef.netlify.app/sitemap.xml
+Sitemap: https://afshinsafarnia1-prog.github.io/sitemap.xml

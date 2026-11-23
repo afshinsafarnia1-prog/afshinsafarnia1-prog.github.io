@@ -1,4 +1,4 @@
-# YADSHIN — Supabase backend
+# RADYAD — Supabase backend
 
 This folder documents the database foundation and the current staging workflow.
 
@@ -13,10 +13,10 @@ This folder documents the database foundation and the current staging workflow.
 2. The administrator creates the therapist profile, uploads the public photo and private license document, verifies the credentials, and publishes the profile.
 3. A client signs in and chooses a listed, verified therapist from the public directory.
 4. The request and payment are created before any appointment is scheduled.
-5. The client receives payment instructions from YADSHIN, transfers the amount, and submits a payment reference.
+5. The client receives payment instructions from RADYAD, transfers the amount, and submits a payment reference.
 6. The administrator checks the actual receipt. Approval marks the request as payment-verified; it does not create or confirm an appointment.
 7. The administrator schedules the session with the therapist selected by the client.
-8. The database records the current 70% therapist / 30% YADSHIN split at request creation.
+8. The database records the current 70% therapist / 30% RADYAD split at request creation.
 
 Therapists do not need Supabase Auth accounts and cannot self-register, edit or publish profiles. The public directory exposes only profiles that are both verified and listed.
 
@@ -47,7 +47,7 @@ The public homepage and portal language controls expose Persian, Kurdish, Englis
 - Manual payment references are not bank verification. An administrator must independently verify actual receipt before approval.
 - Online payment gateways, refunds, notifications, cancellations, payout execution and reconciliation are not implemented.
 - Supabase Auth leaked-password protection is not enabled: this project is on the Free plan, and Supabase rejects saving this setting unless the project is Pro or above. Do not treat a failed save as enabled.
-- The YADSHIN administrator account must enroll a TOTP factor in the application itself. This is separate from MFA on the Supabase dashboard owner account. The admin sign-in screen guides first-time enrollment and later challenges.
+- The RADYAD administrator account must enroll a TOTP factor in the application itself. This is separate from MFA on the Supabase dashboard owner account. The admin sign-in screen guides first-time enrollment and later challenges.
 - Admin SECURITY DEFINER RPCs require both `profiles.role = 'admin'` and the JWT assurance claim `aal2` through `public.require_admin_aal2()`. The guard is enforced at the start of all 15 admin RPCs; private therapist verification reads and admin storage operations also require AAL2. The Supabase advisor may still report these authenticated SECURITY DEFINER RPCs because they are callable at the grant layer, but non-admin or AAL1 requests are rejected by the function body.
 - Add monitoring, backups, rate limits and audit logging.
 - Complete a browser end-to-end test suite and an independent security review.

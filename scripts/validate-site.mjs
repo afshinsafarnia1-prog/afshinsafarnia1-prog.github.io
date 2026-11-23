@@ -52,6 +52,14 @@ if (!fs.existsSync(sitemapPath)) {
   errors.push("Missing sitemap.xml");
 } else {
   const sitemap = fs.readFileSync(sitemapPath, "utf8");
+  const canonicalSiteOrigin = "https://afshinsafarnia1-prog.github.io";
+  if (!sitemap.includes("<loc>" + canonicalSiteOrigin + "/</loc>")) {
+    errors.push("sitemap.xml must use the canonical GitHub Pages site origin");
+  }
+  const sitemapLocations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
+  if (sitemapLocations.some(url => !url.startsWith(canonicalSiteOrigin + "/") && url !== canonicalSiteOrigin)) {
+    errors.push("sitemap.xml contains URLs outside the canonical site origin");
+  }
   if (sitemap.includes("YOUR-DOMAIN.example")) errors.push("sitemap.xml still contains a placeholder domain");
   if (!sitemap.includes("<urlset") || !sitemap.includes("<loc>https://")) errors.push("sitemap.xml has no valid URL entries");
   for (const page of ["/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/relationships.html", "/articles/choosing-a-therapist.html", "/assessment.html"]) {
@@ -92,11 +100,19 @@ for (const file of [".env", ".env.production"]) {
 
 
 const homepage = fs.readFileSync(path.join(root, "index.html"), "utf8");
+for (const requiredPage of ["initial-guidance.html","standards.html","workshops.html","articles/why-assessment-matters.html","articles/ai-robots-human-meaning.html"]) if (!fs.existsSync(path.join(root, requiredPage))) errors.push("Integrated redesign page is required: "+requiredPage);
+const workshopSecurityMigration=path.join(root,"supabase/migrations/20261118111700_restrict_public_workshop_meeting_credentials.sql");
+if(!fs.existsSync(workshopSecurityMigration)) errors.push("Workshop private meeting credential grant migration is required.");
+else {const sql=fs.readFileSync(workshopSecurityMigration,"utf8");if(!sql.includes("revoke select on table public.workshops from public, anon, authenticated")||!sql.includes("grant select (")||!sql.includes("meeting_url, meeting_password")) errors.push("Workshop public grants must exclude private meeting credentials.");}
+if (homepage.includes("elegant-otter-e1f7ef.netlify.app")) errors.push("Homepage social URLs must not point to the paused Netlify deployment.");
+for (const requiredPage of ["initial-guidance.html","standards.html","workshops.html","articles/why-assessment-matters.html","articles/ai-robots-human-meaning.html"]) if (!fs.existsSync(path.join(root, requiredPage))) errors.push("Integrated redesign page is required: "+requiredPage);
+if (homepage.includes("elegant-otter-e1f7ef.netlify.app")) errors.push("Homepage canonical/social URLs must not point to the paused Netlify deployment.");
+if (!homepage.includes("yad-assessment-float") && !fs.readFileSync(path.join(root,"site-i18n.js"),"utf8").includes("yad-assessment-float")) errors.push("Persistent initial-guidance access must be installed globally.");
 const adminPage = fs.readFileSync(path.join(root, "admin.html"), "utf8");
 const adminWorkflow = fs.readFileSync(path.join(root, "admin-workflow-extended.js"), "utf8");
 const appScript = fs.readFileSync(path.join(root, "app.js"), "utf8");
 for (const [condition, message] of [
-  [appScript.includes('get_public_therapist_fee_directory') && appScript.includes('t.fees'), "Homepage must display therapist-specific fees"],
+  [!appScript.includes('get_public_therapist_fee_directory') && appScript.includes('therapist-profile.html?id='), "Homepage directory must omit fees and link to therapist profiles"],
   [fs.existsSync(path.join(root, "therapist-profile.html")), "Public therapist profile page must exist"],
   [fs.existsSync(path.join(root, "workshops.html")) && fs.existsSync(path.join(root, "workshops.js")), "Public workshop directory and loader must exist"],
   [appScript.includes('therapist-profile.html?id='), "Therapist directory cards must link to public profiles"],
@@ -114,9 +130,9 @@ for (const [condition, message] of [
   [fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("admin_set_appointment_meeting") && fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("admin_resolve_support_cancellation") && fs.readFileSync(path.join(root, "supabase/platform-completion-2026-11.sql"), "utf8").includes("client_submit_appointment_feedback"), "Platform completion migration must define private session, cancellation and feedback RPCs"],
   [fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/client-extensions.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-extensions.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/assessment-workflow.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-assessment-workflow.js"'), "PWA cache must include client, admin and assessment workflow scripts"],
   [homepage.includes('articles/choosing-a-therapist.html'), "Homepage must link to the therapist-selection guide"],
-  [appScript.includes('.select("id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path,manager_approved,verified_at")'), "Public therapist directory must request migrated public therapist profile fields"],
+  [(appScript.includes('.select("id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path")') || appScript.includes('const select="id,public_slug,display_name,headline,biography,specialties,modalities,languages,photo_path"')), "Public therapist directory must request migrated public therapist profile fields"],
   [fs.readFileSync(path.join(root, "supabase/upgrade-client-choice-payment-first.sql"), "utf8").includes("add column if not exists photo_path"), "Therapist profile migration must define the public photo field"],
-  [fs.readFileSync(path.join(root, "therapist-profile.js"), "utf8").includes('.select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path,manager_approved,verified_at")'), "Public therapist profile must request only migrated public profile fields"],
+  [fs.readFileSync(path.join(root, "therapist-profile.js"), "utf8").includes('.select("id,public_slug,display_name,headline,biography,qualifications,specialties,languages,modalities,photo_path")'), "Public therapist profile must request only migrated public profile fields"],
   [homepage.includes('id="internationalCurrency"') && homepage.includes('value="CAD"'), "Homepage must include EUR/USD/CAD selector"],
   [homepage.includes('id="yadPublicContacts"') && fs.readFileSync(path.join(root, "app.js"), "utf8").includes('["phone_number","تلفن",v=>"tel:"+v]'), "Homepage must display the admin-managed phone number"],
   [adminPage.includes('id="yadBusinessSettingsForm"'), "Admin must include public contact, branding and intake settings"],
@@ -126,7 +142,7 @@ for (const [condition, message] of [
   [adminWorkflow.includes('admin_set_assessment_specialist'), "Admin must be able to designate verified assessment specialists"],
   [appScript.includes('get_public_site_settings'), "Homepage must load public settings through the scoped RPC"],
   [!adminWorkflow.includes('admin_set_therapist_prices'), "Admin workflow must not override therapist-defined fees"],
-  [appScript.includes('get_public_therapist_fee_directory') && appScript.includes('t.fees'), "Public directory must display therapist-specific fees"],
+  [!appScript.includes('get_public_therapist_fee_directory'), "Public directory must not load or display therapist-specific fees"],
   [fs.readFileSync(path.join(root, "therapist-portal.js"), "utf8").includes("therapist_set_my_fee"), "Therapists must be able to set their own fees"],
   [fs.readFileSync(path.join(root, "therapist-profile.js"), "utf8").includes("get_public_therapist_fees"), "Therapist profiles must show their individual fees"],
   [fs.readFileSync(path.join(root, "client.html"), "utf8").includes('value="CAD"'), "Client booking must support CAD"],
@@ -145,6 +161,9 @@ for (const [condition, message] of [
   [fs.existsSync(path.join(root, "articles/contributor-articles.js")) && fs.readFileSync(path.join(root, "articles/index.html"), "utf8").includes('id="yadContributorArticles"'), "Public article index must display only approved therapist submissions"],
   [fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/therapist-articles.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/admin-articles.js"') && fs.readFileSync(path.join(root, "sw.js"), "utf8").includes('"/articles/contributor-articles.js"'), "PWA cache must include therapist article submission, moderation and public reader scripts"],
   [fs.existsSync(path.join(root, "supabase/migrations/20261117000500_add_moderated_therapist_articles.sql")), "Moderated therapist article workflow migration must be present"],
+  [fs.existsSync(path.join(root, "supabase/migrations/20261119155551_therapist_article_revision_resubmission.sql")) && fs.readFileSync(path.join(root, "therapist-articles.js"), "utf8").includes("therapist_resubmit_article"), "Therapist article revision requests must support secure resubmission"],
+  [fs.existsSync(path.join(root, "supabase/migrations/20261119155727_require_approved_therapist_for_article_publication.sql")), "Article publication must require manager-approved therapist profiles"],
+  [fs.existsSync(path.join(root, "supabase/migrations/20261119155802_include_published_slug_in_therapist_article_status.sql")), "Therapist article status list must return the public article permalink"],
   [fs.readFileSync(path.join(root, "rules.html"), "utf8").includes("2026-11-17-v2-draft") && fs.readFileSync(path.join(root, "rules.html"), "utf8").includes("پیش‌نویس") && fs.readFileSync(path.join(root, "rules.html"), "utf8").includes("رضایت آگاهانهٔ درمان"), "Legal and privacy notice must be versioned, explicitly draft and distinguish platform consent from clinical consent"],
   [fs.readFileSync(path.join(root, "client-workflow.js"), "utf8").includes("2026-11-17-v2-draft") && fs.readFileSync(path.join(root, "admin-workflow-extended.js"), "utf8").includes("2026-11-17-v2-draft"), "Client and admin consent workflows must use the current draft policy version"],
   [fs.readFileSync(path.join(root, "client.html"), "utf8").includes("جایگزین رضایت آگاهانهٔ جداگانه برای شروع درمان نیست"), "Client request consent must not be represented as clinical informed consent"],
@@ -160,7 +179,7 @@ else {
   const guideScript = fs.readFileSync(guideTranslationScript, "utf8");
   for (const [page, counts] of Object.entries({
     "psychology.html": { h2: 5, h3: 6, p: 12, li: 3 },
-    "psychotherapy.html": { h2: 5, h3: 6, p: 12, li: 9 },
+    "psychotherapy.html": { h2: 5, h3: 7, p: 16, li: 9 },
     "psychiatry.html": { h2: 5, h3: 3, p: 11, li: 3 },
     "relationships.html": { h2: 6, h3: 4, p: 11, li: 8 }
   })) {

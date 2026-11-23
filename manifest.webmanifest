@@ -1,14 +1,14 @@
 {
-  "name": "یادشین | مرکز روان‌شناسی و روان‌درمانی",
+  "name": "یادشین | پلتفرم روان‌درمانی، روان‌کاوی و پژوهش",
   "short_name": "یادشین",
   "lang": "fa",
   "dir": "rtl",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#fffdfa",
-  "theme_color": "#123f46",
-  "description": "فضایی برای انتخاب آگاهانه خدمات روان‌شناختی و روان‌درمانی.",
+  "background_color": "#F4EDDF",
+  "theme_color": "#245B4D",
+  "description": "پلتفرمی تخصصی برای روان‌درمانی، روان‌کاوی، پژوهش و آموزش روان‌شناختی.",
   "icons": [
     {
       "src": "/app-icon.svg",

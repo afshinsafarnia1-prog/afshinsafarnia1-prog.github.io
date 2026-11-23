@@ -38,7 +38,7 @@
       const { data: assurance, error: assuranceError } = await db.auth.mfa.getAuthenticatorAssuranceLevel();
       if (assuranceError || assurance?.currentLevel !== "aal2") throw new Error("برای این عملیات ورود دومرحله‌ای (AAL2) لازم است.");
       const { data: profile, error: profileError } = await db.from("profiles").select("role").eq("id", data.session.user.id).maybeSingle();
-      if (profileError || profile?.role !== "admin") throw new Error("دسترسی فقط برای مدیر یادشین مجاز است.");
+      if (profileError || profile?.role !== "admin") throw new Error("دسترسی فقط برای مدیر ردیاد مجاز است.");
     }
 
     async function loadSessions() {
@@ -92,7 +92,7 @@
       root.replaceChildren();
       if (error) { setStatus(root, migrationHint); return; }
       if (!data?.length) { setStatus(root, "درخواست پشتیبانی ثبت نشده است."); return; }
-      const labels = { cancellation: "لغو جلسه", reschedule: "تغییر زمان", complaint: "شکایت", therapist_change: "تغییر درمانگر", data_request: "اطلاعات حساب", account_deletion: "حذف حساب", other: "سایر" };
+      const labels = { therapist_inquiry: "درخواست تماس اولیه دربارهٔ درمانگر", cancellation: "لغو جلسه", reschedule: "تغییر زمان", complaint: "شکایت", therapist_change: "تغییر درمانگر", data_request: "اطلاعات حساب", account_deletion: "حذف حساب", other: "سایر" };
       for (const item of data) {
         const card = node("article", "portal-card");
         card.append(node("h3", "", (labels[item.ticket_type] || item.ticket_type) + " · " + item.client_name));
