@@ -204,7 +204,7 @@
         if (error) throw error;
         const exportData = {
           exported_at: new Date().toISOString(),
-          notice: "This export contains account and service metadata. Keep it private. It does not include clinical notes because YAD Center does not collect clinical records in this version.",
+          notice: "This export contains account and service metadata. Keep it private. It does not include clinical notes because YADSHIN does not collect clinical records in this version.",
           profile,
           requests: requestData || [],
           appointments: appointmentData || [],
@@ -212,7 +212,7 @@
         };
         const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json;charset=utf-8" });
         const url = URL.createObjectURL(blob);
-        const link = node("a"); link.href = url; link.download = "yadcenter-account-export.json";
+        const link = node("a"); link.href = url; link.download = "yadshin-account-export.json";
         document.body.append(link); link.click(); link.remove(); URL.revokeObjectURL(url);
         message("نسخهٔ اطلاعات حساب آماده شد. فایل را در محل امن نگهداری کنید.");
       } catch (error) {
