@@ -209,6 +209,35 @@ try {
     }
   }
 
+  await page.goto("http://127.0.0.1:4173/standards.html", { waitUntil: "domcontentloaded" });
+  const standardsTitles = {
+    fa:"روان‌درمانی با شفافیت", ku:"چارەسەری دەروونی بە ڕوونی", en:"Psychotherapy grounded in transparency",
+    tr:"Şeffaflık, sorumluluk", ar:"علاج نفسي يقوم على الشفافية", es:"Psicoterapia basada en la transparencia",
+    de:"Psychotherapie mit Transparenz", fr:"Une psychothérapie fondée sur la transparence"
+  };
+  for (const [language, expected] of Object.entries(standardsTitles)) {
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    if (!(await page.locator("h1").innerText()).includes(expected)) throw new Error("Standards page did not localize for " + language);
+    const managementText = await page.locator('[data-editorial-i18n="p3"]').innerText();
+    if (!managementText.trim() || (language === "en" && !managementText.includes("Review the documents"))) {
+      throw new Error("Standards management-review wording missing for " + language);
+    }
+  }
+  await page.goto("http://127.0.0.1:4173/articles/", { waitUntil: "domcontentloaded" });
+  const indexTitles = {
+    en:"Psychoanalysis in several voices", ku:"دەروونشیکاری بە دەنگی جیاواز",
+    tr:"Farklı seslerle psikanaliz", ar:"التحليل النفسي بأصوات متعددة",
+    es:"El psicoanálisis en varias voces", de:"Psychoanalyse in mehreren Stimmen",
+    fr:"La psychanalyse au pluriel"
+  };
+  for (const [language, expected] of Object.entries(indexTitles)) {
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    if (!(await page.locator('[data-index-i18n="traditionsTitle"]').innerText()).includes(expected)) {
+      throw new Error("Article index card did not localize for " + language);
+    }
+  }
   const manifest = await page.request.get("http://127.0.0.1:4173/manifest.webmanifest");
   if (!manifest.ok()) throw new Error("PWA manifest is not reachable.");
   const manifestJson = await manifest.json();
