@@ -16,8 +16,11 @@
   function localizedNikoText(value){
     if(!value||typeof value!=="string")return value||"";
     const lang=document.documentElement.lang||"fa";
-    const match=value.match(/FA:\s*([\s\S]*?)\s*\\|\\|\s*EN:\s*([\s\S]*?)\s*\\|\\|\s*AR:\s*([\s\S]*)/);
-    return match?(lang==="en"?match[2].trim():lang==="ar"?match[3].trim():match[1].trim()):value;
+    const parts=value.split("||");
+    if(parts.length<3)return value;
+    const fields=parts.map(part=>part.trim());
+    const pick=(prefix)=>fields.find(part=>part.startsWith(prefix))?.slice(prefix.length).trim()||"";
+    return lang==="en"?pick("EN:"):lang==="ar"?pick("AR:"):pick("FA:");
   }
   const nikoTranslations={
     en:{qualifications:["PhD in Health Psychology","University lecturer","Member, Iranian Psychology and Counselling Organization","Member, Iranian Psychological Association","Member, Iranian Health Psychology Association","Reported professional licence number: 1594616"],specialties:["Adult psychotherapy","Individual psychotherapy","Couples therapy","Premarital counselling","Schema therapy","MMPI assessment","Schema assessment","Life-skills workshops"]},
