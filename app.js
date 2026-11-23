@@ -1,13 +1,13 @@
 (() => {
-  function enforceRadyadBrand(){
+  function enforceYadshinBrand(){
     document.querySelectorAll(".brand,.side-brand").forEach(node=>{
       const title=node.querySelector("b");
-      if(title)title.textContent="ردیاد";
-      node.setAttribute("aria-label","ردیاد");
+      if(title)title.textContent="یادشین";
+      node.setAttribute("aria-label","یادشین");
     });
   }
-  enforceRadyadBrand();
-  window.addEventListener("pageshow",enforceRadyadBrand);
+  enforceYadshinBrand();
+  window.addEventListener("pageshow",enforceYadshinBrand);
 
   const menu=document.getElementById("menuToggle");
   const nav=document.getElementById("mainNav");
@@ -156,7 +156,7 @@
           const byId=new Map(publicMetadata.data.map(x=>[x.therapist_id,x]));
           allTherapists=allTherapists.map(x=>({...x,...(byId.get(x.id)||{})}));
         }
-      }catch(error){console.warn("RADYAD public therapist metadata unavailable:",error);}
+      }catch(error){console.warn("YADSHIN public therapist metadata unavailable:",error);}
 
       try{
         const ratingResult=db
@@ -167,7 +167,7 @@
           const ratingById=new Map(ratingResult.data.map(x=>[x.therapist_id,x]));
           allTherapists=allTherapists.map(x=>({...x,...(ratingById.get(x.id)||{})}));
         }
-      }catch(error){console.warn("RADYAD public therapist ratings unavailable:",error);}
+      }catch(error){console.warn("YADSHIN public therapist ratings unavailable:",error);}
 
       filterDirectory();
       try{
@@ -176,15 +176,15 @@
           : {data:await restRequest("rpc/get_public_site_settings","POST"),error:null};
         if(settingsResult.error)throw settingsResult.error;
         const storedContacts=settingsResult.data?.contacts||{};
-        publicContacts={...storedContacts,phone_number:storedContacts.phone_number||"09999398350",whatsapp_number:storedContacts.whatsapp_number||"09999398350",telegram_url:storedContacts.telegram_url||"https://t.me/RADYAD",eitaa_url:storedContacts.eitaa_url||"https://eitaa.com/RADYAD"};
+        publicContacts={...storedContacts,phone_number:storedContacts.phone_number||"09999398350",whatsapp_number:storedContacts.whatsapp_number||"09999398350",telegram_url:storedContacts.telegram_url||"https://t.me/YADSHIN",eitaa_url:storedContacts.eitaa_url||"https://eitaa.com/YADSHIN"};
         siteBranding=settingsResult.data?.branding||{};
-      }catch(error){console.warn("RADYAD public site settings unavailable:",error);}
+      }catch(error){console.warn("YADSHIN public site settings unavailable:",error);}
       renderPublicBranding();renderPublicTariffs();renderPublicContacts();
       if(notice)notice.textContent=allTherapists.length
-        ?"فهرست درمانگران ردیاد"
+        ?"فهرست درمانگران یادشین"
         :"در حال حاضر درمانگری برای نمایش وجود ندارد.";
     }catch(error){
-      console.error("RADYAD therapist directory request failed:",error);
+      console.error("YADSHIN therapist directory request failed:",error);
       allTherapists=[];
       renderDirectory([]);
       const count=document.getElementById("directoryCount");
@@ -193,7 +193,7 @@
     }
   }
   function renderPublicBranding(){
-    const name="ردیاد";
+    const name="یادشین";
     document.querySelectorAll(".brand").forEach(node=>{
       const title=node.querySelector("b");if(title)title.textContent=name;
       const mark=node.querySelector(".brandmark");
