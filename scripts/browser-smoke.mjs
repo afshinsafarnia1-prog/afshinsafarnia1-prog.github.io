@@ -92,6 +92,7 @@ try {
     await page.locator("#siteLanguage").selectOption(language);
     await page.waitForFunction(value => document.documentElement.lang === value, language);
     const direction = await page.locator("html").getAttribute("dir");
+    if (!(await page.locator('label[for="siteLanguage"]').innerText()).trim()) throw new Error("Homepage language selector label is empty for " + language);
     const expectedDirection = ["fa", "ku", "ar"].includes(language) ? "rtl" : "ltr";
     if (direction !== expectedDirection) throw new Error("Homepage direction is wrong for " + language);
     const hero = await page.locator(".hero h1").textContent();
