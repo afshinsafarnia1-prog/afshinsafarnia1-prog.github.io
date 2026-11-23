@@ -33,9 +33,9 @@
     const publicMeta=metaRows?.[0]||{};
     const {data:feedbackRows}=await db.rpc("get_public_therapist_feedback",{p_therapist_id:id});
     const feedback=feedbackRows||[];
-    document.title=(data.display_name||"درمانگر")+" | پروفایل متخصص | یادسنتر";
+    document.title=(data.display_name||"درمانگر")+" | پروفایل متخصص | یادشین";
     const description=document.querySelector('meta[name="description"]');
-    if(description)description.content="اطلاعات عمومی و تأییدشدهٔ "+(data.display_name||"درمانگر")+" شامل تحصیلات، حوزه‌های تخصصی، رویکرد و زبان‌های ارائهٔ خدمت در یادسنتر.";
+    if(description)description.content="اطلاعات عمومی و تأییدشدهٔ "+(data.display_name||"درمانگر")+" شامل تحصیلات، حوزه‌های تخصصی، رویکرد و زبان‌های ارائهٔ خدمت در یادشین.";
     const ogTitle=document.querySelector('meta[property="og:title"]');if(ogTitle)ogTitle.content=document.title;
     const ogDescription=document.querySelector('meta[property="og:description"]');if(ogDescription&&description)ogDescription.content=description.content;
     root.replaceChildren();
@@ -51,7 +51,7 @@
       hero.append(mark);
     }
     const intro=node("div","profile-intro");
-    intro.append(node("span","eyebrow",data.verified_at?t("profileVerified"):"تأییدشده توسط مدیریت یادسنتر"));
+    intro.append(node("span","eyebrow",data.verified_at?t("profileVerified"):"تأییدشده توسط مدیریت یادشین"));
     intro.append(node("h1","",data.display_name||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.headline));
     if(typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
