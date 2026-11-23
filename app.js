@@ -139,7 +139,7 @@
     const links=[
       ["phone_number","تلفن",v=>"tel:"+v],
       ["whatsapp_number","واتساپ",v=>"https://wa.me/"+v.replace(/[^0-9]/g,"")],
-      ["instagram_url","اینستاگرام",v=>v],["telegram_url","تلگرام",v=>v],["eitaa_url","ایتا",v=>v],
+      ["instagram_url","اینستاگرام",v=>v],["telegram_url","تلگرام",v=>v],
       ["youtube_url","یوتیوب",v=>v],["linkedin_url","لینکدین",v=>v],["facebook_url","فیسبوک",v=>v]
     ];
     links.forEach(([key,label,url])=>{const value=publicContacts[key];if(!value)return;const a=el("a","",label);a.href=url(value);a.target="_blank";a.rel="noopener noreferrer";target.append(a);});

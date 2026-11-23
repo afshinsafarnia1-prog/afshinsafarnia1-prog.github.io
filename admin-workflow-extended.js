@@ -65,7 +65,7 @@
       document.getElementById("yadExistingLogoPath").value=branding.logo_path||"";
       document.getElementById("yadExistingManagerPhotoPath").value=branding.manager_photo_path||"";
       const contacts=data?.contacts||{};
-      const fields={phone_number:"yadContactPhone",whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail",instagram_url:"yadContactInstagram",telegram_url:"yadContactTelegram",eitaa_url:"yadContactEitaa",youtube_url:"yadContactYoutube",linkedin_url:"yadContactLinkedin",facebook_url:"yadContactFacebook"};
+      const fields={phone_number:"yadContactPhone",whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail",instagram_url:"yadContactInstagram",telegram_url:"yadContactTelegram",youtube_url:"yadContactYoutube",linkedin_url:"yadContactLinkedin",facebook_url:"yadContactFacebook"};
       Object.entries(fields).forEach(([key,id])=>{document.getElementById(id).value=contacts[key]||"";});
       businessStatus.textContent="تعرفه‌ها توسط هر درمانگر در پنل اختصاصی خودش تعیین می‌شوند؛ سهم درآمد ثابت ۷۰/۳۰ است.";
     }
@@ -84,7 +84,6 @@
           contact_email:businessValue("yadContactEmail"),
           instagram_url:businessValue("yadContactInstagram"),
           telegram_url:businessValue("yadContactTelegram"),
-          eitaa_url:businessValue("yadContactEitaa"),
           youtube_url:businessValue("yadContactYoutube"),
           linkedin_url:businessValue("yadContactLinkedin"),
           facebook_url:businessValue("yadContactFacebook")
