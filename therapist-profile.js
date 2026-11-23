@@ -13,6 +13,19 @@
   const t=(key)=>window.YAD_I18N?.translations?.[document.documentElement.lang]?.[key]||window.YAD_I18N?.translations?.fa?.[key]||key;
   const node=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!=null)n.textContent=value;return n;};
   const list=(value)=>Array.isArray(value)?value:(typeof value==="string"?value.split(/[,،؛]/).map(x=>x.trim()).filter(Boolean):[]);
+  function localizedNikoText(value){
+    if(!value||typeof value!=="string")return value||"";
+    const lang=document.documentElement.lang||"fa";
+    const parts=value.split("||");
+    if(parts.length<3)return value;
+    const fields=parts.map(part=>part.trim());
+    const pick=(prefix)=>fields.find(part=>part.startsWith(prefix))?.slice(prefix.length).trim()||"";
+    return lang==="en"?pick("EN:"):lang==="ar"?pick("AR:"):pick("FA:");
+  }
+  const nikoTranslations={
+    en:{qualifications:["PhD in Health Psychology","University lecturer","Member, Iranian Psychology and Counselling Organization","Member, Iranian Psychological Association","Member, Iranian Health Psychology Association","Reported professional licence number: 1594616"],specialties:["Adult psychotherapy","Individual psychotherapy","Couples therapy","Premarital counselling","Schema therapy","MMPI assessment","Schema assessment","Life-skills workshops: stress management, anger management, decision-making, problem-solving, assertiveness, critical and creative thinking, empathy, self-awareness, and conflict resolution"]},
+    ar:{qualifications:["دكتوراه في علم النفس الصحي","محاضِرة جامعية","عضوة في منظمة علم النفس والإرشاد الإيرانية","عضوة في الجمعية الإيرانية لعلم النفس","عضوة في الجمعية الإيرانية لعلم النفس الصحي","رقم الترخيص المهني المُعلن: 1594616"],specialties:["العلاج النفسي للبالغين","العلاج النفسي الفردي","العلاج الزواجي","الإرشاد قبل الزواج","العلاج بالمخططات","تقييم MMPI","تقييم المخططات","مدرّبة ورش مهارات الحياة: إدارة التوتر، ضبط الغضب، اتخاذ القرار، حل المشكلات، التوكيدية، التفكير النقدي والإبداعي، التعاطف، الوعي بالذات، وحل النزاعات"]}
+  };
   function section(title,values){
     if(!values.length)return null;
     const box=node("section","profile-section");
@@ -33,9 +46,9 @@
     const publicMeta=metaRows?.[0]||{};
     const {data:feedbackRows}=await db.rpc("get_public_therapist_feedback",{p_therapist_id:id});
     const feedback=feedbackRows||[];
-    document.title=(data.display_name||"درمانگر")+" | پروفایل متخصص | ردیاد";
+    document.title=(data.display_name||"درمانگر")+" | پروفایل متخصص | یادشین";
     const description=document.querySelector('meta[name="description"]');
-    if(description)description.content="اطلاعات عمومی و تأییدشدهٔ "+(data.display_name||"درمانگر")+" شامل تحصیلات، حوزه‌های تخصصی، رویکرد و زبان‌های ارائهٔ خدمت در ردیاد.";
+    if(description)description.content=document.documentElement.lang==="en"?"Professional profile of "+(data.display_name||"therapist")+" on YADSHIN.":document.documentElement.lang==="ar"?"الملف المهني لـ "+(data.display_name||"المعالجة النفسية")+" على يادشين.":"معرفی تحصیلات، حوزه‌های تخصصی، رویکرد و زبان‌های ارائهٔ خدمت نیکو قاسمی در یادشین.";
     const ogTitle=document.querySelector('meta[property="og:title"]');if(ogTitle)ogTitle.content=document.title;
     const ogDescription=document.querySelector('meta[property="og:description"]');if(ogDescription&&description)ogDescription.content=description.content;
     root.replaceChildren();
@@ -54,19 +67,19 @@
     } else if(data.public_slug==="foruzan-shahla"){
       const img=node("img","profile-photo");img.src="/therapists/foruzan-shahla.jpg";img.alt=t("profilePhotoAlt");img.loading="lazy";hero.append(img);
     } else {
-      const mark=node("div","profile-monogram","ی");mark.setAttribute("aria-hidden","true");hero.append(mark);
+      const mark=node("div","profile-monogram",data.public_slug==="niko-ghasemi"?"ن":"ی");mark.setAttribute("aria-hidden","true");hero.append(mark);
     }
     const intro=node("div","profile-intro");
     intro.append(node("h1","",data.display_name||t("profileNoName")));
-    if(data.headline)intro.append(node("p","profile-headline",isMitra&&document.documentElement.lang==="fa"?"روان‌شناس بالینی | روان‌کاو | درمانگر متمرکز بر تروما · ویژهٔ بزرگسالان":data.headline));
-    if(typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
-    intro.append(node("p","profile-session",t("profileSession")));
+    if(data.headline)intro.append(node("p","profile-headline",data.public_slug==="niko-ghasemi"?localizedNikoText(data.headline):(isMitra&&document.documentElement.lang==="fa"?"روان‌شناس بالینی | روان‌کاو | درمانگر متمرکز بر تروما · ویژهٔ بزرگسالان":data.headline)));
+    if(data.public_slug!=="niko-ghasemi"&&typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
+    intro.append(node("p","profile-session",data.public_slug==="niko-ghasemi"?(document.documentElement.lang==="en"?"45-minute session":document.documentElement.lang==="ar"?"جلسة لمدة ٤٥ دقيقة":"جلسهٔ ۴۵ دقیقه‌ای"):t("profileSession")));
     hero.append(intro);root.append(hero);
     const grid=node("div","profile-content-grid");
     const main=node("div","profile-main");
     if(data.biography){
       const bio=node("section","profile-section");
-      let biographyText=data.biography;
+      let biographyText=data.public_slug==="niko-ghasemi"?localizedNikoText(data.biography):data.biography;
       if(isMitra){
         const match=data.biography.match(/فارسی:\s*([\s\S]*?)\s*English:\s*([\s\S]*)/);
         if(match)biographyText=document.documentElement.lang==="fa"?match[1].trim():match[2].trim();
@@ -74,9 +87,9 @@
       bio.append(node("h2","",t("profileAbout")),node("p","profile-biography",biographyText));
       main.append(bio);
     }
-    const qualifications=list(data.qualifications);
+    const qualifications=data.public_slug==="niko-ghasemi"?(nikoTranslations[document.documentElement.lang]?.qualifications||list(data.qualifications)):list(data.qualifications);
     if(qualifications.length)main.append(section(t("profileQualifications"),qualifications));
-    const specialties=list(data.specialties);
+    const specialties=data.public_slug==="niko-ghasemi"?(nikoTranslations[document.documentElement.lang]?.specialties||list(data.specialties)):list(data.specialties);
     if(specialties.length)main.append(section(t("profileSpecialties"),specialties));
     const modalities=list(data.modalities);
     if(modalities.length)main.append(section(t("profileModalities"),modalities));
@@ -104,8 +117,11 @@
     price.append(node("small","profile-muted",t("profile45min")));
     aside.append(price);
     const contactActions=node("div","profile-contact-actions");
-    const whatsappMessage="سلام، برای دریافت اطلاعات و هماهنگی جلسه با درمانگر "+(data.display_name||"منتخب")+" از طریق ردیاد پیام می‌دهم.";
-    const contactLinks=[["https://wa.me/989999398350?text="+encodeURIComponent(whatsappMessage),"پیام در واتساپ","primary"],["https://t.me/RADYAD","پیام در تلگرام","outline"],["https://eitaa.com/RADYAD","پیام در ایتا","outline"]];
+    const lang=document.documentElement.lang||"fa";
+    const whatsappMessage=lang==="en"?"Hello, I would like information and help arranging a session with "+(data.display_name||"the selected therapist")+" through YADSHIN.":lang==="ar"?"مرحباً، أود الحصول على معلومات وتنسيق جلسة مع "+(data.display_name||"المعالجة المختارة")+" عبر يادشين.":"سلام، برای دریافت اطلاعات و هماهنگی جلسه با درمانگر "+(data.display_name||"منتخب")+" از طریق یادشین پیام می‌دهم.";
+    const whatsappLabel=lang==="en"?"Message on WhatsApp":lang==="ar"?"مراسلة عبر واتساب":"پیام در واتساپ";
+    const contactLinks=[["https://wa.me/989999398350?text="+encodeURIComponent(whatsappMessage),whatsappLabel,"primary"]];
+    if(data.public_slug!=="niko-ghasemi")contactLinks.push(["https://t.me/RADYAD","پیام در تلگرام","outline"],["https://eitaa.com/RADYAD","پیام در ایتا","outline"]);
     contactLinks.forEach(([href,label,style])=>{const link=node("a","button "+style+" full-button",label);link.href=href;link.target="_blank";link.rel="noopener noreferrer";contactActions.append(link);});
     aside.append(contactActions);
     aside.append(node("p","profile-muted","زمان جلسه ابتدا با مدیریت و درمانگر هماهنگ می‌شود؛ پس از اعلام مبلغ و تأیید پرداخت، نوبت قطعی خواهد شد."));

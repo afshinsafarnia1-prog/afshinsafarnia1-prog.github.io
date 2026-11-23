@@ -40,6 +40,16 @@
     return "";
   }
 
+  function localizedNikoText(value){
+    if(!value||typeof value!=="string")return value||"";
+    const lang=document.documentElement.lang||"fa";
+    const parts=value.split("||");
+    if(parts.length<3)return value;
+    const fields=parts.map(part=>part.trim());
+    const pick=(prefix)=>fields.find(part=>part.startsWith(prefix))?.slice(prefix.length).trim()||"";
+    return lang==="en"?pick("EN:"):lang==="ar"?pick("AR:"):pick("FA:");
+  }
+
   function createTherapistCard(t){
     const card=el("article","therapist-card");
     card.dataset.therapistSlug=t.public_slug||"";
@@ -54,7 +64,8 @@
     const body=el("div","therapist-card-body");
     body.append(el("h3","",t.display_name||""));
     if(t.headline){
-      const parts=t.headline.split("|").map(x=>x.trim()).filter(Boolean);
+      const headline=t.public_slug==="niko-ghasemi"?localizedNikoText(t.headline):t.headline;
+      const parts=headline.split("|").map(x=>x.trim()).filter(Boolean);
       if(parts[0])body.append(el("p","therapist-headline therapist-headline-role",parts[0]));
       if(parts[1])body.append(el("p","therapist-headline therapist-headline-detail",parts[1]));
       if(parts[2]){
@@ -64,7 +75,11 @@
     }
     const tags=el("div","therapist-tags");
     const modalityLabels={online:"آنلاین",in_person:"حضوری",hybrid:"آنلاین و حضوری"};
-    const values=[...(t.specialties||[]).slice(0,3),...(t.modalities||[]).slice(0,2).map(x=>modalityLabels[x]||x)];
+    const nikoTags={
+      en:["Adult psychotherapy","Individual therapy","Couples therapy","Schema therapy"],
+      ar:["العلاج النفسي للبالغين","العلاج الفردي","العلاج الزواجي","العلاج بالمخططات"]
+    };
+    const values=[...(t.public_slug==="niko-ghasemi"?(nikoTags[document.documentElement.lang]||["روان‌درمانی بزرگسالان","روان‌درمانی فردی","زوج‌درمانی","طرحواره‌درمانی"]):(t.specialties||[]).slice(0,3)),...(t.modalities||[]).slice(0,2).map(x=>modalityLabels[x]||x)];
     values.forEach(value=>tags.append(el("span","",value)));
     if(values.length)body.append(tags);
     const link=el("a","button primary","مشاهدهٔ پروفایل");
@@ -75,7 +90,7 @@
 
   function renderDirectory(items){
     if(!directory)return;
-    const displayPriority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1};
+    const displayPriority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1,"mitra-pahlavan":2,"niko-ghasemi":3};
     const orderedItems=[...items].sort((a,b)=>{
       const pa=displayPriority[a.public_slug]??2, pb=displayPriority[b.public_slug]??2;
       return pa-pb || String(a.display_name||"").localeCompare(String(b.display_name||""),"fa");
@@ -134,7 +149,7 @@
         data=await restRequest("therapists?"+params.toString());
       }
       allTherapists=(data||[]).sort((a,b)=>{
-        const priority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1};
+        const priority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1,"mitra-pahlavan":2,"niko-ghasemi":3};
         const pa=priority[a.public_slug]??2, pb=priority[b.public_slug]??2;
         return pa-pb || String(a.display_name||"").localeCompare(String(b.display_name||""),"fa");
       });
