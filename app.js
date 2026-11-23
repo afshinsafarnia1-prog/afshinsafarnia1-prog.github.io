@@ -176,7 +176,7 @@
           : {data:await restRequest("rpc/get_public_site_settings","POST"),error:null};
         if(settingsResult.error)throw settingsResult.error;
         const storedContacts=settingsResult.data?.contacts||{};
-        publicContacts={...storedContacts,phone_number:storedContacts.phone_number||"09999398350",whatsapp_number:storedContacts.whatsapp_number||"09999398350",telegram_url:storedContacts.telegram_url||"https://t.me/YADSHIN",eitaa_url:storedContacts.eitaa_url||"https://eitaa.com/YADSHIN"};
+        publicContacts={...storedContacts,phone_number:storedContacts.phone_number||"09999398350",whatsapp_number:storedContacts.whatsapp_number||"09999398350",telegram_url:storedContacts.telegram_url||"",eitaa_url:storedContacts.eitaa_url||""};
         siteBranding=settingsResult.data?.branding||{};
       }catch(error){console.warn("YADSHIN public site settings unavailable:",error);}
       renderPublicBranding();renderPublicTariffs();renderPublicContacts();
