@@ -2,7 +2,7 @@ name: Validate YADSHIN static site
 
 on:
   push:
-    branches: [main, yadcenter-seo-redesign, rebrand/yadshin-staging-20261123]
+    branches: [main, yadcenter-seo-redesign, rebrand/yadshin-staging-20261123, feature/yadshin-i18n-port-20261123]
   pull_request:
     branches: [main]
 
@@ -22,9 +22,15 @@ jobs:
       - name: Check browser JavaScript syntax
         run: |
           node --check app.js
+          node --check scripts/browser-smoke.mjs
           node --check therapist-profile.js
           node --check portal.js
           node --check site-i18n.js
+          node --check initial-guidance-i18n.js
+          node --check articles-content-i18n.js
+          node --check articles-assessment-i18n.js
+          node --check editorial-pages-i18n.js
+          node --check articles/articles-index-i18n.js
           node --check service-guides-i18n.js
           node --check admin-workflow.js
           node --check admin-workflow-extended.js

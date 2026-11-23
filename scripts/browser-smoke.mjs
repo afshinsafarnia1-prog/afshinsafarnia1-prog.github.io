@@ -92,10 +92,18 @@ try {
     await page.locator("#siteLanguage").selectOption(language);
     await page.waitForFunction(value => document.documentElement.lang === value, language);
     const direction = await page.locator("html").getAttribute("dir");
+    if (!(await page.locator('label[for="siteLanguage"]').innerText()).trim()) throw new Error("Homepage language selector label is empty for " + language);
     const expectedDirection = ["fa", "ku", "ar"].includes(language) ? "rtl" : "ltr";
     if (direction !== expectedDirection) throw new Error("Homepage direction is wrong for " + language);
     const hero = await page.locator(".hero h1").textContent();
     if (!hero?.trim()) throw new Error("Homepage hero is empty for " + language);
+    const aboutTitle = await page.locator("#yadBrandAboutTitle").innerText();
+    const aboutPanels = await page.locator(".about-panel").count();
+    if (!aboutTitle.trim() || aboutPanels !== 4) throw new Error("Homepage About section did not render all four panels for " + language);
+    for (const key of ["aboutName","aboutMark","aboutMission","aboutPrinciples","aboutSignature","aboutDisclaimer","aboutStandardsLink"]) {
+      const node = page.locator(`[data-i18n="${key}"]`);
+      if (!(await node.innerText()).trim()) throw new Error("Homepage About content did not localize: " + key + " / " + language);
+    }
     if (!(await page.locator('[data-i18n="modalityFilter"]').innerText()).trim()) throw new Error("Therapist approach filter did not localize for " + language);
     if (!(await page.locator('[data-i18n="acceptingOnly"]').innerText()).trim()) throw new Error("Therapist intake filter did not localize for " + language);
   }
@@ -154,9 +162,90 @@ try {
   await page.locator("#siteLanguage").selectOption("en");
   if (await page.locator("[data-i18n-show-non-fa]").isHidden()) throw new Error("Legal Persian-only notice was not shown for English.");
   await page.goto("http://127.0.0.1:4173/articles/psychotherapy-first-session.html", { waitUntil: "domcontentloaded" });
-  await page.locator("#siteLanguage").selectOption("en");
-  if (await page.locator("[data-i18n-show-non-fa]").isHidden()) throw new Error("Article Persian-only notice was not shown for English.");
+  const firstSessionTitles = {
+    fa:"جلسهٔ اول روان‌درمانی", ku:"یەکەم دانیشتنی چارەسەری دەروونی", en:"The first psychotherapy session",
+    tr:"İlk psikoterapi seansı", ar:"الجلسة الأولى للعلاج النفسي", es:"La primera sesión de psicoterapia",
+    de:"Die erste Psychotherapiesitzung", fr:"La première séance de psychothérapie"
+  };
+  for (const [language, expected] of Object.entries(firstSessionTitles)) {
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    if (!(await page.locator('[data-session-i18n="title"]').innerText()).includes(expected)) {
+      throw new Error("First-session article did not localize for " + language);
+    }
+    const body = await page.locator('[data-session-i18n="p1"]').innerText();
+    if (!body.trim() || (language !== "fa" && body.includes("جلسهٔ نخست معمولاً"))) {
+      throw new Error("First-session article body remained Persian or empty for " + language);
+    }
+    const direction = await page.locator("article").getAttribute("dir");
+    if (direction !== (["fa","ku","ar"].includes(language) ? "rtl" : "ltr")) {
+      throw new Error("First-session article direction mismatch for " + language);
+    }
+  }
+  await page.goto("http://127.0.0.1:4173/articles/why-assessment-matters.html", { waitUntil: "domcontentloaded" });
+  const assessmentTitles = {
+    fa:"چرا ارزیابی در روان‌درمانی", ku:"بۆچی هەڵسەنگاندن", en:"Why does assessment matter",
+    tr:"Psikoterapide değerlendirme", ar:"لماذا يُعد التقييم", es:"¿Por qué importa la evaluación",
+    de:"Warum ist eine Einschätzung", fr:"Pourquoi l’évaluation"
+  };
+  for (const [language, expected] of Object.entries(assessmentTitles)) {
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    if (!(await page.locator('[data-assess-i18n="title"]').innerText()).includes(expected)) {
+      throw new Error("Assessment article did not localize for " + language);
+    }
+    const body = await page.locator('[data-assess-i18n="p1"]').innerText();
+    if (!body.trim() || (language !== "fa" && body.includes("دو نفر ممکن است"))) {
+      throw new Error("Assessment article body remained Persian or empty for " + language);
+    }
+  }
+  await page.goto("http://127.0.0.1:4173/initial-guidance.html", { waitUntil: "domcontentloaded" });
+  const guideTitles = {
+    fa:"پیش از انتخاب درمانگر", ku:"پێش هەڵبژاردنی چارەسەرکار", en:"What should I consider",
+    tr:"Bir terapist seçmeden", ar:"ما الأمور التي ينبغي", es:"¿Qué debo tener",
+    de:"Was sollte ich beachten", fr:"Quels éléments prendre"
+  };
+  for (const [language, expected] of Object.entries(guideTitles)) {
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    if (!(await page.locator("h1").innerText()).includes(expected)) {
+      throw new Error("Initial guidance did not localize for " + language);
+    }
+    const direction = await page.locator("html").getAttribute("dir");
+    if (direction !== (["fa","ku","ar"].includes(language) ? "rtl" : "ltr")) {
+      throw new Error("Initial guidance direction mismatch for " + language);
+    }
+  }
 
+  await page.goto("http://127.0.0.1:4173/standards.html", { waitUntil: "domcontentloaded" });
+  const standardsTitles = {
+    fa:"روان‌درمانی با شفافیت", ku:"چارەسەری دەروونی بە ڕوونی", en:"Psychotherapy grounded in transparency",
+    tr:"Şeffaflık, sorumluluk", ar:"علاج نفسي يقوم على الشفافية", es:"Psicoterapia basada en la transparencia",
+    de:"Psychotherapie mit Transparenz", fr:"Une psychothérapie fondée sur la transparence"
+  };
+  for (const [language, expected] of Object.entries(standardsTitles)) {
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    if (!(await page.locator("h1").innerText()).includes(expected)) throw new Error("Standards page did not localize for " + language);
+    const managementText = await page.locator('[data-editorial-i18n="p3"]').innerText();
+    if (!managementText.trim() || (language === "en" && !managementText.includes("Review the documents"))) {
+      throw new Error("Standards management-review wording missing for " + language);
+    }
+  }
+  await page.goto("http://127.0.0.1:4173/articles/", { waitUntil: "domcontentloaded" });
+  const indexTitles = {
+    en:"Psychoanalysis in several voices", ku:"دەروونشیکاری بە دەنگی جیاواز",
+    tr:"Farklı seslerle psikanaliz", ar:"التحليل النفسي بأصوات متعددة",
+    es:"El psicoanálisis en varias voces", de:"Psychoanalyse in mehreren Stimmen",
+    fr:"La psychanalyse au pluriel"
+  };
+  for (const [language, expected] of Object.entries(indexTitles)) {
+    await page.locator("#siteLanguage").selectOption(language);
+    await page.waitForFunction(value => document.documentElement.lang === value, language);
+    if (!(await page.locator('[data-index-i18n="traditionsTitle"]').innerText()).includes(expected)) {
+      throw new Error("Article index card did not localize for " + language);
+    }
+  }
   const manifest = await page.request.get("http://127.0.0.1:4173/manifest.webmanifest");
   if (!manifest.ok()) throw new Error("PWA manifest is not reachable.");
   const manifestJson = await manifest.json();
