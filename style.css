@@ -269,3 +269,24 @@ body{background:#fbfcfa}
   .fee{gap:6px}
   .fee strong{white-space:normal}
 }
+
+
+/* YADSHIN — editorial redesign of the About section */
+.about{position:relative;isolation:isolate;overflow:hidden;padding:clamp(58px,8vw,108px) 0;background:linear-gradient(135deg,#f2f8f4 0%,#fbf8f1 58%,#f4f7f5 100%)}
+.about:before{content:"";position:absolute;z-index:-1;width:460px;height:460px;inset-inline-start:-210px;top:-230px;border:1px solid rgba(18,63,70,.09);border-radius:50%;box-shadow:0 0 0 34px rgba(18,63,70,.018),0 0 0 78px rgba(18,63,70,.014)}
+.about-intro{display:grid;grid-template-columns:minmax(190px,.72fr) minmax(0,1.7fr);gap:clamp(28px,6vw,84px);align-items:center;max-width:1080px;margin:0 auto}
+.about-symbol{position:relative;display:grid;place-items:center;min-height:290px;height:auto;overflow:hidden;border:1px solid rgba(18,63,70,.1);border-radius:34px;background:radial-gradient(circle at 50% 40%,#fff 0,#edf6ef 48%,#dcece4 100%);color:#174b49;font-size:clamp(86px,12vw,138px);font-weight:800;box-shadow:0 22px 60px rgba(18,63,70,.08)}
+.about-symbol span{position:relative;z-index:2;text-shadow:0 8px 28px rgba(18,63,70,.08)}
+.about-symbol:before,.about-symbol:after{content:"";position:absolute;width:190px;height:95px;border:1.5px solid rgba(18,63,70,.2);border-bottom:0;border-radius:190px 190px 0 0;transform:rotate(-24deg)}
+.about-symbol:after{width:150px;height:75px;border-color:rgba(196,139,94,.5);transform:rotate(26deg) translate(12px,22px)}
+.about-copy .eyebrow{color:#a66c49}
+.about-copy h2{font-size:clamp(32px,4.5vw,48px);line-height:1.45;letter-spacing:-.035em;margin:10px 0 20px}
+.about-copy>p{max-width:760px;color:#435e5a;font-size:clamp(14px,1.5vw,16px);line-height:2.25}
+.about-copy .about-secondary{margin-top:12px;color:#637773;font-size:13px}
+.about-principles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1080px;margin:42px auto 0}
+.about-principles article{position:relative;min-height:165px;padding:23px 24px;border:1px solid rgba(18,63,70,.09);border-radius:20px;background:rgba(255,255,255,.76);box-shadow:0 12px 32px rgba(18,63,70,.035)}
+.about-principles article>span{display:inline-flex;margin-bottom:15px;color:#b17a55;font-size:11px;font-weight:800;letter-spacing:.12em}
+.about-principles h3{margin:0 0 7px;color:#174b49;font-size:16px}
+.about-principles p{margin:0;color:#6b7d78;font-size:12px;line-height:2}
+.about-disclaimer{max-width:1080px;margin:22px auto 0;color:#87938e;font-size:11px;line-height:2}
+@media(max-width:760px){.about{padding:52px 0 64px}.about-intro{grid-template-columns:1fr;gap:24px}.about-symbol{min-height:150px;max-height:170px;border-radius:24px;font-size:78px}.about-principles{grid-template-columns:1fr;margin-top:25px}.about-principles article{min-height:0;padding:19px 20px}.about-copy h2{font-size:31px}}
