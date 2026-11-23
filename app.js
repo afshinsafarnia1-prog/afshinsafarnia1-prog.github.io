@@ -40,6 +40,13 @@
     return "";
   }
 
+  function localizedNikoText(value){
+    if(!value||typeof value!=="string")return value||"";
+    const lang=document.documentElement.lang||"fa";
+    const match=value.match(/FA:\\s*([\\s\\S]*?)\\s*\\|\\|\\s*EN:\\s*([\\s\\S]*?)\\s*\\|\\|\\s*AR:\\s*([\\s\\S]*)/);
+    return match?(lang==="en"?match[2].trim():lang==="ar"?match[3].trim():match[1].trim()):value;
+  }
+
   function createTherapistCard(t){
     const card=el("article","therapist-card");
     card.dataset.therapistSlug=t.public_slug||"";
@@ -54,7 +61,8 @@
     const body=el("div","therapist-card-body");
     body.append(el("h3","",t.display_name||""));
     if(t.headline){
-      const parts=t.headline.split("|").map(x=>x.trim()).filter(Boolean);
+      const headline=t.public_slug==="niko-ghasemi"?localizedNikoText(t.headline):t.headline;
+      const parts=headline.split("|").map(x=>x.trim()).filter(Boolean);
       if(parts[0])body.append(el("p","therapist-headline therapist-headline-role",parts[0]));
       if(parts[1])body.append(el("p","therapist-headline therapist-headline-detail",parts[1]));
       if(parts[2]){
@@ -75,7 +83,7 @@
 
   function renderDirectory(items){
     if(!directory)return;
-    const displayPriority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1};
+    const displayPriority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1,"mitra-pahlavan":2,"niko-ghasemi":3};
     const orderedItems=[...items].sort((a,b)=>{
       const pa=displayPriority[a.public_slug]??2, pb=displayPriority[b.public_slug]??2;
       return pa-pb || String(a.display_name||"").localeCompare(String(b.display_name||""),"fa");
@@ -134,7 +142,7 @@
         data=await restRequest("therapists?"+params.toString());
       }
       allTherapists=(data||[]).sort((a,b)=>{
-        const priority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1};
+        const priority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1,"mitra-pahlavan":2,"niko-ghasemi":3};
         const pa=priority[a.public_slug]??2, pb=priority[b.public_slug]??2;
         return pa-pb || String(a.display_name||"").localeCompare(String(b.display_name||""),"fa");
       });
