@@ -1,4 +1,4 @@
-const CACHE = "radyad-shell-v44";
+const CACHE = "yadshin-shell-v47";
 const CORE_ASSETS = [
   "/",
   "/index.html",
@@ -11,7 +11,7 @@ const CORE_ASSETS = [
   "/psychotherapy.html",
   "/psychiatry.html",
   "/style.css",
-  "/radyad-mark.svg",
+  "/yadshin-mark.svg",
   "/app.js",
   "/workshops.js",
   "/pwa-install.js",

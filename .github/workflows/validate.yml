@@ -1,8 +1,8 @@
-name: Validate RADYAD static site
+name: Validate YADSHIN static site
 
 on:
   push:
-    branches: [main, yadcenter-seo-redesign]
+    branches: [main, yadcenter-seo-redesign, rebrand/yadshin-staging-20261123]
   pull_request:
     branches: [main]
 
