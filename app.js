@@ -232,8 +232,6 @@
     const links=[
       ["phone_number","تلفن",v=>"tel:"+v],
       ["whatsapp_number","واتساپ",v=>"https://wa.me/"+(v.replace(/[^0-9]/g,"").replace(/^0/,"98"))],
-      ["instagram_url","اینستاگرام",v=>v],["telegram_url","تلگرام",v=>v],["eitaa_url","ایتا",v=>v],
-      ["youtube_url","یوتیوب",v=>v],["linkedin_url","لینکدین",v=>v],["facebook_url","فیسبوک",v=>v]
     ];
     links.forEach(([key,label,url])=>{const value=publicContacts[key];if(!value)return;const visibleLabel=(key==="phone_number"||key==="whatsapp_number")?label+": "+value:label;const a=el("a","",visibleLabel);a.href=url(value);if(key!=="phone_number"){a.target="_blank";a.rel="noopener noreferrer";}target.append(a);});
     if(publicContacts.contact_email){const a=el("a","","ایمیل");a.href="mailto:"+publicContacts.contact_email;target.append(a);}
