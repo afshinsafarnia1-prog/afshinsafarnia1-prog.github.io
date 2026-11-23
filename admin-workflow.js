@@ -26,7 +26,7 @@
       if (assuranceError || assurance?.currentLevel !== "aal2") throw new Error("برای پنل مدیریت، ورود دومرحله‌ای (MFA) لازم است.");
       const { data: profile, error: profileError } = await db.from("profiles")
         .select("role").eq("id", data.session.user.id).maybeSingle();
-      if (profileError || profile?.role !== "admin") throw new Error("دسترسی فقط برای مدیر یادسنتر مجاز است.");
+      if (profileError || profile?.role !== "admin") throw new Error("دسترسی فقط برای مدیر یادشین مجاز است.");
     }
 
     const businessForm = document.getElementById("yadBusinessSettingsForm");
