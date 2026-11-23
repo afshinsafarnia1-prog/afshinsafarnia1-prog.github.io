@@ -72,7 +72,7 @@
     const intro=node("div","profile-intro");
     intro.append(node("h1","",data.display_name||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.public_slug==="niko-ghasemi"?localizedNikoText(data.headline):(isMitra&&document.documentElement.lang==="fa"?"روان‌شناس بالینی | روان‌کاو | درمانگر متمرکز بر تروما · ویژهٔ بزرگسالان":data.headline)));
-    if(typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
+    if(data.public_slug!=="niko-ghasemi"&&typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
     intro.append(node("p","profile-session",t("profileSession")));
     hero.append(intro);root.append(hero);
     const grid=node("div","profile-content-grid");
