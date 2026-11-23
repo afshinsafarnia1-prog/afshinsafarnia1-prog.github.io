@@ -96,6 +96,13 @@ try {
     if (direction !== expectedDirection) throw new Error("Homepage direction is wrong for " + language);
     const hero = await page.locator(".hero h1").textContent();
     if (!hero?.trim()) throw new Error("Homepage hero is empty for " + language);
+    const aboutTitle = await page.locator("#yadBrandAboutTitle").innerText();
+    const aboutPanels = await page.locator(".about-panel").count();
+    if (!aboutTitle.trim() || aboutPanels !== 4) throw new Error("Homepage About section did not render all four panels for " + language);
+    for (const key of ["aboutName","aboutMark","aboutMission","aboutPrinciples","aboutSignature","aboutDisclaimer","aboutStandardsLink"]) {
+      const node = page.locator(`[data-i18n="${key}"]`);
+      if (!(await node.innerText()).trim()) throw new Error("Homepage About content did not localize: " + key + " / " + language);
+    }
     if (!(await page.locator('[data-i18n="modalityFilter"]').innerText()).trim()) throw new Error("Therapist approach filter did not localize for " + language);
     if (!(await page.locator('[data-i18n="acceptingOnly"]').innerText()).trim()) throw new Error("Therapist intake filter did not localize for " + language);
   }
