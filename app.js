@@ -37,7 +37,7 @@
       else card.append(el("div","therapist-photo therapist-placeholder","ی"));
       const body=el("div","therapist-card-body");
       body.append(el("h3","",t.display_name||""));
-      body.append(el("span","therapist-approval-badge",t.verified_at?"احراز حرفه‌ای ثبت‌شده":"تأییدشده توسط مدیریت یادسنتر"));
+      body.append(el("span","therapist-approval-badge",t.verified_at?"احراز حرفه‌ای ثبت‌شده":"تأییدشده توسط مدیریت یادشین"));
       if(t.headline)body.append(el("p","therapist-headline",t.headline));
       if(t.years_experience!=null)body.append(el("p","therapist-meta",(i18n().yearsExperience||"سابقهٔ حرفه‌ای: {years} سال").replace("{years}",String(t.years_experience))));
       if(typeof t.accepting_new_clients==="boolean")body.append(el("span",t.accepting_new_clients?"availability-open":"availability-closed",t.accepting_new_clients?(i18n().acceptingYes||"پذیرش مراجع جدید"):(i18n().acceptingNo||"فعلاً پذیرش مراجع جدید ندارد")));
@@ -91,12 +91,12 @@
     renderPublicContacts();
     filterDirectory();
     if(notice)notice.textContent=allTherapists.length
-      ?"پروفایل‌های زیر توسط مدیریت یادسنتر بررسی و برای نمایش تأیید شده‌اند."
+      ?"پروفایل‌های زیر توسط مدیریت یادشین بررسی و برای نمایش تأیید شده‌اند."
       :"فهرست درمانگران پس از تأیید مدارک و مجوزها منتشر می‌شود؛ هیچ پروفایل تأییدنشده‌ای نمایش داده نمی‌شود.";
   }
 
   function renderPublicBranding(){
-    const name=siteBranding.brand_name||"یادسنتر";
+    const name=siteBranding.brand_name||"یادشین";
     document.querySelectorAll(".brand").forEach(node=>{
       const title=node.querySelector("b");if(title)title.textContent=name;
       const mark=node.querySelector(".brandmark");
@@ -127,7 +127,7 @@
     target.replaceChildren();
     target.append(el("p","", "تعرفهٔ هر درمانگر به‌صورت مستقل تعیین می‌شود و در پروفایل همان متخصص قابل مشاهده است. جلسهٔ استاندارد ۴۵ دقیقه است."));
     const updated=document.getElementById("yadTariffUpdated");
-    if(updated)updated.textContent="سهم درآمد هر جلسه: ۷۰٪ درمانگر و ۳۰٪ یادسنتر.";
+    if(updated)updated.textContent="سهم درآمد هر جلسه: ۷۰٪ درمانگر و ۳۰٪ یادشین.";
   }
   function renderPublicContacts(){
     const target=document.getElementById("yadPublicContacts");if(!target)return;
