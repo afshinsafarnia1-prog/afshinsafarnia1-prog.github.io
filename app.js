@@ -75,7 +75,11 @@
     }
     const tags=el("div","therapist-tags");
     const modalityLabels={online:"آنلاین",in_person:"حضوری",hybrid:"آنلاین و حضوری"};
-    const values=[...(t.specialties||[]).slice(0,3),...(t.modalities||[]).slice(0,2).map(x=>modalityLabels[x]||x)];
+    const nikoTags={
+      en:["Adult psychotherapy","Individual therapy","Couples therapy","Schema therapy"],
+      ar:["العلاج النفسي للبالغين","العلاج الفردي","العلاج الزواجي","العلاج بالمخططات"]
+    };
+    const values=[...(t.public_slug==="niko-ghasemi"?(nikoTags[document.documentElement.lang]||["روان‌درمانی بزرگسالان","روان‌درمانی فردی","زوج‌درمانی","طرحواره‌درمانی"]):(t.specialties||[]).slice(0,3)),...(t.modalities||[]).slice(0,2).map(x=>modalityLabels[x]||x)];
     values.forEach(value=>tags.append(el("span","",value)));
     if(values.length)body.append(tags);
     const link=el("a","button primary","مشاهدهٔ پروفایل");
