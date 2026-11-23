@@ -29,7 +29,9 @@
         :(i18n().directoryEmpty||"در حال حاضر درمانگر تأییدشده‌ای برای نمایش وجود ندارد.")));
       return;
     }
-    const displayPriority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1,"mitra-pahlavan":2,"niko-ghasemi":3};\n    items=[...items].sort((a,b)=>(displayPriority[a.public_slug]??4)-(displayPriority[b.public_slug]??4)||String(a.display_name||"").localeCompare(String(b.display_name||""),"fa"));\n    items.forEach(t=>{
+    const displayPriority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1,"mitra-pahlavan":2,"niko-ghasemi":3};
+    items=[...items].sort((a,b)=>(displayPriority[a.public_slug]??4)-(displayPriority[b.public_slug]??4)||String(a.display_name||"").localeCompare(String(b.display_name||""),"fa"));
+    items.forEach(t=>{
       const card=el("article","therapist-card");
       const photoUrl=t.photo_path
         ?(String(t.photo_path).startsWith("http")?t.photo_path:(db?.storage.from("therapist-photos").getPublicUrl(t.photo_path).data?.publicUrl||""))
@@ -43,7 +45,8 @@
       if(t.years_experience!=null)body.append(el("p","therapist-meta",(i18n().yearsExperience||"سابقهٔ حرفه‌ای: {years} سال").replace("{years}",String(t.years_experience))));
       if(typeof t.accepting_new_clients==="boolean")body.append(el("span",t.accepting_new_clients?"availability-open":"availability-closed",t.accepting_new_clients?(i18n().acceptingYes||"پذیرش مراجع جدید"):(i18n().acceptingNo||"فعلاً پذیرش مراجع جدید ندارد")));
       const tags=el("div","therapist-tags");
-      const nikoTags={en:["Adult psychotherapy","Individual therapy","Couples therapy","Schema therapy"],ar:["العلاج النفسي للبالغين","العلاج الفردي","العلاج الزواجي","العلاج بالمخططات"]};\n      (t.public_slug==="niko-ghasemi"?(nikoTags[document.documentElement.lang]||["روان‌درمانی بزرگسالان","روان‌درمانی فردی","زوج‌درمانی","طرحواره‌درمانی"]):(t.specialties||[]).slice(0,3)).forEach(x=>tags.append(el("span","",x)));
+      const nikoTags={en:["Adult psychotherapy","Individual therapy","Couples therapy","Schema therapy"],ar:["العلاج النفسي للبالغين","العلاج الفردي","العلاج الزواجي","العلاج بالمخططات"]};
+      (t.public_slug==="niko-ghasemi"?(nikoTags[document.documentElement.lang]||["روان‌درمانی بزرگسالان","روان‌درمانی فردی","زوج‌درمانی","طرحواره‌درمانی"]):(t.specialties||[]).slice(0,3)).forEach(x=>tags.append(el("span","",x)));
       (t.modalities||[]).slice(0,3).forEach(x=>tags.append(el("span","modality-tag",x)));
       (t.languages||[]).forEach(code=>tags.append(el("span","language-tag",languageNames[code]||code)));
       if(Number(t.review_count)>0)tags.append(el("span","rating-tag","★ "+Number(t.average_rating).toFixed(1)+" ("+t.review_count+")"));
