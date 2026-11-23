@@ -17,6 +17,7 @@
   const languageNames={fa:"فارسی",ku:"کوردی",en:"English",tr:"Türkçe",ar:"العربية",es:"Español",de:"Deutsch",fr:"Français"};
   const i18n=()=>window.YAD_I18N?.translations?.[document.documentElement.lang]||window.YAD_I18N?.translations?.fa||{};
   const el=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!=null)node.textContent=text;return node;};
+  function localizedNikoText(value){if(!value||typeof value!=="string")return value||"";const lang=document.documentElement.lang||"fa";const fields=value.split("||").map(part=>part.trim());if(fields.length<3)return value;const pick=prefix=>fields.find(part=>part.startsWith(prefix))?.slice(prefix.length).trim()||"";return lang==="en"?pick("EN:"):lang==="ar"?pick("AR:"):pick("FA:");}
 
   function renderDirectory(items){
     if(!directory)return;
@@ -28,21 +29,21 @@
         :(i18n().directoryEmpty||"در حال حاضر درمانگر تأییدشده‌ای برای نمایش وجود ندارد.")));
       return;
     }
-    items.forEach(t=>{
+    const displayPriority={"foruzan-shahla":0,"hediyeh-sabbaghpour":1,"mitra-pahlavan":2,"niko-ghasemi":3};\n    items=[...items].sort((a,b)=>(displayPriority[a.public_slug]??4)-(displayPriority[b.public_slug]??4)||String(a.display_name||"").localeCompare(String(b.display_name||""),"fa"));\n    items.forEach(t=>{
       const card=el("article","therapist-card");
       const photoUrl=t.photo_path
         ?(String(t.photo_path).startsWith("http")?t.photo_path:(db?.storage.from("therapist-photos").getPublicUrl(t.photo_path).data?.publicUrl||""))
-        :(t.public_slug==="foruzan-shahla"?"/therapists/foruzan-shahla.jpg":"");
+        :(t.public_slug==="foruzan-shahla"?"/therapists/foruzan-shahla.jpg":t.public_slug==="niko-ghasemi"?"/therapists/niko-ghasemi.jpg":"");
       if(photoUrl){const img=el("img","therapist-photo");img.src=photoUrl;img.alt="تصویر "+t.display_name;img.loading="lazy";card.append(img);}
       else card.append(el("div","therapist-photo therapist-placeholder","ی"));
       const body=el("div","therapist-card-body");
       body.append(el("h3","",t.display_name||""));
       body.append(el("span","therapist-approval-badge",t.verified_at?"احراز حرفه‌ای ثبت‌شده":"تأییدشده توسط مدیریت یادشین"));
-      if(t.headline)body.append(el("p","therapist-headline",t.headline));
+      if(t.headline)body.append(el("p","therapist-headline",t.public_slug==="niko-ghasemi"?localizedNikoText(t.headline):t.headline));
       if(t.years_experience!=null)body.append(el("p","therapist-meta",(i18n().yearsExperience||"سابقهٔ حرفه‌ای: {years} سال").replace("{years}",String(t.years_experience))));
       if(typeof t.accepting_new_clients==="boolean")body.append(el("span",t.accepting_new_clients?"availability-open":"availability-closed",t.accepting_new_clients?(i18n().acceptingYes||"پذیرش مراجع جدید"):(i18n().acceptingNo||"فعلاً پذیرش مراجع جدید ندارد")));
       const tags=el("div","therapist-tags");
-      (t.specialties||[]).slice(0,3).forEach(x=>tags.append(el("span","",x)));
+      const nikoTags={en:["Adult psychotherapy","Individual therapy","Couples therapy","Schema therapy"],ar:["العلاج النفسي للبالغين","العلاج الفردي","العلاج الزواجي","العلاج بالمخططات"]};\n      (t.public_slug==="niko-ghasemi"?(nikoTags[document.documentElement.lang]||["روان‌درمانی بزرگسالان","روان‌درمانی فردی","زوج‌درمانی","طرحواره‌درمانی"]):(t.specialties||[]).slice(0,3)).forEach(x=>tags.append(el("span","",x)));
       (t.modalities||[]).slice(0,3).forEach(x=>tags.append(el("span","modality-tag",x)));
       (t.languages||[]).forEach(code=>tags.append(el("span","language-tag",languageNames[code]||code)));
       if(Number(t.review_count)>0)tags.append(el("span","rating-tag","★ "+Number(t.average_rating).toFixed(1)+" ("+t.review_count+")"));

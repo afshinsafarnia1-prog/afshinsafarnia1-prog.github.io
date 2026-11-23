@@ -13,6 +13,8 @@
   const t=(key)=>window.YAD_I18N?.translations?.[document.documentElement.lang]?.[key]||window.YAD_I18N?.translations?.fa?.[key]||key;
   const node=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!=null)n.textContent=value;return n;};
   const list=(value)=>Array.isArray(value)?value:(typeof value==="string"?value.split(/[,،؛]/).map(x=>x.trim()).filter(Boolean):[]);
+  function localizedNikoText(value){if(!value||typeof value!=="string")return value||"";const lang=document.documentElement.lang||"fa";const fields=value.split("||").map(part=>part.trim());if(fields.length<3)return value;const pick=prefix=>fields.find(part=>part.startsWith(prefix))?.slice(prefix.length).trim()||"";return lang==="en"?pick("EN:"):lang==="ar"?pick("AR:"):pick("FA:");}
+  const nikoTranslations={en:{qualifications:["PhD in Health Psychology","University lecturer","Member, Iranian Psychology and Counselling Organization","Member, Iranian Psychological Association","Member, Iranian Health Psychology Association","Reported professional licence number: 1594616"],specialties:["Adult psychotherapy","Individual psychotherapy","Couples therapy","Premarital counselling","Schema therapy","MMPI assessment","Schema assessment","Life-skills workshops: stress management, anger management, decision-making, problem-solving, assertiveness, critical and creative thinking, empathy, self-awareness, and conflict resolution"]},ar:{qualifications:["دكتوراه في علم النفس الصحي","محاضِرة جامعية","عضوة في منظمة علم النفس والإرشاد الإيرانية","عضوة في الجمعية الإيرانية لعلم النفس","عضوة في الجمعية الإيرانية لعلم النفس الصحي","رقم الترخيص المهني المُعلن: 1594616"],specialties:["العلاج النفسي للبالغين","العلاج النفسي الفردي","العلاج الزواجي","الإرشاد قبل الزواج","العلاج بالمخططات","تقييم MMPI","تقييم المخططات","مدرّبة ورش مهارات الحياة: إدارة التوتر، ضبط الغضب، اتخاذ القرار، حل المشكلات، التوكيدية، التفكير النقدي والإبداعي، التعاطف، الوعي بالذات، وحل النزاعات"]}};
   function section(title,values){
     if(!values.length)return null;
     const box=node("section","profile-section");
@@ -42,27 +44,27 @@
     const hero=node("div","profile-hero");
     const profilePhoto=data.photo_path
       ?(String(data.photo_path).startsWith("http")?data.photo_path:(db.storage.from("therapist-photos").getPublicUrl(data.photo_path).data?.publicUrl||""))
-      :(data.public_slug==="foruzan-shahla"?"/therapists/foruzan-shahla.jpg":"");
+      :(data.public_slug==="foruzan-shahla"?"/therapists/foruzan-shahla.jpg":data.public_slug==="niko-ghasemi"?"/therapists/niko-ghasemi.jpg":"");
     if(profilePhoto){
       const img=node("img","profile-photo");img.src=profilePhoto;img.alt=t("profilePhotoAlt");img.loading="lazy";hero.append(img);
     } else {
-      const mark=node("div","profile-monogram","ی");
+      const mark=node("div","profile-monogram",data.public_slug==="niko-ghasemi"?"ن":"ی");
       mark.setAttribute("aria-hidden","true");
       hero.append(mark);
     }
     const intro=node("div","profile-intro");
     intro.append(node("span","eyebrow",data.verified_at?t("profileVerified"):"تأییدشده توسط مدیریت یادشین"));
     intro.append(node("h1","",data.display_name||t("profileNoName")));
-    if(data.headline)intro.append(node("p","profile-headline",data.headline));
-    if(typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
-    intro.append(node("p","profile-session",t("profileSession")));
+    if(data.headline)intro.append(node("p","profile-headline",data.public_slug==="niko-ghasemi"?localizedNikoText(data.headline):data.headline));
+    if(data.public_slug!=="niko-ghasemi"&&typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
+    intro.append(node("p","profile-session",data.public_slug==="niko-ghasemi"?(document.documentElement.lang==="en"?"45-minute session":document.documentElement.lang==="ar"?"جلسة لمدة ٤٥ دقيقة":"جلسهٔ ۴۵ دقیقه‌ای"):t("profileSession")));
     hero.append(intro);root.append(hero);
     const grid=node("div","profile-content-grid");
     const main=node("div","profile-main");
-    if(data.biography){const bio=node("section","profile-section");bio.append(node("h2","",t("profileAbout")),node("p","profile-biography",data.biography));main.append(bio);}
-    const qualifications=list(data.qualifications);
+    if(data.biography){const bio=node("section","profile-section");bio.append(node("h2","",t("profileAbout")),node("p","profile-biography",data.public_slug==="niko-ghasemi"?localizedNikoText(data.biography):data.biography));main.append(bio);}
+    const qualifications=data.public_slug==="niko-ghasemi"?(nikoTranslations[document.documentElement.lang]?.qualifications||list(data.qualifications)):list(data.qualifications);
     if(qualifications.length)main.append(section(t("profileQualifications"),qualifications));
-    const specialties=list(data.specialties);
+    const specialties=data.public_slug==="niko-ghasemi"?(nikoTranslations[document.documentElement.lang]?.specialties||list(data.specialties)):list(data.specialties);
     if(specialties.length)main.append(section(t("profileSpecialties"),specialties));
     const modalities=list(data.modalities);
     if(modalities.length)main.append(section(t("profileModalities"),modalities));
