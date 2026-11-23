@@ -1,4 +1,4 @@
-const CACHE = "yadshin-shell-v46";
+const CACHE = "yadshin-shell-v47";
 const CORE_ASSETS = [
   "/",
   "/index.html",
