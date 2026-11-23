@@ -48,7 +48,7 @@
     const feedback=feedbackRows||[];
     document.title=(data.display_name||"درمانگر")+" | پروفایل متخصص | یادشین";
     const description=document.querySelector('meta[name="description"]');
-    if(description)description.content=(document.documentElement.lang==="en"?"Professional profile of ":"الملف المهني لـ ")+(data.display_name||"درمانگر")+(document.documentElement.lang==="en"?" on YADSHIN.":" على يادشين.");
+    if(description)description.content=document.documentElement.lang==="en"?"Professional profile of "+(data.display_name||"therapist")+" on YADSHIN.":document.documentElement.lang==="ar"?"الملف المهني لـ "+(data.display_name||"المعالجة النفسية")+" على يادشين.":"معرفی تحصیلات، حوزه‌های تخصصی، رویکرد و زبان‌های ارائهٔ خدمت نیکو قاسمی در یادشین.";
     const ogTitle=document.querySelector('meta[property="og:title"]');if(ogTitle)ogTitle.content=document.title;
     const ogDescription=document.querySelector('meta[property="og:description"]');if(ogDescription&&description)ogDescription.content=description.content;
     root.replaceChildren();
@@ -117,8 +117,11 @@
     price.append(node("small","profile-muted",t("profile45min")));
     aside.append(price);
     const contactActions=node("div","profile-contact-actions");
-    const whatsappMessage="سلام، برای دریافت اطلاعات و هماهنگی جلسه با درمانگر "+(data.display_name||"منتخب")+" از طریق یادشین پیام می‌دهم.";
-    const contactLinks=[["https://wa.me/989999398350?text="+encodeURIComponent(whatsappMessage),"پیام در واتساپ","primary"],["https://t.me/RADYAD","پیام در تلگرام","outline"],["https://eitaa.com/RADYAD","پیام در ایتا","outline"]];
+    const lang=document.documentElement.lang||"fa";
+    const whatsappMessage=lang==="en"?"Hello, I would like information and help arranging a session with "+(data.display_name||"the selected therapist")+" through YADSHIN.":lang==="ar"?"مرحباً، أود الحصول على معلومات وتنسيق جلسة مع "+(data.display_name||"المعالجة المختارة")+" عبر يادشين.":"سلام، برای دریافت اطلاعات و هماهنگی جلسه با درمانگر "+(data.display_name||"منتخب")+" از طریق یادشین پیام می‌دهم.";
+    const whatsappLabel=lang==="en"?"Message on WhatsApp":lang==="ar"?"مراسلة عبر واتساب":"پیام در واتساپ";
+    const contactLinks=[["https://wa.me/989999398350?text="+encodeURIComponent(whatsappMessage),whatsappLabel,"primary"]];
+    if(data.public_slug!=="niko-ghasemi")contactLinks.push(["https://t.me/RADYAD","پیام در تلگرام","outline"],["https://eitaa.com/RADYAD","پیام در ایتا","outline"]);
     contactLinks.forEach(([href,label,style])=>{const link=node("a","button "+style+" full-button",label);link.href=href;link.target="_blank";link.rel="noopener noreferrer";contactActions.append(link);});
     aside.append(contactActions);
     aside.append(node("p","profile-muted","زمان جلسه ابتدا با مدیریت و درمانگر هماهنگ می‌شود؛ پس از اعلام مبلغ و تأیید پرداخت، نوبت قطعی خواهد شد."));
