@@ -205,9 +205,7 @@
     const topTagline=document.getElementById("yadBrandTopTagline");
     if(topTagline&&siteBranding.tagline)topTagline.textContent=siteBranding.tagline;
     const aboutTitle=document.getElementById("yadBrandAboutTitle");
-    const aboutText=document.getElementById("yadBrandAboutText");
     const manager=document.getElementById("yadPublicManager");
-    if(aboutTitle&&siteBranding.tagline)aboutTitle.textContent=siteBranding.tagline;
     if(manager&&siteBranding.manager_name){
       document.getElementById("yadPublicManagerName").textContent=siteBranding.manager_name;
       document.getElementById("yadPublicManagerTitle").textContent=siteBranding.manager_title||"";
