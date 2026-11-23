@@ -2,7 +2,7 @@ name: Validate YADSHIN static site
 
 on:
   push:
-    branches: [main, yadcenter-seo-redesign, rebrand/yadshin-staging-20261123]
+    branches: [main, yadcenter-seo-redesign, rebrand/yadshin-staging-20261123, feature/yadshin-i18n-port-20261123]
   pull_request:
     branches: [main]
 
