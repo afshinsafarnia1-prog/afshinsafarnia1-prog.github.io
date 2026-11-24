@@ -52,8 +52,6 @@
 
   function createTherapistCard(t){
     const card=el("article","therapist-card");
-    if(t.public_slug==="niko-ghasemi"||["نیکو قاسمی","Niko Ghasemi"].includes((t.display_name||"").trim().replace(/\s+/g," ")))card.classList.add("therapist-card-niko");
-    if(t.public_slug==="mitra-pahlavan"||["میترا پهلوان","Mitra Pahlavan"].includes((t.display_name||"").trim().replace(/\s+/g," ")))card.classList.add("therapist-card-mitra");
     card.dataset.therapistSlug=t.public_slug||"";
     const photoUrl=therapistPhotoUrl(t.photo_path,t.public_slug);
     if(photoUrl){
