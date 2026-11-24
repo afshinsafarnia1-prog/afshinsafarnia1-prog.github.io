@@ -901,6 +901,6 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 
 
 /* Requested spacing applies only inside each therapist's dedicated profile. */
-#therapistProfile.mitra-profile{margin-top:114px}
+#therapistProfile.mitra-profile{margin-top:152px}
 #therapistProfile.niko-profile{margin-top:170px}
-#therapistProfile:has(.hediyeh-profile){margin-top:38px}
+#therapistProfile:has(.hediyeh-profile){margin-top:76px}
