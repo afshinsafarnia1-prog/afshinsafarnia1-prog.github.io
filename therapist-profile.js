@@ -53,6 +53,7 @@
     const ogDescription=document.querySelector('meta[property="og:description"]');if(ogDescription&&description)ogDescription.content=description.content;
     root.replaceChildren();
     const isMitra=data.public_slug==="mitra-pahlavan";
+    if(data.public_slug==="niko-ghasemi")root.classList.add("niko-profile");
     if(isMitra){
       root.classList.add("mitra-profile");
       const topLink=document.querySelector(".navcta");
