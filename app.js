@@ -52,7 +52,6 @@
 
   function createTherapistCard(t){
     const card=el("article","therapist-card");
-    if(t.public_slug==="niko-ghasemi"||["نیکو قاسمی","Niko Ghasemi"].includes((t.display_name||"").trim().replace(/\s+/g," ")))card.classList.add("therapist-card-niko");
     card.dataset.therapistSlug=t.public_slug||"";
     const photoUrl=therapistPhotoUrl(t.photo_path,t.public_slug);
     if(photoUrl){
@@ -63,9 +62,10 @@
     }else card.append(el("div","therapist-photo therapist-placeholder",(t.display_name||"د").slice(0,1)));
 
     const body=el("div","therapist-card-body");
-    body.append(el("h3","",t.display_name||""));
+    const displayName=t.public_slug==="mitra-pahlavan"&&document.documentElement.lang==="fa"?"میترا پهلوان":(t.display_name||"");
+    body.append(el("h3","",displayName));
     if(t.headline){
-      const headline=t.public_slug==="niko-ghasemi"?localizedNikoText(t.headline):t.headline;
+      const headline=t.public_slug==="niko-ghasemi"?localizedNikoText(t.headline):(t.public_slug==="mitra-pahlavan"&&document.documentElement.lang==="fa"?"روان‌شناس بالینی | روان‌کاو و درمانگر متمرکز بر تروما | ویژهٔ بزرگسالان":t.headline);
       const parts=headline.split("|").map(x=>x.trim()).filter(Boolean);
       if(parts[0])body.append(el("p","therapist-headline therapist-headline-role",parts[0]));
       if(parts[1])body.append(el("p","therapist-headline therapist-headline-detail",parts[1]));
@@ -80,7 +80,7 @@
       en:["Adult psychotherapy","Individual therapy","Couples therapy","Schema therapy"],
       ar:["العلاج النفسي للبالغين","العلاج الفردي","العلاج الزواجي","العلاج بالمخططات"]
     };
-    const values=[...(t.public_slug==="niko-ghasemi"?(nikoTags[document.documentElement.lang]||["روان‌درمانی بزرگسالان","روان‌درمانی فردی","زوج‌درمانی","طرحواره‌درمانی"]):(t.specialties||[]).slice(0,3)),...(t.modalities||[]).slice(0,2).map(x=>modalityLabels[x]||x)];
+    const values=[...(t.public_slug==="niko-ghasemi"?(nikoTags[document.documentElement.lang]||["روان‌درمانی بزرگسالان","روان‌درمانی فردی","زوج‌درمانی","طرحواره‌درمانی"]):(t.public_slug==="mitra-pahlavan"&&document.documentElement.lang==="fa"?(t.specialties||[]).filter(x=>/[\u0600-\u06FF]/.test(x)).slice(0,3):(t.specialties||[]).slice(0,3))),...(t.modalities||[]).slice(0,2).map(x=>modalityLabels[x]||x)];
     values.forEach(value=>tags.append(el("span","",value)));
     if(values.length)body.append(tags);
     const link=el("a","button primary","مشاهدهٔ پروفایل");

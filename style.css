@@ -899,7 +899,8 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 @media(max-width:480px){.mitra-profile .profile-hero{display:flex;align-items:center}.mitra-profile .profile-photo{width:100px;height:120px;flex-basis:100px}}
 
 
-/* Niko Ghasemi: two-line vertical offset in the therapist directory only */
-/* Niko Ghasemi: visual-only two-line offset; preserve every other card's layout */
-#therapistDirectory .therapist-cards-track:has(>.therapist-card.therapist-card-niko){padding-bottom:calc(18px + 2em)!important}
-#therapistDirectory .therapist-cards-track>.therapist-card.therapist-card-niko{margin:0!important;transform:translateY(2em)!important}
+
+/* Requested spacing applies only inside each therapist's dedicated profile. */
+#therapistProfile.mitra-profile{margin-top:152px}
+#therapistProfile.niko-profile{margin-top:170px}
+#therapistProfile:has(.hediyeh-profile){margin-top:152px}
