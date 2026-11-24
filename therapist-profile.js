@@ -46,7 +46,9 @@
     const publicMeta=metaRows?.[0]||{};
     const {data:feedbackRows}=await db.rpc("get_public_therapist_feedback",{p_therapist_id:id});
     const feedback=feedbackRows||[];
-    document.title=(data.display_name||"درمانگر")+" | پروفایل متخصص | یادشین";
+    const isMitraPersian=data.public_slug==="mitra-pahlavan"&&document.documentElement.lang==="fa";
+    const displayName=isMitraPersian?"میترا پهلوان":(data.display_name||"درمانگر");
+    document.title=displayName+" | پروفایل متخصص | یادشین";
     const description=document.querySelector('meta[name="description"]');
     if(description)description.content=document.documentElement.lang==="en"?"Professional profile of "+(data.display_name||"therapist")+" on YADSHIN.":document.documentElement.lang==="ar"?"الملف المهني لـ "+(data.display_name||"المعالجة النفسية")+" على يادشين.":"معرفی تحصیلات، حوزه‌های تخصصی، رویکرد و زبان‌های ارائهٔ خدمت نیکو قاسمی در یادشین.";
     const ogTitle=document.querySelector('meta[property="og:title"]');if(ogTitle)ogTitle.content=document.title;
@@ -71,7 +73,7 @@
       const mark=node("div","profile-monogram",data.public_slug==="niko-ghasemi"?"ن":"ی");mark.setAttribute("aria-hidden","true");hero.append(mark);
     }
     const intro=node("div","profile-intro");
-    intro.append(node("h1","",data.display_name||t("profileNoName")));
+    intro.append(node("h1","",displayName||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.public_slug==="niko-ghasemi"?localizedNikoText(data.headline):(isMitra&&document.documentElement.lang==="fa"?"روان‌شناس بالینی | روان‌کاو | درمانگر متمرکز بر تروما · ویژهٔ بزرگسالان":data.headline)));
     if(data.public_slug!=="niko-ghasemi"&&typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
     intro.append(node("p","profile-session",data.public_slug==="niko-ghasemi"?(document.documentElement.lang==="en"?"45-minute session":document.documentElement.lang==="ar"?"جلسة لمدة ٤٥ دقيقة":"جلسهٔ ۴۵ دقیقه‌ای"):t("profileSession")));
@@ -88,9 +90,9 @@
       bio.append(node("h2","",t("profileAbout")),node("p","profile-biography",biographyText));
       main.append(bio);
     }
-    const qualifications=data.public_slug==="niko-ghasemi"?(nikoTranslations[document.documentElement.lang]?.qualifications||list(data.qualifications)):list(data.qualifications);
+    const qualifications=data.public_slug==="niko-ghasemi"?(nikoTranslations[document.documentElement.lang]?.qualifications||list(data.qualifications)):(isMitraPersian?["کارشناسی ارشد روان‌شناسی بالینی","کارشناسی ارشد روان‌شناسی بالینی کودک و نوجوان","گذراندن دورهٔ تخصصی تکنیک فلش همراه با تمرین تحت نظارت"]:list(data.qualifications));
     if(qualifications.length)main.append(section(t("profileQualifications"),qualifications));
-    const specialties=data.public_slug==="niko-ghasemi"?(nikoTranslations[document.documentElement.lang]?.specialties||list(data.specialties)):list(data.specialties);
+    const specialties=data.public_slug==="niko-ghasemi"?(nikoTranslations[document.documentElement.lang]?.specialties||list(data.specialties)):(isMitraPersian?list(data.specialties).filter(x=>/[\u0600-\u06FF]/.test(x)):list(data.specialties));
     if(specialties.length)main.append(section(t("profileSpecialties"),specialties));
     const modalities=list(data.modalities);
     if(modalities.length)main.append(section(t("profileModalities"),modalities));
@@ -119,7 +121,7 @@
     aside.append(price);
     const contactActions=node("div","profile-contact-actions");
     const lang=document.documentElement.lang||"fa";
-    const whatsappMessage=lang==="en"?"Hello, I would like information and help arranging a session with "+(data.display_name||"the selected therapist")+" through YADSHIN.":lang==="ar"?"مرحباً، أود الحصول على معلومات وتنسيق جلسة مع "+(data.display_name||"المعالجة المختارة")+" عبر يادشين.":"سلام، برای دریافت اطلاعات و هماهنگی جلسه با درمانگر "+(data.display_name||"منتخب")+" از طریق یادشین پیام می‌دهم.";
+    const whatsappMessage=lang==="en"?"Hello, I would like information and help arranging a session with "+(displayName||"the selected therapist")+" through YADSHIN.":lang==="ar"?"مرحباً، أود الحصول على معلومات وتنسيق جلسة مع "+(displayName||"المعالجة المختارة")+" عبر يادشين.":"سلام، برای دریافت اطلاعات و هماهنگی جلسه با درمانگر "+(displayName||"منتخب")+" از طریق یادشین پیام می‌دهم.";
     const whatsappLabel=lang==="en"?"Message on WhatsApp":lang==="ar"?"مراسلة عبر واتساب":"پیام در واتساپ";
     const contactLinks=[["https://wa.me/989999398350?text="+encodeURIComponent(whatsappMessage),whatsappLabel,"primary"]];
     if(data.public_slug!=="niko-ghasemi")contactLinks.push(["https://t.me/RADYAD","پیام در تلگرام","outline"],["https://eitaa.com/RADYAD","پیام در ایتا","outline"]);
