@@ -900,4 +900,6 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 
 
 /* Niko Ghasemi: two-line vertical offset in the therapist directory only */
-#therapistDirectory .therapist-cards-track>.therapist-card.therapist-card-niko{align-self:flex-start!important;margin-top:2em!important;transform:none!important}
+/* Niko Ghasemi: visual-only two-line offset; preserve every other card's layout */
+#therapistDirectory .therapist-cards-track:has(>.therapist-card.therapist-card-niko){padding-bottom:calc(18px + 2em)!important}
+#therapistDirectory .therapist-cards-track>.therapist-card.therapist-card-niko{margin:0!important;transform:translateY(2em)!important}
