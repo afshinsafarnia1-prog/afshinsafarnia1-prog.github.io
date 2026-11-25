@@ -157,7 +157,7 @@ try {
   for (const selector of ["#yadSessionAccessAdmin", "#yadSupportAdmin", "#yadFeedbackAdmin", "#yadAvailabilityForm", "#yadAvailabilityTherapist", "#yadYearsExperience", "#yadJurisdictions", "#yadAcceptingNewClients"]) {
     if (!(await page.locator(selector).count())) throw new Error("Admin workflow control missing: " + selector);
   }
-  if (await page.locator(".admin-shortcuts a").count() !== 8) throw new Error("Admin quick navigation is incomplete.");
+  if (await page.locator(".admin-shortcuts a").count() !== 10) throw new Error("Admin quick navigation is incomplete.");
   if (await page.locator("#yadTherapistForm > details").count() !== 4) throw new Error("Therapist editor should have four guided sections.");
   if (await page.locator("#yadWorkshopAdminForm > details").count() !== 4) throw new Error("Workshop editor should have four guided sections.");
   for (const link of await page.locator(".admin-shortcuts a").evaluateAll(nodes => nodes.map(a => a.getAttribute("href")))) {
@@ -283,8 +283,19 @@ try {
   await page.locator('#mainNav a[href="#services"]').click();
   if (await page.locator("#mainNav").isVisible()) throw new Error("Mobile navigation did not close after selecting a destination.");
   if (await page.locator("#menuToggle").getAttribute("aria-expanded") !== "false") throw new Error("Mobile navigation expanded state was not reset after closing.");
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  const navLabels = await page.locator("#mainNav a").allTextContents();
+  if (navLabels.length !== 7 || navLabels[2].trim() !== "کارگاه‌ها" || navLabels[3].trim() !== "مجله" || navLabels[5].trim() !== "پنل درمانگر" || navLabels[6].trim() !== "مدیریت") {
+    throw new Error("Homepage navigation labels do not match their destinations.");
+  }
+  if (await page.locator('#mainNav a[href="client.html"]').count()) throw new Error("Client portal must not appear in the public homepage navigation.");
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
   if (!(await page.locator(".admin-shortcuts").count())) throw new Error("Admin quick-access navigation is missing.");
+  if (!(await page.locator(".auth-gate").isVisible()) || !(await page.locator("#yadEmail").isVisible())) throw new Error("Admin login gate is not visible before authentication.");
+  if (await page.locator(".admin-shortcuts").isVisible()) throw new Error("Admin data and shortcuts must remain hidden before authentication.");
+  await page.goto("http://127.0.0.1:4173/therapist.html", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator(".auth-gate").isVisible()) || !(await page.locator("#yadEmail").isVisible())) throw new Error("Therapist login gate is not visible.");
+  if (await page.locator("#therapistPrivatePortal").isVisible()) throw new Error("Private therapist portal must remain hidden before authentication.");
 
   for (const [path, selector] of [["/initial-guidance.html","#initialGuideForm"],["/standards.html","h1"],["/workshops.html","#yadWorkshopPageList"],["/articles/why-assessment-matters.html","h1"]]) {
     const response=await page.goto("http://127.0.0.1:4173"+path,{waitUntil:"domcontentloaded"});
