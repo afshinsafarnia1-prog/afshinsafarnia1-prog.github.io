@@ -1017,3 +1017,15 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
 .side-nav i svg{width:25px!important;height:25px!important;stroke-width:2.15!important}
 .side-nav>a:not(.side-brand){gap:10px!important}
 @media(max-width:760px){.side-nav i{width:27px!important;height:27px!important;flex-basis:27px!important}.side-nav i svg{width:23px!important;height:23px!important}}
+
+
+/* Private therapist identity: one clear portrait and a compact navigation. */
+.therapist-identity{display:flex;align-items:center;gap:16px;margin:18px 0 24px;padding:16px;border:1px solid var(--ui-line,#e4ece8);border-radius:16px;background:#f7faf8}
+.therapist-identity[hidden]{display:none}
+.therapist-identity img{width:104px;height:124px;flex:0 0 104px;object-fit:cover;object-position:center 22%;border-radius:12px;background:#edf2ef}
+.therapist-identity img[hidden]{display:none}
+.therapist-identity strong{font-size:18px;color:var(--ui-ink,#203638)}
+.therapist-identity p{margin:4px 0 0}
+.therapist-quick-nav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+.therapist-quick-nav a{padding:8px 14px;border:1px solid var(--ui-line,#e4ece8);border-radius:10px;text-decoration:none;background:#fff}
+@media(max-width:520px){.therapist-identity{gap:12px;padding:12px}.therapist-identity img{width:88px;height:108px;flex-basis:88px}}
