@@ -955,3 +955,7 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
 .yad-branding-previews img[hidden]{display:none}
 .yad-branding-previews figcaption{font-size:14px;color:var(--ui-muted,#607477)}
 @media(max-width:520px){.yad-branding-previews{grid-template-columns:1fr}.yad-branding-previews figure{min-height:125px}}
+
+.service-icon{display:grid;place-items:center;width:58px;height:58px;border:1px solid var(--ui-line,#e4ece8);border-radius:18px;background:var(--ui-soft,#f4f9f6);color:var(--ui-accent,#176d62)}
+.service-icon svg{display:block;width:31px;height:31px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.service-grid .service{border:1px solid var(--ui-line,#e4ece8);border-radius:20px}
