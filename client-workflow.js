@@ -205,8 +205,8 @@
     }
 
     select.addEventListener("change",()=>{loadAvailableSlots();updateSelectedFee();});
-    document.getElementById("yadRequestMarket").addEventListener("change",updateSelectedFee);
-    document.getElementById("yadRequestCurrency").addEventListener("change",updateSelectedFee);
+    document.getElementById("yadRequestMarket").addEventListener("change",()=>{updateSelectedFee();loadAvailableSlots();});
+    document.getElementById("yadRequestCurrency").addEventListener("change",()=>{updateSelectedFee();loadAvailableSlots();});
     countryInput?.addEventListener("change",loadAvailableSlots);
     form.addEventListener("submit", async event => {
       event.preventDefault();
