@@ -48,7 +48,7 @@
         .order("display_name", { ascending: true });
       if (error) throw error;
       directory = data || [];
-      const {data:feeRows,error:feeError}=await db.rpc("get_public_therapist_session_fee_directory");
+      const {data:feeRows,error:feeError}=await db.rpc("get_public_therapist_fee_directory");
       if(feeError)throw feeError;
       const feesByTherapist=new Map();
       (feeRows||[]).forEach(row=>{if(!feesByTherapist.has(row.therapist_id))feesByTherapist.set(row.therapist_id,[]);feesByTherapist.get(row.therapist_id).push(row);});
@@ -71,15 +71,19 @@
 
     async function updateSelectedFee(){
       if(!feeNote)return;
-      if(!select.value){feeNote.textContent="پس از انتخاب درمانگر، تعرفهٔ همان متخصص نمایش داده می‌شود.";return;}
-      if(!activeUser){feeNote.textContent="برای مشاهدهٔ تعرفهٔ متناسب با سابقهٔ جلسات، وارد حساب مراجع شوید.";return;}
+      const therapist=directory.find(t=>t.id===select.value);
+      if(!therapist){feeNote.textContent="پس از انتخاب درمانگر، تعرفهٔ همان متخصص نمایش داده می‌شود.";return;}
       const market=document.getElementById("yadRequestMarket").value;
       const currency=market==="iran"?"IRR":document.getElementById("yadRequestCurrency").value;
-      const {data,error}=await db.rpc("client_get_therapist_session_quote",{p_therapist_id:select.value,p_market:market,p_currency:currency});
-      const quote=data?.[0];
-      if(error||!quote){feeNote.textContent="تعرفهٔ این درمانگر برای ارز انتخاب‌شده ثبت نشده یا در دسترس نیست.";return;}
-      const amount=new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(currency==="IRR"?Number(quote.amount)/10:Number(quote.amount))+(currency==="IRR"?" تومان":" "+currency);
-      feeNote.textContent=(quote.is_first_session?"جلسهٔ اول با این درمانگر":"جلسهٔ پیگیری با این درمانگر")+" · "+quote.session_duration_minutes+" دقیقه · "+amount;
+      const fee=(therapist.fees||[]).find(x=>x.currency===currency);
+      let duration=fee?.session_duration_minutes||45;
+      if(activeUser){
+        const result=await db.rpc("client_get_therapist_session_duration",{p_therapist_id:therapist.id});
+        if(!result.error&&Number.isInteger(result.data))duration=result.data;
+      }
+      feeNote.textContent=fee
+        ?"تعرفهٔ این درمانگر: "+new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(currency==="IRR"?Number(fee.amount)/10:Number(fee.amount))+(currency==="IRR"?" تومان":" "+currency)+" · "+duration+" دقیقه"
+        :"این درمانگر هنوز تعرفه‌ای برای ارز انتخاب‌شده ثبت نکرده است؛ لطفاً ارز دیگری انتخاب کنید یا با مدیریت تماس بگیرید.";
     }
     async function loadAvailableSlots() {
       if (!slotSelect) return;
@@ -90,15 +94,13 @@
       slotSelect.add(new Option("در حال دریافت زمان‌های آزاد…",""));
       let duration=45;
       if(activeUser){
-        const market=document.getElementById("yadRequestMarket").value;
-        const currency=market==="iran"?"IRR":document.getElementById("yadRequestCurrency").value;
-        const quoteResult=await db.rpc("client_get_therapist_session_quote",{p_therapist_id:select.value,p_market:market,p_currency:currency});
-        if(quoteResult.error||!quoteResult.data?.[0]){slotSelect.replaceChildren(new Option("برای این درمانگر و ارز انتخاب‌شده تعرفه یا مدت جلسه ثبت نشده است.",""));return;}
-        duration=quoteResult.data[0].session_duration_minutes;
+        const result=await db.rpc("client_get_therapist_session_duration",{p_therapist_id:select.value});
+        if(result.error){slotSelect.replaceChildren(new Option("مدت جلسه در دسترس نیست؛ لطفاً بعداً تلاش کنید.",""));return;}
+        duration=result.data;
       }
       const {data,error}=await db.rpc("client_list_available_slots",{p_therapist_id:select.value,p_country_code:country,p_session_duration_minutes:duration});
       slotSelect.replaceChildren();
-      slotSelect.add(new Option(error?"زمان‌های آزاد در دسترس نیست":(data?.length?"زمان دلخواه را انتخاب کنید":"فعلاً بازهٔ زمانی کافی برای مدت این جلسه ثبت نشده است"),""));
+      slotSelect.add(new Option(error?"زمان‌های آزاد در دسترس نیست":(data?.length?"زمان دلخواه را انتخاب کنید":"فعلاً زمان آزادی برای این درمانگر ثبت نشده است"),""));
       if(error){setStatus(error.message||"دریافت زمان‌های آزاد ناموفق بود.",true);return;}
       (data||[]).forEach(slot=>{
         const label=new Intl.DateTimeFormat(document.documentElement.lang||"fa-IR",{dateStyle:"medium",timeStyle:"short",timeZone:slot.timezone||undefined}).format(new Date(slot.starts_at));
@@ -205,8 +207,8 @@
     }
 
     select.addEventListener("change",()=>{loadAvailableSlots();updateSelectedFee();});
-    document.getElementById("yadRequestMarket").addEventListener("change",()=>{updateSelectedFee();loadAvailableSlots();});
-    document.getElementById("yadRequestCurrency").addEventListener("change",()=>{updateSelectedFee();loadAvailableSlots();});
+    document.getElementById("yadRequestMarket").addEventListener("change",updateSelectedFee);
+    document.getElementById("yadRequestCurrency").addEventListener("change",updateSelectedFee);
     countryInput?.addEventListener("change",loadAvailableSlots);
     form.addEventListener("submit", async event => {
       event.preventDefault();
