@@ -341,6 +341,40 @@ begin
 end;
 $$;
 
+-- Keep the administrator availability workflow compatible with longer first sessions.
+create or replace function public.admin_create_availability_slot(
+  p_therapist_id uuid,p_starts_at timestamptz,p_ends_at timestamptz,p_timezone text
+) returns uuid
+language plpgsql security definer set search_path=''
+as $
+declare v_admin uuid:=auth.uid(); v_id uuid; v_zone text:=trim(coalesce(p_timezone,''));
+begin
+  perform public.require_admin_aal2();
+  if v_admin is null or not exists(select 1 from public.profiles p where p.id=v_admin and p.role='admin') then
+    raise exception 'admin_only' using errcode='42501';
+  end if;
+  if not exists(select 1 from public.therapists t where t.id=p_therapist_id and t.verified_at is not null and t.is_listed) then
+    raise exception 'verified_listed_therapist_required' using errcode='23514';
+  end if;
+  if p_starts_at is null or p_ends_at is null or p_starts_at<=now()
+    or p_ends_at<=p_starts_at or p_ends_at-p_starts_at<interval '20 minutes'
+    or p_ends_at-p_starts_at>interval '180 minutes' then
+    raise exception 'future_20_to_180_minute_slot_required' using errcode='22023';
+  end if;
+  if v_zone='' or length(v_zone)>80 or not exists(select 1 from pg_timezone_names z where z.name=v_zone) then
+    raise exception 'valid_timezone_required' using errcode='22023';
+  end if;
+  perform pg_advisory_xact_lock(hashtextextended(p_therapist_id::text,0));
+  if exists(select 1 from public.availability_slots s where s.therapist_id=p_therapist_id
+    and s.starts_at<p_ends_at and s.ends_at>p_starts_at) then
+    raise exception 'availability_overlap' using errcode='23P01';
+  end if;
+  insert into public.availability_slots(therapist_id,starts_at,ends_at,is_available,timezone)
+  values(p_therapist_id,p_starts_at,p_ends_at,true,v_zone) returning id into v_id;
+  return v_id;
+end;
+$;
+
 revoke all on function public.therapist_get_my_session_settings() from public, anon;
 revoke all on function public.therapist_set_my_session_durations(integer,integer) from public, anon;
 revoke all on function public.therapist_get_my_session_fees() from public, anon;
