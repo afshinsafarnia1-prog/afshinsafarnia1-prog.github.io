@@ -1029,3 +1029,19 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
 .therapist-quick-nav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
 .therapist-quick-nav a{padding:8px 14px;border:1px solid var(--ui-line,#e4ece8);border-radius:10px;text-decoration:none;background:#fff}
 @media(max-width:520px){.therapist-identity{gap:12px;padding:12px}.therapist-identity img{width:88px;height:108px;flex-basis:88px}}
+
+
+/* Unified, larger therapist portraits across the directory, profiles and private portal. */
+#therapistDirectory .therapist-photo,
+#therapistDirectory .therapist-placeholder{width:118px!important;height:142px!important;flex:0 0 118px!important;object-fit:cover!important;object-position:center 22%;display:block!important;border-radius:10px!important}
+.profile-hero .profile-photo,.profile-hero .profile-monogram{width:190px!important;height:220px!important;flex:0 0 190px!important;object-fit:cover!important;object-position:center 22%;}
+.therapist-identity img{width:132px!important;height:156px!important;flex:0 0 132px!important;object-fit:cover!important;object-position:center 22%}
+@media(max-width:760px){
+ #therapistDirectory .therapist-photo,#therapistDirectory .therapist-placeholder{width:108px!important;height:130px!important;flex-basis:108px!important}
+ .profile-hero .profile-photo,.profile-hero .profile-monogram{width:150px!important;height:180px!important;flex-basis:150px!important}
+}
+@media(max-width:520px){
+ #therapistDirectory .therapist-photo,#therapistDirectory .therapist-placeholder{width:100px!important;height:122px!important;flex-basis:100px!important}
+ .profile-hero .profile-photo,.profile-hero .profile-monogram{width:122px!important;height:148px!important;flex-basis:122px!important}
+ .therapist-identity img{width:112px!important;height:136px!important;flex-basis:112px!important}
+}
