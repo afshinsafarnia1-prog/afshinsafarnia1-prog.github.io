@@ -185,7 +185,7 @@
       availabilityTherapist.replaceChildren();
       const placeholder=node("option","","درمانگر را انتخاب کنید");placeholder.value="";availabilityTherapist.append(placeholder);
       (therapists||[]).filter(t=>t.verified&&t.is_listed).forEach(t=>{
-        const option=node("option","",t.display_name);option.value=t.therapist_id;availabilityTherapist.append(option);
+        const option=node("option","",t.display_name);option.value=t.therapist_id;option.dataset.slug=t.public_slug||"";availabilityTherapist.append(option);
       });
       availabilityTherapist.addEventListener("change",loadAvailabilitySlots);
       availabilityForm.addEventListener("submit",async event=>{
@@ -197,7 +197,11 @@
           start=localDateTimeInZone(document.getElementById("yadAvailabilityStart").value,zone);
           end=localDateTimeInZone(document.getElementById("yadAvailabilityEnd").value,zone);
         }catch(error){availabilityMessage(error.message,true);return;}
-        if(end.getTime()-start.getTime()!==45*60000){availabilityMessage("هر ظرفیت باید دقیقاً ۴۵ دقیقه باشد.",true);return;}
+        const isNiko=availabilityTherapist.selectedOptions[0]?.dataset.slug==="niko-ghasemi";
+        const slotMinutes=(end.getTime()-start.getTime())/60000;
+        if(isNiko?(slotMinutes<75||slotMinutes>180):slotMinutes!==45){
+          availabilityMessage(isNiko?"ظرفیت نیکو باید حداقل ۷۵ و حداکثر ۱۸۰ دقیقه باشد.":"ظرفیت سایر درمانگران باید دقیقاً ۴۵ دقیقه باشد.",true);return;
+        }
         const button=availabilityForm.querySelector('button[type="submit"]');button.disabled=true;
         const {error:saveError}=await db.rpc("admin_create_availability_slot",{
           p_therapist_id:availabilityTherapist.value,p_starts_at:start.toISOString(),p_ends_at:end.toISOString(),p_timezone:zone
@@ -206,7 +210,7 @@
         if(saveError){availabilityMessage(saveError.message||"ثبت زمان آزاد ناموفق بود.",true);return;}
         availabilityForm.reset();
         document.getElementById("yadAvailabilityTimezone").value=zone;
-        availabilityMessage("زمان آزاد ۴۵ دقیقه‌ای ثبت شد.");
+        availabilityMessage(isNiko?"ظرفیت نیکو ثبت شد؛ جلسهٔ اول ۷۵ و جلسات بعدی ۶۰ دقیقه خواهد بود.":"زمان آزاد ۴۵ دقیقه‌ای ثبت شد.");
         await loadAvailabilitySlots();
       });
     }
