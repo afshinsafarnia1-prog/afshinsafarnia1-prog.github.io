@@ -186,6 +186,9 @@ try {
   await page.locator("#therapistPrivatePortal").evaluate(el => { el.hidden = false; });
   await page.locator("#yadTherapistAvailabilityStart").fill("2026-11-25T10:00");
   if (await page.locator("#yadTherapistAvailabilityEnd").inputValue() !== "2026-11-25T10:45") throw new Error("Therapist availability end time is not calculated as 45 minutes.");
+  await page.locator("#yadTherapistAvailabilityStart").fill("2026-11-25T23:30");
+  if (await page.locator("#yadTherapistAvailabilityEnd").inputValue() !== "2026-11-26T00:15") throw new Error("Therapist availability end time did not roll over midnight correctly.");
+  if (!(await page.locator("#yadTherapistAvailabilityEnd").isDisabled()) && !(await page.locator("#yadTherapistAvailabilityEnd").evaluate(el => el.readOnly))) throw new Error("Therapist availability end time should not be manually editable.");
   await page.locator("#yadTherapistAvailabilityStart").fill("");
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Therapist profiles")) throw new Error("Therapist page translation did not apply.");
