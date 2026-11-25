@@ -162,29 +162,48 @@
 <form id="yadWorkshopAdminForm" class="yad-admin-form">
 <input id="eventId" type="hidden">
 <h3 id="eventFormHeading">ایجاد کارگاه یا نشست جدید</h3>
+<p class="admin-form-intro">برای ساخت رویداد، ابتدا عنوان و ارائه‌دهنده را وارد کن. زمان‌بندی، هزینه و اطلاعات تکمیلی در بخش‌های جداگانه قرار دارند.</p>
+<details class="admin-form-group" open>
+<summary><span><b>۱. اطلاعات اصلی رویداد</b><small>عنوان، ارائه‌دهنده، زبان و موضوع کارگاه.</small></span></summary>
 <div class="portal-grid">
 <label>عنوان کارگاه<input id="eventTitle" required minlength="4" maxlength="180"></label>
-<label>شناسه صفحه (لاتین)<input id="eventSlug" required pattern="[a-zA-Z0-9-]+" maxlength="100"></label>
+<label>شناسه صفحه (لاتین)<input id="eventSlug" required pattern="[a-zA-Z0-9-]+" maxlength="100" placeholder="مثلاً attachment-workshop"><small>فقط حروف لاتین، عدد و خط تیره.</small></label>
 <label>نام ارائه‌دهنده<input id="eventPresenter" required maxlength="120"></label>
-<label>زبان ارائه (کدها با ویرگول)<input id="eventLanguages" value="fa"></label>
-<label>موضوع‌ها (با ویرگول)<input id="eventTopics"></label>
+<label>زبان ارائه (کدها با ویرگول)<input id="eventLanguages" value="fa" placeholder="fa, en"></label>
+<label>موضوع‌ها (با ویرگول)<input id="eventTopics" placeholder="مثلاً دلبستگی، ذهن‌آگاهی"></label>
 <label>نوع برگزاری<select id="eventFormat"><option value="online">آنلاین</option><option value="hybrid">حضوری و آنلاین</option><option value="in_person">حضوری</option></select></label>
-<label>بستر برگزاری<select id="eventPlatform"><option>Zoom</option><option>Google Meet</option><option>Microsoft Teams</option><option>Other</option><option>In person</option></select></label>
-<label>مکان (برای حضوری)<input id="eventVenue"></label>
+</div>
+</details>
+<details class="admin-form-group">
+<summary><span><b>۲. زمان‌بندی و ثبت‌نام</b><small>زمان، منطقه زمانی، ظرفیت، هزینه و وضعیت انتشار.</small></span></summary>
+<div class="portal-grid">
 <label>تاریخ و ساعت شروع<input id="eventStarts" type="datetime-local" required></label>
 <label>تاریخ و ساعت پایان<input id="eventEnds" type="datetime-local" required></label>
-<label>منطقه زمانی<input id="eventTimezone" placeholder="به‌صورت خودکار از دستگاه" required></label>
+<label>منطقه زمانی<input id="eventTimezone" placeholder="به‌صورت خودکار از دستگاه" required><small>به‌صورت خودکار از منطقه زمانی دستگاه تنظیم می‌شود.</small></label>
 <label>ظرفیت (خالی = بدون محدودیت)<input id="eventCapacity" type="number" min="1"></label>
 <label>هزینه<input id="eventFee" type="number" min="0" value="0"></label>
 <label>واحد پول<select id="eventCurrency"><option>EUR</option><option>USD</option><option>IRR</option></select></label>
 <label>مهلت ثبت‌نام<input id="eventDeadline" type="datetime-local"></label>
-<label>وضعیت انتشار<select id="eventStatus"><option value="draft">پیش‌نویس</option><option value="published">انتشار عمومی</option><option value="cancelled">لغوشده</option><option value="completed">پایان‌یافته</option></select></label>
-<label>لینک خصوصی جلسه (Zoom/…؛ فقط برای ثبت‌نام‌کنندگان مجاز)<input id="eventMeetingUrl" type="url"></label>
-<label>رمز جلسه (اختیاری)<input id="eventMeetingPassword" maxlength="120"></label>
+<label>وضعیت رویداد<select id="eventStatus"><option value="draft">پیش‌نویس (منتشر نشده)</option><option value="published">انتشار عمومی</option><option value="cancelled">لغوشده</option><option value="completed">پایان‌یافته</option></select></label>
 </div>
+</details>
+<details class="admin-form-group">
+<summary><span><b>۳. مکان و بستر برگزاری</b><small>اطلاعات محل برگزاری حضوری یا آنلاین.</small></span></summary>
+<div class="portal-grid">
+<label>بستر برگزاری<select id="eventPlatform"><option>Zoom</option><option>Google Meet</option><option>Microsoft Teams</option><option>Other</option><option>In person</option></select></label>
+<label>مکان (برای حضوری)<input id="eventVenue"></label>
+</div>
+</details>
+<details class="admin-form-group">
+<summary><span><b>۴. توضیحات و دسترسی خصوصی</b><small>معرفی رویداد و اطلاعات محرمانه جلسه آنلاین.</small></span></summary>
 <label>خلاصهٔ معرفی<textarea id="eventSummary" rows="2" maxlength="500"></textarea></label>
 <label>شرح کامل<textarea id="eventDescription" rows="5"></textarea></label>
 <label>معرفی ارائه‌دهنده<textarea id="eventPresenterBio" rows="3"></textarea></label>
+<div class="portal-grid">
+<label>لینک خصوصی جلسه<input id="eventMeetingUrl" type="url" placeholder="https://…"><small>این لینک فقط باید در اختیار ثبت‌نام‌کنندگان مجاز قرار گیرد.</small></label>
+<label>رمز جلسه (اختیاری)<input id="eventMeetingPassword" maxlength="120"></label>
+</div>
+</details>
 <div class="admin-actions"><button class="button primary" type="submit">ذخیره کارگاه</button><button class="button outline" id="eventCancelEdit" type="button" hidden>لغو ویرایش</button></div>
 </form>
 <h3>پیشنهادهای رسیده از درمانگران</h3>
