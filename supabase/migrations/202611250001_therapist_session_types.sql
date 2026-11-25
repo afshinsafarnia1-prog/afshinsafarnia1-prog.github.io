@@ -12,7 +12,8 @@ set first_session_duration_minutes = coalesce(first_session_duration_minutes, se
 
 update public.therapists
 set first_session_duration_minutes = 75,
-    followup_session_duration_minutes = 60
+    followup_session_duration_minutes = 60,
+    session_duration_minutes = 60
 where public_slug = 'niko-ghasemi';
 
 alter table public.therapists
@@ -82,7 +83,8 @@ begin
   where t.owner_user_id=auth.uid() order by t.updated_at desc limit 1;
   if v_therapist is null then raise exception 'therapist_profile_not_linked' using errcode='P0002'; end if;
   update public.therapists set first_session_duration_minutes=p_first_minutes,
-    followup_session_duration_minutes=p_followup_minutes, updated_at=now()
+    followup_session_duration_minutes=p_followup_minutes,
+    session_duration_minutes=p_followup_minutes, updated_at=now()
   where id=v_therapist;
   return true;
 end;
