@@ -226,6 +226,13 @@ try {
   await page.locator('#mainNav a[href="#services"]').click();
   if (await page.locator("#mainNav").isVisible()) throw new Error("Mobile navigation did not close after selecting a destination.");
   if (await page.locator("#menuToggle").getAttribute("aria-expanded") !== "false") throw new Error("Mobile navigation expanded state was not reset after closing.");
+  await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
+  const shortcutGroups = page.locator(".admin-shortcuts-grouped");
+  if (!(await shortcutGroups.count())) throw new Error("Grouped admin shortcuts are missing.");
+  const shortcutColumns = await shortcutGroups.evaluate(el => getComputedStyle(el).gridTemplateColumns.split(" ").length);
+  if (shortcutColumns !== 1) throw new Error("Admin shortcut groups should stack on mobile.");
+  const shortcutOverflow = await shortcutGroups.evaluate(el => el.scrollWidth > el.clientWidth);
+  if (shortcutOverflow) throw new Error("Admin shortcuts overflow the mobile viewport.");
 
   for (const [path, selector] of [["/initial-guidance.html","#initialGuideForm"],["/standards.html","h1"],["/workshops.html","#yadWorkshopPageList"],["/articles/why-assessment-matters.html","h1"]]) {
     const response=await page.goto("http://127.0.0.1:4173"+path,{waitUntil:"domcontentloaded"});
