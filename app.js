@@ -11,11 +11,15 @@
 
   const menu=document.getElementById("menuToggle");
   const nav=document.getElementById("mainNav");
+  menu?.setAttribute("aria-expanded","false");
   menu?.addEventListener("click",()=>{
-    const open=nav.classList.toggle("open");
+    const open=nav?.classList.toggle("open") || false;
     menu.setAttribute("aria-expanded",String(open));
   });
-  nav?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>nav.classList.remove("open")));
+  nav?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{
+    nav.classList.remove("open");
+    menu?.setAttribute("aria-expanded","false");
+  }));
 
   const config=window.YAD_SUPABASE_CONFIG||{};
   let db=null, allTherapists=[], allFees=[], publicContacts={}, siteBranding={};
