@@ -300,10 +300,10 @@ try {
     if (links.some(link => link.href === "/client.html")) throw new Error("Client portal appeared in public navigation after " + journey + ".");
   };
   await page.goto("http://127.0.0.1:4173/therapist.html", { waitUntil: "domcontentloaded" });
-  await page.locator('.portal-nav a[href="/"]').click();
+  await page.locator(".portal-nav a").first().click();
   await assertPublicPortalLinks("returning from therapist portal");
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
-  await page.locator('.portal-nav a[href="/"]').click();
+  await page.locator(".portal-nav a").first().click();
   await assertPublicPortalLinks("returning from admin portal");
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
   if (!(await page.locator(".admin-shortcuts").count())) throw new Error("Admin quick-access navigation is missing.");
