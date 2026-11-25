@@ -222,10 +222,10 @@
     const name="یادشین";
     document.querySelectorAll(".brand").forEach(node=>{
       const title=node.querySelector("b");if(title)title.textContent=name;
-      const mark=node.querySelector(".brandmark");
-      if(mark&&siteBranding.logo_path&&db){
+      const logo=node.querySelector(".brand-logo");
+      if(logo&&siteBranding.logo_path&&db){
         const {data}=db.storage.from("site-assets").getPublicUrl(siteBranding.logo_path);
-        if(data?.publicUrl){const img=el("img","yad-brand-logo");img.src=data.publicUrl;img.alt=name+" لوگو";mark.replaceChildren(img);}
+        if(data?.publicUrl){logo.src=data.publicUrl;logo.alt=name+" لوگو";logo.removeAttribute("aria-hidden");}
       }
     });
     const topTagline=document.getElementById("yadBrandTopTagline");
