@@ -285,11 +285,26 @@ try {
   if (await page.locator("#menuToggle").getAttribute("aria-expanded") !== "false") throw new Error("Mobile navigation expanded state was not reset after closing.");
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
   const navLabels = await page.locator("#mainNav a").allTextContents();
-  const expectedNavLabels = document.documentElement.lang === "en" ? ["Services", "Therapists", "Workshops", "Articles", "About YAD", "Therapist portal", "Admin"] : ["خدمات", "درمانگران", "کارگاه‌ها", "مجله", "دربارهٔ ما", "پنل درمانگر", "پنل مدیریت"];
+  const activeLanguage = await page.locator("html").getAttribute("lang");
+  const expectedNavLabels = activeLanguage === "en" ? ["Services", "Therapists", "Workshops", "Articles", "About YAD", "Therapist portal", "Admin"] : ["خدمات", "درمانگران", "کارگاه‌ها", "مجله", "دربارهٔ ما", "پنل درمانگر", "پنل مدیریت"];
   if (navLabels.length !== expectedNavLabels.length || navLabels.some((label, index) => label.trim() !== expectedNavLabels[index])) {
     throw new Error("Homepage navigation labels do not match the active language: " + JSON.stringify({ language: document.documentElement.lang, labels: navLabels }));
   }
   if (await page.locator('#mainNav a[href="client.html"]').count()) throw new Error("Client portal must not appear in the public homepage navigation.");
+  const assertPublicPortalLinks = async (journey) => {
+    const links = await page.locator("#mainNav a").evaluateAll(nodes => nodes.map(a => ({href:new URL(a.href).pathname, label:a.textContent.trim()})));
+    const expected = ["/therapist.html", "/admin.html"];
+    for (const path of expected) {
+      if (!links.some(link => link.href === path)) throw new Error("Public homepage lost " + path + " after " + journey + ": " + JSON.stringify(links));
+    }
+    if (links.some(link => link.href === "/client.html")) throw new Error("Client portal appeared in public navigation after " + journey + ".");
+  };
+  await page.goto("http://127.0.0.1:4173/therapist.html", { waitUntil: "domcontentloaded" });
+  await page.locator(".portal-header a.brand").click();
+  await assertPublicPortalLinks("returning from therapist portal");
+  await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
+  await page.locator(".portal-header a.brand").click();
+  await assertPublicPortalLinks("returning from admin portal");
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
   if (!(await page.locator(".admin-shortcuts").count())) throw new Error("Admin quick-access navigation is missing.");
   if (!(await page.locator(".auth-gate").isVisible()) || !(await page.locator("#yadEmail").isVisible())) throw new Error("Admin login gate is not visible before authentication.");
