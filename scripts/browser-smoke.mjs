@@ -165,6 +165,16 @@ try {
   await page.goto("http://127.0.0.1:4173/assistant.html", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Where would you like to begin")) throw new Error("Assistant translation did not apply.");
+  await page.addInitScript(() => {
+    window.supabase = {
+      createClient: () => ({
+        auth: {
+          getSession: async () => ({ data: { session: null } }),
+          onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } })
+        }
+      })
+    };
+  });
   await page.goto("http://127.0.0.1:4173/therapist.html", { waitUntil: "domcontentloaded" });
   if (await page.locator(".therapist-quick-nav a").count() !== 4) throw new Error("Therapist quick navigation is incomplete.");
   const therapistLinks = await page.locator(".therapist-quick-nav a").evaluateAll(nodes => nodes.map(a => a.getAttribute("href")));
