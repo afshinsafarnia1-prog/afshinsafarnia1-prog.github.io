@@ -230,6 +230,7 @@ try {
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
   const shortcutGroups = page.locator(".admin-shortcuts-grouped");
   if (!(await shortcutGroups.count())) throw new Error("Grouped admin shortcuts are missing.");
+  await shortcutGroups.evaluate(el => { for (let current = el; current && current !== document.body; current = current.parentElement) current.hidden = false; });
   const shortcutColumns = await shortcutGroups.evaluate(el => getComputedStyle(el).gridTemplateColumns.split(" ").length);
   if (shortcutColumns !== 1) throw new Error("Admin shortcut groups should stack on mobile.");
   const shortcutOverflow = await shortcutGroups.evaluate(el => el.scrollWidth > el.clientWidth);
