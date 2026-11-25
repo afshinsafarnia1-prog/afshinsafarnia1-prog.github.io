@@ -63,15 +63,36 @@
     }
     const hero=node("div","profile-hero");
     if(data.id==="f5732cee-8463-440e-885b-b6e58b92f0d0")hero.classList.add("hediyeh-profile");
+    const addMonogram=()=>{
+      const mark=node("div","profile-monogram",data.public_slug==="niko-ghasemi"?"ن":"ی");
+      mark.setAttribute("aria-hidden","true");
+      hero.append(mark);
+    };
     if(data.photo_path){
-      const isDirect=data.photo_path.startsWith("/")||data.photo_path.includes(".jpg")||data.photo_path.includes(".jpeg")||data.photo_path.includes(".png")||data.photo_path.includes(".webp")||data.photo_path.startsWith("http");
-      const photoUrl=isDirect?(data.photo_path.startsWith("/")?data.photo_path:"/"+data.photo_path.replace(/^\/+/, "")):db.storage.from("therapist-photos").getPublicUrl(data.photo_path).data?.publicUrl;
-      if(photoUrl){const img=node("img","profile-photo");img.src=photoUrl;img.alt=t("profilePhotoAlt");img.loading="lazy";hero.append(img);}
+      let photoUrl="";
+      try{
+        const storedPath=String(data.photo_path).trim();
+        if(/^https?:\/\//i.test(storedPath))photoUrl=storedPath;
+        else if(storedPath.startsWith("/"))photoUrl=storedPath;
+        else photoUrl=db.storage.from("therapist-photos").getPublicUrl(storedPath).data?.publicUrl||"";
+      }catch(error){
+        console.error("YADSHIN: could not build therapist photo URL",error);
+      }
+      if(photoUrl){
+        const img=node("img","profile-photo");
+        img.alt=t("profilePhotoAlt");
+        img.loading="eager";
+        img.decoding="async";
+        img.onerror=()=>{
+          img.remove();
+          if(!hero.querySelector(".profile-monogram"))addMonogram();
+        };
+        img.src=photoUrl;
+        hero.append(img);
+      }else addMonogram();
     } else if(data.public_slug==="foruzan-shahla"){
       const img=node("img","profile-photo");img.src="/therapists/foruzan-shahla.jpg";img.alt=t("profilePhotoAlt");img.loading="lazy";hero.append(img);
-    } else {
-      const mark=node("div","profile-monogram",data.public_slug==="niko-ghasemi"?"ن":"ی");mark.setAttribute("aria-hidden","true");hero.append(mark);
-    }
+    } else addMonogram();
     const intro=node("div","profile-intro");
     intro.append(node("h1","",displayName||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.public_slug==="niko-ghasemi"?localizedNikoText(data.headline):(isMitra&&document.documentElement.lang==="fa"?"روان‌شناس بالینی | روان‌کاو | درمانگر متمرکز بر تروما · ویژهٔ بزرگسالان":data.headline)));
