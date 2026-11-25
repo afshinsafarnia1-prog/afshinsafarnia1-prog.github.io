@@ -139,7 +139,17 @@ button:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
 }
 body{background:#fbfcfa}
 .portal-header .navrow{height:72px}
-.portal-nav{display:flex;align-items:center;gap:22px;flex:1}
+.portal-nav{display:flex;align-items:center;gap:22px;flex:1;flex-wrap:wrap}
+.portal-header .brand{flex:0 0 auto}
+.portal-header .navcta{flex:0 0 auto}
+@media(max-width:760px){
+ .portal-header .navrow{height:auto;min-height:0;flex-wrap:wrap;align-items:center;gap:9px 14px;padding-top:12px;padding-bottom:12px}
+ .portal-header .brand{flex:1 0 100%;width:100%}
+ .portal-header .portal-nav{order:2;flex:1 0 100%;width:100%;gap:8px 16px;padding-top:10px;border-top:1px solid var(--line);white-space:normal}
+ .portal-header .portal-nav a{white-space:normal;line-height:1.8}
+ .portal-header .navcta{order:3;margin-top:2px}
+}
+
 .portal-nav a{font-size:12px;font-weight:700;color:#536b69;white-space:nowrap}
 .portal-nav a:hover{color:#159b8a}
 .rules-page .portal-main{padding-top:68px}
