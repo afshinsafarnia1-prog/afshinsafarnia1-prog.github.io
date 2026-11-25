@@ -39,13 +39,10 @@
 </section>
 <section class="portal-card" id="therapistPrivatePortal" hidden>
 <h2 data-i18n="privatePortalTitle">پنل اختصاصی درمانگر</h2>
-<p data-i18n="privatePortalLead">جلسات تأییدشده و زمان‌های آزاد خود را مدیریت کنید. اطلاعات بالینی مراجعان در این پنل نمایش داده نمی‌شود.</p><nav class="yad-quick-nav therapist-quick-nav" aria-label="دسترسی سریع پنل درمانگر">
-<a href="#yadTherapistFeeSection"><b>تعرفه‌ها</b><small>تنظیم قیمت جلسات</small></a>
-<a href="#yadTherapistSessionsSection"><b>جلسات من</b><small>مشاهده جلسات تأییدشده</small></a>
-<a href="#yadTherapistAvailabilitySection"><b>زمان‌های آزاد</b><small>ثبت و مدیریت ظرفیت</small></a>
-<a href="#yadTherapistArticles"><b>مقاله‌ها</b><small>ارسال و پیگیری مقاله</small></a>
-<a href="#yadTherapistAssessmentSection"><b>ارزیابی‌ها</b><small>درخواست‌های ارزیابی</small></a>
-<a href="#workshopProposal"><b>پیشنهاد کارگاه</b><small>ارسال موضوع پیشنهادی</small></a>
+<p data-i18n="privatePortalLead">جلسات تأییدشده و زمان‌های آزاد خود را مدیریت کنید. اطلاعات بالینی مراجعان در این پنل نمایش داده نمی‌شود.</p><div id="yadTherapistIdentity" class="therapist-identity" hidden><img id="yadTherapistIdentityPhoto" alt="تصویر پروفایل درمانگر"><div><strong id="yadTherapistIdentityName"></strong><p id="yadTherapistIdentityHeadline"></p></div></div><p id="yadTherapistIdentityStatus" class="muted" hidden></p><nav class="yad-quick-nav therapist-quick-nav" aria-label="دسترسی سریع پنل درمانگر">
+<a href="#yadTherapistSessionsSection">جلسات من</a>
+<a href="#yadTherapistAvailabilitySection">زمان‌های آزاد</a>
+<a href="#yadTherapistFeeSection">تعرفه‌ها</a>
 </nav>
 <div class="portal-card" id="yadTherapistFeeSection"><h3>تعرفه‌های جلسات من</h3><p>مبلغ هر جلسهٔ ۴۵ دقیقه‌ای را خودتان تعیین کنید. قیمت‌ها در پروفایل عمومی شما نمایش داده می‌شوند. مبلغ ایران را به تومان وارد کنید؛ مبلغ در سامانه به ریال ذخیره می‌شود. سهم شما ۷۰٪ و سهم یادشین ۳۰٪ است.</p>
 <form id="yadTherapistFeeForm" class="yad-admin-form"><label>ایران (تومان)<input id="yadTherapistFeeIRR" type="number" min="1" step="1"></label><label>اروپا (یورو)<input id="yadTherapistFeeEUR" type="number" min="1" step="1"></label><label>آمریکا (دلار آمریکا)<input id="yadTherapistFeeUSD" type="number" min="1" step="1"></label><label>کانادا (دلار کانادا)<input id="yadTherapistFeeCAD" type="number" min="1" step="1"></label><button class="button primary" type="submit">ذخیره تعرفه‌ها</button></form><p id="yadTherapistFeeStatus" class="notice" role="status" aria-live="polite"></p></div>
