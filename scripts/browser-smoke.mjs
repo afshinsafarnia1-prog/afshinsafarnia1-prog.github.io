@@ -157,7 +157,7 @@ try {
   for (const selector of ["#yadSessionAccessAdmin", "#yadSupportAdmin", "#yadFeedbackAdmin", "#yadAvailabilityForm", "#yadAvailabilityTherapist", "#yadYearsExperience", "#yadJurisdictions", "#yadAcceptingNewClients"]) {
     if (!(await page.locator(selector).count())) throw new Error("Admin workflow control missing: " + selector);
   }
-  if (await page.locator(".admin-shortcuts a").count() !== 10) throw new Error("Admin quick navigation is incomplete.");
+  if (await page.locator(".admin-shortcuts a").count() !== 14) throw new Error("Admin quick navigation is incomplete.");
   if (await page.locator("#yadTherapistForm > details").count() !== 4) throw new Error("Therapist editor should have four guided sections.");
   if (await page.locator("#yadWorkshopAdminForm > details").count() !== 4) throw new Error("Workshop editor should have four guided sections.");
   for (const link of await page.locator(".admin-shortcuts a").evaluateAll(nodes => nodes.map(a => a.getAttribute("href")))) {
