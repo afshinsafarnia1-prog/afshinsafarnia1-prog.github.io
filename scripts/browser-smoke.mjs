@@ -149,6 +149,14 @@ try {
   if (!(await workshopSection.evaluate(el => el.open))) throw new Error("Workshop editor section did not expand.");
   const adminHtml = await readFile(resolve(root, "admin.html"), "utf8");
   if (!adminHtml.includes("admin-extensions.js")) throw new Error("Admin extension script is not connected.");
+  for (const id of ["yadBrandLogoPreview", "yadManagerPhotoPreview"]) {
+    if (!adminHtml.includes('id="' + id + '"')) throw new Error("Brand image preview is missing: " + id);
+  }
+  const brandingWorkflow = await readFile(resolve(root, "admin-workflow-extended.js"), "utf8");
+  if (!brandingWorkflow.includes('bucket === "site-assets" ? "site-assets/" + generatedPath')) throw new Error("Brand image upload path does not match the secure branding RPC.");
+  if (!brandingWorkflow.includes('bindImagePreview("yadBrandLogo","yadBrandLogoPreview")')) throw new Error("Brand logo live preview is not connected.");
+  const publicApp = await readFile(resolve(root, "app.js"), "utf8");
+  if (!publicApp.includes('node.querySelector(".brand-logo")')) throw new Error("Public header does not render the admin-managed brand logo.");
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
   for (const selector of ["#modality", "#therapistKeyword", "#acceptingOnly", "#clearTherapistFilters"]) {
     if (!(await page.locator(selector).count())) throw new Error("Therapist directory filter missing: " + selector);
