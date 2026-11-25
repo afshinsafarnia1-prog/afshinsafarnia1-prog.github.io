@@ -71,13 +71,17 @@
       hero.append(mark);
     };
     if(data.photo_path||data.public_slug==="hediyeh-sabbaghpour"){
-      let photoUrl=data.public_slug==="hediyeh-sabbaghpour"?"/therapists/hediyeh-sabbaghpour.jpg":"";
+      let photoUrl="";
       try{
-        const storedPath=String(data.photo_path||"").trim();
-        if(/^https?:\/\//i.test(storedPath))photoUrl=storedPath;
-        else if(storedPath.startsWith("/"))photoUrl=storedPath;
-        else if(/^therapists\//i.test(storedPath))photoUrl="/"+storedPath;
-        else photoUrl=db.storage.from("therapist-photos").getPublicUrl(storedPath).data?.publicUrl||"";
+        if(data.public_slug==="hediyeh-sabbaghpour"){
+          photoUrl="/therapists/hediyeh-sabbaghpour.jpg";
+        }else{
+          const storedPath=String(data.photo_path||"").trim();
+          if(/^https?:\/\//i.test(storedPath))photoUrl=storedPath;
+          else if(storedPath.startsWith("/"))photoUrl=storedPath;
+          else if(/^therapists\//i.test(storedPath))photoUrl="/"+storedPath;
+          else photoUrl=db.storage.from("therapist-photos").getPublicUrl(storedPath).data?.publicUrl||"";
+        }
       }catch(error){
         console.error("YADSHIN: could not build therapist photo URL",error);
       }
