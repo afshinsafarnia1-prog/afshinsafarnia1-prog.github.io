@@ -292,6 +292,8 @@ try {
   }
   if (await page.locator('#mainNav a[href="client.html"]').count()) throw new Error("Client portal must not appear in the public homepage navigation.");
   const assertPublicPortalLinks = async (journey) => {
+    await page.waitForURL("http://127.0.0.1:4173/");
+    await page.locator("#mainNav").waitFor({ state: "attached" });
     const links = await page.locator("#mainNav a").evaluateAll(nodes => nodes.map(a => ({href:new URL(a.href).pathname, label:a.textContent.trim()})));
     const expected = ["/therapist.html", "/admin.html"];
     for (const path of expected) {
