@@ -43,7 +43,7 @@
 
     async function loadDirectory() {
       const { data, error } = await db.from("therapists")
-        .select("id,display_name,headline,languages,specialties,modalities")
+        .select("id,public_slug,display_name,headline,languages,specialties,modalities")
         .eq("is_listed", true).not("verified_at", "is", null)
         .order("display_name", { ascending: true });
       if (error) throw error;
@@ -69,15 +69,20 @@
       if (!directory.length) setStatus("در حال حاضر پروفایل تأییدشده‌ای برای انتخاب منتشر نشده است.");
     }
 
-    function updateSelectedFee(){
+    async function updateSelectedFee(){
       if(!feeNote)return;
       const therapist=directory.find(t=>t.id===select.value);
       if(!therapist){feeNote.textContent="پس از انتخاب درمانگر، تعرفهٔ همان متخصص نمایش داده می‌شود.";return;}
       const market=document.getElementById("yadRequestMarket").value;
       const currency=market==="iran"?"IRR":document.getElementById("yadRequestCurrency").value;
       const fee=(therapist.fees||[]).find(x=>x.currency===currency);
+      let duration=therapist.public_slug==="niko-ghasemi"?75:(fee?.session_duration_minutes||45);
+      if(activeUser){
+        const result=await db.rpc("client_get_therapist_session_duration",{p_therapist_id:therapist.id});
+        if(!result.error&&Number.isInteger(result.data))duration=result.data;
+      }
       feeNote.textContent=fee
-        ?"تعرفهٔ این درمانگر: "+new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(currency==="IRR"?Number(fee.amount)/10:Number(fee.amount))+(currency==="IRR"?" تومان":" "+currency)+" · هر جلسه ۴۵ دقیقه"
+        ?"تعرفهٔ این درمانگر: "+new Intl.NumberFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB").format(currency==="IRR"?Number(fee.amount)/10:Number(fee.amount))+(currency==="IRR"?" تومان":" "+currency)+" · "+duration+" دقیقه"
         :"این درمانگر هنوز تعرفه‌ای برای ارز انتخاب‌شده ثبت نکرده است؛ لطفاً ارز دیگری انتخاب کنید یا با مدیریت تماس بگیرید.";
     }
     async function loadAvailableSlots() {
@@ -87,7 +92,14 @@
       if(!select.value){slotSelect.add(new Option("ابتدا درمانگر را انتخاب کنید",""));return;}
       if(!/^[A-Z]{2}$/.test(country)){slotSelect.add(new Option("ابتدا کشور محل حضور را وارد کنید",""));return;}
       slotSelect.add(new Option("در حال دریافت زمان‌های آزاد…",""));
-      const {data,error}=await db.rpc("client_list_available_slots",{p_therapist_id:select.value,p_country_code:country});
+      const selectedTherapist=directory.find(t=>t.id===select.value);
+      let duration=selectedTherapist?.public_slug==="niko-ghasemi"?75:45;
+      if(activeUser){
+        const result=await db.rpc("client_get_therapist_session_duration",{p_therapist_id:select.value});
+        if(result.error){slotSelect.replaceChildren(new Option("مدت جلسه در دسترس نیست؛ لطفاً بعداً تلاش کنید.",""));return;}
+        duration=result.data;
+      }
+      const {data,error}=await db.rpc("client_list_available_slots",{p_therapist_id:select.value,p_country_code:country,p_session_duration_minutes:duration});
       slotSelect.replaceChildren();
       slotSelect.add(new Option(error?"زمان‌های آزاد در دسترس نیست":(data?.length?"زمان دلخواه را انتخاب کنید":"فعلاً زمان آزادی برای این درمانگر ثبت نشده است"),""));
       if(error){setStatus(error.message||"دریافت زمان‌های آزاد ناموفق بود.",true);return;}
