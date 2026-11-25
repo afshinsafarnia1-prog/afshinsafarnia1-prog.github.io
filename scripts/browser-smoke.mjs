@@ -144,8 +144,9 @@ try {
   for (const link of await page.locator(".admin-shortcuts a").evaluateAll(nodes => nodes.map(a => a.getAttribute("href")))) {
     if (!link?.startsWith("#") || !(await page.locator(link).count())) throw new Error("Admin quick navigation target is missing: " + link);
   }
-  await page.locator("#yadWorkshopAdminForm > details").nth(1).locator("summary").click();
-  if (!(await page.locator("#yadWorkshopAdminForm > details").nth(1).evaluate(el => el.open))) throw new Error("Workshop editor section did not expand.");
+  const workshopSection = page.locator("#yadWorkshopAdminForm > details").nth(1);
+  await workshopSection.locator("summary").evaluate(summary => summary.click());
+  if (!(await workshopSection.evaluate(el => el.open))) throw new Error("Workshop editor section did not expand.");
   const adminHtml = await readFile(resolve(root, "admin.html"), "utf8");
   if (!adminHtml.includes("admin-extensions.js")) throw new Error("Admin extension script is not connected.");
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
