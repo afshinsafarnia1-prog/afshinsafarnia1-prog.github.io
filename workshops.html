@@ -16,12 +16,40 @@
 <script defer src="site-i18n.js"></script>
 <script defer src="portal.js"></script>
 <script defer src="workshops.js"></script>
+
+<style>
+/* Workshops page: readable portrait layout without horizontal scrolling. */
+.workshops-page{overflow-x:hidden}
+.workshops-page .portal-header .navrow{min-height:72px;height:auto;flex-wrap:wrap;padding-block:10px;gap:12px}
+.workshops-page .portal-nav{min-width:0;flex-wrap:wrap;gap:8px 18px}
+.workshops-page .portal-nav a{white-space:normal}
+.workshops-page #mainContent .wrap{min-width:0}
+.workshops-page #mainContent .section-head{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:10px}
+.workshops-page #mainContent .section-head>div,.workshops-page #mainContent .section-head>p{min-width:0;max-width:none}
+.workshops-page #mainContent h1{font-size:clamp(25px,5vw,36px);line-height:1.7;overflow-wrap:anywhere;margin:6px 0}
+.workshops-page #mainContent p{overflow-wrap:anywhere}
+.workshops-page .workshop-intro,.workshops-page .workshop-grid,.workshops-page .workshop-card{min-width:0;max-width:100%}
+@media(max-width:760px){
+ .workshops-page .portal-header .navrow{width:92%;align-items:center}
+ .workshops-page .portal-header .brand{margin-inline-end:auto}
+ .workshops-page .portal-nav{order:3;width:100%;justify-content:flex-start;border-top:1px solid var(--line);padding-top:10px;gap:8px 16px}
+ .workshops-page .portal-nav a{font-size:12px;padding:3px 0}
+ .workshops-page .market-switch{margin-inline-start:auto}
+ .workshops-page #mainContent.section{padding:36px 0 54px}
+ .workshops-page #mainContent .section-head{margin-bottom:22px}
+}
+@media(max-width:420px){
+ .workshops-page #mainContent h1{font-size:25px}
+ .workshops-page .portal-nav{column-gap:12px}
+ .workshops-page .portal-nav a{font-size:11px}
+}
+</style>
 </head>
-<body>
+<body class="workshops-page">
 <a class="skip-link" href="#mainContent">رفتن به محتوای اصلی</a>
-<header class="header"><div class="wrap navrow">
+<header class="header portal-header"><div class="wrap navrow">
 <a class="brand" href="/"><img class="brand-logo" src="yadshin-mark.svg" alt="" aria-hidden="true"><span><b>یادشین</b><small>YADSHIN</small></span></a>
-<nav class="portal-nav" aria-label="ناوبری"><a href="/">صفحهٔ اصلی</a><a href="/initial-guidance.html">ارزیابی اولیه</a><a href="/#therapists" data-i18n="therapists">درمانگران</a><a href="client.html" data-i18n="client">پنل مراجع</a><a href="therapist.html" data-i18n="collaborate">همکاری درمانگران</a></nav>
+<nav class="portal-nav" aria-label="ناوبری"><a href="/">صفحهٔ اصلی</a><a href="/#therapists" data-i18n="therapists">درمانگران</a><a href="/articles/">مجله</a><a href="therapist.html" data-i18n="collaborate">همکاری درمانگران</a></nav>
 <div class="market-switch language-switch"><label for="siteLanguage">زبان</label><select id="siteLanguage" aria-label="انتخاب زبان"><option value="fa">فارسی</option><option value="ku">کوردی</option><option value="en">English</option><option value="tr">Türkçe</option><option value="ar">العربية</option><option value="es">Español</option><option value="de">Deutsch</option><option value="fr">Français</option></select></div>
 </div></header>
 <main id="mainContent" class="section"><div class="wrap">
