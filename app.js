@@ -47,6 +47,7 @@
       }
     }
     if(slug==="foruzan-shahla")return "/therapists/foruzan-shahla.jpg";
+    if(slug==="hediyeh-sabbaghpour")return "/therapists/hediyeh-sabbaghpour.jpg";
     return "";
   }
 
@@ -66,7 +67,7 @@
     const photoUrl=therapistPhotoUrl(t.photo_path,t.public_slug);
     if(photoUrl){
       const img=el("img","therapist-photo");
-      img.src=photoUrl;img.alt="تصویر "+(t.display_name||"درمانگر");img.loading="lazy";
+      img.src=photoUrl;img.alt="تصویر "+(t.display_name||"درمانگر");img.loading=t.public_slug==="hediyeh-sabbaghpour"?"eager":"lazy";
       img.addEventListener("error",()=>{const fallback=el("div","therapist-photo therapist-placeholder",(t.display_name||"د").slice(0,1));img.replaceWith(fallback);},{once:true});
       card.append(img);
     }else card.append(el("div","therapist-photo therapist-placeholder",(t.display_name||"د").slice(0,1)));

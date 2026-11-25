@@ -1,4 +1,4 @@
-const CACHE = "yadshin-shell-v47";
+const CACHE = "yadshin-shell-v48";
 const CORE_ASSETS = [
   "/",
   "/index.html",
@@ -37,6 +37,8 @@ const CORE_ASSETS = [
   "/therapist.html",
   "/therapist-profile.html",
   "/therapists/foruzan-shahla.html",
+  "/therapists/hediyeh-sabbaghpour.html",
+  "/therapists/hediyeh-sabbaghpour.jpg",
   "/therapist-profile.js",
   "/client.html",
   "/admin.html",
