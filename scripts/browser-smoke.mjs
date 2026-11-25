@@ -80,6 +80,13 @@ try {
   if (!(await page.locator("h1").innerText()).includes("درمانگر")) throw new Error("Therapist-selection guide did not render.");
   await page.goto("http://127.0.0.1:4173/workshops.html", { waitUntil: "domcontentloaded" });
   if (!(await page.locator("h1").innerText()).includes("کارگاه")) throw new Error("Workshops landing page did not render.");
+  if (await page.locator('.portal-nav a[href="client.html"]').count()) throw new Error("Client portal must not appear in the public workshops navigation.");
+  await page.setViewportSize({width:360,height:800});
+  await page.waitForTimeout(100);
+  const workshopMobile = await page.evaluate(() => ({width:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth,heading:document.querySelector("h1").getBoundingClientRect().toJSON(),lead:document.querySelector(".section-head>p").getBoundingClientRect().toJSON()}));
+  if (workshopMobile.scrollWidth > workshopMobile.width) throw new Error("Workshops page overflows horizontally on a 360px portrait viewport.");
+  if (workshopMobile.heading.left < 0 || workshopMobile.heading.right > workshopMobile.width + 1 || workshopMobile.lead.left < 0 || workshopMobile.lead.right > workshopMobile.width + 1) throw new Error("Workshops heading or introduction is clipped on a portrait viewport.");
+  await page.setViewportSize({width:1280,height:800});
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
   for (const selector of ['.topline a[href="/articles/"]', '#mainNav a[href="/articles/"]', '#mainNav a[href="/workshops.html"]', 'a.navcta[href="/articles/choosing-a-therapist.html"]', '.footerlinks a[href="/articles/"]']) {
     if (!(await page.locator(selector).count())) throw new Error("Homepage journal/workshop route is missing: " + selector);
