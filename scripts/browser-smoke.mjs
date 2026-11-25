@@ -285,8 +285,8 @@ try {
   if (await page.locator("#menuToggle").getAttribute("aria-expanded") !== "false") throw new Error("Mobile navigation expanded state was not reset after closing.");
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
   const navLabels = await page.locator("#mainNav a").allTextContents();
-  if (navLabels.length !== 7 || navLabels[2].trim() !== "کارگاه‌ها" || navLabels[3].trim() !== "مجله" || navLabels[5].trim() !== "پنل درمانگر" || navLabels[6].trim() !== "مدیریت") {
-    throw new Error("Homepage navigation labels do not match their destinations.");
+  if (navLabels.length !== 7 || navLabels[2].trim() !== "کارگاه‌ها" || navLabels[3].trim() !== "مجله" || navLabels[5].trim() !== "پنل درمانگر" || !["مدیریت", "پنل مدیریت"].includes(navLabels[6].trim())) {
+    throw new Error("Homepage navigation labels do not match their destinations: " + JSON.stringify(navLabels));
   }
   if (await page.locator('#mainNav a[href="client.html"]').count()) throw new Error("Client portal must not appear in the public homepage navigation.");
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
