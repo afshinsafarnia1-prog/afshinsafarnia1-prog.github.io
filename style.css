@@ -904,3 +904,45 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 #therapistProfile.mitra-profile{margin-top:152px}
 #therapistProfile.niko-profile{margin-top:170px}
 #therapistProfile:has(.hediyeh-profile){margin-top:152px}
+
+
+/* Calm, readable interface refresh — November 2026 */
+:root{
+  --ui-ink:#203638;
+  --ui-muted:#607477;
+  --ui-line:#e4ece8;
+  --ui-surface:#ffffff;
+  --ui-soft:#f4f9f6;
+  --ui-accent:#176d62;
+  --ui-radius:18px;
+}
+body{font-size:16px;line-height:2;color:var(--ui-ink)}
+a,button,input,select,textarea{transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,color .18s ease}
+:where(button,.button,.navcta,[role="button"]){min-height:46px}
+:where(input,select,textarea){font:inherit;font-size:16px;min-height:48px;border-radius:12px}
+:where(label){font-size:15px;line-height:1.9}
+:where(.portal-card){border-radius:var(--ui-radius);padding:clamp(20px,3vw,30px);box-shadow:0 8px 28px #123f4608}
+:where(.portal-card h2,.portal-card h3){line-height:1.7;color:var(--teal)}
+:where(.portal-card p,.portal-card li){font-size:15px;line-height:2.1;color:var(--ui-muted)}
+:where(.notice,.privacy-hint,.muted){font-size:14px;line-height:2}
+:where(.button,.navcta){font-size:15px;border-radius:13px;font-weight:700}
+:where(.button:focus-visible,.navcta:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible){outline:3px solid #35c6b080;outline-offset:3px}
+.side-nav{width:248px;padding:22px 15px;gap:9px;box-shadow:-4px 0 24px #123f4610}
+.side-nav>a:not(.side-brand){display:flex;align-items:center;gap:10px;min-height:48px;padding:9px 11px;font-size:14px;font-weight:600;border-radius:12px}
+.side-nav i{display:inline-grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border-radius:10px;background:#ffffff18;color:#fff;font-size:18px;margin:0}
+.side-nav>a:hover{background:#ffffff18}
+.side-brand{font-size:20px;margin-bottom:18px}
+.side-nav>small{font-size:12px;letter-spacing:.02em}
+.with-sidebar{padding-right:248px}
+.portal-main{padding:clamp(34px,5vw,62px) 0}
+.portal-wrap{width:min(1020px,92%)}
+.portal-wrap h1{font-size:clamp(28px,3.5vw,40px);line-height:1.65}
+.portal-grid{gap:18px}
+@media(max-width:760px){
+ .side-nav{width:66px;padding:12px 8px;gap:8px}
+ .side-nav>a:not(.side-brand){width:50px;height:48px;min-height:48px;padding:7px;justify-content:center}
+ .side-nav i{flex-basis:34px;width:34px;height:34px}
+ .with-sidebar{padding-right:66px}
+ .portal-wrap{width:min(100% - 28px,720px)}
+ :where(.portal-card){padding:18px}
+}
