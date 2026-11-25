@@ -952,3 +952,43 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
 .service-icon{display:grid;place-items:center;width:58px;height:58px;border:1px solid var(--ui-line,#e4ece8);border-radius:18px;background:var(--ui-soft,#f4f9f6);color:var(--ui-accent,#176d62)}
 .service-icon svg{display:block;width:31px;height:31px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .service-grid .service{border:1px solid var(--ui-line,#e4ece8);border-radius:20px}
+
+
+/* Clear, larger therapist portraits with a quieter directory layout */
+#therapistDirectory .therapist-cards-track>.therapist-card{
+  min-height:238px!important;
+  gap:18px!important;
+  padding:17px!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo{
+  display:block!important;
+  width:138px!important;height:168px!important;flex:0 0 138px!important;
+  object-fit:cover!important;object-position:center 22%!important;
+  opacity:1!important;filter:none!important;image-rendering:auto!important;
+  border-radius:12px!important;background:#f1f5f2!important;
+}
+.profile-hero .profile-photo,
+#therapistProfile .profile-photo{
+  width:190px!important;height:220px!important;flex:0 0 190px!important;
+  object-fit:cover!important;object-position:center 22%!important;
+  opacity:1!important;filter:none!important;image-rendering:auto!important;
+  border-radius:16px!important;background:#f1f5f2!important;
+}
+@media(max-width:760px){
+  #therapistDirectory .therapist-cards-track>.therapist-card{
+    min-height:210px!important;gap:13px!important;padding:14px!important;
+  }
+  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo{
+    width:112px!important;height:138px!important;flex-basis:112px!important;
+  }
+  .profile-hero .profile-photo,
+  #therapistProfile .profile-photo{
+    width:130px!important;height:156px!important;flex-basis:130px!important;
+  }
+}
+@media(max-width:480px){
+  .profile-hero .profile-photo,
+  #therapistProfile .profile-photo{
+    width:116px!important;height:140px!important;flex-basis:116px!important;
+  }
+}
