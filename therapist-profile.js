@@ -76,6 +76,7 @@
         const storedPath=String(data.photo_path).trim();
         if(/^https?:\/\//i.test(storedPath))photoUrl=storedPath;
         else if(storedPath.startsWith("/"))photoUrl=storedPath;
+        else if(/^therapists\//i.test(storedPath))photoUrl="/"+storedPath;
         else photoUrl=db.storage.from("therapist-photos").getPublicUrl(storedPath).data?.publicUrl||"";
       }catch(error){
         console.error("YADSHIN: could not build therapist photo URL",error);
