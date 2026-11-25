@@ -1067,3 +1067,52 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
   }
   .therapist-identity img{width:112px!important;height:136px!important;flex-basis:112px!important}
 }
+
+
+/* Visible portrait enlargement override — ensure it wins over all earlier responsive rules. */
+#therapistDirectory .therapist-cards-track .therapist-card .therapist-photo,
+#therapistDirectory .therapist-cards-track .therapist-card .therapist-placeholder {
+  width: 176px !important;
+  height: 210px !important;
+  min-width: 176px !important;
+  flex: 0 0 176px !important;
+  object-fit: cover !important;
+}
+.profile-hero .profile-photo, #therapistProfile .profile-photo {
+  width: 230px !important;
+  height: 270px !important;
+  min-width: 230px !important;
+  flex: 0 0 230px !important;
+  object-fit: cover !important;
+}
+.therapist-identity img {
+  width: 176px !important;
+  height: 210px !important;
+  min-width: 176px !important;
+  flex: 0 0 176px !important;
+  object-fit: cover !important;
+}
+@media (max-width: 760px) {
+  #therapistDirectory .therapist-cards-track .therapist-card .therapist-photo,
+  #therapistDirectory .therapist-cards-track .therapist-card .therapist-placeholder {
+    width: 160px !important; height: 192px !important; min-width: 160px !important; flex-basis: 160px !important;
+  }
+  .profile-hero .profile-photo, #therapistProfile .profile-photo {
+    width: 190px !important; height: 228px !important; min-width: 190px !important; flex-basis: 190px !important;
+  }
+  .therapist-identity img {
+    width: 160px !important; height: 192px !important; min-width: 160px !important; flex-basis: 160px !important;
+  }
+}
+@media (max-width: 480px) {
+  #therapistDirectory .therapist-cards-track .therapist-card .therapist-photo,
+  #therapistDirectory .therapist-cards-track .therapist-card .therapist-placeholder {
+    width: 145px !important; height: 174px !important; min-width: 145px !important; flex-basis: 145px !important;
+  }
+  .profile-hero .profile-photo, #therapistProfile .profile-photo {
+    width: 165px !important; height: 198px !important; min-width: 165px !important; flex-basis: 165px !important;
+  }
+  .therapist-identity img {
+    width: 145px !important; height: 174px !important; min-width: 145px !important; flex-basis: 145px !important;
+  }
+}
