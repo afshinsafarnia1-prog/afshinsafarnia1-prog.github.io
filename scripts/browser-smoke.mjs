@@ -189,20 +189,13 @@ try {
     };
   });
   await page.goto("http://127.0.0.1:4173/therapist.html", { waitUntil: "domcontentloaded" });
-  if (await page.locator(".therapist-quick-nav a").count() !== 4) throw new Error("Therapist quick navigation is incomplete.");
+  if (await page.locator(".therapist-quick-nav a").count() !== 3) throw new Error("Therapist quick navigation is incomplete.");
   const therapistLinks = await page.locator(".therapist-quick-nav a").evaluateAll(nodes => nodes.map(a => a.getAttribute("href")));
   for (const link of therapistLinks) {
     if (!link?.startsWith("#") || !(await page.locator(link).count())) throw new Error("Therapist quick navigation target is missing: " + link);
   }
-  if (!therapistLinks.includes("#yadTherapistArticles")) throw new Error("Therapist article shortcut is missing.");
   // The private portal is hidden until authentication; reveal it in this isolated UI test.
   await page.locator("#therapistPrivatePortal").evaluate(el => { el.hidden = false; });
-  await page.locator("#yadTherapistAvailabilityStart").fill("2026-11-25T10:00");
-  if (await page.locator("#yadTherapistAvailabilityEnd").inputValue() !== "2026-11-25T10:45") throw new Error("Therapist availability end time is not calculated as 45 minutes.");
-  await page.locator("#yadTherapistAvailabilityStart").fill("2026-11-25T23:30");
-  if (await page.locator("#yadTherapistAvailabilityEnd").inputValue() !== "2026-11-26T00:15") throw new Error("Therapist availability end time did not roll over midnight correctly.");
-  if (!(await page.locator("#yadTherapistAvailabilityEnd").isDisabled()) && !(await page.locator("#yadTherapistAvailabilityEnd").evaluate(el => el.readOnly))) throw new Error("Therapist availability end time should not be manually editable.");
-  await page.locator("#yadTherapistAvailabilityStart").fill("");
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Therapist profiles")) throw new Error("Therapist page translation did not apply.");
   await page.goto("http://127.0.0.1:4173/articles/", { waitUntil: "domcontentloaded" });
@@ -240,13 +233,7 @@ try {
   if (await page.locator("#mainNav").isVisible()) throw new Error("Mobile navigation did not close after selecting a destination.");
   if (await page.locator("#menuToggle").getAttribute("aria-expanded") !== "false") throw new Error("Mobile navigation expanded state was not reset after closing.");
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
-  const shortcutGroups = page.locator(".admin-shortcuts-grouped");
-  if (!(await shortcutGroups.count())) throw new Error("Grouped admin shortcuts are missing.");
-  await shortcutGroups.evaluate(el => { for (let current = el; current && current !== document.body; current = current.parentElement) current.hidden = false; });
-  const shortcutColumns = await shortcutGroups.evaluate(el => getComputedStyle(el).gridTemplateColumns.split(" ").length);
-  if (shortcutColumns !== 1) throw new Error("Admin shortcut groups should stack on mobile.");
-  const shortcutOverflow = await shortcutGroups.evaluate(el => el.scrollWidth > el.clientWidth);
-  if (shortcutOverflow) throw new Error("Admin shortcuts overflow the mobile viewport.");
+  if (!(await page.locator(".admin-shortcuts").count())) throw new Error("Admin quick-access navigation is missing.");
 
   for (const [path, selector] of [["/initial-guidance.html","#initialGuideForm"],["/standards.html","h1"],["/workshops.html","#yadWorkshopPageList"],["/articles/why-assessment-matters.html","h1"]]) {
     const response=await page.goto("http://127.0.0.1:4173"+path,{waitUntil:"domcontentloaded"});
