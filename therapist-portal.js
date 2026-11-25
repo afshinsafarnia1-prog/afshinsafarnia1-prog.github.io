@@ -28,7 +28,7 @@
     };
     const date = (value,tz) => value ? new Intl.DateTimeFormat(document.documentElement.lang==="fa"?"fa-IR":"en-GB",{dateStyle:"medium",timeStyle:"short",timeZone:tz||undefined}).format(new Date(value)) : "—";
     const updateAvailabilityEnd = () => {
-      const match=/^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2})$/.exec(start.value||"");
+      const match=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(start.value||"");
       if(!match){end.value="";return;}
       const value=new Date(Date.UTC(Number(match[1]),Number(match[2])-1,Number(match[3]),Number(match[4]),Number(match[5])+45));
       const pad=part=>String(part).padStart(2,"0");
