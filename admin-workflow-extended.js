@@ -64,11 +64,36 @@
       document.getElementById("yadManagerBio").value=branding.manager_bio||"";
       document.getElementById("yadExistingLogoPath").value=branding.logo_path||"";
       document.getElementById("yadExistingManagerPhotoPath").value=branding.manager_photo_path||"";
+      const setStoredPreview=(id,path)=>{
+        const image=document.getElementById(id);
+        if(!image)return;
+        if(path){
+          const {data}=db.storage.from("site-assets").getPublicUrl(path);
+          if(data?.publicUrl){image.src=data.publicUrl;image.hidden=false;return;}
+        }
+        image.removeAttribute("src");image.hidden=true;
+      };
+      setStoredPreview("yadBrandLogoPreview",branding.logo_path);
+      setStoredPreview("yadManagerPhotoPreview",branding.manager_photo_path);
       const contacts=data?.contacts||{};
       const fields={phone_number:"yadContactPhone",whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail",instagram_url:"yadContactInstagram",telegram_url:"yadContactTelegram",youtube_url:"yadContactYoutube",linkedin_url:"yadContactLinkedin",facebook_url:"yadContactFacebook"};
       Object.entries(fields).forEach(([key,id])=>{document.getElementById(id).value=contacts[key]||"";});
       businessStatus.textContent="تعرفه‌ها توسط هر درمانگر در پنل اختصاصی خودش تعیین می‌شوند؛ سهم درآمد ثابت ۷۰/۳۰ است.";
     }
+    const bindImagePreview=(inputId,previewId)=>{
+      const input=document.getElementById(inputId),image=document.getElementById(previewId);
+      input?.addEventListener("change",()=>{
+        const file=input.files?.[0];
+        if(!file){image.hidden=true;image.removeAttribute("src");return;}
+        if(!["image/jpeg","image/png","image/webp"].includes(file.type)){image.hidden=true;return;}
+        const previous=image.dataset.objectUrl;
+        if(previous)URL.revokeObjectURL(previous);
+        const objectUrl=URL.createObjectURL(file);
+        image.dataset.objectUrl=objectUrl;image.src=objectUrl;image.hidden=false;
+      });
+    };
+    bindImagePreview("yadBrandLogo","yadBrandLogoPreview");
+    bindImagePreview("yadManagerPhoto","yadManagerPhotoPreview");
     businessForm?.addEventListener("submit",async event=>{
       event.preventDefault();
       businessStatus.textContent="در حال ذخیره تنظیمات مرکز…";
@@ -115,7 +140,9 @@
       const allowed=isDocument?["application/pdf","image/jpeg","image/png"]:["image/jpeg","image/png","image/webp"];
       if(!allowed.includes(file.type))throw new Error("فرمت فایل انتخاب‌شده مجاز نیست.");
       const clean = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-90);
-      const path = crypto.randomUUID() + "/" + clean;
+      const generatedPath = crypto.randomUUID() + "/" + clean;
+      // Site-branding RPCs validate a bucket-prefixed object key; keep upload and public URL paths identical.
+      const path = bucket === "site-assets" ? "site-assets/" + generatedPath : generatedPath;
       const { error } = await db.storage.from(bucket).upload(path, file, {
         upsert: false, contentType: file.type || "application/octet-stream"
       });

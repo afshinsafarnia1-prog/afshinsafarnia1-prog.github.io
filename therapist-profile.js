@@ -152,7 +152,6 @@
     const whatsappMessage=lang==="en"?"Hello, I would like information and help arranging a session with "+(displayName||"the selected therapist")+" through YADSHIN.":lang==="ar"?"مرحباً، أود الحصول على معلومات وتنسيق جلسة مع "+(displayName||"المعالجة المختارة")+" عبر يادشين.":"سلام، برای دریافت اطلاعات و هماهنگی جلسه با درمانگر "+(displayName||"منتخب")+" از طریق یادشین پیام می‌دهم.";
     const whatsappLabel=lang==="en"?"Message on WhatsApp":lang==="ar"?"مراسلة عبر واتساب":"پیام در واتساپ";
     const contactLinks=[["https://wa.me/989999398350?text="+encodeURIComponent(whatsappMessage),whatsappLabel,"primary"]];
-    if(data.public_slug!=="niko-ghasemi")contactLinks.push(["https://t.me/RADYAD","پیام در تلگرام","outline"],["https://eitaa.com/RADYAD","پیام در ایتا","outline"]);
     contactLinks.forEach(([href,label,style])=>{const link=node("a","button "+style+" full-button",label);link.href=href;link.target="_blank";link.rel="noopener noreferrer";contactActions.append(link);});
     aside.append(contactActions);
     aside.append(node("p","profile-muted","زمان جلسه ابتدا با مدیریت و درمانگر هماهنگ می‌شود؛ پس از اعلام مبلغ و تأیید پرداخت، نوبت قطعی خواهد شد."));

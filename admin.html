@@ -17,6 +17,17 @@
 <span class="eyebrow" data-i18n="adminEyebrow">مدیریت متمرکز یادشین</span>
 <h1 data-i18n="adminTitle">پنل مدیریت یادشین</h1>
 <p class="lead" data-i18n="adminLead">مدیریت درمانگران، مراجعان، نوبت‌ها و پرداخت‌ها از طریق مدیریت مرکزی یادشین انجام می‌شود.</p>
+<nav class="admin-shortcuts" aria-label="دسترسی سریع مدیریت">
+<a href="#yadTherapistForm"><span class="shortcut-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><span><b>افزودن درمانگر</b><small>ثبت یا ویرایش پروفایل</small></span></a>
+<a href="#yadAppointmentsSection"><span class="shortcut-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4m8-4v4M3 10h18"/></svg></span><span><b>نوبت‌ها</b><small>بررسی زمان جلسات</small></span></a>
+<a href="#yadPaymentsSection"><span class="shortcut-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18v13H3zM3 7l2-4h14l2 4M3 12h18"/></svg></span><span><b>پرداخت‌ها</b><small>رسیدها و تأیید وجه</small></span></a>
+<a href="#yadAvailabilityManager"><span class="shortcut-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span><b>زمان‌های آزاد</b><small>مدیریت ظرفیت</small></span></a>
+<a href="#yadWorkshopAdmin"><span class="shortcut-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18H5zM8 8h8M8 12h8M8 16h5"/></svg></span><span><b>محتوا و کارگاه</b><small>انتشار و بررسی</small></span></a>
+<a href="#yadRequestsSection"><span class="shortcut-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM8 9h8M8 13h8M8 17h4"/></svg></span><span><b>درخواست‌های مراجعان</b><small>پیگیری و هماهنگی</small></span></a>
+<a href="#yadArticleModeration"><span class="shortcut-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/></svg></span><span><b>مقاله‌ها</b><small>بررسی و انتشار</small></span></a>
+<a href="#yadBusinessSettings"><span class="shortcut-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0-6v3m0 14v3m10-10h-3M5 12H2m17.1-7.1-2.1 2.1M7 17l-2.1 2.1m14.2 0L17 17M7 7 4.9 4.9"/></svg></span><span><b>تنظیمات مرکز</b><small>اطلاعات و ارتباطات</small></span></a>
+</nav>
+<p class="admin-shortcuts-hint">برای شروع، یکی از بخش‌های بالا را انتخاب کن؛ لازم نیست تمام صفحه را جست‌وجو کنی.</p>
 <section class="portal-card" id="yadBusinessSettings">
 <h2 data-i18n="businessTitle">تعرفه‌ها و راه‌های ارتباطی یادشین</h2>
 <p data-i18n="businessHelp">تعرفه‌ها برای همه درمانگران یکسان است. مبلغ‌ها برای جلسهٔ ۴۵ دقیقه‌ای به تفکیک بازار ثبت می‌شوند.</p>
@@ -33,6 +44,7 @@
 <label>لوگوی اختصاصی مرکز<input id="yadBrandLogo" type="file" accept="image/jpeg,image/png,image/webp"></label>
 <label>تصویر مدیر / بنیان‌گذار<input id="yadManagerPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label>
 </div>
+<div class="yad-branding-previews" aria-live="polite"><figure><img id="yadBrandLogoPreview" alt="پیش‌نمایش نشان یادشین" hidden><figcaption>پیش‌نمایش لوگو</figcaption></figure><figure><img id="yadManagerPhotoPreview" alt="پیش‌نمایش تصویر مدیر" hidden><figcaption>پیش‌نمایش تصویر مدیر</figcaption></figure></div>
 <label>معرفی کوتاه مدیر و رویکرد مرکز<textarea id="yadManagerBio" rows="4" maxlength="1800"></textarea></label>
 <h3>مدل تعرفه‌گذاری درمانگران</h3>
 <p class="privacy-hint">تعرفهٔ هر درمانگر مستقل است و در پنل اختصاصی خودش تعیین می‌شود. سهم درآمد هر جلسه به‌صورت ثابت ۷۰٪ برای درمانگر و ۳۰٪ برای یادشین محاسبه می‌شود. ارزهای پشتیبانی‌شده: تومان، یورو، دلار آمریکا و دلار کانادا.</p>
@@ -64,13 +76,13 @@
 <div><b data-i18n="paymentsTitle">پرداخت‌ها</b><p data-i18n="paymentsHelp">بررسی رسیدهای پرداخت و ثبت نتیجه.</p><strong id="yadPaymentCount">—</strong></div>
 </div>
 </section>
-<section class="portal-card">
+<section class="portal-card" id="yadAppointmentsSection">
 <div class="section-head"><div><h2 data-i18n="appointmentsTitle">نوبت‌ها</h2><p data-i18n="appointmentsHelp">فهرست نوبت‌های ثبت‌شده در سامانه.</p></div><button class="button outline" id="yadRefreshAppointments" type="button" data-i18n="refresh">به‌روزرسانی</button></div>
 <div style="overflow-x:auto"><table class="admin-table"><thead><tr>
 <th data-i18n="client">مراجع</th><th data-i18n="phone">تلفن</th><th data-i18n="therapist">درمانگر</th><th data-i18n="sessionTime">زمان جلسه</th><th data-i18n="market">بازار</th><th data-i18n="status">وضعیت</th>
 </tr></thead><tbody id="yadAppointmentsBody"><tr><td colspan="6" data-i18n="loading">در حال بارگذاری…</td></tr></tbody></table></div>
 </section>
-<section class="portal-card">
+<section class="portal-card" id="yadPaymentsSection">
 <div class="section-head"><div><h2 data-i18n="paymentsTitle">پرداخت‌ها</h2><p data-i18n="paymentsReviewHelp">رسیدهای انتقال دستی را بررسی و تأیید یا رد کن.</p></div><button class="button outline" id="yadRefreshPayments" type="button" data-i18n="refresh">به‌روزرسانی</button></div>
 <div style="overflow-x:auto"><table class="admin-table"><thead><tr>
 <th data-i18n="client">مراجع</th><th data-i18n="amount">مبلغ</th><th data-i18n="reference">شماره پیگیری</th><th data-i18n="createdAt">تاریخ ثبت</th><th data-i18n="status">وضعیت</th><th data-i18n="action">اقدام</th>
@@ -81,24 +93,35 @@
 <div id="yadWorkflowStatus" class="notice" role="status" aria-live="polite">در حال اتصال…</div>
 <div id="yadTherapistList" class="portal-grid"></div>
 <form id="yadTherapistForm" class="yad-admin-form">
-<h3 id="yadFormTitle">ثبت درمانگر جدید</h3>
+<h3 id="yadFormTitle">ثبت درمانگر جدید</h3><p class="admin-form-intro">فقط اطلاعات اصلی را ابتدا وارد کن. بخش‌های تخصص و مدارک را می‌توانی جداگانه باز کنی. شناسهٔ صفحه را با حروف لاتین و بدون فاصله بنویس.</p>
 <input id="yadTherapistId" type="hidden">
 <input id="yadExistingPhoto" type="hidden">
 <input id="yadExistingDocument" type="hidden">
 <input id="yadExistingScopeDocument" type="hidden">
-<div class="portal-grid">
-<label>نام نمایشی<input id="yadDisplayName" required maxlength="120"></label>
+
+<details class="admin-form-group" open>
+<summary><span><b>۱. اطلاعات اصلی درمانگر</b><small>نام، عنوان و شناسهٔ صفحه؛ این بخش برای هر پروفایل لازم است.</small></span></summary>
+<div class="portal-grid"><label>نام نمایشی<input id="yadDisplayName" required maxlength="120"></label>
 <label>شناسهٔ صفحه (لاتین)<input id="yadPublicSlug" required pattern="[a-zA-Z0-9-]+" maxlength="100"></label>
 <label>عنوان حرفه‌ای<input id="yadHeadline" maxlength="180"></label>
 <label>مدت جلسه (دقیقه)<input id="yadDuration" type="number" min="45" max="45" value="45" readonly required><small>مدت استاندارد همهٔ جلسات یادشین ۴۵ دقیقه است.</small></label>
 <label>شناسهٔ حساب درمانگر در سامانه (UUID؛ پس از ایجاد حساب با نقش درمانگر)<input id="yadTherapistOwnerUserId" maxlength="36" pattern="[0-9a-fA-F-]{36}" placeholder="UUID حساب کاربری درمانگر"><small>اختیاری؛ فقط پس از احراز هویت و تأیید صلاحیت به پروفایل متصل شود.</small></label>
-<label>تحصیلات و مدارک (با ویرگول جدا کن)<input id="yadQualifications"></label>
+</div>
+</details>
+<details class="admin-form-group">
+<summary><span><b>۲. تخصص و معرفی حرفه‌ای</b><small>تحصیلات، حوزه‌های تخصصی، زبان‌ها و سابقه.</small></span></summary>
+<div class="portal-grid"><label>تحصیلات و مدارک (با ویرگول جدا کن)<input id="yadQualifications"></label>
 <label>حوزه‌های تخصصی<input id="yadSpecialties"></label>
 <label>زبان‌ها (fa, ku, en, tr, ar, es, de, fr)<input id="yadLanguages" value="fa"></label>
 <label>رویکردهای درمانی<input id="yadModalities"></label>
 <label>سابقهٔ حرفه‌ای (سال)<input id="yadYearsExperience" type="number" min="0" max="60" step="1"></label>
 <label>کشورهای مجاز فعالیت (کد دوحرفی ISO؛ با ویرگول)<input id="yadJurisdictions" maxlength="2000" placeholder="IR, DE, NL — فقط پس از بررسی مجوز"></label>
-<label>عکس پروفایل<input id="yadPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label>
+</div>
+<label>زندگی‌نامه و معرفی حرفه‌ای<textarea id="yadBiography" rows="5"></textarea></label>
+</details>
+<details class="admin-form-group">
+<summary><span><b>۳. عکس و مدارک احراز صلاحیت</b><small>مدارک این بخش خصوصی‌اند؛ پیش از انتشار باید بررسی شوند.</small></span></summary>
+<div class="portal-grid"><label>عکس پروفایل<input id="yadPhoto" type="file" accept="image/jpeg,image/png,image/webp"><span class="admin-photo-preview" id="yadPhotoPreview" aria-live="polite">پس از انتخاب عکس، پیش‌نمایش اینجا نمایش داده می‌شود.</span></label>
 <label>مدرک مجوز / پروانه<input id="yadLicenseDocument" type="file" accept="application/pdf,image/jpeg,image/png"></label>
 <label>شمارهٔ پروانه اشتغال سازمان نظام<input id="yadLicense" maxlength="120"></label>
 <label>مرجع صادرکنندهٔ مجوز (متناسب با کشور)<input id="yadAuthority" maxlength="240" placeholder="نام سازمان یا نهاد رسمی صادرکننده"></label>
@@ -107,8 +130,8 @@
 <label>مدرک تخصصی روان‌درمانگری، آموزش رویکردی و سوپرویژن<input id="yadScopeDocument" type="file" accept="application/pdf,image/jpeg,image/png"></label>
 <label>مستند بررسی مقررات هر کشور مجاز<textarea id="yadJurisdictionReviewReference" rows="3" maxlength="4000" placeholder="برای هر کشور کد ISO و مرجع/نظر حقوقی مربوط را ثبت کنید؛ نمونه: IR=...؛ DE=..."></textarea></label>
 </div>
-<label>زندگی‌نامه و معرفی حرفه‌ای<textarea id="yadBiography" rows="5"></textarea></label>
-<div class="yad-checks"><label><input id="yadAssessmentSpecialist" type="checkbox"> ارائه‌دهندهٔ ارزیابی STIPO / SWAP</label><label><input id="yadVerified" type="checkbox"> پروانه رسمی، صلاحیت تخصصی روان‌درمانگری و مستندات قلمروها بررسی شده‌اند</label><label><input id="yadListed" type="checkbox"> انتشار در فهرست عمومی</label><label><input id="yadAcceptingNewClients" type="checkbox"> پذیرش مراجع جدید فعال است</label></div><p class="privacy-hint">ثبت و انتشار درمانگر فقط پس از استعلام رسمی پروانه، بررسی مدارک تخصصی روان‌درمانگری/سوپرویژن و ثبت مستندات حقوقی تک‌تک کشورهای مجاز ممکن است. پروانه ایرانی به‌تنهایی مجوز فعالیت در کشورهای دیگر نیست. مدارک در فضای خصوصی نگهداری شوند.</p>
+</details>
+<details class="admin-form-group admin-form-status" open><summary><span><b>۴. وضعیت تأیید و نمایش پروفایل</b><small>گزینهٔ انتشار را فقط پس از تکمیل بررسی مدارک فعال کن.</small></span></summary><div class="yad-checks"><label><input id="yadAssessmentSpecialist" type="checkbox"> ارائه‌دهندهٔ ارزیابی STIPO / SWAP</label><label><input id="yadVerified" type="checkbox"> پروانه رسمی، صلاحیت تخصصی روان‌درمانگری و مستندات قلمروها بررسی شده‌اند</label><label><input id="yadListed" type="checkbox"> انتشار در فهرست عمومی</label><label><input id="yadAcceptingNewClients" type="checkbox"> پذیرش مراجع جدید فعال است</label></div><p class="privacy-hint">ثبت و انتشار درمانگر فقط پس از استعلام رسمی پروانه، بررسی مدارک تخصصی روان‌درمانگری/سوپرویژن و ثبت مستندات حقوقی تک‌تک کشورهای مجاز ممکن است. پروانه ایرانی به‌تنهایی مجوز فعالیت در کشورهای دیگر نیست. مدارک در فضای خصوصی نگهداری شوند.</p></details>
 <div class="admin-actions"><button class="button primary" type="submit">ذخیرهٔ پروفایل</button><button class="button outline" id="yadCancelEdit" type="button" hidden>لغو ویرایش</button></div>
 </form>
 </section>
@@ -126,7 +149,7 @@
 </form>
 <h3>زمان‌های ثبت‌شده</h3><div id="yadAvailabilityList" class="portal-grid"><p>ابتدا درمانگر را انتخاب کنید.</p></div>
 </section>
-<section class="portal-card">
+<section class="portal-card" id="yadRequestsSection">
 <div class="section-head"><div><h2 data-i18n="requestsTitle">درخواست‌های مراجعان و پرداخت‌ها</h2><p data-i18n="requestsHelp">پس از تأیید واقعی وجه، زمان جلسه با درمانگر هماهنگ می‌شود.</p></div><button class="button outline" id="yadRefreshWorkflow" type="button">به‌روزرسانی</button></div>
 <div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>مراجع</th><th>درمانگر انتخابی</th><th>مبلغ</th><th>سهم درمانگر / یادشین</th><th>شماره پیگیری</th><th>وضعیت درخواست</th><th>وضعیت پرداخت</th><th>اقدام</th></tr></thead><tbody id="yadRequestsBody"><tr><td colspan="8">در حال بارگذاری…</td></tr></tbody></table></div>
 </section>
@@ -140,29 +163,48 @@
 <form id="yadWorkshopAdminForm" class="yad-admin-form">
 <input id="eventId" type="hidden">
 <h3 id="eventFormHeading">ایجاد کارگاه یا نشست جدید</h3>
+<p class="admin-form-intro">برای ساخت رویداد، ابتدا عنوان و ارائه‌دهنده را وارد کن. زمان‌بندی، هزینه و اطلاعات تکمیلی در بخش‌های جداگانه قرار دارند.</p>
+<details class="admin-form-group" open>
+<summary><span><b>۱. اطلاعات اصلی رویداد</b><small>عنوان، ارائه‌دهنده، زبان و موضوع کارگاه.</small></span></summary>
 <div class="portal-grid">
 <label>عنوان کارگاه<input id="eventTitle" required minlength="4" maxlength="180"></label>
-<label>شناسه صفحه (لاتین)<input id="eventSlug" required pattern="[a-zA-Z0-9-]+" maxlength="100"></label>
+<label>شناسه صفحه (لاتین)<input id="eventSlug" required pattern="[a-zA-Z0-9-]+" maxlength="100" placeholder="مثلاً attachment-workshop"><small>فقط حروف لاتین، عدد و خط تیره.</small></label>
 <label>نام ارائه‌دهنده<input id="eventPresenter" required maxlength="120"></label>
-<label>زبان ارائه (کدها با ویرگول)<input id="eventLanguages" value="fa"></label>
-<label>موضوع‌ها (با ویرگول)<input id="eventTopics"></label>
+<label>زبان ارائه (کدها با ویرگول)<input id="eventLanguages" value="fa" placeholder="fa, en"></label>
+<label>موضوع‌ها (با ویرگول)<input id="eventTopics" placeholder="مثلاً دلبستگی، ذهن‌آگاهی"></label>
 <label>نوع برگزاری<select id="eventFormat"><option value="online">آنلاین</option><option value="hybrid">حضوری و آنلاین</option><option value="in_person">حضوری</option></select></label>
-<label>بستر برگزاری<select id="eventPlatform"><option>Zoom</option><option>Google Meet</option><option>Microsoft Teams</option><option>Other</option><option>In person</option></select></label>
-<label>مکان (برای حضوری)<input id="eventVenue"></label>
+</div>
+</details>
+<details class="admin-form-group">
+<summary><span><b>۲. زمان‌بندی و ثبت‌نام</b><small>زمان، منطقه زمانی، ظرفیت، هزینه و وضعیت انتشار.</small></span></summary>
+<div class="portal-grid">
 <label>تاریخ و ساعت شروع<input id="eventStarts" type="datetime-local" required></label>
 <label>تاریخ و ساعت پایان<input id="eventEnds" type="datetime-local" required></label>
-<label>منطقه زمانی<input id="eventTimezone" placeholder="به‌صورت خودکار از دستگاه" required></label>
+<label>منطقه زمانی<input id="eventTimezone" placeholder="به‌صورت خودکار از دستگاه" required><small>به‌صورت خودکار از منطقه زمانی دستگاه تنظیم می‌شود.</small></label>
 <label>ظرفیت (خالی = بدون محدودیت)<input id="eventCapacity" type="number" min="1"></label>
 <label>هزینه<input id="eventFee" type="number" min="0" value="0"></label>
 <label>واحد پول<select id="eventCurrency"><option>EUR</option><option>USD</option><option>IRR</option></select></label>
 <label>مهلت ثبت‌نام<input id="eventDeadline" type="datetime-local"></label>
-<label>وضعیت انتشار<select id="eventStatus"><option value="draft">پیش‌نویس</option><option value="published">انتشار عمومی</option><option value="cancelled">لغوشده</option><option value="completed">پایان‌یافته</option></select></label>
-<label>لینک خصوصی جلسه (Zoom/…؛ فقط برای ثبت‌نام‌کنندگان مجاز)<input id="eventMeetingUrl" type="url"></label>
-<label>رمز جلسه (اختیاری)<input id="eventMeetingPassword" maxlength="120"></label>
+<label>وضعیت رویداد<select id="eventStatus"><option value="draft">پیش‌نویس (منتشر نشده)</option><option value="published">انتشار عمومی</option><option value="cancelled">لغوشده</option><option value="completed">پایان‌یافته</option></select></label>
 </div>
+</details>
+<details class="admin-form-group">
+<summary><span><b>۳. مکان و بستر برگزاری</b><small>اطلاعات محل برگزاری حضوری یا آنلاین.</small></span></summary>
+<div class="portal-grid">
+<label>بستر برگزاری<select id="eventPlatform"><option>Zoom</option><option>Google Meet</option><option>Microsoft Teams</option><option>Other</option><option>In person</option></select></label>
+<label>مکان (برای حضوری)<input id="eventVenue"></label>
+</div>
+</details>
+<details class="admin-form-group">
+<summary><span><b>۴. توضیحات و دسترسی خصوصی</b><small>معرفی رویداد و اطلاعات محرمانه جلسه آنلاین.</small></span></summary>
 <label>خلاصهٔ معرفی<textarea id="eventSummary" rows="2" maxlength="500"></textarea></label>
 <label>شرح کامل<textarea id="eventDescription" rows="5"></textarea></label>
 <label>معرفی ارائه‌دهنده<textarea id="eventPresenterBio" rows="3"></textarea></label>
+<div class="portal-grid">
+<label>لینک خصوصی جلسه<input id="eventMeetingUrl" type="url" placeholder="https://…"><small>این لینک فقط باید در اختیار ثبت‌نام‌کنندگان مجاز قرار گیرد.</small></label>
+<label>رمز جلسه (اختیاری)<input id="eventMeetingPassword" maxlength="120"></label>
+</div>
+</details>
 <div class="admin-actions"><button class="button primary" type="submit">ذخیره کارگاه</button><button class="button outline" id="eventCancelEdit" type="button" hidden>لغو ویرایش</button></div>
 </form>
 <h3>پیشنهادهای رسیده از درمانگران</h3>
@@ -195,5 +237,38 @@
 .admin-actions{display:flex;gap:5px}
 .admin-muted{color:#8b9998}
 .admin-error{color:#9c3d36}
- .yad-admin-form{display:grid;gap:14px;margin-top:24px}.yad-admin-form label{display:grid;gap:5px;font-size:12px;color:#52696a}.yad-admin-form input,.yad-admin-form textarea,.yad-admin-form select{width:100%;padding:10px;border:1px solid #dce8e3;border-radius:10px;font:inherit;background:#fff}.yad-checks{display:flex;gap:20px;flex-wrap:wrap}.yad-checks label{display:flex;align-items:center;gap:8px}.yad-checks input{width:auto}.therapist-admin-card{min-width:0}.yad-admin-form h3{margin:0;color:#123f46}#yadWorkflowStatus[data-error=true]{color:#9c3d36}#yadRequestsBody input{padding:7px;border:1px solid #dce8e3;border-radius:8px;min-width:190px}</style>
-</body></html>
+ .yad-admin-form{display:grid;gap:14px;margin-top:24px}.yad-admin-form label{display:grid;gap:5px;font-size:12px;color:#52696a}.yad-admin-form input,.yad-admin-form textarea,.yad-admin-form select{width:100%;padding:10px;border:1px solid #dce8e3;border-radius:10px;font:inherit;background:#fff}.yad-checks{display:flex;gap:20px;flex-wrap:wrap}.yad-checks label{display:flex;align-items:center;gap:8px}.yad-checks input{width:auto}.therapist-admin-card{min-width:0}.yad-admin-form h3{margin:0;color:#123f46}#yadWorkflowStatus[data-error=true]{color:#9c3d36}#yadRequestsBody input{padding:7px;border:1px solid #dce8e3;border-radius:8px;min-width:190px}
+.admin-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:28px 0 10px}
+.admin-shortcuts a{display:flex;align-items:center;gap:12px;min-height:78px;padding:14px;background:#fff;border:1px solid #e4ece8;border-radius:15px;color:#203638;box-shadow:0 5px 20px #123f4607}
+.admin-shortcuts a:hover{border-color:#9bcfc2;background:#f8fcfa}
+.admin-shortcuts b,.admin-shortcuts small{display:block}
+.admin-shortcuts b{font-size:14px;color:#123f46}
+.admin-shortcuts small{font-size:12px;color:#687b7c;margin-top:2px}
+.shortcut-icon{display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;border-radius:12px;background:#eaf6f1;color:#176d62}.shortcut-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.admin-shortcuts-hint{font-size:13px;color:#687b7c;margin:8px 2px 24px}
+.admin-photo-preview{display:flex;align-items:center;gap:12px;min-height:82px;padding:10px;border:1px dashed #cbded5;border-radius:12px;background:#f8fbf9;color:#687b7c;font-size:12px}
+.admin-photo-preview img{width:76px;height:76px;object-fit:cover;border-radius:12px}
+#yadTherapistForm{scroll-margin-top:24px}
+#yadAppointmentsSection,#yadPaymentsSection,#yadAvailabilityManager,#yadWorkshopAdmin,#yadBusinessSettings{scroll-margin-top:24px}
+@media(max-width:760px){.admin-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.admin-shortcuts a{padding:11px;min-height:72px}.shortcut-icon{flex-basis:34px;width:34px;height:34px;font-size:19px}.shortcut-icon svg{width:19px;height:19px}.admin-shortcuts b{font-size:13px}.admin-shortcuts small{font-size:11px}}
+@media(max-width:390px){.admin-shortcuts{grid-template-columns:1fr}}
+
+.admin-form-intro{margin:0;color:#617678;font-size:13px;line-height:1.9}
+.admin-form-group{border:1px solid #e1ebe6;border-radius:14px;background:#fff;padding:0 15px;margin:4px 0}
+.admin-form-group>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:66px;cursor:pointer;list-style:none;color:#164b4b}
+.admin-form-group>summary::-webkit-details-marker{display:none}
+.admin-form-group>summary:after{content:"＋";display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#edf6f2;color:#176d62;font-size:19px}
+.admin-form-group[open]>summary:after{content:"−"}
+.admin-form-group>summary b,.admin-form-group>summary small{display:block}
+.admin-form-group>summary b{font-size:14px}
+.admin-form-group>summary small{font-size:12px;font-weight:400;color:#738586;margin-top:3px}
+.admin-form-group>.portal-grid{padding:4px 0 16px}
+.admin-form-group>label{margin:8px 0 16px}
+.admin-form-status{background:#fbfdfc}
+.admin-form-status .yad-checks{padding:8px 0 14px}
+#yadTherapistForm .admin-actions{position:sticky;bottom:8px;z-index:3;padding:10px;background:#ffffffed;border:1px solid #e3ece7;border-radius:12px;box-shadow:0 5px 20px #163d3b12}
+</style>
+
+<script>
+(()=>{const ready=()=>{const input=document.getElementById("yadPhoto");const preview=document.getElementById("yadPhotoPreview");if(!input||!preview)return;let currentUrl=null;input.addEventListener("change",()=>{if(currentUrl)URL.revokeObjectURL(currentUrl);currentUrl=null;preview.replaceChildren();const file=input.files&&input.files[0];if(!file){preview.textContent="پس از انتخاب عکس، پیش‌نمایش اینجا نمایش داده می‌شود.";return;}if(!/^image\/(jpeg|png|webp)$/.test(file.type)){preview.textContent="فرمت عکس باید JPG، PNG یا WebP باشد.";return;}currentUrl=URL.createObjectURL(file);const img=document.createElement("img");img.src=currentUrl;img.alt="پیش‌نمایش عکس درمانگر";const note=document.createElement("span");note.textContent=file.name+" · "+Math.max(1,Math.round(file.size/1024))+" کیلوبایت";preview.append(img,note);});};if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",ready,{once:true});else ready();})();
+</script></body></html>

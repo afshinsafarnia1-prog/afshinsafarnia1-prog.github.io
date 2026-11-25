@@ -43,7 +43,7 @@ try {
   const context = await browser.newContext({ serviceWorkers: "block" });
   const page = await context.newPage();
   const pageErrors = [];
-  page.on("pageerror", error => pageErrors.push(error.message));
+  page.on("pageerror", error => pageErrors.push(`${page.url()} :: ${error.stack || error.message}`));
   await page.route("**/*", async route => {
     const url = new URL(route.request().url());
     if (url.origin === "http://127.0.0.1:4173") return route.continue();
@@ -120,6 +120,10 @@ try {
   for (const selector of ["#yadClientConsent", "#yadAdultConfirm", "#yadSessionCountry", "#yadPreferredTime", "#yadClientAppointmentList", "#yadClientSupportForm", "#yadClientNotificationsList", "#yadExportMyData"]) {
     if (!(await page.locator(selector).count())) throw new Error("Client workflow control missing: " + selector);
   }
+  if (await page.locator(".yad-quick-nav a").count() !== 6) throw new Error("Client quick navigation is incomplete.");
+  for (const link of await page.locator(".yad-quick-nav a").evaluateAll(nodes => nodes.map(a => a.getAttribute("href")))) {
+    if (!link?.startsWith("#") || !(await page.locator(link).count())) throw new Error("Client quick navigation target is missing: " + link);
+  }
   const clientHtml = await readFile(resolve(root, "client.html"), "utf8");
   if (!clientHtml.includes("client-extensions.js")) throw new Error("Client extension script is not connected.");
   for (const language of languages) {
@@ -134,8 +138,25 @@ try {
   for (const selector of ["#yadSessionAccessAdmin", "#yadSupportAdmin", "#yadFeedbackAdmin", "#yadAvailabilityForm", "#yadAvailabilityTherapist", "#yadYearsExperience", "#yadJurisdictions", "#yadAcceptingNewClients"]) {
     if (!(await page.locator(selector).count())) throw new Error("Admin workflow control missing: " + selector);
   }
+  if (await page.locator(".admin-shortcuts a").count() !== 8) throw new Error("Admin quick navigation is incomplete.");
+  if (await page.locator("#yadTherapistForm > details").count() !== 4) throw new Error("Therapist editor should have four guided sections.");
+  if (await page.locator("#yadWorkshopAdminForm > details").count() !== 4) throw new Error("Workshop editor should have four guided sections.");
+  for (const link of await page.locator(".admin-shortcuts a").evaluateAll(nodes => nodes.map(a => a.getAttribute("href")))) {
+    if (!link?.startsWith("#") || !(await page.locator(link).count())) throw new Error("Admin quick navigation target is missing: " + link);
+  }
+  const workshopSection = page.locator("#yadWorkshopAdminForm > details").nth(1);
+  await workshopSection.locator("summary").evaluate(summary => summary.click());
+  if (!(await workshopSection.evaluate(el => el.open))) throw new Error("Workshop editor section did not expand.");
   const adminHtml = await readFile(resolve(root, "admin.html"), "utf8");
   if (!adminHtml.includes("admin-extensions.js")) throw new Error("Admin extension script is not connected.");
+  for (const id of ["yadBrandLogoPreview", "yadManagerPhotoPreview"]) {
+    if (!adminHtml.includes('id="' + id + '"')) throw new Error("Brand image preview is missing: " + id);
+  }
+  const brandingWorkflow = await readFile(resolve(root, "admin-workflow-extended.js"), "utf8");
+  if (!brandingWorkflow.includes('bucket === "site-assets" ? "site-assets/" + generatedPath')) throw new Error("Brand image upload path does not match the secure branding RPC.");
+  if (!brandingWorkflow.includes('bindImagePreview("yadBrandLogo","yadBrandLogoPreview")')) throw new Error("Brand logo live preview is not connected.");
+  const publicApp = await readFile(resolve(root, "app.js"), "utf8");
+  if (!publicApp.includes('node.querySelector(".brand-logo")')) throw new Error("Public header does not render the admin-managed brand logo.");
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
   for (const selector of ["#modality", "#therapistKeyword", "#acceptingOnly", "#clearTherapistFilters"]) {
     if (!(await page.locator(selector).count())) throw new Error("Therapist directory filter missing: " + selector);
@@ -145,6 +166,10 @@ try {
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Where would you like to begin")) throw new Error("Assistant translation did not apply.");
   await page.goto("http://127.0.0.1:4173/therapist.html", { waitUntil: "domcontentloaded" });
+  if (await page.locator(".therapist-quick-nav a").count() !== 6) throw new Error("Therapist quick navigation is incomplete.");
+  for (const link of await page.locator(".therapist-quick-nav a").evaluateAll(nodes => nodes.map(a => a.getAttribute("href")))) {
+    if (!link?.startsWith("#") || !(await page.locator(link).count())) throw new Error("Therapist quick navigation target is missing: " + link);
+  }
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Therapist profiles")) throw new Error("Therapist page translation did not apply.");
   await page.goto("http://127.0.0.1:4173/articles/", { waitUntil: "domcontentloaded" });
