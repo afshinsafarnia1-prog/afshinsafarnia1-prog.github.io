@@ -946,3 +946,12 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
  .portal-wrap{width:min(100% - 28px,720px)}
  :where(.portal-card){padding:18px}
 }
+
+
+/* Clear image editing previews in the admin branding form */
+.yad-branding-previews{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:16px 0}
+.yad-branding-previews figure{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:150px;margin:0;padding:16px;border:1px solid var(--ui-line,#e4ece8);border-radius:16px;background:var(--ui-soft,#f4f9f6)}
+.yad-branding-previews img{display:block;width:100%;max-width:220px;height:112px;object-fit:contain;border-radius:10px}
+.yad-branding-previews img[hidden]{display:none}
+.yad-branding-previews figcaption{font-size:14px;color:var(--ui-muted,#607477)}
+@media(max-width:520px){.yad-branding-previews{grid-template-columns:1fr}.yad-branding-previews figure{min-height:125px}}
