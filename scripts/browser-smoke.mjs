@@ -166,6 +166,7 @@ try {
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Where would you like to begin")) throw new Error("Assistant translation did not apply.");
   await page.addInitScript(() => {
+    if (location.pathname !== "/therapist.html") return;
     window.supabase = {
       createClient: () => ({
         auth: {
