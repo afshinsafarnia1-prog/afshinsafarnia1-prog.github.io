@@ -116,28 +116,38 @@
     }
     async function loadMyFees(){
       if(!feeForm)return;
-      const {data,error}=await db.rpc("therapist_get_my_fees");
-      if(error){feeStatus.textContent=error.message||"بارگذاری تعرفه‌ها ناموفق بود.";return;}
-      const map=Object.fromEntries((data||[]).map(x=>[x.currency,x.amount]));
-      document.getElementById("yadTherapistFeeIRR").value=map.IRR?Number(map.IRR)/10:"";
-      document.getElementById("yadTherapistFeeEUR").value=map.EUR||"";
-      document.getElementById("yadTherapistFeeUSD").value=map.USD||"";
-      document.getElementById("yadTherapistFeeCAD").value=map.CAD||"";
+      const [{data:fees,error:feeError},{data:durations,error:durationError}]=await Promise.all([
+        db.rpc("therapist_get_my_session_fees"),db.rpc("therapist_get_my_session_settings")
+      ]);
+      if(feeError||durationError){feeStatus.textContent=(feeError||durationError).message||"بارگذاری تنظیمات ناموفق بود.";return;}
+      const map=Object.fromEntries((fees||[]).map(x=>[x.session_type+":"+x.currency,x.amount]));
+      const setting=durations?.[0]||{};
+      document.getElementById("yadTherapistFirstDuration").value=setting.first_session_duration_minutes||45;
+      document.getElementById("yadTherapistFollowupDuration").value=setting.followup_session_duration_minutes||45;
+      for(const type of ["First","Followup"])for(const currency of ["IRR","EUR","USD","CAD"]){
+        const value=map[type.toLowerCase()+":"+currency];
+        document.getElementById("yadTherapist"+type+currency).value=value?(currency==="IRR"?Number(value)/10:value):"";
+      }
     }
     feeForm?.addEventListener("submit",async event=>{
       event.preventDefault();
       if(!activeUser){feeStatus.textContent="ابتدا وارد حساب درمانگر شوید.";return;}
-      const fields=[["IRR","yadTherapistFeeIRR",10],["EUR","yadTherapistFeeEUR",1],["USD","yadTherapistFeeUSD",1],["CAD","yadTherapistFeeCAD",1]];
-      const values=fields.map(([currency,id,multiplier])=>({currency,id,multiplier,value:document.getElementById(id).value.trim()})).filter(x=>x.value!=="");
-      if(!values.length){feeStatus.textContent="حداقل یک تعرفه وارد کنید.";return;}
-      if(values.some(x=>!Number.isSafeInteger(Number(x.value))||Number(x.value)<=0)){feeStatus.textContent="همه مبالغ باید عدد صحیح و بیشتر از صفر باشند.";return;}
-      
-      const button=feeForm.querySelector('button[type="submit"]');button.disabled=true;feeStatus.textContent="در حال ذخیره تعرفه‌ها…";
-      for(const item of values){
-        const {error}=await db.rpc("therapist_set_my_fee",{p_currency:item.currency,p_amount:Number(item.value)*item.multiplier});
+      const first=Number(document.getElementById("yadTherapistFirstDuration").value);
+      const followup=Number(document.getElementById("yadTherapistFollowupDuration").value);
+      if(!Number.isInteger(first)||!Number.isInteger(followup)||first<20||first>180||followup<20||followup>180){feeStatus.textContent="مدت هر جلسه باید بین ۲۰ تا ۱۸۰ دقیقه باشد.";return;}
+      const button=feeForm.querySelector('button[type="submit"]');button.disabled=true;feeStatus.textContent="در حال ذخیره تنظیمات…";
+      const {error:durationError}=await db.rpc("therapist_set_my_session_durations",{p_first_minutes:first,p_followup_minutes:followup});
+      if(durationError){button.disabled=false;feeStatus.textContent=durationError.message||"ذخیره مدت جلسات ناموفق بود.";return;}
+      for(const type of ["first","followup"])for(const currency of ["IRR","EUR","USD","CAD"]){
+        const id="yadTherapist"+(type==="first"?"First":"Followup")+currency;
+        const raw=document.getElementById(id).value.trim();
+        if(!raw)continue;
+        if(!Number.isSafeInteger(Number(raw))||Number(raw)<=0){button.disabled=false;feeStatus.textContent="تعرفه‌ها باید عدد صحیح و بیشتر از صفر باشند.";return;}
+        const amount=Number(raw)*(currency==="IRR"?10:1);
+        const {error}=await db.rpc("therapist_set_my_session_fee",{p_session_type:type,p_currency:currency,p_amount:amount});
         if(error){button.disabled=false;feeStatus.textContent=error.message||"ذخیره یکی از تعرفه‌ها ناموفق بود.";return;}
       }
-      button.disabled=false;feeStatus.textContent="تعرفه‌ها ذخیره شدند و در پروفایل عمومی شما نمایش داده می‌شوند.";
+      button.disabled=false;feeStatus.textContent="مدت و تعرفه‌های مستقل جلسات ذخیره شدند.";
       await loadMyFees();
     });
     async function init(session){
@@ -160,13 +170,13 @@
         starts=localDateTimeInZone(start.value,zone.value.trim());
         ends=localDateTimeInZone(end.value,zone.value.trim());
       }catch(error){setStatus(error.message,true);return;}
-      if(ends.getTime()-starts.getTime()!==45*60000){setStatus("هر زمان آزاد باید دقیقاً ۴۵ دقیقه باشد.",true);return;}
+      if(ends.getTime()<=starts.getTime()||ends.getTime()-starts.getTime()<20*60000||ends.getTime()-starts.getTime()>180*60000){setStatus("بازهٔ زمانی آزاد باید بین ۲۰ تا ۱۸۰ دقیقه باشد.",true);return;}
       const button=form.querySelector('button[type="submit"]');button.disabled=true;
       const {error}=await db.rpc("therapist_create_availability_slot",{p_starts_at:starts.toISOString(),p_ends_at:ends.toISOString(),p_timezone:zone.value.trim()});
       button.disabled=false;
       if(error){setStatus(error.message==="availability_overlap"?"این زمان با یک زمان دیگر هم‌پوشانی دارد.":error.message||"ثبت زمان آزاد ناموفق بود.",true);return;}
       form.reset();zone.value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
-      setStatus("زمان آزاد ۴۵ دقیقه‌ای ثبت شد.");
+      setStatus("بازهٔ زمانی آزاد ثبت شد.");
       await loadSlots();
     });
     db.auth.getSession().then(({data})=>init(data.session));
