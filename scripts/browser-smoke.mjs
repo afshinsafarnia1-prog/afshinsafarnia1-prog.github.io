@@ -172,6 +172,8 @@ try {
     if (!link?.startsWith("#") || !(await page.locator(link).count())) throw new Error("Therapist quick navigation target is missing: " + link);
   }
   if (!therapistLinks.includes("#yadTherapistArticles")) throw new Error("Therapist article shortcut is missing.");
+  // The private portal is hidden until authentication; reveal it in this isolated UI test.
+  await page.locator("#therapistPrivatePortal").evaluate(el => { el.hidden = false; });
   await page.locator("#yadTherapistAvailabilityStart").fill("2026-11-25T10:00");
   if (await page.locator("#yadTherapistAvailabilityEnd").inputValue() !== "2026-11-25T10:45") throw new Error("Therapist availability end time is not calculated as 45 minutes.");
   await page.locator("#yadTherapistAvailabilityStart").fill("");
