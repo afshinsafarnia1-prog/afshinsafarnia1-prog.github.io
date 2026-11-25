@@ -63,7 +63,7 @@ try {
 
   const pages = [
     "/", "/contact.html", "/relationships.html", "/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/client.html", "/admin.html", "/therapist.html",
-    "/assistant.html", "/rules.html", "/articles/",
+    "/assistant.html", "/rules.html", "/articles/", "/articles/choosing-a-therapist.html", "/workshops.html",
     "/articles/psychotherapy-first-session.html",
     "/articles/therapeutic-relationship.html",
     "/articles/ai-robots-human-meaning.html", "/therapists/foruzan-shahla.html"
@@ -71,6 +71,18 @@ try {
   for (const path of pages) {
     const response = await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
     if (!response || response.status() !== 200) throw new Error(`Page failed: ${path} (${response?.status()})`);
+  }
+
+  await page.goto("http://127.0.0.1:4173/articles/", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator("h1").innerText()).includes("مقالات تحلیلی")) throw new Error("Journal landing page heading is incorrect.");
+  if (!(await page.locator("#yadContributorArticles").count())) throw new Error("Contributor articles section is missing from the journal.");
+  await page.goto("http://127.0.0.1:4173/articles/choosing-a-therapist.html", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator("h1").innerText()).includes("درمانگر")) throw new Error("Therapist-selection guide did not render.");
+  await page.goto("http://127.0.0.1:4173/workshops.html", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator("h1").innerText()).includes("کارگاه")) throw new Error("Workshops landing page did not render.");
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  for (const selector of ['.topline a[href="/articles/"]', '#mainNav a[href="/articles/"]', '#mainNav a[href="/workshops.html"]', 'a.navcta[href="/articles/choosing-a-therapist.html"]', '.footerlinks a[href="/articles/"]']) {
+    if (!(await page.locator(selector).count())) throw new Error("Homepage journal/workshop route is missing: " + selector);
   }
 
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
