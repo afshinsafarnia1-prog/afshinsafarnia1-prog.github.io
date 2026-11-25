@@ -1031,17 +1031,39 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
 @media(max-width:520px){.therapist-identity{gap:12px;padding:12px}.therapist-identity img{width:88px;height:108px;flex-basis:88px}}
 
 
-/* Unified, larger therapist portraits across the directory, profiles and private portal. */
-#therapistDirectory .therapist-photo,
-#therapistDirectory .therapist-placeholder{width:118px!important;height:142px!important;flex:0 0 118px!important;object-fit:cover!important;object-position:center 22%;display:block!important;border-radius:10px!important}
-.profile-hero .profile-photo,.profile-hero .profile-monogram{width:190px!important;height:220px!important;flex:0 0 190px!important;object-fit:cover!important;object-position:center 22%;}
-.therapist-identity img{width:132px!important;height:156px!important;flex:0 0 132px!important;object-fit:cover!important;object-position:center 22%}
-@media(max-width:760px){
- #therapistDirectory .therapist-photo,#therapistDirectory .therapist-placeholder{width:108px!important;height:130px!important;flex-basis:108px!important}
- .profile-hero .profile-photo,.profile-hero .profile-monogram{width:150px!important;height:180px!important;flex-basis:150px!important}
+/* Final responsive portrait sizes: directory 150x180, profile 220x260, private panel 150x180. */
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo,
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-placeholder{
+  width:150px!important;height:180px!important;flex:0 0 150px!important;
+  object-fit:cover!important;object-position:center 22%!important;
+  display:block!important;border-radius:13px!important;
 }
-@media(max-width:520px){
- #therapistDirectory .therapist-photo,#therapistDirectory .therapist-placeholder{width:100px!important;height:122px!important;flex-basis:100px!important}
- .profile-hero .profile-photo,.profile-hero .profile-monogram{width:122px!important;height:148px!important;flex-basis:122px!important}
- .therapist-identity img{width:112px!important;height:136px!important;flex-basis:112px!important}
+.profile-hero .profile-photo,#therapistProfile .profile-photo,
+.profile-hero .profile-monogram{
+  width:220px!important;height:260px!important;flex:0 0 220px!important;
+  object-fit:cover!important;object-position:center 22%!important;border-radius:16px!important;
+}
+.therapist-identity img{
+  width:150px!important;height:180px!important;flex:0 0 150px!important;
+  object-fit:cover!important;object-position:center 22%!important;
+}
+@media(max-width:760px){
+  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo,
+  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-placeholder{
+    width:126px!important;height:152px!important;flex-basis:126px!important;
+  }
+  .profile-hero .profile-photo,#therapistProfile .profile-photo,.profile-hero .profile-monogram{
+    width:170px!important;height:204px!important;flex-basis:170px!important;
+  }
+  .therapist-identity img{width:126px!important;height:152px!important;flex-basis:126px!important}
+}
+@media(max-width:480px){
+  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo,
+  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-placeholder{
+    width:112px!important;height:136px!important;flex-basis:112px!important;
+  }
+  .profile-hero .profile-photo,#therapistProfile .profile-photo,.profile-hero .profile-monogram{
+    width:145px!important;height:174px!important;flex-basis:145px!important;
+  }
+  .therapist-identity img{width:112px!important;height:136px!important;flex-basis:112px!important}
 }
