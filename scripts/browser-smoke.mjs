@@ -43,7 +43,7 @@ try {
   const context = await browser.newContext({ serviceWorkers: "block" });
   const page = await context.newPage();
   const pageErrors = [];
-  page.on("pageerror", error => pageErrors.push(error.message));
+  page.on("pageerror", error => pageErrors.push(`${page.url()} :: ${error.stack || error.message}`));
   await page.route("**/*", async route => {
     const url = new URL(route.request().url());
     if (url.origin === "http://127.0.0.1:4173") return route.continue();
