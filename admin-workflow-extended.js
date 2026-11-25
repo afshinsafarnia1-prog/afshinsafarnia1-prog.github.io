@@ -57,7 +57,7 @@
       document.getElementById("yadClientIntakeEnabled").checked = data?.client_intake_enabled === true;
       document.getElementById("yadClientPolicyVersion").value = data?.client_policy_version || "2026-11-17-v2-draft";
       const branding=data?.branding||{};
-      document.getElementById("yadBrandName").value=branding.brand_name||"ردیاد";
+      document.getElementById("yadBrandName").value=branding.brand_name||"یادشین";
       document.getElementById("yadBrandTagline").value=branding.tagline||"";
       document.getElementById("yadManagerName").value=branding.manager_name||"";
       document.getElementById("yadManagerTitle").value=branding.manager_title||"";
@@ -76,7 +76,7 @@
       setStoredPreview("yadBrandLogoPreview",branding.logo_path);
       setStoredPreview("yadManagerPhotoPreview",branding.manager_photo_path);
       const contacts=data?.contacts||{};
-      const fields={phone_number:"yadContactPhone",whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail",instagram_url:"yadContactInstagram",telegram_url:"yadContactTelegram",youtube_url:"yadContactYoutube",linkedin_url:"yadContactLinkedin",facebook_url:"yadContactFacebook"};
+      const fields={phone_number:"yadContactPhone",whatsapp_number:"yadContactWhatsapp",contact_email:"yadContactEmail"};
       Object.entries(fields).forEach(([key,id])=>{document.getElementById(id).value=contacts[key]||"";});
       businessStatus.textContent="تعرفه‌ها توسط هر درمانگر در پنل اختصاصی خودش تعیین می‌شوند؛ سهم درآمد ثابت ۷۰/۳۰ است.";
     }
@@ -107,11 +107,6 @@
           phone_number:businessValue("yadContactPhone"),
           whatsapp_number:businessValue("yadContactWhatsapp"),
           contact_email:businessValue("yadContactEmail"),
-          instagram_url:businessValue("yadContactInstagram"),
-          telegram_url:businessValue("yadContactTelegram"),
-          youtube_url:businessValue("yadContactYoutube"),
-          linkedin_url:businessValue("yadContactLinkedin"),
-          facebook_url:businessValue("yadContactFacebook")
         };
         const {error:contactsError}=await db.rpc("admin_update_yad_public_contacts",{p_contacts:contacts});
         if(contactsError)throw contactsError;
