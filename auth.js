@@ -152,6 +152,7 @@
     gate.querySelector("#yadWrongRoleLogout").hidden=true;
     gate.hidden=true;
     original.forEach(el=>el.hidden=false);
+    if (requiredRole === "therapist") therapistPrivatePanel?.scrollIntoView({behavior:"smooth",block:"start"});
     let bar=document.getElementById("yadSessionBar");
     if(!bar){
       bar=document.createElement("div");bar.id="yadSessionBar";bar.className="portal-card session-bar";

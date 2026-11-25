@@ -63,7 +63,7 @@ try {
 
   const pages = [
     "/", "/contact.html", "/relationships.html", "/psychology.html", "/psychotherapy.html", "/psychiatry.html", "/client.html", "/admin.html", "/therapist.html",
-    "/assistant.html", "/rules.html", "/articles/",
+    "/assistant.html", "/rules.html", "/articles/", "/articles/choosing-a-therapist.html", "/workshops.html",
     "/articles/psychotherapy-first-session.html",
     "/articles/therapeutic-relationship.html",
     "/articles/ai-robots-human-meaning.html", "/therapists/foruzan-shahla.html"
@@ -71,6 +71,25 @@ try {
   for (const path of pages) {
     const response = await page.goto("http://127.0.0.1:4173" + path, { waitUntil: "domcontentloaded" });
     if (!response || response.status() !== 200) throw new Error(`Page failed: ${path} (${response?.status()})`);
+  }
+
+  await page.goto("http://127.0.0.1:4173/articles/", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator("h1").innerText()).includes("مقالات تحلیلی")) throw new Error("Journal landing page heading is incorrect.");
+  if (!(await page.locator("#yadContributorArticles").count())) throw new Error("Contributor articles section is missing from the journal.");
+  await page.goto("http://127.0.0.1:4173/articles/choosing-a-therapist.html", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator("h1").innerText()).includes("درمانگر")) throw new Error("Therapist-selection guide did not render.");
+  await page.goto("http://127.0.0.1:4173/workshops.html", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator("h1").innerText()).includes("کارگاه")) throw new Error("Workshops landing page did not render.");
+  if (await page.locator('.portal-nav a[href="client.html"]').count()) throw new Error("Client portal must not appear in the public workshops navigation.");
+  await page.setViewportSize({width:360,height:800});
+  await page.waitForTimeout(100);
+  const workshopMobile = await page.evaluate(() => ({width:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth,heading:document.querySelector("h1").getBoundingClientRect().toJSON(),lead:document.querySelector(".section-head>p").getBoundingClientRect().toJSON()}));
+  if (workshopMobile.scrollWidth > workshopMobile.width) throw new Error("Workshops page overflows horizontally on a 360px portrait viewport.");
+  if (workshopMobile.heading.left < 0 || workshopMobile.heading.right > workshopMobile.width + 1 || workshopMobile.lead.left < 0 || workshopMobile.lead.right > workshopMobile.width + 1) throw new Error("Workshops heading or introduction is clipped on a portrait viewport.");
+  await page.setViewportSize({width:1280,height:800});
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  for (const selector of ['.topline a[href="/articles/"]', '#mainNav a[href="/articles/"]', '#mainNav a[href="/workshops.html"]', 'a.navcta[href="/articles/choosing-a-therapist.html"]', '.footerlinks a[href="/articles/"]']) {
+    if (!(await page.locator(selector).count())) throw new Error("Homepage journal/workshop route is missing: " + selector);
   }
 
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
@@ -165,11 +184,69 @@ try {
   await page.goto("http://127.0.0.1:4173/assistant.html", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Where would you like to begin")) throw new Error("Assistant translation did not apply.");
-  await page.goto("http://127.0.0.1:4173/therapist.html", { waitUntil: "domcontentloaded" });
-  if (await page.locator(".therapist-quick-nav a").count() !== 3) throw new Error("Therapist quick navigation is incomplete.");
-  for (const link of await page.locator(".therapist-quick-nav a").evaluateAll(nodes => nodes.map(a => a.getAttribute("href")))) {
-    if (!link?.startsWith("#") || !(await page.locator(link).count())) throw new Error("Therapist quick navigation target is missing: " + link);
+  await page.addInitScript(() => {
+    if (!["/admin.html", "/therapist.html"].includes(location.pathname)) return;
+    const role = location.pathname === "/admin.html" ? "admin" : "therapist";
+    let session = null;
+    const resultFor = table => table === "profiles"
+      ? { data: { role, display_name: "حساب آزمایشی" }, error: null }
+      : table === "therapists" ? { data: null, error: null } : { data: [], error: null };
+    const makeQuery = table => {
+      const result = resultFor(table);
+      const query = new Proxy({}, {
+        get(_target, property) {
+          if (property === "then") return (resolve, reject) => Promise.resolve(result).then(resolve, reject);
+          if (property === "maybeSingle" || property === "single") return () => Promise.resolve(result);
+          return () => query;
+        }
+      });
+      return query;
+    };
+    window.supabase = {
+      createClient: () => ({
+        auth: {
+          getSession: async () => ({ data: { session } }),
+          onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }),
+          signInWithPassword: async ({ email }) => {
+            session = { user: { id: "00000000-0000-4000-8000-000000000001", email } };
+            return { data: { session }, error: null };
+          },
+          signOut: async () => { session = null; return { error: null }; },
+          refreshSession: async () => ({ data: { session }, error: null }),
+          mfa: { getAuthenticatorAssuranceLevel: async () => ({ data: { currentLevel: "aal2" }, error: null }) }
+        },
+        from: table => makeQuery(table),
+        rpc: async () => ({ data: [], error: null }),
+        storage: { from: () => ({ upload: async () => ({ data: null, error: null }), getPublicUrl: () => ({ data: { publicUrl: "" } }) }) }
+      })
+    };
+  });
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  for (const [href, heading, visibleSelector] of [
+    ["/admin.html", "مدیر", ".admin-shortcuts"],
+    ["/therapist.html", "درمانگر", "#therapistPrivatePortal"]
+  ]) {
+    const link = page.locator('#mainNav a[href="' + href + '"]');
+    if (!(await link.count())) throw new Error("Homepage portal link is missing: " + href);
+    await link.click();
+    await page.locator("#yadLogin").waitFor({ state: "visible" });
+    if (!(await page.locator(".auth-gate h2").innerText()).includes(heading)) throw new Error("Wrong login gate for " + href);
+    await page.locator("#yadEmail").fill("test@example.invalid");
+    await page.locator("#yadPassword").fill("TestPassword123!");
+    await page.locator("#yadLogin").click();
+    await page.locator(visibleSelector).waitFor({ state: "visible", timeout: 5000 });
+    if (await page.locator("#yadSessionBar").count() !== 1) throw new Error("Authenticated session bar did not appear for " + href);
+    if (href === "/therapist.html" && await page.locator("#therapistPrivatePortal").isHidden()) throw new Error("Therapist private portal stayed hidden after sign-in.");
+    if (href === "/therapist.html") {
+      if (await page.locator(".therapist-quick-nav a").count() !== 3) throw new Error("Therapist quick navigation is incomplete.");
+      const therapistLinks = await page.locator(".therapist-quick-nav a").evaluateAll(nodes => nodes.map(a => a.getAttribute("href")));
+      for (const target of therapistLinks) {
+        if (!target?.startsWith("#") || !(await page.locator(target).count())) throw new Error("Therapist quick navigation target is missing: " + target);
+      }
+    }
+    await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
   }
+  await page.goto("http://127.0.0.1:4173/therapist.html", { waitUntil: "domcontentloaded" });
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Therapist profiles")) throw new Error("Therapist page translation did not apply.");
   await page.goto("http://127.0.0.1:4173/articles/", { waitUntil: "domcontentloaded" });
@@ -202,6 +279,12 @@ try {
   if (!(await page.locator(".therapist-filters").isVisible())) throw new Error("Mobile therapist filters are not visible.");
   const mobileFilterColumns = await page.locator(".therapist-filters").evaluate(el => getComputedStyle(el).gridTemplateColumns);
   if (mobileFilterColumns.split(" ").length !== 1) throw new Error("Therapist filters are not single-column on mobile.");
+  if (await page.locator("#menuToggle").getAttribute("aria-expanded") !== "true") throw new Error("Mobile navigation expanded state was not announced.");
+  await page.locator('#mainNav a[href="#services"]').click();
+  if (await page.locator("#mainNav").isVisible()) throw new Error("Mobile navigation did not close after selecting a destination.");
+  if (await page.locator("#menuToggle").getAttribute("aria-expanded") !== "false") throw new Error("Mobile navigation expanded state was not reset after closing.");
+  await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator(".admin-shortcuts").count())) throw new Error("Admin quick-access navigation is missing.");
 
   for (const [path, selector] of [["/initial-guidance.html","#initialGuideForm"],["/standards.html","h1"],["/workshops.html","#yadWorkshopPageList"],["/articles/why-assessment-matters.html","h1"]]) {
     const response=await page.goto("http://127.0.0.1:4173"+path,{waitUntil:"domcontentloaded"});
