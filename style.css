@@ -1070,8 +1070,8 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
 
 
 /* Visible portrait enlargement override — ensure it wins over all earlier responsive rules. */
-#therapistDirectory .therapist-cards-track > .therapist-card > .therapist-photo,
-#therapistDirectory .therapist-cards-track > .therapist-card > .therapist-placeholder {
+#therapistDirectory .therapist-cards-track .therapist-card .therapist-photo,
+#therapistDirectory .therapist-cards-track .therapist-card .therapist-placeholder {
   width: 176px !important;
   height: 210px !important;
   min-width: 176px !important;
@@ -1093,8 +1093,8 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
   object-fit: cover !important;
 }
 @media (max-width: 760px) {
-  #therapistDirectory .therapist-cards-track > .therapist-card > .therapist-photo,
-  #therapistDirectory .therapist-cards-track > .therapist-card > .therapist-placeholder {
+  #therapistDirectory .therapist-cards-track .therapist-card .therapist-photo,
+  #therapistDirectory .therapist-cards-track .therapist-card .therapist-placeholder {
     width: 160px !important; height: 192px !important; min-width: 160px !important; flex-basis: 160px !important;
   }
   .profile-hero .profile-photo, #therapistProfile .profile-photo {
@@ -1105,8 +1105,8 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
   }
 }
 @media (max-width: 480px) {
-  #therapistDirectory .therapist-cards-track > .therapist-card > .therapist-photo,
-  #therapistDirectory .therapist-cards-track > .therapist-card > .therapist-placeholder {
+  #therapistDirectory .therapist-cards-track .therapist-card .therapist-photo,
+  #therapistDirectory .therapist-cards-track .therapist-card .therapist-placeholder {
     width: 145px !important; height: 174px !important; min-width: 145px !important; flex-basis: 145px !important;
   }
   .profile-hero .profile-photo, #therapistProfile .profile-photo {
