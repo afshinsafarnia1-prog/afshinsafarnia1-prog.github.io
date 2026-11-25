@@ -336,15 +336,18 @@
   }
 };
   Object.entries(workshopPageTranslations).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
-  Object.assign(translations, {
-    fa:{therapistPortal:"پنل درمانگر"},
-    en:{therapistPortal:"Therapist portal"},
-    ku:{therapistPortal:"پەڕەی چارەسەرکار"},
-    tr:{therapistPortal:"Terapist paneli"},
-    ar:{therapistPortal:"لوحة المعالج"},
-    es:{therapistPortal:"Panel del terapeuta"},
-    de:{therapistPortal:"Therapeutenbereich"},
-    fr:{therapistPortal:"Espace thérapeute"}
+  const therapistPortalLabels = {
+    fa:"پنل درمانگر",
+    en:"Therapist portal",
+    ku:"پەڕەی چارەسەرکار",
+    tr:"Terapist paneli",
+    ar:"لوحة المعالج",
+    es:"Panel del terapeuta",
+    de:"Therapeutenbereich",
+    fr:"Espace thérapeute"
+  };
+  Object.entries(therapistPortalLabels).forEach(([lang,label])=>{
+    if(translations[lang]) translations[lang].therapistPortal=label;
   });
   const keys = {
     ".topinner span":"tagline","#mainNav a:nth-child(1)":"services","#mainNav a:nth-child(2)":"therapists",
