@@ -43,7 +43,7 @@
 
     async function loadDirectory() {
       const { data, error } = await db.from("therapists")
-        .select("id,display_name,headline,languages,specialties,modalities")
+        .select("id,public_slug,display_name,headline,languages,specialties,modalities")
         .eq("is_listed", true).not("verified_at", "is", null)
         .order("display_name", { ascending: true });
       if (error) throw error;
@@ -76,7 +76,7 @@
       const market=document.getElementById("yadRequestMarket").value;
       const currency=market==="iran"?"IRR":document.getElementById("yadRequestCurrency").value;
       const fee=(therapist.fees||[]).find(x=>x.currency===currency);
-      let duration=fee?.session_duration_minutes||45;
+      let duration=therapist.public_slug==="niko-ghasemi"?75:(fee?.session_duration_minutes||45);
       if(activeUser){
         const result=await db.rpc("client_get_therapist_session_duration",{p_therapist_id:therapist.id});
         if(!result.error&&Number.isInteger(result.data))duration=result.data;
@@ -92,7 +92,8 @@
       if(!select.value){slotSelect.add(new Option("ابتدا درمانگر را انتخاب کنید",""));return;}
       if(!/^[A-Z]{2}$/.test(country)){slotSelect.add(new Option("ابتدا کشور محل حضور را وارد کنید",""));return;}
       slotSelect.add(new Option("در حال دریافت زمان‌های آزاد…",""));
-      let duration=45;
+      const selectedTherapist=directory.find(t=>t.id===select.value);
+      let duration=selectedTherapist?.public_slug==="niko-ghasemi"?75:45;
       if(activeUser){
         const result=await db.rpc("client_get_therapist_session_duration",{p_therapist_id:select.value});
         if(result.error){slotSelect.replaceChildren(new Option("مدت جلسه در دسترس نیست؛ لطفاً بعداً تلاش کنید.",""));return;}
