@@ -336,11 +336,21 @@
   }
 };
   Object.entries(workshopPageTranslations).forEach(([lang,values])=>{if(translations[lang])Object.assign(translations[lang],values);});
+  Object.assign(translations, {
+    fa:{therapistPortal:"پنل درمانگر"},
+    en:{therapistPortal:"Therapist portal"},
+    ku:{therapistPortal:"پەڕەی چارەسەرکار"},
+    tr:{therapistPortal:"Terapist paneli"},
+    ar:{therapistPortal:"لوحة المعالج"},
+    es:{therapistPortal:"Panel del terapeuta"},
+    de:{therapistPortal:"Therapeutenbereich"},
+    fr:{therapistPortal:"Espace thérapeute"}
+  });
   const keys = {
     ".topinner span":"tagline","#mainNav a:nth-child(1)":"services","#mainNav a:nth-child(2)":"therapists",
-    "#mainNav a:nth-child(3)":"client","#mainNav a:nth-child(4)":"admin","#mainNav a:nth-child(5)":"how",
-    "#mainNav a:nth-child(6)":"workshopsNav","#mainNav a:nth-child(7)":"articles","#mainNav a:nth-child(8)":"assistant",
-    "#mainNav a:nth-child(9)":"rules","#mainNav a:nth-child(10)":"about","#mainNav a:nth-child(11)":"collaborate",
+    "#mainNav a:nth-child(3)":"workshopsNav","#mainNav a:nth-child(4)":"articles",
+    "#mainNav a:nth-child(5)":"about","#mainNav a:nth-child(6)":"therapistPortal",
+    "#mainNav a:nth-child(7)":"admin",
     ".navcta":"cta",".hero-copy .eyebrow":"heroEyebrow",".hero h1":"heroTitle",
     ".hero-copy .lead":"heroLead",".hero-actions .button":"find",".hero-actions .textlink":"read",
     ".searchbox .eyebrow":"searchEyebrow",".searchbox h2":"searchTitle",".searchbox p":"searchLead",
