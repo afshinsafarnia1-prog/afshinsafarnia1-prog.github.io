@@ -70,10 +70,10 @@
       mark.setAttribute("aria-hidden","true");
       hero.append(mark);
     };
-    if(data.photo_path){
-      let photoUrl="";
+    if(data.photo_path||data.public_slug==="hediyeh-sabbaghpour"){
+      let photoUrl=data.public_slug==="hediyeh-sabbaghpour"?"/therapists/hediyeh-sabbaghpour.jpg":"";
       try{
-        const storedPath=String(data.photo_path).trim();
+        const storedPath=String(data.photo_path||"").trim();
         if(/^https?:\/\//i.test(storedPath))photoUrl=storedPath;
         else if(storedPath.startsWith("/"))photoUrl=storedPath;
         else if(/^therapists\//i.test(storedPath))photoUrl="/"+storedPath;
