@@ -961,3 +961,28 @@ body:not(:has(.portal-header)) .articles .article-card.featured>b{color:#27796e!
 #yadPhotoPreview{display:flex;align-items:center;gap:14px;margin:8px 0 16px}
 #yadPhotoPreview img{width:112px;height:132px;object-fit:cover;border-radius:12px;border:1px solid #dce8e3}
 #yadPhotoPreview span{font-size:13px;color:#60736d}
+
+
+/* Hediyeh Sabbaghpour: keep the portrait in the normal profile layout */
+.profile-hero.hediyeh-profile{
+  margin-top:28px!important;
+  align-items:center!important;
+  min-height:0!important;
+}
+.profile-hero.hediyeh-profile .profile-photo{
+  position:static!important;
+  top:auto!important;
+  width:190px!important;height:220px!important;
+  flex:0 0 190px!important;
+  object-fit:cover!important;
+}
+.profile-hero.hediyeh-profile .profile-intro h1{
+  position:static!important;
+  margin:8px 0!important;
+}
+@media(max-width:760px){
+  .profile-hero.hediyeh-profile{gap:16px!important}
+  .profile-hero.hediyeh-profile .profile-photo{
+    width:128px!important;height:152px!important;flex-basis:128px!important;
+  }
+}
