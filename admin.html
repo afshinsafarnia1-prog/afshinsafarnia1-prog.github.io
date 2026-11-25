@@ -17,6 +17,15 @@
 <span class="eyebrow" data-i18n="adminEyebrow">مدیریت متمرکز یادشین</span>
 <h1 data-i18n="adminTitle">پنل مدیریت یادشین</h1>
 <p class="lead" data-i18n="adminLead">مدیریت درمانگران، مراجعان، نوبت‌ها و پرداخت‌ها از طریق مدیریت مرکزی یادشین انجام می‌شود.</p>
+<nav class="admin-shortcuts" aria-label="دسترسی سریع مدیریت">
+<a href="#yadTherapistForm"><span class="shortcut-icon">＋</span><span><b>افزودن درمانگر</b><small>ثبت یا ویرایش پروفایل</small></span></a>
+<a href="#yadAppointmentsSection"><span class="shortcut-icon">▣</span><span><b>نوبت‌ها</b><small>بررسی زمان جلسات</small></span></a>
+<a href="#yadPaymentsSection"><span class="shortcut-icon">◇</span><span><b>پرداخت‌ها</b><small>رسیدها و تأیید وجه</small></span></a>
+<a href="#yadAvailabilityManager"><span class="shortcut-icon">◷</span><span><b>زمان‌های آزاد</b><small>مدیریت ظرفیت</small></span></a>
+<a href="#yadWorkshopAdmin"><span class="shortcut-icon">▤</span><span><b>محتوا و کارگاه</b><small>انتشار و بررسی</small></span></a>
+<a href="#yadBusinessSettings"><span class="shortcut-icon">⚙</span><span><b>تنظیمات مرکز</b><small>اطلاعات و ارتباطات</small></span></a>
+</nav>
+<p class="admin-shortcuts-hint">برای شروع، یکی از بخش‌های بالا را انتخاب کن؛ لازم نیست تمام صفحه را جست‌وجو کنی.</p>
 <section class="portal-card" id="yadBusinessSettings">
 <h2 data-i18n="businessTitle">تعرفه‌ها و راه‌های ارتباطی یادشین</h2>
 <p data-i18n="businessHelp">تعرفه‌ها برای همه درمانگران یکسان است. مبلغ‌ها برای جلسهٔ ۴۵ دقیقه‌ای به تفکیک بازار ثبت می‌شوند.</p>
@@ -98,7 +107,7 @@
 <label>رویکردهای درمانی<input id="yadModalities"></label>
 <label>سابقهٔ حرفه‌ای (سال)<input id="yadYearsExperience" type="number" min="0" max="60" step="1"></label>
 <label>کشورهای مجاز فعالیت (کد دوحرفی ISO؛ با ویرگول)<input id="yadJurisdictions" maxlength="2000" placeholder="IR, DE, NL — فقط پس از بررسی مجوز"></label>
-<label>عکس پروفایل<input id="yadPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label>
+<label>عکس پروفایل<input id="yadPhoto" type="file" accept="image/jpeg,image/png,image/webp"><span class="admin-photo-preview" id="yadPhotoPreview" aria-live="polite">پس از انتخاب عکس، پیش‌نمایش اینجا نمایش داده می‌شود.</span></label>
 <label>مدرک مجوز / پروانه<input id="yadLicenseDocument" type="file" accept="application/pdf,image/jpeg,image/png"></label>
 <label>شمارهٔ پروانه اشتغال سازمان نظام<input id="yadLicense" maxlength="120"></label>
 <label>مرجع صادرکنندهٔ مجوز (متناسب با کشور)<input id="yadAuthority" maxlength="240" placeholder="نام سازمان یا نهاد رسمی صادرکننده"></label>
@@ -195,5 +204,23 @@
 .admin-actions{display:flex;gap:5px}
 .admin-muted{color:#8b9998}
 .admin-error{color:#9c3d36}
- .yad-admin-form{display:grid;gap:14px;margin-top:24px}.yad-admin-form label{display:grid;gap:5px;font-size:12px;color:#52696a}.yad-admin-form input,.yad-admin-form textarea,.yad-admin-form select{width:100%;padding:10px;border:1px solid #dce8e3;border-radius:10px;font:inherit;background:#fff}.yad-checks{display:flex;gap:20px;flex-wrap:wrap}.yad-checks label{display:flex;align-items:center;gap:8px}.yad-checks input{width:auto}.therapist-admin-card{min-width:0}.yad-admin-form h3{margin:0;color:#123f46}#yadWorkflowStatus[data-error=true]{color:#9c3d36}#yadRequestsBody input{padding:7px;border:1px solid #dce8e3;border-radius:8px;min-width:190px}</style>
-</body></html>
+ .yad-admin-form{display:grid;gap:14px;margin-top:24px}.yad-admin-form label{display:grid;gap:5px;font-size:12px;color:#52696a}.yad-admin-form input,.yad-admin-form textarea,.yad-admin-form select{width:100%;padding:10px;border:1px solid #dce8e3;border-radius:10px;font:inherit;background:#fff}.yad-checks{display:flex;gap:20px;flex-wrap:wrap}.yad-checks label{display:flex;align-items:center;gap:8px}.yad-checks input{width:auto}.therapist-admin-card{min-width:0}.yad-admin-form h3{margin:0;color:#123f46}#yadWorkflowStatus[data-error=true]{color:#9c3d36}#yadRequestsBody input{padding:7px;border:1px solid #dce8e3;border-radius:8px;min-width:190px}
+.admin-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:28px 0 10px}
+.admin-shortcuts a{display:flex;align-items:center;gap:12px;min-height:78px;padding:14px;background:#fff;border:1px solid #e4ece8;border-radius:15px;color:#203638;box-shadow:0 5px 20px #123f4607}
+.admin-shortcuts a:hover{border-color:#9bcfc2;background:#f8fcfa}
+.admin-shortcuts b,.admin-shortcuts small{display:block}
+.admin-shortcuts b{font-size:14px;color:#123f46}
+.admin-shortcuts small{font-size:12px;color:#687b7c;margin-top:2px}
+.shortcut-icon{display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;border-radius:12px;background:#eaf6f1;color:#176d62;font-size:22px;font-weight:700}
+.admin-shortcuts-hint{font-size:13px;color:#687b7c;margin:8px 2px 24px}
+.admin-photo-preview{display:flex;align-items:center;gap:12px;min-height:82px;padding:10px;border:1px dashed #cbded5;border-radius:12px;background:#f8fbf9;color:#687b7c;font-size:12px}
+.admin-photo-preview img{width:76px;height:76px;object-fit:cover;border-radius:12px}
+#yadTherapistForm{scroll-margin-top:24px}
+#yadAppointmentsSection,#yadPaymentsSection,#yadAvailabilityManager,#yadWorkshopAdmin,#yadBusinessSettings{scroll-margin-top:24px}
+@media(max-width:760px){.admin-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.admin-shortcuts a{padding:11px;min-height:72px}.shortcut-icon{flex-basis:34px;width:34px;height:34px;font-size:19px}.admin-shortcuts b{font-size:13px}.admin-shortcuts small{font-size:11px}}
+@media(max-width:390px){.admin-shortcuts{grid-template-columns:1fr}}
+</style>
+
+<script>
+(()=>{const ready=()=>{const input=document.getElementById("yadPhoto");const preview=document.getElementById("yadPhotoPreview");if(!input||!preview)return;let currentUrl=null;input.addEventListener("change",()=>{if(currentUrl)URL.revokeObjectURL(currentUrl);currentUrl=null;preview.replaceChildren();const file=input.files&&input.files[0];if(!file){preview.textContent="پس از انتخاب عکس، پیش‌نمایش اینجا نمایش داده می‌شود.";return;}if(!/^image\\/(jpeg|png|webp)$/.test(file.type)){preview.textContent="فرمت عکس باید JPG، PNG یا WebP باشد.";return;}currentUrl=URL.createObjectURL(file);const img=document.createElement("img");img.src=currentUrl;img.alt="پیش‌نمایش عکس درمانگر";const note=document.createElement("span");note.textContent=file.name+" · "+Math.max(1,Math.round(file.size/1024))+" کیلوبایت";preview.append(img,note);});};if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",ready,{once:true});else ready();})();
+</script></body></html>
