@@ -40,8 +40,16 @@
 <section class="portal-card" id="therapistPrivatePortal" hidden>
 <h2 data-i18n="privatePortalTitle">پنل اختصاصی درمانگر</h2>
 <p data-i18n="privatePortalLead">جلسات تأییدشده و زمان‌های آزاد خود را مدیریت کنید. اطلاعات بالینی مراجعان در این پنل نمایش داده نمی‌شود.</p>
-<div class="portal-card"><h3>تعرفه‌های جلسات من</h3><p>مبلغ هر جلسهٔ ۴۵ دقیقه‌ای را خودتان تعیین کنید. قیمت‌ها در پروفایل عمومی شما نمایش داده می‌شوند. مبلغ ایران را به تومان وارد کنید؛ مبلغ در سامانه به ریال ذخیره می‌شود. سهم شما ۷۰٪ و سهم یادشین ۳۰٪ است.</p>
-<form id="yadTherapistFeeForm" class="yad-admin-form"><label>ایران (تومان)<input id="yadTherapistFeeIRR" type="number" min="1" step="1"></label><label>اروپا (یورو)<input id="yadTherapistFeeEUR" type="number" min="1" step="1"></label><label>آمریکا (دلار آمریکا)<input id="yadTherapistFeeUSD" type="number" min="1" step="1"></label><label>کانادا (دلار کانادا)<input id="yadTherapistFeeCAD" type="number" min="1" step="1"></label><button class="button primary" type="submit">ذخیره تعرفه‌ها</button></form><p id="yadTherapistFeeStatus" class="notice" role="status" aria-live="polite"></p></div>
+<div class="portal-card"><h3>مدت و تعرفهٔ جلسات من</h3><p>مدت و مبلغ جلسهٔ اول و جلسات بعدی را مستقل تعیین کنید. مبلغ ایران به تومان وارد می‌شود و در سامانه به ریال ذخیره خواهد شد. سهم مالی مطابق توافق همکاری محاسبه می‌شود.</p>
+<form id="yadTherapistFeeForm" class="yad-admin-form">
+<h4>مدت جلسات (دقیقه)</h4>
+<label>جلسهٔ اول<input id="yadTherapistFirstDuration" type="number" min="20" max="180" step="5" required></label>
+<label>جلسات بعدی<input id="yadTherapistFollowupDuration" type="number" min="20" max="180" step="5" required></label>
+<h4>تعرفهٔ جلسهٔ اول</h4>
+<label>ایران (تومان)<input id="yadTherapistFirstIRR" type="number" min="1" step="1"></label><label>اروپا (یورو)<input id="yadTherapistFirstEUR" type="number" min="1" step="1"></label><label>آمریکا (دلار آمریکا)<input id="yadTherapistFirstUSD" type="number" min="1" step="1"></label><label>کانادا (دلار کانادا)<input id="yadTherapistFirstCAD" type="number" min="1" step="1"></label>
+<h4>تعرفهٔ جلسات بعدی</h4>
+<label>ایران (تومان)<input id="yadTherapistFollowupIRR" type="number" min="1" step="1"></label><label>اروپا (یورو)<input id="yadTherapistFollowupEUR" type="number" min="1" step="1"></label><label>آمریکا (دلار آمریکا)<input id="yadTherapistFollowupUSD" type="number" min="1" step="1"></label><label>کانادا (دلار کانادا)<input id="yadTherapistFollowupCAD" type="number" min="1" step="1"></label>
+<button class="button primary" type="submit">ذخیره مدت و تعرفه‌ها</button></form><p id="yadTherapistFeeStatus" class="notice" role="status" aria-live="polite"></p></div>
 <div class="portal-card"><h3>درخواست‌های ارزیابی شخصیت</h3><p>اگر به‌عنوان متخصص ارزیابی تعیین شده‌اید، درخواست‌های پرداخت‌شده و زمان‌بندی‌شده در این بخش نمایش داده می‌شوند. پس از ارزیابی می‌توانید گزارش بازخورد و درمانگران پیشنهادی را ثبت کنید؛ اتصال خودکار به درمانگر انجام نمی‌شود.</p><div id="yadTherapistAssessmentRequests" class="portal-grid"><p>درخواست ارزیابی‌ای برای این حساب ثبت نشده است.</p></div></div>
 <div class="portal-card" id="yadTherapistArticles"><h3>ارسال مقاله برای مجله یادشین</h3><p>مقاله‌های علمی و آموزشی خود را برای بررسی تحریریه ارسال کنید. متن باید تألیفی و مستند باشد و منابع آن روشن ذکر شوند. از درج هرگونه اطلاعات هویتی یا جزئیات قابل‌شناسایی مراجعان خودداری کنید؛ تغییر نام به‌تنهایی برای ناشناس‌سازی کافی نیست. مقاله پس از بررسی علمی، اخلاقی و نگارشی و تأیید مدیر منتشر می‌شود.</p><form id="yadTherapistArticleForm" class="yad-admin-form"><label>عنوان مقاله<input id="yadArticleTitle" required minlength="5" maxlength="180"></label><label>خلاصه مقاله<textarea id="yadArticleExcerpt" required minlength="30" maxlength="500" rows="3"></textarea></label><label>متن کامل مقاله<textarea id="yadArticleBody" required minlength="500" maxlength="20000" rows="12" placeholder="متن مقاله را به‌صورت متن ساده وارد کنید؛ کد HTML پذیرفته نمی‌شود. ارجاعات و فهرست منابع را در پایان متن بیاورید."></textarea></label><label>زبان مقاله<select id="yadArticleLanguage"><option value="fa">فارسی</option><option value="ku">کوردی</option><option value="en">English</option><option value="tr">Türkçe</option><option value="ar">العربية</option><option value="es">Español</option><option value="de">Deutsch</option><option value="fr">Français</option></select></label><button class="button primary" type="submit">ارسال برای بررسی مدیر</button></form><p id="yadTherapistArticleStatus" class="notice" role="status" aria-live="polite"></p><h4>وضعیت مقاله‌های من</h4><div id="yadTherapistArticleStatusList" class="portal-grid">برای مشاهده وارد حساب درمانگر شوید.</div></div><div class="portal-card"><h3>جلسات من</h3><div id="yadTherapistSessions" class="portal-grid"><p>برای مشاهدهٔ جلسات وارد حساب درمانگر شوید.</p></div></div>
 <div class="portal-card"><h3>مدیریت زمان‌های آزاد</h3>
@@ -49,7 +57,7 @@
 <label>زمان شروع<input id="yadTherapistAvailabilityStart" type="datetime-local" required></label>
 <label>زمان پایان<input id="yadTherapistAvailabilityEnd" type="datetime-local" required></label>
 <label>منطقهٔ زمانی (IANA)<input id="yadTherapistAvailabilityTimezone" maxlength="80" required></label>
-<button class="button primary" type="submit">ثبت زمان آزاد ۴۵ دقیقه‌ای</button>
+<button class="button primary" type="submit">ثبت بازهٔ زمانی آزاد (۲۰ تا ۱۸۰ دقیقه)</button>
 </form>
 <p id="yadTherapistAvailabilityStatus" class="notice" role="status" aria-live="polite"></p>
 <div id="yadTherapistAvailabilityList" class="portal-grid"></div>
