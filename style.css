@@ -1005,3 +1005,9 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
 .profile-hero .profile-photo,#therapistProfile .profile-photo{width:205px!important;height:235px!important;flex-basis:205px!important;object-fit:cover!important;object-position:center 22%!important;opacity:1!important;filter:none!important;border-radius:16px!important}
 @media(max-width:760px){#therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo{width:118px!important;height:144px!important;flex-basis:118px!important}.profile-hero .profile-photo,#therapistProfile .profile-photo{width:140px!important;height:168px!important;flex-basis:140px!important}}
 @media(max-width:480px){.profile-hero .profile-photo,#therapistProfile .profile-photo{width:124px!important;height:150px!important;flex-basis:124px!important}}
+
+/* Corrected per review: right-panel icons are larger, brighter and clearer. */
+.side-nav i{width:30px!important;height:30px!important;flex:0 0 30px!important;color:#e7f5ef!important;background:transparent!important;border:0!important}
+.side-nav i svg{width:25px!important;height:25px!important;stroke-width:2.15!important}
+.side-nav>a:not(.side-brand){gap:10px!important}
+@media(max-width:760px){.side-nav i{width:27px!important;height:27px!important;flex-basis:27px!important}.side-nav i svg{width:23px!important;height:23px!important}}
