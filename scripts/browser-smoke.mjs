@@ -157,7 +157,7 @@ try {
   for (const selector of ["#yadSessionAccessAdmin", "#yadSupportAdmin", "#yadFeedbackAdmin", "#yadAvailabilityForm", "#yadAvailabilityTherapist", "#yadYearsExperience", "#yadJurisdictions", "#yadAcceptingNewClients"]) {
     if (!(await page.locator(selector).count())) throw new Error("Admin workflow control missing: " + selector);
   }
-  if (await page.locator(".admin-shortcuts a").count() !== 8) throw new Error("Admin quick navigation is incomplete.");
+  if (await page.locator(".admin-shortcuts a").count() !== 14) throw new Error("Admin quick navigation is incomplete.");
   if (await page.locator("#yadTherapistForm > details").count() !== 4) throw new Error("Therapist editor should have four guided sections.");
   if (await page.locator("#yadWorkshopAdminForm > details").count() !== 4) throw new Error("Workshop editor should have four guided sections.");
   for (const link of await page.locator(".admin-shortcuts a").evaluateAll(nodes => nodes.map(a => a.getAttribute("href")))) {
@@ -283,8 +283,37 @@ try {
   await page.locator('#mainNav a[href="#services"]').click();
   if (await page.locator("#mainNav").isVisible()) throw new Error("Mobile navigation did not close after selecting a destination.");
   if (await page.locator("#menuToggle").getAttribute("aria-expanded") !== "false") throw new Error("Mobile navigation expanded state was not reset after closing.");
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  const navLabels = await page.locator("#mainNav a").allTextContents();
+  const activeLanguage = await page.locator("html").getAttribute("lang");
+  const expectedNavLabels = activeLanguage === "en" ? ["Services", "Therapists", "Workshops", "Articles", "About YAD", "Therapist portal", "Admin"] : ["خدمات", "درمانگران", "کارگاه‌ها", "مجله", "دربارهٔ ما", "پنل درمانگر", "پنل مدیریت"];
+  if (navLabels.length !== expectedNavLabels.length || navLabels.some((label, index) => label.trim() !== expectedNavLabels[index])) {
+    throw new Error("Homepage navigation labels do not match the active language: " + JSON.stringify({ language: document.documentElement.lang, labels: navLabels }));
+  }
+  if (await page.locator('#mainNav a[href="client.html"]').count()) throw new Error("Client portal must not appear in the public homepage navigation.");
+  const assertPublicPortalLinks = async (journey) => {
+    await page.waitForURL("http://127.0.0.1:4173/");
+    await page.locator("#mainNav").waitFor({ state: "attached" });
+    const links = await page.locator("#mainNav a").evaluateAll(nodes => nodes.map(a => ({href:new URL(a.href).pathname, label:a.textContent.trim()})));
+    const expected = ["/therapist.html", "/admin.html"];
+    for (const path of expected) {
+      if (!links.some(link => link.href === path)) throw new Error("Public homepage lost " + path + " after " + journey + ": " + JSON.stringify(links));
+    }
+    if (links.some(link => link.href === "/client.html")) throw new Error("Client portal appeared in public navigation after " + journey + ".");
+  };
+  await page.goto("http://127.0.0.1:4173/therapist.html", { waitUntil: "domcontentloaded" });
+  await page.locator(".portal-nav a").first().click();
+  await assertPublicPortalLinks("returning from therapist portal");
+  await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
+  await page.locator(".portal-nav a").first().click();
+  await assertPublicPortalLinks("returning from admin portal");
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
   if (!(await page.locator(".admin-shortcuts").count())) throw new Error("Admin quick-access navigation is missing.");
+  if (!(await page.locator(".auth-gate").isVisible()) || !(await page.locator("#yadEmail").isVisible())) throw new Error("Admin login gate is not visible before authentication.");
+  if (await page.locator(".admin-shortcuts").isVisible()) throw new Error("Admin data and shortcuts must remain hidden before authentication.");
+  await page.goto("http://127.0.0.1:4173/therapist.html", { waitUntil: "domcontentloaded" });
+  if (!(await page.locator(".auth-gate").isVisible()) || !(await page.locator("#yadEmail").isVisible())) throw new Error("Therapist login gate is not visible.");
+  if (await page.locator("#therapistPrivatePortal").isVisible()) throw new Error("Private therapist portal must remain hidden before authentication.");
 
   for (const [path, selector] of [["/initial-guidance.html","#initialGuideForm"],["/standards.html","h1"],["/workshops.html","#yadWorkshopPageList"],["/articles/why-assessment-matters.html","h1"]]) {
     const response=await page.goto("http://127.0.0.1:4173"+path,{waitUntil:"domcontentloaded"});
