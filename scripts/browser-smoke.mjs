@@ -285,8 +285,9 @@ try {
   if (await page.locator("#menuToggle").getAttribute("aria-expanded") !== "false") throw new Error("Mobile navigation expanded state was not reset after closing.");
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
   const navLabels = await page.locator("#mainNav a").allTextContents();
-  if (navLabels.length !== 7 || navLabels[2].trim() !== "کارگاه‌ها" || navLabels[3].trim() !== "مجله" || navLabels[5].trim() !== "پنل درمانگر" || !["مدیریت", "پنل مدیریت"].includes(navLabels[6].trim())) {
-    throw new Error("Homepage navigation labels do not match their destinations: " + JSON.stringify(navLabels));
+  const expectedNavLabels = document.documentElement.lang === "en" ? ["Services", "Therapists", "Workshops", "Articles", "About YAD", "Therapist portal", "Admin"] : ["خدمات", "درمانگران", "کارگاه‌ها", "مجله", "دربارهٔ ما", "پنل درمانگر", "پنل مدیریت"];
+  if (navLabels.length !== expectedNavLabels.length || navLabels.some((label, index) => label.trim() !== expectedNavLabels[index])) {
+    throw new Error("Homepage navigation labels do not match the active language: " + JSON.stringify({ language: document.documentElement.lang, labels: navLabels }));
   }
   if (await page.locator('#mainNav a[href="client.html"]').count()) throw new Error("Client portal must not appear in the public homepage navigation.");
   await page.goto("http://127.0.0.1:4173/admin.html", { waitUntil: "domcontentloaded" });
