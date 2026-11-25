@@ -340,6 +340,15 @@ begin
 end;
 $$;
 
+revoke all on function public.therapist_get_my_session_settings() from public, anon;
+revoke all on function public.therapist_set_my_session_durations(integer,integer) from public, anon;
+revoke all on function public.therapist_get_my_session_fees() from public, anon;
+revoke all on function public.therapist_set_my_session_fee(text,text,bigint) from public, anon;
+revoke all on function public.client_get_therapist_session_quote(uuid,text,text) from public, anon;
+revoke all on function public.get_public_therapist_session_fees(uuid) from public;
+revoke all on function public.get_public_therapist_session_fee_directory() from public;
+revoke all on function public.client_list_available_slots(uuid,text,integer) from public, anon;
+
 grant execute on function public.therapist_get_my_session_settings() to authenticated;
 grant execute on function public.therapist_set_my_session_durations(integer,integer) to authenticated;
 grant execute on function public.therapist_get_my_session_fees() to authenticated;
