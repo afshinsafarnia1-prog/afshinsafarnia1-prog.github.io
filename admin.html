@@ -10,7 +10,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="supabase-config.js"></script>
 <script defer src="auth.js"></script>
-<script defer src="admin-workflow-extended.js"></script><script defer src="admin-extensions.js"></script><script defer src="admin-assessment-workflow.js"></script><script defer src="admin-articles.js"></script>
+<script defer src="admin-workflow-extended.js"></script><script defer src="admin-extensions.js"></script><script defer src="admin-assessment-workflow.js"></script><script defer src="admin-articles.js"></script><script defer src="admin-photo-preview.js?v=1"></script>
 </head>
 <body>
 <a class="skip-link" href="#mainContent">رفتن به محتوای اصلی</a><header class="header portal-header"><div class="wrap navrow"><a class="brand" href="/"><img class="brand-logo" src="yadshin-mark.svg" alt="" aria-hidden="true"><span><b>یادشین</b><small>YADSHIN</small></span></a><nav class="portal-nav" aria-label="ناوبری مدیریت"><a href="/">نمای عمومی سایت</a><a href="/#therapists">فهرست درمانگران</a></nav><a class="navcta" href="/rules.html">قوانین و حریم خصوصی</a></div></header><main id="mainContent" class="portal-main"><div class="portal-wrap">
@@ -98,7 +98,7 @@
 <label>رویکردهای درمانی<input id="yadModalities"></label>
 <label>سابقهٔ حرفه‌ای (سال)<input id="yadYearsExperience" type="number" min="0" max="60" step="1"></label>
 <label>کشورهای مجاز فعالیت (کد دوحرفی ISO؛ با ویرگول)<input id="yadJurisdictions" maxlength="2000" placeholder="IR, DE, NL — فقط پس از بررسی مجوز"></label>
-<label>عکس پروفایل<input id="yadPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label>
+<label>عکس پروفایل<input id="yadPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label><div id="yadPhotoPreview" aria-live="polite"><span>پیش‌نمایش عکس درمانگر پس از انتخاب فایل نمایش داده می‌شود.</span></div>
 <label>مدرک مجوز / پروانه<input id="yadLicenseDocument" type="file" accept="application/pdf,image/jpeg,image/png"></label>
 <label>شمارهٔ پروانه اشتغال سازمان نظام<input id="yadLicense" maxlength="120"></label>
 <label>مرجع صادرکنندهٔ مجوز (متناسب با کشور)<input id="yadAuthority" maxlength="240" placeholder="نام سازمان یا نهاد رسمی صادرکننده"></label>
