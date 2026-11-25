@@ -325,6 +325,63 @@ begin
 end;
 $function$;
 
+-- Only show admin slots long enough for the requested session.
+create or replace function public.admin_list_available_slots_for_request(p_request_id uuid)
+returns table(slot_id uuid, starts_at timestamptz, ends_at timestamptz, timezone text, client_timezone text)
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $function$
+declare
+  v_request public.client_requests%rowtype;
+begin
+  perform public.require_admin_aal2();
+
+  if not exists (
+    select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin'
+  ) then
+    raise exception 'admin_only' using errcode = '42501';
+  end if;
+
+  select * into v_request
+  from public.client_requests r
+  where r.id = p_request_id and r.status = 'payment_verified';
+
+  if not found then
+    raise exception 'request_not_ready_to_schedule' using errcode = 'P0001';
+  end if;
+
+  if not exists (
+    select 1 from public.payments p
+    where p.request_id = p_request_id and p.status = 'paid'
+  ) then
+    raise exception 'payment_not_verified' using errcode = 'P0001';
+  end if;
+
+  return query
+  select s.id, s.starts_at, s.ends_at, s.timezone,
+    coalesce(nullif(p.timezone, ''), s.timezone, 'Asia/Tehran')
+  from public.availability_slots s
+  join public.profiles p on p.id = v_request.client_id
+  join public.therapists t on t.id = s.therapist_id
+  where s.therapist_id = v_request.therapist_id
+    and s.is_available = true
+    and s.starts_at > now()
+    and s.ends_at - s.starts_at >= make_interval(mins => v_request.session_duration_minutes)
+    and t.is_listed
+    and t.verified_at is not null
+    and not exists (
+      select 1 from public.appointments a
+      where a.therapist_id = s.therapist_id
+        and a.status in ('requested','confirmed')
+        and a.starts_at < s.ends_at
+        and a.ends_at > s.starts_at
+    )
+  order by case when s.id = v_request.requested_slot_id then 0 else 1 end, s.starts_at;
+end;
+$function$;
+
 -- Admin may create a longer availability window for Niko; other therapists retain 45-minute slots.
 create or replace function public.admin_create_availability_slot(
   p_therapist_id uuid,
@@ -365,9 +422,9 @@ begin
   end if;
 
   if v_slug = 'niko-ghasemi' then
-    if p_ends_at - p_starts_at < interval '60 minutes'
+    if p_ends_at - p_starts_at < interval '75 minutes'
       or p_ends_at - p_starts_at > interval '180 minutes' then
-      raise exception 'niko_availability_must_be_60_to_180_minutes' using errcode = '22023';
+      raise exception 'niko_availability_must_be_75_to_180_minutes' using errcode = '22023';
     end if;
   elsif p_ends_at - p_starts_at <> interval '45 minutes' then
     raise exception 'future_45_minute_slot_required' using errcode = '22023';
