@@ -114,6 +114,32 @@
         assessmentRoot.append(card);
       });
     }
+    async function loadMyIdentity(){
+      const card=document.getElementById("yadTherapistIdentity");
+      const photo=document.getElementById("yadTherapistIdentityPhoto");
+      const name=document.getElementById("yadTherapistIdentityName");
+      const headline=document.getElementById("yadTherapistIdentityHeadline");
+      const note=document.getElementById("yadTherapistIdentityStatus");
+      if(!card)return;
+      const {data,error}=await db.from("therapists")
+        .select("display_name,headline,public_slug,photo_path")
+        .eq("owner_user_id",activeUser).maybeSingle();
+      if(error){note.hidden=false;note.textContent="اطلاعات پروفایل به این حساب متصل نیست.";return;}
+      if(!data){
+        note.hidden=false;
+        note.textContent="پروفایل حرفه‌ای هنوز به این حساب متصل نشده است. برای نمایش عکس و مشخصات، مدیریت باید اتصال حساب را تکمیل کند.";
+        return;
+      }
+      name.textContent=data.display_name||"درمانگر";
+      headline.textContent=data.headline||"";
+      if(data.photo_path){
+        const slug=data.public_slug||"";
+        photo.src=slug?("/therapists/"+slug+".jpg"):"";
+        photo.hidden=!slug;
+        photo.onerror=()=>{photo.hidden=true;};
+      }else{photo.hidden=true;}
+      card.hidden=false;
+    }
     async function loadMyFees(){
       if(!feeForm)return;
       const {data,error}=await db.rpc("therapist_get_my_fees");
@@ -150,7 +176,7 @@
         return;
       }
       zone.value=Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Tehran";
-      await Promise.all([loadSessions(),loadSlots(),loadMyFees(),loadAssessmentRequests()]);
+      await Promise.all([loadMyIdentity(),loadSessions(),loadSlots(),loadMyFees(),loadAssessmentRequests()]);
     }
     form.addEventListener("submit",async event=>{
       event.preventDefault();

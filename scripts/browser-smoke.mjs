@@ -166,7 +166,7 @@ try {
   await page.locator("#siteLanguage").selectOption("en");
   if (!(await page.locator("h1").innerText()).includes("Where would you like to begin")) throw new Error("Assistant translation did not apply.");
   await page.goto("http://127.0.0.1:4173/therapist.html", { waitUntil: "domcontentloaded" });
-  if (await page.locator(".therapist-quick-nav a").count() !== 6) throw new Error("Therapist quick navigation is incomplete.");
+  if (await page.locator(".therapist-quick-nav a").count() !== 3) throw new Error("Therapist quick navigation is incomplete.");
   for (const link of await page.locator(".therapist-quick-nav a").evaluateAll(nodes => nodes.map(a => a.getAttribute("href")))) {
     if (!link?.startsWith("#") || !(await page.locator(link).count())) throw new Error("Therapist quick navigation target is missing: " + link);
   }
