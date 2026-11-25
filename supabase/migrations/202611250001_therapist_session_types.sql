@@ -146,7 +146,8 @@ begin
   end if;
   select case when exists(
     select 1 from public.appointments a
-    where a.client_id=v_client and a.therapist_id=p_therapist_id and a.status='completed'
+    where a.client_id=v_client and a.therapist_id=p_therapist_id
+      and (a.status='completed' or (a.status='confirmed' and a.ends_at<now()))
   ) then 'followup' else 'first' end into v_type;
   select case when v_type='first' then t.first_session_duration_minutes
               else t.followup_session_duration_minutes end
