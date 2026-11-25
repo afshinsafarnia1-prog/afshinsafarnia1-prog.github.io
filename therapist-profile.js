@@ -44,6 +44,8 @@
     if(error||!data){root.textContent=t("profileNotFound");return;}
     const {data:metaRows}=await db.rpc("get_public_therapist_public_metadata",{p_therapist_id:id});
     const publicMeta=metaRows?.[0]||{};
+    const {data:sessionFeeRows}=await db.rpc("get_public_therapist_session_fees",{p_therapist_id:id});
+    const sessionFees=sessionFeeRows||[];
     const {data:feedbackRows}=await db.rpc("get_public_therapist_feedback",{p_therapist_id:id});
     const feedback=feedbackRows||[];
     const isMitraPersian=data.public_slug==="mitra-pahlavan"&&document.documentElement.lang==="fa";
@@ -97,7 +99,12 @@
     intro.append(node("h1","",displayName||t("profileNoName")));
     if(data.headline)intro.append(node("p","profile-headline",data.public_slug==="niko-ghasemi"?localizedNikoText(data.headline):(isMitra&&document.documentElement.lang==="fa"?"روان‌شناس بالینی | روان‌کاو | درمانگر متمرکز بر تروما · ویژهٔ بزرگسالان":data.headline)));
     if(data.public_slug!=="niko-ghasemi"&&typeof publicMeta.accepting_new_clients==="boolean")intro.append(node("span",publicMeta.accepting_new_clients?"availability-open":"availability-closed",t(publicMeta.accepting_new_clients?"profileAcceptingYes":"profileAcceptingNo")));
-    intro.append(node("p","profile-session",data.public_slug==="niko-ghasemi"?(document.documentElement.lang==="en"?"45-minute session":document.documentElement.lang==="ar"?"جلسة لمدة ٤٥ دقيقة":"جلسهٔ ۴۵ دقیقه‌ای"):t("profileSession")));
+    const firstDuration=sessionFees.find(x=>x.session_type==="first")?.session_duration_minutes;
+    const followupDuration=sessionFees.find(x=>x.session_type==="followup")?.session_duration_minutes;
+    const sessionText=firstDuration&&followupDuration
+      ?(document.documentElement.lang==="en"?"First session: "+firstDuration+" min · Follow-up: "+followupDuration+" min":document.documentElement.lang==="ar"?"الجلسة الأولى: "+firstDuration+" دقيقة · الجلسات اللاحقة: "+followupDuration+" دقيقة":"جلسهٔ اول: "+firstDuration+" دقیقه · جلسات بعدی: "+followupDuration+" دقیقه")
+      :t("profileSession");
+    intro.append(node("p","profile-session",sessionText));
     hero.append(intro);root.append(hero);
     const grid=node("div","profile-content-grid");
     const main=node("div","profile-main");
@@ -127,18 +134,20 @@
     const aside=node("aside","profile-aside");
     const price=node("section","profile-section");
     price.append(node("h2","",t("profileFee")));
-    let tariffs=[];
-    const {data:feeRows,error:feeError}=await db.rpc("get_public_therapist_fees",{p_therapist_id:id});
     const currencyLabels={IRR:t("profileIran")+" · "+t("profileToman"),EUR:t("profileEuro"),USD:t("profileDollar"),CAD:"دلار کانادا"};
-    if(!feeError&&feeRows?.length){
-      feeRows.forEach(item=>{
-        const amount=new Intl.NumberFormat(locale()).format(item.currency==="IRR"?Number(item.amount)/10:Number(item.amount))+(item.currency==="IRR"?" تومان":" "+item.currency);
-        price.append(node("p","profile-price",(currencyLabels[item.currency]||item.currency)+" · "+amount));
-      });
+    if(sessionFees.length){
+      for(const type of ["first","followup"]){
+        const rows=sessionFees.filter(item=>item.session_type===type);
+        if(!rows.length)continue;
+        price.append(node("h3","",type==="first"?(document.documentElement.lang==="en"?"First session":document.documentElement.lang==="ar"?"الجلسة الأولى":"جلسهٔ اول"):(document.documentElement.lang==="en"?"Follow-up sessions":document.documentElement.lang==="ar"?"الجلسات اللاحقة":"جلسات بعدی")));
+        rows.forEach(item=>{
+          const amount=new Intl.NumberFormat(locale()).format(item.currency==="IRR"?Number(item.amount)/10:Number(item.amount))+(item.currency==="IRR"?" تومان":" "+item.currency);
+          price.append(node("p","profile-price",(currencyLabels[item.currency]||item.currency)+" · "+amount+" · "+item.session_duration_minutes+" دقیقه"));
+        });
+      }
     }else{
       price.append(node("p","profile-muted","تعرفهٔ این درمانگر هنوز برای نمایش ثبت نشده است."));
     }
-    price.append(node("small","profile-muted",t("profile45min")));
     aside.append(price);
     const contactActions=node("div","profile-contact-actions");
     const lang=document.documentElement.lang||"fa";
