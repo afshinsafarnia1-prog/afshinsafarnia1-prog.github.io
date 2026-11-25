@@ -75,7 +75,7 @@ begin
   if auth.uid() is null or not exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='therapist') then
     raise exception 'therapist_only' using errcode='42501';
   end if;
-  if p_first_minutes not between 20 and 180 or p_followup_minutes not between 20 and 180 then
+  if p_first_minutes is null or p_followup_minutes is null or p_first_minutes not between 20 and 180 or p_followup_minutes not between 20 and 180 then
     raise exception 'invalid_session_duration' using errcode='22023';
   end if;
   select t.id into v_therapist from public.therapists t
@@ -214,7 +214,7 @@ begin
 
   perform pg_advisory_xact_lock(hashtextextended(v_client::text||':'||p_therapist_id::text,0));
   select case when exists(select 1 from public.appointments a
-    where a.client_id=v_client and a.therapist_id=p_therapist_id and a.status='completed')
+    where a.client_id=v_client and a.therapist_id=p_therapist_id and (a.status='completed' or (a.status='confirmed' and a.ends_at<now())))
     then 'followup' else 'first' end into v_type;
   select case when v_type='first' then t.first_session_duration_minutes
               else t.followup_session_duration_minutes end
