@@ -90,24 +90,35 @@
 <div id="yadWorkflowStatus" class="notice" role="status" aria-live="polite">در حال اتصال…</div>
 <div id="yadTherapistList" class="portal-grid"></div>
 <form id="yadTherapistForm" class="yad-admin-form">
-<h3 id="yadFormTitle">ثبت درمانگر جدید</h3>
+<h3 id="yadFormTitle">ثبت درمانگر جدید</h3><p class="admin-form-intro">فقط اطلاعات اصلی را ابتدا وارد کن. بخش‌های تخصص و مدارک را می‌توانی جداگانه باز کنی. شناسهٔ صفحه را با حروف لاتین و بدون فاصله بنویس.</p>
 <input id="yadTherapistId" type="hidden">
 <input id="yadExistingPhoto" type="hidden">
 <input id="yadExistingDocument" type="hidden">
 <input id="yadExistingScopeDocument" type="hidden">
-<div class="portal-grid">
-<label>نام نمایشی<input id="yadDisplayName" required maxlength="120"></label>
+
+<details class="admin-form-group" open>
+<summary><span><b>۱. اطلاعات اصلی درمانگر</b><small>نام، عنوان و شناسهٔ صفحه؛ این بخش برای هر پروفایل لازم است.</small></span></summary>
+<div class="portal-grid"><label>نام نمایشی<input id="yadDisplayName" required maxlength="120"></label>
 <label>شناسهٔ صفحه (لاتین)<input id="yadPublicSlug" required pattern="[a-zA-Z0-9-]+" maxlength="100"></label>
 <label>عنوان حرفه‌ای<input id="yadHeadline" maxlength="180"></label>
 <label>مدت جلسه (دقیقه)<input id="yadDuration" type="number" min="45" max="45" value="45" readonly required><small>مدت استاندارد همهٔ جلسات یادشین ۴۵ دقیقه است.</small></label>
 <label>شناسهٔ حساب درمانگر در سامانه (UUID؛ پس از ایجاد حساب با نقش درمانگر)<input id="yadTherapistOwnerUserId" maxlength="36" pattern="[0-9a-fA-F-]{36}" placeholder="UUID حساب کاربری درمانگر"><small>اختیاری؛ فقط پس از احراز هویت و تأیید صلاحیت به پروفایل متصل شود.</small></label>
-<label>تحصیلات و مدارک (با ویرگول جدا کن)<input id="yadQualifications"></label>
+</div>
+</details>
+<details class="admin-form-group">
+<summary><span><b>۲. تخصص و معرفی حرفه‌ای</b><small>تحصیلات، حوزه‌های تخصصی، زبان‌ها و سابقه.</small></span></summary>
+<div class="portal-grid"><label>تحصیلات و مدارک (با ویرگول جدا کن)<input id="yadQualifications"></label>
 <label>حوزه‌های تخصصی<input id="yadSpecialties"></label>
 <label>زبان‌ها (fa, ku, en, tr, ar, es, de, fr)<input id="yadLanguages" value="fa"></label>
 <label>رویکردهای درمانی<input id="yadModalities"></label>
 <label>سابقهٔ حرفه‌ای (سال)<input id="yadYearsExperience" type="number" min="0" max="60" step="1"></label>
 <label>کشورهای مجاز فعالیت (کد دوحرفی ISO؛ با ویرگول)<input id="yadJurisdictions" maxlength="2000" placeholder="IR, DE, NL — فقط پس از بررسی مجوز"></label>
-<label>عکس پروفایل<input id="yadPhoto" type="file" accept="image/jpeg,image/png,image/webp"><span class="admin-photo-preview" id="yadPhotoPreview" aria-live="polite">پس از انتخاب عکس، پیش‌نمایش اینجا نمایش داده می‌شود.</span></label>
+</div>
+<label>زندگی‌نامه و معرفی حرفه‌ای<textarea id="yadBiography" rows="5"></textarea></label>
+</details>
+<details class="admin-form-group">
+<summary><span><b>۳. عکس و مدارک احراز صلاحیت</b><small>مدارک این بخش خصوصی‌اند؛ پیش از انتشار باید بررسی شوند.</small></span></summary>
+<div class="portal-grid"><label>عکس پروفایل<input id="yadPhoto" type="file" accept="image/jpeg,image/png,image/webp"><span class="admin-photo-preview" id="yadPhotoPreview" aria-live="polite">پس از انتخاب عکس، پیش‌نمایش اینجا نمایش داده می‌شود.</span></label>
 <label>مدرک مجوز / پروانه<input id="yadLicenseDocument" type="file" accept="application/pdf,image/jpeg,image/png"></label>
 <label>شمارهٔ پروانه اشتغال سازمان نظام<input id="yadLicense" maxlength="120"></label>
 <label>مرجع صادرکنندهٔ مجوز (متناسب با کشور)<input id="yadAuthority" maxlength="240" placeholder="نام سازمان یا نهاد رسمی صادرکننده"></label>
@@ -115,9 +126,10 @@
 <label>مرجع/نشانی استعلام رسمی پروانه<input id="yadRegistryReference" maxlength="2000" placeholder="نشانی یا شناسه استعلام از درگاه رسمی سازمان"></label>
 <label>مدرک تخصصی روان‌درمانگری، آموزش رویکردی و سوپرویژن<input id="yadScopeDocument" type="file" accept="application/pdf,image/jpeg,image/png"></label>
 <label>مستند بررسی مقررات هر کشور مجاز<textarea id="yadJurisdictionReviewReference" rows="3" maxlength="4000" placeholder="برای هر کشور کد ISO و مرجع/نظر حقوقی مربوط را ثبت کنید؛ نمونه: IR=...؛ DE=..."></textarea></label>
-</div>
+</div></div>
+</details>
 <label>زندگی‌نامه و معرفی حرفه‌ای<textarea id="yadBiography" rows="5"></textarea></label>
-<div class="yad-checks"><label><input id="yadAssessmentSpecialist" type="checkbox"> ارائه‌دهندهٔ ارزیابی STIPO / SWAP</label><label><input id="yadVerified" type="checkbox"> پروانه رسمی، صلاحیت تخصصی روان‌درمانگری و مستندات قلمروها بررسی شده‌اند</label><label><input id="yadListed" type="checkbox"> انتشار در فهرست عمومی</label><label><input id="yadAcceptingNewClients" type="checkbox"> پذیرش مراجع جدید فعال است</label></div><p class="privacy-hint">ثبت و انتشار درمانگر فقط پس از استعلام رسمی پروانه، بررسی مدارک تخصصی روان‌درمانگری/سوپرویژن و ثبت مستندات حقوقی تک‌تک کشورهای مجاز ممکن است. پروانه ایرانی به‌تنهایی مجوز فعالیت در کشورهای دیگر نیست. مدارک در فضای خصوصی نگهداری شوند.</p>
+<details class="admin-form-group admin-form-status" open><summary><span><b>۴. وضعیت تأیید و نمایش پروفایل</b><small>گزینهٔ انتشار را فقط پس از تکمیل بررسی مدارک فعال کن.</small></span></summary><div class="yad-checks"><label><input id="yadAssessmentSpecialist" type="checkbox"> ارائه‌دهندهٔ ارزیابی STIPO / SWAP</label><label><input id="yadVerified" type="checkbox"> پروانه رسمی، صلاحیت تخصصی روان‌درمانگری و مستندات قلمروها بررسی شده‌اند</label><label><input id="yadListed" type="checkbox"> انتشار در فهرست عمومی</label><label><input id="yadAcceptingNewClients" type="checkbox"> پذیرش مراجع جدید فعال است</label></div><p class="privacy-hint">ثبت و انتشار درمانگر فقط پس از استعلام رسمی پروانه، بررسی مدارک تخصصی روان‌درمانگری/سوپرویژن و ثبت مستندات حقوقی تک‌تک کشورهای مجاز ممکن است. پروانه ایرانی به‌تنهایی مجوز فعالیت در کشورهای دیگر نیست. مدارک در فضای خصوصی نگهداری شوند.</p></details>
 <div class="admin-actions"><button class="button primary" type="submit">ذخیرهٔ پروفایل</button><button class="button outline" id="yadCancelEdit" type="button" hidden>لغو ویرایش</button></div>
 </form>
 </section>
@@ -219,6 +231,21 @@
 #yadAppointmentsSection,#yadPaymentsSection,#yadAvailabilityManager,#yadWorkshopAdmin,#yadBusinessSettings{scroll-margin-top:24px}
 @media(max-width:760px){.admin-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.admin-shortcuts a{padding:11px;min-height:72px}.shortcut-icon{flex-basis:34px;width:34px;height:34px;font-size:19px}.shortcut-icon svg{width:19px;height:19px}.admin-shortcuts b{font-size:13px}.admin-shortcuts small{font-size:11px}}
 @media(max-width:390px){.admin-shortcuts{grid-template-columns:1fr}}
+
+.admin-form-intro{margin:0;color:#617678;font-size:13px;line-height:1.9}
+.admin-form-group{border:1px solid #e1ebe6;border-radius:14px;background:#fff;padding:0 15px;margin:4px 0}
+.admin-form-group>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:66px;cursor:pointer;list-style:none;color:#164b4b}
+.admin-form-group>summary::-webkit-details-marker{display:none}
+.admin-form-group>summary:after{content:"＋";display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#edf6f2;color:#176d62;font-size:19px}
+.admin-form-group[open]>summary:after{content:"−"}
+.admin-form-group>summary b,.admin-form-group>summary small{display:block}
+.admin-form-group>summary b{font-size:14px}
+.admin-form-group>summary small{font-size:12px;font-weight:400;color:#738586;margin-top:3px}
+.admin-form-group>.portal-grid{padding:4px 0 16px}
+.admin-form-group>label{margin:8px 0 16px}
+.admin-form-status{background:#fbfdfc}
+.admin-form-status .yad-checks{padding:8px 0 14px}
+#yadTherapistForm .admin-actions{position:sticky;bottom:8px;z-index:3;padding:10px;background:#ffffffed;border:1px solid #e3ece7;border-radius:12px;box-shadow:0 5px 20px #163d3b12}
 </style>
 
 <script>
