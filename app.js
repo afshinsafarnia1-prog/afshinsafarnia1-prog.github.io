@@ -30,11 +30,21 @@
 
   function therapistPhotoUrl(path, slug){
     if(path){
-      const lower=path.toLowerCase();
-      const isHttp=path.startsWith("http://")||path.startsWith("https://");
-      const isLocal=path.startsWith("/")||[".jpg",".jpeg",".png",".webp"].some(ext=>lower.endsWith(ext));
-      if(isHttp||isLocal)return path.startsWith("/")||isHttp?path:"/"+path;
-      if(db){const {data}=db.storage.from("therapist-photos").getPublicUrl(path);return data?.publicUrl||"";}
+      const storedPath=String(path).trim();
+      const isHttp=/^https?:\/\//i.test(storedPath);
+      const isRootRelative=storedPath.startsWith("/");
+      const isLegacyTherapistAsset=/^therapists\//i.test(storedPath);
+      if(isHttp)return storedPath;
+      if(isRootRelative)return storedPath;
+      if(isLegacyTherapistAsset)return "/"+storedPath;
+      if(db){
+        try{
+          const {data,error}=db.storage.from("therapist-photos").getPublicUrl(storedPath);
+          if(!error&&data?.publicUrl)return data.publicUrl;
+        }catch(error){
+          console.error("YADSHIN: could not build directory therapist photo URL",error);
+        }
+      }
     }
     if(slug==="foruzan-shahla")return "/therapists/foruzan-shahla.jpg";
     return "";
