@@ -222,6 +222,10 @@ try {
   if (!(await page.locator(".therapist-filters").isVisible())) throw new Error("Mobile therapist filters are not visible.");
   const mobileFilterColumns = await page.locator(".therapist-filters").evaluate(el => getComputedStyle(el).gridTemplateColumns);
   if (mobileFilterColumns.split(" ").length !== 1) throw new Error("Therapist filters are not single-column on mobile.");
+  if (await page.locator("#menuToggle").getAttribute("aria-expanded") !== "true") throw new Error("Mobile navigation expanded state was not announced.");
+  await page.locator('#mainNav a[href="#services"]').click();
+  if (await page.locator("#mainNav").isVisible()) throw new Error("Mobile navigation did not close after selecting a destination.");
+  if (await page.locator("#menuToggle").getAttribute("aria-expanded") !== "false") throw new Error("Mobile navigation expanded state was not reset after closing.");
 
   for (const [path, selector] of [["/initial-guidance.html","#initialGuideForm"],["/standards.html","h1"],["/workshops.html","#yadWorkshopPageList"],["/articles/why-assessment-matters.html","h1"]]) {
     const response=await page.goto("http://127.0.0.1:4173"+path,{waitUntil:"domcontentloaded"});
