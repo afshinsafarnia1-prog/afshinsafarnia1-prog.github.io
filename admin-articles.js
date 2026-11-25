@@ -22,14 +22,14 @@
     card.append(node("p","muted","نویسنده: "+a.therapist_name+" · زبان: "+a.language+" · وضعیت: "+a.status));
     card.append(node("p","",a.excerpt));
     const preview=node("details","");const summary=node("summary","", "مشاهده متن کامل");preview.append(summary,node("pre","article-submission-body",a.body));card.append(preview);
-    const note=node("textarea","");note.rows=2;note.maxLength=2000;note.placeholder="یادداشت ویرایشی برای نویسنده (اختیاری)";note.value=a.editor_note||"";card.append(note);
+    const note=node("textarea","");note.rows=2;note.maxLength=2000;note.placeholder="یادداشت ویرایشی برای نویسنده (اختیاری؛ در درخواست اصلاح یا رد مقاله توضیح روشن بنویسید)";note.setAttribute("aria-label","یادداشت ویرایشی برای نویسنده");note.value=a.editor_note||"";card.append(note);
     const actions=node("div","filter-actions");
     const publish=node("button","button primary","تأیید و انتشار");publish.type="button";
     const revise=node("button","button outline","درخواست اصلاح");revise.type="button";
     const reject=node("button","button outline","رد مقاله");reject.type="button";
-    publish.addEventListener("click",async()=>{const slug="therapist-article-"+a.id.slice(0,8);await review(a,"published",note.value,slug,publish);});
+    publish.addEventListener("click",async()=>{if(!window.confirm("مقاله پس از تأیید برای عموم منتشر می‌شود. آیا متن، منابع و محرمانگی آن را بررسی کرده‌اید؟"))return;const slug="therapist-article-"+a.id.slice(0,8);await review(a,"published",note.value,slug,publish);});
     revise.addEventListener("click",async()=>review(a,"revision_requested",note.value,null,revise));
-    reject.addEventListener("click",async()=>review(a,"rejected",note.value,null,reject));
+    reject.addEventListener("click",async()=>{if(!window.confirm("آیا از رد این مقاله مطمئن هستید؟ یادداشت شما برای نویسنده ثبت می‌شود."))return;await review(a,"rejected",note.value,null,reject);});
     actions.append(publish,revise,reject);card.append(actions);root.append(card);
    });
   }
