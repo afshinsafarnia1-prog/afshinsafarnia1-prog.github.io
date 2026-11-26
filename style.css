@@ -1260,3 +1260,23 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
     height:220px!important;flex-basis:220px!important;
   }
 }
+
+
+/* Image visibility correction: show the complete portrait, never crop it. */
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo{
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:#f2f5f2!important;
+}
+@media(max-width:760px){
+  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo{
+    height:280px!important;
+    flex-basis:280px!important;
+  }
+}
+@media(max-width:420px){
+  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo{
+    height:265px!important;
+    flex-basis:265px!important;
+  }
+}
