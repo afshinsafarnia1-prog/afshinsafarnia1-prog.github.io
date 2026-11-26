@@ -1176,3 +1176,87 @@ a,button,input,select,textarea{transition:background-color .18s ease,border-colo
     min-width:132px!important;max-width:132px!important;
   }
 }
+
+
+/* EXPERIMENT: vertical therapist directory cards — image above, details below. */
+#therapistDirectory .therapist-cards-track{
+  align-items:stretch!important;
+  gap:20px!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card{
+  display:flex!important;
+  flex:0 0 calc((100% - 20px)/2)!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:0!important;
+  min-height:0!important;
+  height:auto!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:1px solid #dce8e3!important;
+  border-radius:18px!important;
+  background:#fff!important;
+  box-shadow:0 8px 26px rgba(25,70,60,.07)!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo,
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-placeholder{
+  display:block!important;
+  width:100%!important;
+  height:250px!important;
+  min-width:0!important;
+  max-width:none!important;
+  flex:0 0 250px!important;
+  object-fit:cover!important;
+  object-position:center 24%!important;
+  border-radius:0!important;
+  margin:0!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-card-body{
+  display:flex!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  padding:20px 22px 22px!important;
+  align-items:flex-start!important;
+  overflow:visible!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card h3{
+  font-size:19px!important;
+  line-height:1.7!important;
+  margin:0 0 7px!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-headline-role{
+  font-size:14px!important;line-height:1.9!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-headline-detail,
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-meta{
+  font-size:12px!important;line-height:1.9!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card .therapist-tags{
+  margin:10px 0 6px!important;
+}
+#therapistDirectory .therapist-cards-track>.therapist-card .button{
+  margin-top:auto!important;
+  align-self:flex-start!important;
+}
+@media(max-width:760px){
+  #therapistDirectory .therapist-cards-track{gap:14px!important}
+  #therapistDirectory .therapist-cards-track>.therapist-card{
+    flex:0 0 84%!important;
+    min-height:0!important;
+  }
+  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo,
+  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-placeholder{
+    height:235px!important;
+    flex-basis:235px!important;
+  }
+  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-card-body{
+    padding:17px 18px 19px!important;
+  }
+}
+@media(max-width:420px){
+  #therapistDirectory .therapist-cards-track>.therapist-card{flex-basis:90%!important}
+  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-photo,
+  #therapistDirectory .therapist-cards-track>.therapist-card .therapist-placeholder{
+    height:220px!important;flex-basis:220px!important;
+  }
+}
